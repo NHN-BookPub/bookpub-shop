@@ -55,5 +55,6 @@ jobs:
         script_stop: true
         script: "./startup_shop.sh"
         
+         
     - name : Run SonarQube
-      run : mvn sonar:sonar -Dsonar.projectKey=bookpub-shop -Dsonar.host.url=${{secrets.SONAR_HOST}} -Dsonar.login=${{secrets.SONAR_TOKEN}}
+      run : mvn sonar:sonar -Dsonar.projectKey=bookpub-shop -Dsonar.host.url=http://133.186.151.141:9000 -Dsonar.login=3f13b892ab9ed2811157f93967e30e52eab88445
