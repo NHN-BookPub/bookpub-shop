@@ -4,6 +4,8 @@ import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -28,19 +30,20 @@ import lombok.ToString;
 @Table(name = "purchase")
 public class Purchase {
     @Id
-    @Column(name = "purchase_number")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "purchase_number", nullable = false, unique = true)
     private Long purchaseNo;
 
-    @Column(name = "purchase_price")
+    @Column(name = "purchase_price", nullable = false)
     private Long purchasePrice;
 
-    @Column(name = "purchase_created_at")
+    @Column(name = "purchase_created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "purchase_amount")
+    @Column(name = "purchase_amount", nullable = false)
     private Integer purchaseAmount;
 
     @ManyToOne
-    @JoinColumn(name = "product_number")
+    @JoinColumn(name = "product_number", nullable = false)
     private Product productNo;
 }
