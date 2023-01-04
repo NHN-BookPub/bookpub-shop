@@ -24,7 +24,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "order_product_state_code")
+@Table(name = "order_and_product")
 public class OrderProduct {
     @Id
     @Column(name = "order_product_number")
