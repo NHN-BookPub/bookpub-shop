@@ -1,6 +1,8 @@
 package com.nhnacademy.bookpubshop.file.entity;
 
+import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
+import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.service.entity.CustomerService;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -34,12 +36,20 @@ public class File {
     private Long fileNo;
 
     /**
-     *  TODO 쿠폰, 리뷰, 상품 매핑해야합니다.
+     *  TODO 리뷰 매핑해야합니다.
      */
 
     @ManyToOne
     @JoinColumn(name = "personal_inquiry_number")
     private PersonalInquiry personalInquiry;
+
+    @ManyToOne
+    @JoinColumn(name = "coupon_number")
+    private Coupon coupon;
+
+    @ManyToOne
+    @JoinColumn(name = "product_number")
+    private Product product;
 
     @ManyToOne
     @JoinColumn(name = "customer_service_number")
