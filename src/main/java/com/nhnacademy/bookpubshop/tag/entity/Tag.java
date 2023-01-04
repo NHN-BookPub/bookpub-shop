@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * Some description here.
+ * 태그(tag) 테이블.
  *
  * @author : 박경서
  * @since : 1.0
@@ -24,6 +24,9 @@ import lombok.ToString;
 @Table(name = "tag")
 public class Tag {
     @Id
+    @Column(name = "tag_number")
+    private Integer tagNo;
+
     @Column(name = "tag_name")
     private String tagName;
 
