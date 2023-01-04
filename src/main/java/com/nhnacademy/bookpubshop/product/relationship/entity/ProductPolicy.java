@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * Some description here.
+ * 상품정책(product_policy) 테이블.
  *
  * @author : 박경서
  * @since : 1.0
