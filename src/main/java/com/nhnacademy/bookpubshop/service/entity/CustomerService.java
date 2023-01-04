@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -52,4 +53,26 @@ public class CustomerService {
 
     @Column(name = "customer_service_created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    /**
+     * pk 를 뺀 생성자입니다.
+     *
+     * @param customerServiceStateCode 고객상태코드
+     * @param member                   멤버
+     * @param serviceCategory          고객서비스종류
+     * @param serviceTitle             타이틀
+     * @param serviceContent           내용
+     * @param createdAt                생성일자
+     */
+    @Builder
+    public CustomerService(CustomerServiceStateCode customerServiceStateCode, Member member,
+                           String serviceCategory, String serviceTitle, String serviceContent,
+                           LocalDateTime createdAt) {
+        this.customerServiceStateCode = customerServiceStateCode;
+        this.member = member;
+        this.serviceCategory = serviceCategory;
+        this.serviceTitle = serviceTitle;
+        this.serviceContent = serviceContent;
+        this.createdAt = createdAt;
+    }
 }
