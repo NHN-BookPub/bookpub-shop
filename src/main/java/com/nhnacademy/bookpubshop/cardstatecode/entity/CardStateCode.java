@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Some description here.
+ * 카드상태코드(card_state_code) 테이블.
  *
  * @author : 김서현
  * @since : 1.0
@@ -23,13 +23,13 @@ import lombok.NoArgsConstructor;
 public class CardStateCode {
 
     @Id
-    @Column(name = "card_state_code_number")
+    @Column(name = "card_state_code_number", nullable = false)
     private Integer codeNo;
 
-    @Column(name = "card_state_code_name")
+    @Column(name = "card_state_code_name", nullable = false)
     private String codeName;
 
-    @Column(name = "card_state_code_used")
+    @Column(name = "card_state_code_used", nullable = false)
     private boolean codeUsed;
 
     @Column(name = "card_state_code_info")

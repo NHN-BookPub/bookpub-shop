@@ -17,7 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Some description here.
+ * 주문(order) 테이블.
  *
  * @author : 김서현
  * @since : 1.0
@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
 public class Order {
 
     @Id
-    @Column(name = "order_number", nullable = false, unique = true)
+    @Column(name = "order_number", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderNo;
 

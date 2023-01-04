@@ -4,6 +4,8 @@ import com.nhnacademy.bookpubshop.delivery.entity.Delivery;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -14,7 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Some description here.
+ * 배송위치(delivery_location) 테이블.
  *
  * @author : 김서현
  * @since : 1.0
@@ -27,17 +29,18 @@ import lombok.NoArgsConstructor;
 public class DeliveryLocation {
 
     @Id
-    @Column(name = "delivery_location_number")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "delivery_location_number", nullable = false)
     private Long locationNo;
 
     @ManyToOne
-    @JoinColumn(name = "delivery_number")
+    @JoinColumn(name = "delivery_number", nullable = false, unique = true)
     private Delivery delivery;
 
-    @Column(name = "delivery_location_name")
+    @Column(name = "delivery_location_name", nullable = false)
     private String locationName;
 
-    @Column(name = "delivery_location_created_at")
+    @Column(name = "delivery_location_created_at", nullable = false)
     private LocalDateTime createdAt;
 
 }

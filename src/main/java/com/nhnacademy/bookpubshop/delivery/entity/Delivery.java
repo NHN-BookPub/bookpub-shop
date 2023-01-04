@@ -1,9 +1,14 @@
 package com.nhnacademy.bookpubshop.delivery.entity;
 
+import com.nhnacademy.bookpubshop.order.entity.Order;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -11,7 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Some description here.
+ * 배송(delivery) 테이블.
  *
  * @author : 김서현
  * @since : 1.0
@@ -24,27 +29,30 @@ import lombok.NoArgsConstructor;
 public class Delivery {
 
     @Id
-    @Column(name = "delivery_number")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "delivery_number", nullable = false)
     private Long deliveryNo;
 
-    //TODO : order_number join
+    @ManyToOne
+    @JoinColumn(name = "order_number", nullable = false)
+    private Order order;
 
-    @Column(name = "delivery_invoice_number")
+    @Column(name = "delivery_invoice_number", nullable = false)
     private String invoiceNo;
 
-    @Column(name = "delivery_company")
+    @Column(name = "delivery_company", nullable = false)
     private String deliveryCompany;
 
-    @Column(name = "delivery_state")
+    @Column(name = "delivery_state", nullable = false)
     private String deliveryState;
 
     @Column(name = "delivery_request")
     private String deliveryRequest;
 
-    @Column(name = "delivery_recipient")
+    @Column(name = "delivery_recipient", nullable = false)
     private String deliveryRecipient;
 
-    @Column(name = "delivery_recipient_phone")
+    @Column(name = "delivery_recipient_phone", nullable = false)
     private String recipientPhone;
 
     @Column(name = "delivery_finished_at")

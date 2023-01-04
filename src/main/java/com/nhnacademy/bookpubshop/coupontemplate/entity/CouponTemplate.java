@@ -18,7 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Some description here.
+ * 쿠폰 템플릿 (coupon_template) 테이블.
  *
  * @author : 김서현
  * @since : 1.0
@@ -32,7 +32,7 @@ public class CouponTemplate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "coupon_template_number", nullable = false, unique = true)
+    @Column(name = "coupon_template_number", nullable = false)
     private Long templateNo;
 
     @ManyToOne

@@ -13,7 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Some description here.
+ * 카드(Card) 테이블.
  *
  * @author : 김서현
  * @since : 1.0
@@ -26,20 +26,20 @@ import lombok.NoArgsConstructor;
 public class Card {
 
     @Id
-    @Column(name = "payment_number")
+    @Column(name = "payment_number", nullable = false)
     private Long paymentNo;
 
     @ManyToOne
-    @JoinColumn(name = "card_state_code_number")
-    private CardStateCode codeNumber;
+    @JoinColumn(name = "card_state_code_number", nullable = false)
+    private CardStateCode cardStateCode;
 
-    @Column(name = "card_company")
+    @Column(name = "card_company", nullable = false)
     private String cardCompany;
 
-    @Column(name = "card_number")
-    private String cardNumber;
+    @Column(name = "card_number", nullable = false)
+    private String cardNo;
 
-    @Column(name = "card_code_succeed")
+    @Column(name = "card_code_succeed", nullable = false)
     private boolean codeSucceed;
 
     @Column(name = "card_installment_month")
