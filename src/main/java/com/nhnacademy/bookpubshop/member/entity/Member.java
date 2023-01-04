@@ -28,47 +28,53 @@ import lombok.NoArgsConstructor;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_number")
+    @Column(name = "member_number", nullable = false, unique = true)
     private Long memberNo;
 
     @ManyToOne
-    @JoinColumn(name = "tier_number")
+    @JoinColumn(name = "tier_number", nullable = false)
     private Tier tier;
 
-    @Column(name = "member_id")
+    @Column(name = "member_id", nullable = false, unique = true)
     private String memberId;
 
-    @Column(name = "member_nickname")
+    @Column(name = "member_nickname", nullable = false, unique = true)
     private String memberNickname;
 
-    @Column(name = "member_gender")
+    @Column(name = "member_name", nullable = false)
+    private String memberName;
+
+    @Column(name = "member_gender", nullable = false)
     private String memberGender;
 
-    @Column(name = "member_birth")
-    private String memberBirth;
+    @Column(name = "member_birth_year", nullable = false)
+    private Integer memberBirthYear;
 
-    @Column(name = "member_pwd")
+    @Column(name = "member_birth_month", nullable = false)
+    private Integer memberBirthMonth;
+
+    @Column(name = "member_pwd", nullable = false)
     private String memberPwd;
 
-    @Column(name = "member_phone")
+    @Column(name = "member_phone", nullable = false)
     private String memberPhone;
 
-    @Column(name = "member_email")
+    @Column(name = "member_email", nullable = false)
     private String memberEmail;
 
-    @Column(name = "member_created_at")
+    @Column(name = "member_created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "member_deleted")
+    @Column(name = "member_deleted", nullable = false)
     private boolean memberDeleted;
 
-    @Column(name = "member_blocked")
+    @Column(name = "member_blocked", nullable = false)
     private boolean memberBlocked;
 
     @Column(name = "member_blocked_at")
     private LocalDateTime blockedAt;
 
-    @Column(name = "member_point")
+    @Column(name = "member_point", nullable = false)
     private Long memberPoint;
 
     @Column(name = "member_social_joined")

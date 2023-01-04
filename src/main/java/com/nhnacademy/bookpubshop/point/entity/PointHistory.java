@@ -28,19 +28,19 @@ import lombok.NoArgsConstructor;
 public class PointHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "history_number")
-    private Long historyNo;
+    @Column(name = "point_history_number", nullable = false, unique = true)
+    private Long pointHistoryNo;
 
     @ManyToOne
-    @JoinColumn(name = "member_number")
+    @JoinColumn(name = "member_number", nullable = false)
     private Member member;
 
-    @Column(name = "point_amount")
-    private Long pointAmount;
+    @Column(name = "point_history_amount", nullable = false)
+    private Long pointHistoryAmount;
 
-    @Column(name = "point_state")
-    private boolean pointState;
+    @Column(name = "point_history_increased", nullable = false)
+    private boolean pointHistoryIncreased;
 
-    @Column(name = "point_reason")
-    private String pointReason;
+    @Column(name = "point_history_reason", nullable = false)
+    private String pointHistoryReason;
 }

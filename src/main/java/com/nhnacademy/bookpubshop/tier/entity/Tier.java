@@ -25,9 +25,9 @@ import lombok.NoArgsConstructor;
 public class Tier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "tier_number")
+    @Column(name = "tier_number", nullable = false, unique = true)
     private Integer tierNo;
 
-    @Column
+    @Column(name = "tier_name", nullable = false, unique = true)
     private String tierName;
 }

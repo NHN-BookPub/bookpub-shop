@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.service.entity;
 
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.servicecode.entity.CustomerServiceStateCode;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,22 +30,26 @@ import lombok.NoArgsConstructor;
 public class CustomerService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_service_number")
+    @Column(name = "customer_service_number", nullable = false, unique = true)
     private Integer serviceNo;
 
     @ManyToOne
-    @JoinColumn(name = "member_number")
+    @JoinColumn(name = "customer_service_code_number", nullable = false)
+    private CustomerServiceStateCode customerServiceStateCode;
+
+    @ManyToOne
+    @JoinColumn(name = "member_number", nullable = false)
     private Member member;
 
-    @Column(name = "customer_service_category")
+    @Column(name = "customer_service_category", nullable = false)
     private String serviceCategory;
 
-    @Column(name = "customer_service_title")
+    @Column(name = "customer_service_title", nullable = false)
     private String serviceTitle;
 
-    @Column(name = "customer_service_content")
+    @Column(name = "customer_service_content", nullable = false)
     private String serviceContent;
 
-    @Column(name = "customer_service_created_at")
+    @Column(name = "customer_service_created_at", nullable = false)
     private LocalDateTime createdAt;
 }

@@ -25,13 +25,13 @@ import lombok.NoArgsConstructor;
 public class CustomerServiceStateCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_service_state_code_number")
+    @Column(name = "customer_service_state_code_number", nullable = false, unique = true)
     private Integer serviceCodeNo;
 
-    @Column(name = "customer_service_state_code_name")
+    @Column(name = "customer_service_state_code_name", nullable = false, unique = true)
     private String serviceCodeName;
 
-    @Column(name = "customer_service_state_code_used")
+    @Column(name = "customer_service_state_code_used", nullable = false)
     private boolean serviceCodeUsed;
 
     @Column(name = "customer_service_state_code_info")

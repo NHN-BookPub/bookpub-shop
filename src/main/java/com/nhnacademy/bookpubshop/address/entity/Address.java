@@ -26,12 +26,12 @@ import lombok.NoArgsConstructor;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "address_number")
+    @Column(name = "address_number", nullable = false, unique = true)
     private Integer addressNo;
 
-    @Column(name = "address_zipcode")
+    @Column(name = "address_zipcode", nullable = false)
     private String addressZipcode;
 
-    @Column(name = "address_base")
+    @Column(name = "address_base", nullable = false)
     private String addressBase;
 }

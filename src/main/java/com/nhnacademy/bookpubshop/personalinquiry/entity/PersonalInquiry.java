@@ -29,28 +29,28 @@ import lombok.NoArgsConstructor;
 public class PersonalInquiry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "personal_inquiry_number")
+    @Column(name = "personal_inquiry_number", nullable = false, unique = true)
     private Long personalInquiryNo;
 
     @ManyToOne
-    @JoinColumn(name = "member_number")
+    @JoinColumn(name = "member_number", nullable = false)
     private Member member;
 
-    @Column(name = "personal_inquiry_title")
+    @Column(name = "personal_inquiry_title", nullable = false)
     private String inquiryTitle;
 
-    @Column(name = "personal_inquiry_content")
+    @Column(name = "personal_inquiry_content", nullable = false)
     private String inquiryContent;
 
     @Column(name = "personal_inquiry_image_path")
     private String imagePath;
 
-    @Column(name = "personal_inquiry_answered")
+    @Column(name = "personal_inquiry_answered", nullable = false)
     private boolean inquiryAnswered;
 
-    @Column(name = "personal_inquiry_created_at")
+    @Column(name = "personal_inquiry_created_at", nullable = true)
     private LocalDateTime createdAt;
 
-    @Column(name = "personal_inquiry_deleted")
+    @Column(name = "personal_inquiry_deleted", nullable = false)
     private boolean inquiryDeleted;
 }

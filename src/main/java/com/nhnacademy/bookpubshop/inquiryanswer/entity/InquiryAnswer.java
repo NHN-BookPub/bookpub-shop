@@ -16,6 +16,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
+ * 문의답변 개체입니다.
+ *
  * @author : 임태원
  * @since : 1.0
  **/
@@ -27,16 +29,16 @@ import lombok.NoArgsConstructor;
 public class InquiryAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "personal_inquiry_answer_number")
+    @Column(name = "personal_inquiry_answer_number", nullable = false, unique = true)
     private Long answerNumber;
 
     @OneToOne
-    @JoinColumn(name = "personal_inquiry_number")
+    @JoinColumn(name = "personal_inquiry_number", nullable = false)
     private PersonalInquiry personalInquiry;
 
-    @Column(name = "personal_inquiry_answer_content")
+    @Column(name = "personal_inquiry_content", nullable = false)
     private String answerContent;
 
-    @Column(name = "personal_inquiry_answer_created_at")
+    @Column(name = "personal_inquiry_created_at", nullable = false)
     private LocalDateTime createdAt;
 }

@@ -25,6 +25,6 @@ import lombok.NoArgsConstructor;
 public class Authority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "authority_number")
+    @Column(name = "authority_number", nullable = false, unique = true)
     private Integer authorityNo;
 }
