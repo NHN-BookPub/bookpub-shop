@@ -15,7 +15,7 @@ import lombok.ToString;
 
 
 /**
- * Some description here.
+ * 연관상품(product_relation) 테이블.
  *
  * @author : 박경서
  * @since : 1.0
@@ -36,5 +36,5 @@ public class ProductRelation {
 
     @ManyToOne
     @JoinColumn(name = "product_number")
-    private Product productNo;
+    private Product product;
 }
