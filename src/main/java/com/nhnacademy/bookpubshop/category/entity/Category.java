@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.product.entity;
+package com.nhnacademy.bookpubshop.category.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
