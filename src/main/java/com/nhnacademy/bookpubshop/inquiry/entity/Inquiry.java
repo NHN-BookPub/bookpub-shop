@@ -4,6 +4,8 @@ import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -28,30 +30,31 @@ import lombok.ToString;
 @Table(name = "inquiry")
 public class Inquiry {
     @Id
-    @Column(name = "inquiry_number")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "inquiry_number", nullable = false, unique = true)
     private Long inquiryNo;
 
     @ManyToOne
-    @JoinColumn(name = "inquiry_number")
+    @JoinColumn(name = "inquiry_parent_number")
     private Inquiry inquiry;
 
     //Todo 회원번호 join
 
     @ManyToOne
-    @JoinColumn(name = "product_number")
+    @JoinColumn(name = "product_number", nullable = false)
     private Product product;
 
     //Todo 문의상태코드번호 join
 
-    @Column(name = "inquiry_content")
+    @Column(name = "inquiry_content", nullable = false)
     private String inquiryContent;
 
-    @Column(name = "inquiry_displayed")
+    @Column(name = "inquiry_displayed", nullable = false)
     private boolean inquiryDisplayed;
 
-    @Column(name = "inquiry_created_at")
+    @Column(name = "inquiry_created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "inquiry_answered")
+    @Column(name = "inquiry_answered", nullable = false)
     private boolean inquiryAnswered;
 }
