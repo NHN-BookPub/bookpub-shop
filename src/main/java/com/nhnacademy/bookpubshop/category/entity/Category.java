@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * Some description here.
+ * 카테고리(category) 테이블.
  *
  * @author : 박경서
  * @since : 1.0
@@ -40,5 +40,5 @@ public class Category {
 
     @ManyToOne
     @JoinColumn(name = "category_number")
-    private Category parentNo;
+    private Category parent;
 }
