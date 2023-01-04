@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.paymenttypestatecode.dummy;
 
+import static com.nhnacademy.bookpubshop.state.PaymentTypeState.CARD;
 import com.nhnacademy.bookpubshop.paymenttypestatecode.entity.PaymentTypeStateCode;
 
 /**
@@ -13,9 +14,9 @@ public class PaymentTypeStateCodeDummy {
     public static PaymentTypeStateCode dummy() {
         return new PaymentTypeStateCode(
                 null,
-                "test_code_name",
-                true,
-                "test_code_info"
+                CARD.getName(),
+                CARD.isUsed(),
+                "test_info"
         );
     }
 
