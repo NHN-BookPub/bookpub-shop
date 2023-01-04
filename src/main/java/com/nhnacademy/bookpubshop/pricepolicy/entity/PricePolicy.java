@@ -23,7 +23,7 @@ public class PricePolicy {
 
     @Id
     @Column(name = "price_policy_number")
-    private Integer policyNumber;
+    private Integer policyNo;
 
     @Column(name = "price_policy_name")
     private String policyName;

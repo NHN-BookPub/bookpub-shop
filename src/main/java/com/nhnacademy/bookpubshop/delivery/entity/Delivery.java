@@ -25,12 +25,12 @@ public class Delivery {
 
     @Id
     @Column(name = "delivery_number")
-    private Long deliveryNumber;
+    private Long deliveryNo;
 
     //TODO : order_number join
 
     @Column(name = "delivery_invoice_number")
-    private String invoiceNumber;
+    private String invoiceNo;
 
     @Column(name = "delivery_company")
     private String deliveryCompany;

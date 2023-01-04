@@ -23,7 +23,8 @@ import lombok.NoArgsConstructor;
 public class CouponPolicy {
 
     @Id
-    private Integer policyNumber;
+    @Column(name = "coupon_policy_number")
+    private Integer policyNo;
 
     @Column(name = "coupon_policy_fixed")
     private boolean policyFixed;

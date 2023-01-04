@@ -22,7 +22,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "payment_type_state_code")
 public class PaymentTypeStateCode {
     @Id
-    private Integer codeNumber;
+    @Column(name = "payment_type_state_code_number")
+    private Integer codeNo;
 
     @Column(name = "payment_type_state_code_name")
     private String codeName;

@@ -27,7 +27,7 @@ public class Card {
 
     @Id
     @Column(name = "payment_number")
-    private Long paymentNumber;
+    private Long paymentNo;
 
     @ManyToOne
     @JoinColumn(name = "card_state_code_number")

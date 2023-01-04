@@ -23,7 +23,8 @@ import lombok.NoArgsConstructor;
 public class CouponStateCode {
 
     @Id
-    private Integer codeNumber;
+    @Column(name ="coupon_state_code_number" )
+    private Integer codeNo;
 
     @Column(name = "coupon_state_code_target")
     private String codeTarget;

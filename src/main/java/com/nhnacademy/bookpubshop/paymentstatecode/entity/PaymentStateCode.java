@@ -24,7 +24,7 @@ public class PaymentStateCode {
 
     @Id
     @Column(name = "payment_state_code_number")
-    private Integer codeNumber;
+    private Integer codeNo;
 
     @Column(name = "payment_state_code_name")
     private String codeName;

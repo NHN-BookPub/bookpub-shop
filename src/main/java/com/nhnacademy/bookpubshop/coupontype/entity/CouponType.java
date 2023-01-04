@@ -24,7 +24,8 @@ import lombok.NoArgsConstructor;
 public class CouponType {
 
     @Id
-    private Long typeNumber;
+    @Column(name = "coupon_type_number")
+    private Long typeNo;
 
     @Column(name = "coupon_type_name")
     private String typeName;
