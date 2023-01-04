@@ -3,6 +3,8 @@ package com.nhnacademy.bookpubshop.product.relationship.entity;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -28,13 +30,15 @@ import lombok.ToString;
 @Table(name = "product_relation")
 public class ProductRelation {
     @Id
-    @Column(name = "product_relation_number")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_relation_number", nullable = false, unique = true)
     private Long productRelationNo;
 
-    @Column(name = "product_relation_deleted")
+    @ManyToOne
+    @JoinColumn(name = "product_number", nullable = false)
+    private Product product;
+
+    @Column(name = "product_relation_deleted", nullable = false)
     private boolean relationDeleted;
 
-    @ManyToOne
-    @JoinColumn(name = "product_number")
-    private Product product;
 }
