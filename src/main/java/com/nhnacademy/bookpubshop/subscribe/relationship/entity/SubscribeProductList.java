@@ -43,6 +43,6 @@ public class SubscribeProductList {
     @JoinColumn(name = "product_number", nullable = false)
     private Product product;
 
-    @Column(name = "subscribe_product_list_publish", nullable = false)
-    private LocalDateTime listPublish;
+    @Column(name = "subscribe_product_list_published_at", nullable = false)
+    private LocalDateTime publishedAt;
 }
