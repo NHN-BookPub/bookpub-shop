@@ -3,6 +3,8 @@ package com.nhnacademy.bookpubshop.subscribe.entity;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
@@ -25,30 +27,31 @@ import lombok.ToString;
 @Table(name = "subscribe")
 public class Subscribe {
     @Id
-    @Column(name = "subscribe_number")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "subscribe_number", nullable = false, unique = true)
     private Long subscribeNo;
 
-    @Column(name = "subscribe_name")
+    @Column(name = "subscribe_name", nullable = false)
     private String subscribeName;
 
-    @Column(name = "subscribe_sales_price")
+    @Column(name = "subscribe_sales_price", nullable = false)
     private Long salesPrice;
 
-    @Column(name = "subscribe_price")
+    @Column(name = "subscribe_price", nullable = false)
     private Long subscribePrice;
 
-    @Column(name = "subscribe_sales_rate")
+    @Column(name = "subscribe_sales_rate", nullable = false)
     private Integer salesRate;
 
-    @Column(name = "subscribe_view_count")
+    @Column(name = "subscribe_view_count", nullable = false)
     private Long viewCount;
 
-    @Column(name = "subscribe_deleted")
+    @Column(name = "subscribe_deleted", nullable = false)
     private boolean subscribeDeleted;
 
-    @Column(name = "subscribe_created_at")
+    @Column(name = "subscribe_created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "subscribe_renewed")
+    @Column(name = "subscribe_renewed", nullable = false)
     private boolean subscribeRenewed;
 }
