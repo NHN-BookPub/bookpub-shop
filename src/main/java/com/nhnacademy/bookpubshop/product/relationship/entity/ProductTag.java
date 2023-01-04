@@ -57,7 +57,7 @@ public class ProductTag {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Embeddable
     public static class Pk implements Serializable {
-        private String tagNo;
+        private Integer tagNo;
         private Long productNo;
     }
 }
