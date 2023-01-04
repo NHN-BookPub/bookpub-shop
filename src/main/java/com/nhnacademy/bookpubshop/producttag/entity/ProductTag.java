@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.tag.entity;
+package com.nhnacademy.bookpubshop.producttag.entity;
 
 import java.io.Serializable;
 import javax.persistence.Column;
