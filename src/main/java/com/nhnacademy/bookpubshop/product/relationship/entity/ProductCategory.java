@@ -24,7 +24,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table
+@Table(name = "product_and_category")
 public class ProductCategory {
     @EmbeddedId
     private Pk pk;
