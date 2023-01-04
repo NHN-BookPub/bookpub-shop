@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * Some description here.
+ * 상품카테고리관계(product_and_category) 테이블.
  *
  * @author : 박경서
  * @since : 1.0
@@ -29,10 +29,17 @@ public class ProductCategory {
     @EmbeddedId
     private Pk pk;
 
+    /**
+     * 상품카테고리관계(product_and_category) 테이블 Pk
+     * (카테고리번호, 상품번호).
+     *
+     * @author : 박경서
+     * @since : 1.0
+     **/
     @EqualsAndHashCode
     @Getter
     @AllArgsConstructor
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Embeddable
     public static class Pk implements Serializable {
         @Column(name = "category_number")
