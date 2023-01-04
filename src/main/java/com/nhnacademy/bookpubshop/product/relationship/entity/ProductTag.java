@@ -1,10 +1,15 @@
 package com.nhnacademy.bookpubshop.product.relationship.entity;
 
+import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.tag.entity.Tag;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,6 +34,16 @@ public class ProductTag {
     @EmbeddedId
     private Pk pk;
 
+    @MapsId("tagNo")
+    @ManyToOne
+    @JoinColumn(name = "tag_number", nullable = false, unique = true)
+    private Tag tag;
+
+    @MapsId("productNo")
+    @ManyToOne
+    @JoinColumn(name = "product_number", nullable = false, unique = true)
+    private Product product;
+
     /**
      * 상품태그(product_and_tag) 테이블 Pk
      * (상품번호, 태그번호).
@@ -42,10 +57,7 @@ public class ProductTag {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Embeddable
     public static class Pk implements Serializable {
-        @Column(name = "tag_name")
-        private String tagName;
-
-        @Column(name = "product_number")
+        private String tagNo;
         private Long productNo;
     }
 }
