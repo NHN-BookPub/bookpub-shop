@@ -1,0 +1,90 @@
+package com.nhnacademy.bookpubshop.order.entity;
+
+import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
+import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+/**
+ * Some description here.
+ *
+ * @author : 김서현
+ * @since : 1.0
+ **/
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Table(name = "order")
+public class Order {
+
+    @Id
+    @Column(name = "order_number", nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long orderNo;
+
+    //TODO : member_id join
+
+
+    @ManyToOne
+    @JoinColumn(name = "price_policy_delivery_number", nullable = false)
+    private PricePolicy deliveryPricePolicy;
+
+    @ManyToOne
+    @JoinColumn(name = "price_policy_packaging_number", nullable = false)
+    private PricePolicy packagingPricePolicy;
+
+    //TODO : address_number join
+
+    @ManyToOne
+    @JoinColumn(name = "order_state_code_number", nullable = false)
+    private OrderStateCode orderStateCode;
+
+    @Column(name = "order_ordered_at", nullable = false)
+    private LocalDateTime orderedAt;
+
+    @Column(name = "order_recipient", nullable = false)
+    private String orderRecipient;
+
+    @Column(name = "order_recipient_phone", nullable = false)
+    private String recipientPhone;
+
+    @Column(name = "order_buyer", nullable = false)
+    private String orderBuyer;
+
+    @Column(name = "order_buyer_phone", nullable = false)
+    private String buyerPhone;
+
+    @Column(name = "order_received_at", nullable = false)
+    private LocalDateTime receivedAt;
+
+    @Column(name = "order_invoice_number")
+    private String invoiceNumber;
+
+    @Column(name = "order_price", nullable = false)
+    private Long orderPrice;
+
+    @Column(name = "order_point_amount", nullable = false)
+    private Long pointAmount;
+
+    @Column(name = "order_packaged", nullable = false)
+    private boolean orderPackaged;
+
+    @Column(name = "order_request")
+    private String orderRequest;
+
+    @Column(name = "order_coupon_discount", nullable = false)
+    private Long couponDiscount;
+
+}
