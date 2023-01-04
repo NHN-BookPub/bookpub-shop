@@ -30,7 +30,7 @@ public class ProductTypeStateCode {
     @Column(name = "product_type_state_code_number", nullable = false, unique = true)
     private Integer codeNo;
 
-    @Column(name = "product_type_state_code_name", nullable = false)
+    @Column(name = "product_type_state_code_name", nullable = false, unique = true)
     private String codeName;
 
     @Column(name = "product_type_state_code_used", nullable = false)
