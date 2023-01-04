@@ -29,7 +29,7 @@ class PaymentTypeStateCodeRepositoryTest {
     PaymentTypeStateCode paymentTypeStateCode;
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         paymentTypeStateCode = PaymentTypeStateCodeDummy.dummy();
     }
 
