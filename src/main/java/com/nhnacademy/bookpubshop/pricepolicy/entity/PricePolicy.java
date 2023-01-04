@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "price_policy")
-@Table
+@Entity
+@Table(name = "price_policy")
 public class PricePolicy {
 
     @Id

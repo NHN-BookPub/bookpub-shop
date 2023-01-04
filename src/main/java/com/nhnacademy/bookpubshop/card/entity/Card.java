@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "card")
-@Table
+@Entity
+@Table(name = "card")
 public class Card {
 
     @Id
