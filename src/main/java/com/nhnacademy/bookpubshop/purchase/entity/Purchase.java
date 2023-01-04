@@ -41,7 +41,7 @@ public class Purchase {
     private LocalDateTime createdAt;
 
     @Column(name = "purchase_amount", nullable = false)
-    private Integer purchaseAmount;
+    private Long purchaseAmount;
 
     @ManyToOne
     @JoinColumn(name = "product_number", nullable = false)
