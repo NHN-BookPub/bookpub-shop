@@ -36,6 +36,7 @@ public class Coupon {
      * Todo 주문번호, 주문상품번호, 쿠폰템플릿 매핑해야합니다.
      */
 
+
     @ManyToOne
     @JoinColumn(name = "member_number", nullable = false, unique = true)
     private Member member;

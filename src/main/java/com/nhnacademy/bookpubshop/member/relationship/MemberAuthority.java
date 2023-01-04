@@ -41,12 +41,18 @@ public class MemberAuthority {
     @JoinColumn(name = "authority_number", nullable = false, unique = true)
     private Authority authority;
 
+    /**
+     * 회원과 권한의 연관관계 키입니다.
+     *
+     * @author : 임태원
+     * @since : 1.0
+     **/
     @Embeddable
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @EqualsAndHashCode
     @Getter
-    private static class Pk implements Serializable {
+    public static class Pk implements Serializable {
         private Long memberNo;
         private Integer authorityNo;
     }
