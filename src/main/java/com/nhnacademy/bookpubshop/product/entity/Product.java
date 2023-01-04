@@ -89,7 +89,7 @@ public class Product {
     private LocalDateTime publishDate;
 
     @Column(name = "product_created_at", nullable = false)
-    private boolean createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "product_subscribed", nullable = false)
     private boolean productSubscribed;
