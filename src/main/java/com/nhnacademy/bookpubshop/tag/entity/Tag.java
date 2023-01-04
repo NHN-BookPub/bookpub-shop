@@ -2,6 +2,8 @@ package com.nhnacademy.bookpubshop.tag.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
@@ -24,12 +26,13 @@ import lombok.ToString;
 @Table(name = "tag")
 public class Tag {
     @Id
-    @Column(name = "tag_number")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tag_number", nullable = false, unique = true)
     private Integer tagNo;
 
-    @Column(name = "tag_name")
+    @Column(name = "tag_name", nullable = false, unique = true)
     private String tagName;
 
-    @Column(name = "tag_color_code")
+    @Column(name = "tag_color_code", nullable = false)
     private String colorCode;
 }
