@@ -14,12 +14,11 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * Some description here.
+ * 상품태그(product_and_tag) 테이블.
  *
  * @author : 박경서
  * @since : 1.0
  **/
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -30,10 +29,17 @@ public class ProductTag {
     @EmbeddedId
     private Pk pk;
 
+    /**
+     * 상품태그(product_and_tag) 테이블 Pk
+     * (상품번호, 태그번호).
+     *
+     * @author : 박경서
+     * @since : 1.0
+     **/
     @EqualsAndHashCode
     @Getter
     @AllArgsConstructor
-    @NoArgsConstructor
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Embeddable
     public static class Pk implements Serializable {
         @Column(name = "tag_name")
