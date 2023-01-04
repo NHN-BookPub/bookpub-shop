@@ -5,6 +5,8 @@ import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -29,17 +31,18 @@ import lombok.ToString;
 @Table(name = "subscribe_product_list")
 public class SubscribeProductList {
     @Id
-    @Column(name = "subscribe_product_list_number")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "subscribe_product_list_number", nullable = false, unique = true)
     private Long listNumber;
 
-    @Column(name = "subscribe_product_list_publish")
-    private LocalDateTime listPublish;
-
     @ManyToOne
-    @JoinColumn(name = "subscribe_number")
+    @JoinColumn(name = "subscribe_number", nullable = false)
     private Subscribe subscribe;
 
     @ManyToOne
-    @JoinColumn(name = "product_number")
+    @JoinColumn(name = "product_number", nullable = false)
     private Product product;
+
+    @Column(name = "subscribe_product_list_publish", nullable = false)
+    private LocalDateTime listPublish;
 }
