@@ -2,6 +2,8 @@ package com.nhnacademy.bookpubshop.subscribe.relationship.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
@@ -24,13 +26,14 @@ import lombok.ToString;
 @Table(name = "order_subscribe_state_code")
 public class OrderSubscribeStateCode {
     @Id
-    @Column(name = "order_subscribe_state_code_number")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_subscribe_state_code_number", nullable = false, unique = true)
     private Integer codeNo;
 
-    @Column(name = "order_subscribe_state_code_name")
+    @Column(name = "order_subscribe_state_code_name", nullable = false, unique = true)
     private String codeName;
 
-    @Column(name = "order_subscribe_state_code_used")
+    @Column(name = "order_subscribe_state_used", nullable = false)
     private boolean codeUsed;
 
     @Column(name = "order_subscribe_state_code_info")
