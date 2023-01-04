@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.paymentstatecode.dummy;
 
+import static com.nhnacademy.bookpubshop.state.PaymentState.COMPLETE_PAYMENT;
 import com.nhnacademy.bookpubshop.paymentstatecode.entity.PaymentStateCode;
 
 /**
@@ -13,9 +14,9 @@ public class PaymentStateCodeDummy {
 
         return new PaymentStateCode(
                 null,
-                "test_codeName",
-                true,
-                "test_codeInfo"
+                COMPLETE_PAYMENT.getName(),
+                COMPLETE_PAYMENT.isUsed(),
+                "test_info"
         );
     }
 }
