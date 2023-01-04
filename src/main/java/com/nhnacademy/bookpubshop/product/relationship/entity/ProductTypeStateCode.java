@@ -11,12 +11,11 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * Some description here.
+ * 상품유형(product_type_state_code) 테이블.
  *
  * @author : 박경서
  * @since : 1.0
  **/
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
