@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.card.entity;
 
 import com.nhnacademy.bookpubshop.cardstatecode.entity.CardStateCode;
 import com.nhnacademy.bookpubshop.payment.entity.Payment;
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -25,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "card")
-public class Card {
+public class Card implements Serializable {
 
     @Id
     @OneToOne
