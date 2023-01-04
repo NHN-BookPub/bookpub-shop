@@ -1,10 +1,14 @@
 package com.nhnacademy.bookpubshop.wishlist.entity;
 
+import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,6 +33,16 @@ public class Wishlist {
     @EmbeddedId
     private Pk pk;
 
+    // TODO 회원 join
+//    @MapsId()
+//    @ManyToOne
+//    @JoinColumn(name = "member_number")
+
+    @MapsId("productNo")
+    @ManyToOne
+    @JoinColumn(name = "product_number", nullable = false, unique = true)
+    private Product product;
+
     @Column(name = "wishlist_applied")
     private boolean wishlistApplied;
 
@@ -45,10 +59,7 @@ public class Wishlist {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Embeddable
     public static class Pk implements Serializable {
-        @Column(name = "member_number")
         private Long memberNo;
-
-        @Column(name = "product_number")
         private Long productNo;
     }
 }
