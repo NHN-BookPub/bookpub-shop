@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * Product 엔티티 맵핑
+ * 상품(product) 테이블.
  *
  * @author : 박경서
  * @since : 1.0
