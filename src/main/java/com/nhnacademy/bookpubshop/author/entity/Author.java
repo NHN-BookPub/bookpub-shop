@@ -2,6 +2,8 @@ package com.nhnacademy.bookpubshop.author.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
@@ -24,9 +26,10 @@ import lombok.ToString;
 @Table(name = "author")
 public class Author {
     @Id
-    @Column(name = "aythor_number")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "author_number", nullable = false, unique = true)
     private Integer authorNo;
 
-    @Column(name = "author_name")
+    @Column(name = "author_name", nullable = false)
     private String authorName;
 }
