@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.productcategory.entity;
+package com.nhnacademy.bookpubshop.product.relationship.entity;
 
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -6,6 +6,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,7 +20,7 @@ import lombok.ToString;
  * @since : 1.0
  **/
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ToString
 @Entity

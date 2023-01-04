@@ -1,20 +1,18 @@
-package com.nhnacademy.bookpubshop.productrelation.entity;
+package com.nhnacademy.bookpubshop.product.relationship.entity;
 
+import com.nhnacademy.bookpubshop.product.entity.Product;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import com.nhnacademy.bookpubshop.product.entity.Product;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import com.nhnacademy.bookpubshop.product.entity.Product;
 
 /**
  * Some description here.
