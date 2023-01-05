@@ -1,8 +1,14 @@
 package com.nhnacademy.bookpubshop.address.relationship.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
+import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.address.relationship.entity.AddressMember;
 import com.nhnacademy.bookpubshop.address.relationship.dummy.AddressMemberDummy;
+import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
+import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
+import com.nhnacademy.bookpubshop.tier.entity.Tier;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,11 +31,17 @@ class AddressMemberRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
 
+    Tier tier;
+    Member member;
+    Address address;
     AddressMember addressMember;
 
     @BeforeEach
     void setUp() {
-        addressMember = AddressMemberDummy.dummy();
+        tier = TierDummy.dummy();
+        member = MemberDummy.dummy(tier);
+        address = AddressDummy.dummy();
+        addressMember = AddressMemberDummy.dummy(member,address);
     }
 
     @Test
@@ -47,7 +59,7 @@ class AddressMemberRepositoryTest {
         assertThat(findAddressMember).isPresent();
         assertThat(findAddressMember.get().getAddress().getAddressZipcode()).isEqualTo("61910");
         assertThat(findAddressMember.get().getMember().getMemberNickname()).isEqualTo("nickname");
-        assertThat(findAddressMember.get().getAddressMemberDetail()).isEqualTo("109동 102호");
+        assertThat(findAddressMember.get().getId()).isEqualTo(addressMember.getId());
 
     }
 }

@@ -34,4 +34,7 @@ public class Address {
 
     @Column(name = "address_base", nullable = false)
     private String addressBase;
+
+    @Column(name = "address_detail", nullable = false)
+    private String addressMemberDetail;
 }

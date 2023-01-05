@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.address.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
 import com.nhnacademy.bookpubshop.address.entity.Address;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +30,7 @@ class AddressRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        address = new Address(null, "61910", "광주광역시 서구 상무버들로 40번길 14");
+        address = AddressDummy.dummy();
     }
 
     @Test
