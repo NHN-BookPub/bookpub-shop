@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
 public class Card {
 
     @Id
-    @Column(name = "payment_number")
+    @Column(name = "payment_number", nullable = false)
     private Long paymentNo;
 
     @MapsId(value = "paymentNo")

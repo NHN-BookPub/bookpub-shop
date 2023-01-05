@@ -28,8 +28,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "order")
-public class Order {
+@Table(name = "bookpub_order")
+public class BookpubOrder {
 
     @Id
     @Column(name = "order_number", nullable = false)
@@ -37,7 +37,7 @@ public class Order {
     private Long orderNo;
 
     @ManyToOne
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne
