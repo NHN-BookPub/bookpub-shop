@@ -1,5 +1,6 @@
-package com.nhnacademy.bookpubshop.dummy;
+package com.nhnacademy.bookpubshop.member.dummy;
 
+import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import java.time.LocalDateTime;
 

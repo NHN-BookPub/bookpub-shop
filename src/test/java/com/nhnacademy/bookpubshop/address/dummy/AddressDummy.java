@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.dummy;
+package com.nhnacademy.bookpubshop.address.dummy;
 
 import com.nhnacademy.bookpubshop.address.entity.Address;
 

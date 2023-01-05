@@ -1,6 +1,8 @@
-package com.nhnacademy.bookpubshop.dummy;
+package com.nhnacademy.bookpubshop.address.relationship.dummy;
 
 import com.nhnacademy.bookpubshop.address.relationship.entity.AddressMember;
+import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
+import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import java.time.LocalDateTime;
 
 /**

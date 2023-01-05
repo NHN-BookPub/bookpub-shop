@@ -1,11 +1,9 @@
 package com.nhnacademy.bookpubshop.member.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.nhnacademy.bookpubshop.dummy.MemberDummy;
-import com.nhnacademy.bookpubshop.dummy.TierDummy;
+import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
+import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

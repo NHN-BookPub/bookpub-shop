@@ -1,17 +1,8 @@
 package com.nhnacademy.bookpubshop.address.relationship.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.address.relationship.entity.AddressMember;
-import com.nhnacademy.bookpubshop.address.repository.AddressRepository;
-import com.nhnacademy.bookpubshop.dummy.AddressDummy;
-import com.nhnacademy.bookpubshop.dummy.AddressMemberDummy;
-import com.nhnacademy.bookpubshop.dummy.MemberDummy;
-import com.nhnacademy.bookpubshop.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
-import java.time.LocalDateTime;
+import com.nhnacademy.bookpubshop.address.relationship.dummy.AddressMemberDummy;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

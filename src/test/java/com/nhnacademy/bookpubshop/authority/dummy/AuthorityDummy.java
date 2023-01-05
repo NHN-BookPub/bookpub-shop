@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.dummy;
+package com.nhnacademy.bookpubshop.authority.dummy;
 
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 

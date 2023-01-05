@@ -1,9 +1,8 @@
 package com.nhnacademy.bookpubshop.authority.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
-import com.nhnacademy.bookpubshop.dummy.AuthorityDummy;
+import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

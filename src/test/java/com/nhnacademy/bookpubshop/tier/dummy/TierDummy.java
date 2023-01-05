@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.dummy;
+package com.nhnacademy.bookpubshop.tier.dummy;
 
 import com.nhnacademy.bookpubshop.tier.entity.Tier;
 
