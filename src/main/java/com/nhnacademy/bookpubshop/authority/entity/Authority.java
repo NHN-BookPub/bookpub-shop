@@ -27,4 +27,7 @@ public class Authority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "authority_number", nullable = false, unique = true)
     private Integer authorityNo;
+
+    @Column(name = "authority_name", nullable = false, unique = true)
+    private String authorityName;
 }
