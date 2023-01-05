@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.wishlist.entity;
 
+import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -33,10 +34,10 @@ public class Wishlist {
     @EmbeddedId
     private Pk pk;
 
-    // TODO 회원 join
-//    @MapsId()
-//    @ManyToOne
-//    @JoinColumn(name = "member_number")
+    @MapsId("memberNo")
+    @ManyToOne
+    @JoinColumn(name = "member_number")
+    private Member member;
 
     @MapsId("productNo")
     @ManyToOne
