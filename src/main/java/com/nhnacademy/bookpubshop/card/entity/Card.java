@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
@@ -28,6 +29,10 @@ import lombok.NoArgsConstructor;
 public class Card {
 
     @Id
+    @Column(name = "payment_number")
+    private Long paymentNo;
+
+    @MapsId(value = "paymentNo")
     @OneToOne
     @JoinColumn(name = "payment_number", nullable = false)
     private Payment payment;
