@@ -41,12 +41,15 @@ public class MemberAuthority {
     @JoinColumn(name = "authority_number", nullable = false, unique = true)
     private Authority authority;
 
+    /**
+     * 관계테이블 Pk.
+     */
     @Embeddable
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @EqualsAndHashCode
     @Getter
-    private static class Pk implements Serializable {
+    public static class Pk implements Serializable {
         private Long memberNo;
         private Integer authorityNo;
     }
