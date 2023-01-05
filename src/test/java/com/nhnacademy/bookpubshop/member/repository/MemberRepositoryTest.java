@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.tier.entity.Tier;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,11 +27,13 @@ class MemberRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
 
+    Tier tier;
     Member member;
 
     @BeforeEach
     void setUp() {
-        member = MemberDummy.dummy();
+        tier = TierDummy.dummy();
+        member = MemberDummy.dummy(tier);
     }
 
     @Test

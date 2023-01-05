@@ -46,7 +46,6 @@ public class Review {
     @JoinColumn(name = "product_review_policy_number", nullable = false)
     private ReviewPolicy reviewPolicy;
 
-    //별점이 Long 타입일 필요가 있을까요?
     @Column(name = "review_star", nullable = false)
     private Long reviewStar;
 

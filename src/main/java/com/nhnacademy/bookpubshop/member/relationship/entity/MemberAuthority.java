@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.member.relationship;
+package com.nhnacademy.bookpubshop.member.relationship.entity;
 
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.member.entity.Member;
