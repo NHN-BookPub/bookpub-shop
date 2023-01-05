@@ -1,7 +1,9 @@
-package com.nhnacademy.bookpubshop.coupontemplate.repository;
+package com.nhnacademy.bookpubshop.couponmonth.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.category.entity.Category;
+import com.nhnacademy.bookpubshop.couponmonth.dummy.CouponMonthDummy;
+import com.nhnacademy.bookpubshop.couponmonth.entity.CouponMonth;
 import com.nhnacademy.bookpubshop.couponpolicy.dummy.CouponPolicyDummy;
 import com.nhnacademy.bookpubshop.couponpolicy.entity.CouponPolicy;
 import com.nhnacademy.bookpubshop.couponstatecode.dummy.CouponStateCodeDummy;
@@ -24,57 +26,52 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 /**
- * 쿠폰 템플릿 Repo Test.
+ * 이달의쿠폰 Repo Test.
  *
  * @author : 정유진
  * @since : 1.0
  **/
 @DataJpaTest
-class CouponTemplateRepositoryTest {
+class CouponMonthRepositoryTest {
 
     @Autowired
     TestEntityManager entityManager;
 
     @Autowired
-    CouponTemplateRepository couponTemplateRepository;
+    CouponMonthRepository couponMonthRepository;
 
     CouponPolicy couponPolicy;
     CouponType couponType;
     CouponStateCode couponStateCode;
     CouponTemplate couponTemplate;
+    CouponMonth couponMonth;
 
     @BeforeEach
     void setUp() {
         couponPolicy = CouponPolicyDummy.dummy();
         couponType = CouponTypeDummy.dummy();
         couponStateCode = CouponStateCodeDummy.dummy();
-        couponTemplate = CouponTemplateDummy.dummy(couponPolicy, couponType,
-                productDummy(), categoryDummy(), couponStateCode);
+        couponTemplate = CouponTemplateDummy.dummy(couponPolicy, couponType, productDummy(),
+                categoryDummy(), couponStateCode);
+        couponMonth = CouponMonthDummy.dummy(couponTemplate);
     }
 
     @Test
-    @DisplayName(value = "쿠폰 템플릿 save 테스트")
-    void CouponTemplateSaveTest() {
+    @DisplayName(value = "이달의쿠폰 save 테스트")
+    void couponMonthSaveTest() {
         entityManager.persist(couponPolicy);
         entityManager.persist(couponType);
         entityManager.persist(couponStateCode);
         entityManager.persist(couponTemplate);
+        entityManager.persist(couponMonth);
 
-        Optional<CouponTemplate> result = couponTemplateRepository.findById(couponTemplate.getTemplateNo());
+        Optional<CouponMonth> result = couponMonthRepository.findById(couponMonth.getMonthNumber());
 
         assertThat(result).isPresent();
-        assertThat(result.get().getTemplateNo()).isEqualTo(couponTemplate.getTemplateNo());
-        assertThat(result.get().getCouponPolicy().getPolicyNo()).isEqualTo(couponTemplate.getCouponPolicy().getPolicyNo());
-        assertThat(result.get().getCouponType().getTypeNo()).isEqualTo(couponTemplate.getCouponType().getTypeNo());
-        assertThat(result.get().getProduct().getProductNo()).isEqualTo(couponTemplate.getProduct().getProductNo());
-        assertThat(result.get().getCategory().getCategoryNo()).isEqualTo(couponTemplate.getCategory().getCategoryNo());
-        assertThat(result.get().getCouponStateCode().getCodeNo()).isEqualTo(couponTemplate.getCouponStateCode().getCodeNo());
-        assertThat(result.get().getTemplateName()).isEqualTo(couponTemplate.getTemplateName());
-        assertThat(result.get().getTemplateImage()).isEqualTo(couponTemplate.getTemplateImage());
-        assertThat(result.get().getFinishedAt()).isEqualTo(couponTemplate.getFinishedAt());
-        assertThat(result.get().getIssuedAt()).isEqualTo(couponTemplate.getIssuedAt());
-        assertThat(result.get().isTemplateOverlapped()).isEqualTo(couponTemplate.isTemplateOverlapped());
-        assertThat(result.get().isTemplateBundled()).isEqualTo(couponTemplate.isTemplateBundled());
+        assertThat(result.get().getMonthNumber()).isEqualTo(couponMonth.getMonthNumber());
+        assertThat(result.get().getCouponTemplate().getTemplateNo()).isEqualTo(couponMonth.getCouponTemplate().getTemplateNo());
+        assertThat(result.get().getOpenedAt()).isEqualTo(couponMonth.getOpenedAt());
+        assertThat(result.get().getMonthQuantity()).isEqualTo(couponMonth.getMonthQuantity());
     }
 
     private Product productDummy() {
