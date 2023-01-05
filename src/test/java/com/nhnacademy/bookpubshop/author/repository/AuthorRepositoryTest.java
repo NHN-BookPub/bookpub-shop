@@ -34,14 +34,13 @@ class AuthorRepositoryTest {
     @Test
     @DisplayName("저자 save 테스트")
     void memberSaveTest() {
-        entityManager.persist(author);
-        entityManager.clear();
+        Author persist = entityManager.persist(author);
 
-        Optional<Author> author = authorRepository.findById(1);
+        Optional<Author> author = authorRepository.findById(persist.getAuthorNo());
 
         assertThat(author).isPresent();
-        assertThat(author.get().getAuthorNo()).isEqualTo(1);
-        assertThat(author.get().getAuthorName()).isEqualTo("사람");
+        assertThat(author.get().getAuthorNo()).isEqualTo(persist.getAuthorNo());
+        assertThat(author.get().getAuthorName()).isEqualTo(persist.getAuthorName());
 
     }
 

@@ -36,14 +36,13 @@ class SubscribeRepositoryTest {
     @Test
     @DisplayName("구독 save 테스트")
     void memberSaveTest() {
-        entityManager.persist(subscribe);
-        entityManager.clear();
+        Subscribe persist = entityManager.persist(subscribe);
 
-        Optional<Subscribe> subscribe = subscribeRepository.findById(1L);
+        Optional<Subscribe> subscribe = subscribeRepository.findById(persist.getSubscribeNo());
 
         assertThat(subscribe).isPresent();
-        assertThat(subscribe.get().getSubscribeNo()).isEqualTo(1L);
-        assertThat(subscribe.get().getSubscribeName()).isEqualTo("좋은생각");
+        assertThat(subscribe.get().getSubscribeNo()).isEqualTo(persist.getSubscribeNo());
+        assertThat(subscribe.get().getSubscribeName()).isEqualTo(persist.getSubscribeName());
 
     }
 }

@@ -14,7 +14,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 매입이력(purchase) 테이블.
@@ -25,7 +24,6 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "purchase")
 public class Purchase {
@@ -46,5 +44,6 @@ public class Purchase {
 
     @Column(name = "purchase_amount", nullable = false)
     private Long purchaseAmount;
+
 
 }

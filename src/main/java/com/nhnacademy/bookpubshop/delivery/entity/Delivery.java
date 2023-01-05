@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.delivery.entity;
 
-import com.nhnacademy.bookpubshop.order.entity.Order;
+import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +35,7 @@ public class Delivery {
 
     @ManyToOne
     @JoinColumn(name = "order_number", nullable = false)
-    private Order order;
+    private BookpubOrder order;
 
     @Column(name = "delivery_invoice_number", nullable = false)
     private String invoiceNo;

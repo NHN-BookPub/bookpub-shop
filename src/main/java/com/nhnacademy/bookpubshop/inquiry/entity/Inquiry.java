@@ -16,7 +16,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 상품문의(inquiry) 테이블.
@@ -27,7 +26,6 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "inquiry")
 public class Inquiry {
@@ -35,10 +33,9 @@ public class Inquiry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inquiry_number", nullable = false, unique = true)
     private Long inquiryNo;
-
     @ManyToOne
     @JoinColumn(name = "inquiry_parent_number")
-    private Inquiry inquiry;
+    private Inquiry parentInquiry;
 
     @ManyToOne
     @JoinColumn(name = "member_number")

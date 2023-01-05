@@ -51,14 +51,13 @@ class ProductRepositoryTest {
     @Test
     @DisplayName("멤버 save 테스트")
     void memberSaveTest() {
-        entityManager.persist(product);
+        Product persist = entityManager.persist(product);
         entityManager.clear();
 
-        Optional<Product> product = productRepository.findById(1L);
-
+        Optional<Product> product = productRepository.findById(persist.getProductNo());
         assertThat(product).isPresent();
-        assertThat(product.get().getProductNo()).isEqualTo(1L);
-        assertThat(product.get().getTitle()).isEqualTo("인어공주");
+        assertThat(product.get().getProductNo()).isEqualTo(persist.getProductNo());
+        assertThat(product.get().getTitle()).isEqualTo(persist.getTitle());
 
     }
 }

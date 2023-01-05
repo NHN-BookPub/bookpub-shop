@@ -12,6 +12,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -41,4 +42,20 @@ public class InquiryAnswer {
 
     @Column(name = "personal_inquiry_created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    /**
+     * Id 값을 제외한 생성자입니다.
+     *
+     * @param personalInquiry the personal inquiry
+     * @param answerContent   the answer content
+     * @param createdAt       the created at
+     */
+    @Builder
+    public InquiryAnswer(PersonalInquiry personalInquiry,
+                         String answerContent,
+                         LocalDateTime createdAt) {
+        this.personalInquiry = personalInquiry;
+        this.answerContent = answerContent;
+        this.createdAt = createdAt;
+    }
 }

@@ -47,9 +47,6 @@ public class AddressMember {
     @Column(name = "address_member_created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "address_member_detail", nullable = false)
-    private String addressMemberDetail;
-
     @Column(name = "address_member_based", nullable = false)
     private boolean memberBased;
 

@@ -18,7 +18,6 @@ import com.nhnacademy.bookpubshop.tier.entity.Tier;
 import com.nhnacademy.bookpubshop.wishlist.entity.Wishlist;
 import java.time.LocalDateTime;
 import java.util.Optional;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.order.relationship.entity;
 
+import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,7 +40,7 @@ public class OrderProduct {
 
     @ManyToOne
     @JoinColumn
-    private Order order;
+    private BookpubOrder order;
 
     @ManyToOne
     @JoinColumn(name = "order_product_code_number", nullable = false)

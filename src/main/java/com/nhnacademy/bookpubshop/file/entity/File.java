@@ -1,7 +1,10 @@
 package com.nhnacademy.bookpubshop.file.entity;
 
+import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
+import com.nhnacademy.bookpubshop.customer_service.entity.CustomerService;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
-import com.nhnacademy.bookpubshop.service.entity.CustomerService;
+import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.review.entity.Review;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,13 +36,21 @@ public class File {
     @Column(name = "file_number", nullable = false)
     private Long fileNo;
 
-    /**
-     *  TODO 쿠폰, 리뷰, 상품 매핑해야합니다.
-     */
+    @ManyToOne
+    @JoinColumn(name = "review_number")
+    private Review review;
 
     @ManyToOne
     @JoinColumn(name = "personal_inquiry_number")
     private PersonalInquiry personalInquiry;
+
+    @ManyToOne
+    @JoinColumn(name = "coupon_template_number")
+    private CouponTemplate couponTemplate;
+
+    @ManyToOne
+    @JoinColumn(name = "product_number")
+    private Product product;
 
     @ManyToOne
     @JoinColumn(name = "customer_service_number")

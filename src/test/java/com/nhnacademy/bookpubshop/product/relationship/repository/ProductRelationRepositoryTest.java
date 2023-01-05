@@ -80,7 +80,7 @@ class ProductRelationRepositoryTest {
         Optional<ProductRelation> optional = productRelationRepository.findById(testProductRelation.getProductRelationNo());
         assertThat(optional).isPresent();
         assertThat(optional.get().getProductRelationNo()).isEqualTo(testProductRelation.getProductRelationNo());
-        assertThat(optional.get().isRelationDeleted()).isEqualTo(false);
+        assertThat(optional.get().isRelationDeleted()).isFalse();
 
         entityManager.clear();
     }

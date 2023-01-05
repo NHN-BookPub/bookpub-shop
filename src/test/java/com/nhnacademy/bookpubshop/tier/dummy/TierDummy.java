@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.tier.dummy;
 
-
 import com.nhnacademy.bookpubshop.tier.entity.Tier;
 
 /**
