@@ -1,0 +1,47 @@
+package com.nhnacademy.bookpubshop.subscribe.repository;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.state.SubscribeState;
+import com.nhnacademy.bookpubshop.subscribe.relationship.entity.OrderSubscribeStateCode;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+/**
+ * 구독상태코드 레포지토리 테스트.
+ *
+ * @author : 여운석
+ * @since : 1.0
+ **/
+@DataJpaTest
+class OrderSubscribeStateCodeRepositoryTest {
+    @Autowired
+    TestEntityManager entityManager;
+
+    @Autowired
+    OrderSubscribeStateCodeRepository orderSubscribeStateCodeRepository;
+
+    OrderSubscribeStateCode stateCode;
+
+    @BeforeEach
+    void setUp() {
+        stateCode = new OrderSubscribeStateCode(null, SubscribeState.WAITING_SUBSCRIPTION.getName(), SubscribeState.WAITING_SUBSCRIPTION.isUsed(), "구독중입니다.");
+    }
+
+    @Test
+    @DisplayName("구독상태코드 save 테스트")
+    void memberSaveTest() {
+        entityManager.persist(stateCode);
+        entityManager.clear();
+
+        Optional<OrderSubscribeStateCode> orderSubscribeStateCode = orderSubscribeStateCodeRepository.findById(1);
+
+        assertThat(orderSubscribeStateCode).isPresent();
+        assertThat(orderSubscribeStateCode.get().getCodeNo()).isEqualTo(1);
+        assertThat(orderSubscribeStateCode.get().getCodeName()).isEqualTo(SubscribeState.WAITING_SUBSCRIPTION.getName());
+    }
+}
