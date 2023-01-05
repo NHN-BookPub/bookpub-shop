@@ -34,6 +34,10 @@ public class Purchase {
     @Column(name = "purchase_number", nullable = false, unique = true)
     private Long purchaseNo;
 
+    @ManyToOne
+    @JoinColumn(name = "product_number", nullable = false)
+    private Product product;
+
     @Column(name = "purchase_price", nullable = false)
     private Long purchasePrice;
 
@@ -43,7 +47,4 @@ public class Purchase {
     @Column(name = "purchase_amount", nullable = false)
     private Long purchaseAmount;
 
-    @ManyToOne
-    @JoinColumn(name = "product_number", nullable = false)
-    private Product productNo;
 }
