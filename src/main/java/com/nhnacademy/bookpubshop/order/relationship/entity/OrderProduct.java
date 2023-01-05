@@ -37,7 +37,9 @@ public class OrderProduct {
     @JoinColumn(name = "product_number", nullable = false)
     private Product product;
 
-    //Todo 주문 번호 컬럼 조인 필요.
+    @ManyToOne
+    @JoinColumn
+    private Order order;
 
     @ManyToOne
     @JoinColumn(name = "order_product_code_number", nullable = false)
