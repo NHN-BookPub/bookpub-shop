@@ -67,7 +67,8 @@ class ReviewRepositoryTest {
         assertThat(findReview).isPresent();
         assertThat(findReview.get().getReviewStar()).isEqualTo(5L);
         assertThat(findReview.get().getProduct().getProductIsbn()).isEqualTo("isbn");
-
+        assertThat(findReview.get().getProduct().getProductSaleStateCode().getCodeInfo())
+                .isEqualTo("info");
     }
 
     private Product productDummy() {
