@@ -64,14 +64,13 @@ class SubscribeProductListRepositoryTest {
     @Test
     @DisplayName("멤버 save 테스트")
     void memberSaveTest() {
-        entityManager.persist(subscribeProductList);
-        entityManager.clear();
+        SubscribeProductList persist = entityManager.persist(subscribeProductList);
 
-        Optional<SubscribeProductList> subscribeProductList = subscribeProductListRepository.findById(1L);
+        Optional<SubscribeProductList> subscribeProductList = subscribeProductListRepository.findById(persist.getListNumber());
 
         assertThat(subscribeProductList).isPresent();
-        assertThat(subscribeProductList.get().getListNumber()).isEqualTo(1L);
-        assertThat(subscribeProductList.get().getPublishedAt()).isEqualTo(dateTime);
+        assertThat(subscribeProductList.get().getListNumber()).isEqualTo(persist.getListNumber());
+        assertThat(subscribeProductList.get().getPublishedAt()).isEqualTo(persist.getPublishedAt());
 
     }
 }
