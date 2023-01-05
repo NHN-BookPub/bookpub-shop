@@ -1,7 +1,14 @@
 package com.nhnacademy.bookpubshop.file.repository;
 
+import static com.nhnacademy.bookpubshop.state.CouponState.COUPON_ALL;
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
+import com.nhnacademy.bookpubshop.couponpolicy.entity.CouponPolicy;
+import com.nhnacademy.bookpubshop.couponstatecode.entity.CouponStateCode;
+import com.nhnacademy.bookpubshop.coupontemplate.dummy.CouponTemplateDummy;
+import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
+import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.member.entity.Member;
@@ -41,18 +48,24 @@ class FileRepositoryTest {
 
     Member member;
 
+    Product product;
+
+    CouponTemplate couponTemplate;
     @BeforeEach
     void setUp() {
+        product = productDummy();
+
+        couponTemplate = CouponTemplateDummy.dummy(couponPolicyDummy(), couponType(), product, category(),
+                couponStateCodeDummy());
         member = memberDummy();
-        file = FileDummy.dummy(PersonalInquiryDummy.dummy(member), couponDummy(member), productDummy(),
+        file = FileDummy.dummy(PersonalInquiryDummy.dummy(member),couponTemplate, product,
                 CustomerServiceDummy.dummy(CustomerServiceStateCodeDummy.dummy(),member));
     }
 
     @DisplayName("파일 Repo save 테스트")
     @Test
     void fileRepositorySaveTest() {
-        entityManager.persist(file.getCustomerService().getCustomerServiceStateCode());
-        entityManager.persist(file.getCustomerService());
+        entityManager.persist(file.getCouponTemplate());
         File persist = entityManager.persist(file);
 
         Optional<File> result = fileRepository.findById(persist.getFileNo());
@@ -67,8 +80,6 @@ class FileRepositoryTest {
                 .isEqualTo(persist.getPersonalInquiry().getPersonalInquiryNo());
         assertThat(result.get().getCustomerService().getServiceNo())
                 .isEqualTo(persist.getCustomerService().getServiceNo());
-        assertThat(result.get().getCoupon().getCouponNo())
-                .isEqualTo(persist.getCoupon().getCouponNo());
         assertThat(result.get().getProduct().getProductNo()).isEqualTo(persist.getProduct().getProductNo());
         assertThat(result.get().getFileNo()).isEqualTo(persist.getFileNo());
     }
@@ -107,9 +118,33 @@ class FileRepositoryTest {
         entityManager.persist(testMember.getTier());
         return entityManager.persist(testMember);
     }
-
     private Coupon couponDummy(Member member) {
         Coupon coupon = new Coupon(null, member, false, LocalDateTime.now());
         return entityManager.persist(coupon);
+    }
+
+    private CouponPolicy couponPolicyDummy(){
+        CouponPolicy couponPolicy =
+                new CouponPolicy(null, false, 0L, 0L, 0L);
+        return entityManager.persist(couponPolicy);
+    }
+
+    private CouponType couponType(){
+        CouponType couponType = new CouponType(null, "coupon");
+        return entityManager.persist(couponType);
+    }
+
+    private Category category() {
+        Category category = new Category(null, null, "name",
+                0, true);
+
+        return entityManager.persist(category);
+    }
+
+    private CouponStateCode couponStateCodeDummy(){
+        CouponStateCode couponStateCode = new CouponStateCode(null, COUPON_ALL.getName(),
+                COUPON_ALL.isUsed(), "info");
+
+        return entityManager.persist(couponStateCode);
     }
 }

@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.file.dummy;
 
 import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
+import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
@@ -16,11 +17,11 @@ import java.time.LocalDateTime;
 public class FileDummy {
 
     public static File dummy(PersonalInquiry personalInquiry,
-                             Coupon coupon,
+                             CouponTemplate couponTemplate,
                              Product product,
                              CustomerService customerService) {
         return new File(
-                null, personalInquiry, coupon, product,
+                null, personalInquiry, couponTemplate, product,
                 customerService,
                 "file_category_test",
                 "test_path",
