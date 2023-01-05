@@ -2,6 +2,10 @@ package com.nhnacademy.bookpubshop.coupon.dummy;
 
 import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
+import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.order.entity.Order;
+import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
+import java.time.LocalDateTime;
 
 /**
  * 쿠폰 더미 클래스
@@ -12,7 +16,18 @@ import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
  * @since : 1.0
  **/
 public class CouponDummy {
-    public static Coupon dummy() {
-        return null;
+    public static Coupon dummy(CouponTemplate couponTemplate,
+                               Order order,
+                               OrderProduct orderProduct,
+                               Member member) {
+        return new Coupon(
+                null,
+                couponTemplate,
+                order,
+                orderProduct,
+                member,
+                false,
+                LocalDateTime.now()
+        );
     }
 }

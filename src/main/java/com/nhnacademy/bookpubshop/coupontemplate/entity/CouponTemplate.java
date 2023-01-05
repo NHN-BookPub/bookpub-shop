@@ -1,8 +1,10 @@
 package com.nhnacademy.bookpubshop.coupontemplate.entity;
 
+import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.couponpolicy.entity.CouponPolicy;
 import com.nhnacademy.bookpubshop.couponstatecode.entity.CouponStateCode;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
+import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,8 +45,13 @@ public class CouponTemplate {
     @JoinColumn(name = "coupon_type_number", nullable = false)
     private CouponType couponType;
 
-    //TODO : product_number join
-    //TODO : category_number join
+    @ManyToOne
+    @JoinColumn(name = "product_number")
+    private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "category_number")
+    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "coupon_state_code_number", nullable = false)
