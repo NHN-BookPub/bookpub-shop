@@ -1,6 +1,9 @@
 package com.nhnacademy.bookpubshop.coupon.entity;
 
+import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.order.entity.Order;
+import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,9 +35,17 @@ public class Coupon {
     @Column(name = "coupon_number", nullable = false, unique = true)
     private Long couponNo;
 
-    /**
-     * Todo 주문번호, 주문상품번호, 쿠폰템플릿 매핑해야합니다.
-     */
+    @ManyToOne
+    @JoinColumn(name = "coupon_template_number", nullable = false)
+    private CouponTemplate couponTemplate;
+
+    @ManyToOne
+    @JoinColumn(name = "order_number", nullable = false)
+    private Order order;
+
+    @ManyToOne
+    @JoinColumn(name = "order_product_number", nullable = false)
+    private OrderProduct orderProduct;
 
     @ManyToOne
     @JoinColumn(name = "member_number", nullable = false, unique = true)

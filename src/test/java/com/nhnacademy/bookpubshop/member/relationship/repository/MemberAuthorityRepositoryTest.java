@@ -4,8 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
 import com.nhnacademy.bookpubshop.member.dummy.MemberAuthorityDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.member.relationship.MemberAuthority;
+import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
 import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,9 @@ class MemberAuthorityRepositoryTest {
     private MemberAuthorityRepository memberAuthorityRepository;
 
     MemberAuthority memberAuthority;
+    @Autowired
+    private TierRepository tierRepository;
+
     @BeforeEach
     void setUp() {
         memberAuthority = MemberAuthorityDummy.dummy(

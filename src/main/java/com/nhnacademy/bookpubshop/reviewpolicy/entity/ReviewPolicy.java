@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.address.entity;
+package com.nhnacademy.bookpubshop.reviewpolicy.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,29 +12,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 주소 개체입니다.
+ * 리뷰 정책 테이블입니다.
  *
  * @author : 임태원
  * @since : 1.0
  **/
-
-@Table(name = "address")
+@Table(name = "product_review_policy")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Address {
+public class ReviewPolicy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "address_number", nullable = false, unique = true)
-    private Integer addressNo;
+    @Column(name = "product_review_policy_number", nullable = false)
+    private Integer policyNo;
 
-    @Column(name = "address_zipcode", nullable = false)
-    private String addressZipcode;
+    @Column(name = "product_review_policy_send_point", nullable = false)
+    private Long sendPoint;
 
-    @Column(name = "address_base", nullable = false)
-    private String addressBase;
-
-    @Column(name = "address_detail", nullable = false)
-    private String addressMemberDetail;
 }

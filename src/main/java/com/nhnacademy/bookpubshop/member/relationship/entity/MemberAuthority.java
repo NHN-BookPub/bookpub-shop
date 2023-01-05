@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.member.relationship;
+package com.nhnacademy.bookpubshop.member.relationship.entity;
 
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.member.entity.Member;
@@ -42,8 +42,11 @@ public class MemberAuthority {
     private Authority authority;
 
     /**
-     * 관계테이블 Pk.
-     */
+     * 회원과 권한의 연관관계 키입니다.
+     *
+     * @author : 임태원
+     * @since : 1.0
+     **/
     @Embeddable
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -47,19 +47,21 @@ public class AddressMember {
     @Column(name = "address_member_created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "address_member_detail", nullable = false)
-    private String addressMemberDetail;
-
     @Column(name = "address_member_based", nullable = false)
     private boolean memberBased;
 
-
+    /**
+     * 주소와 회원의 연관관계 키입니다.
+     *
+     * @author : 임태원
+     * @since : 1.0
+     **/
     @Embeddable
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @EqualsAndHashCode
     @Getter
-    private static class Pk implements Serializable {
+    public static class Pk implements Serializable {
         private Long memberNo;
         private Integer addressNo;
     }
