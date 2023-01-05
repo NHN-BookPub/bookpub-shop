@@ -35,12 +35,10 @@ class InquiryCodeRepositoryTest {
     @Test
     @DisplayName("문의코드테이블 저장 테스트")
     void inquiryCodeTest() {
-        entityManager.persist(inquiryCode);
-        entityManager.clear();
-
-        Optional<InquiryCode> findInquiryCode = inquiryCodeRepository.findById(1);
+        InquiryCode persist = entityManager.persist(inquiryCode);
+        Optional<InquiryCode> findInquiryCode = inquiryCodeRepository.findById(persist.getInquiryCodeNo());
 
         assertThat(findInquiryCode).isPresent();
-        assertThat(findInquiryCode.get().getInquiryCodeInfo()).isEqualTo("info");
+        assertThat(findInquiryCode.get().getInquiryCodeInfo()).isEqualTo(persist.getInquiryCodeInfo());
     }
 }

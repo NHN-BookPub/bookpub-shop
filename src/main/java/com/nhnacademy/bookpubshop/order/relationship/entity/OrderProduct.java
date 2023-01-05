@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.order.relationship.entity;
 
+import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,7 +38,9 @@ public class OrderProduct {
     @JoinColumn(name = "product_number", nullable = false)
     private Product product;
 
-    //Todo 주문 번호 컬럼 조인 필요.
+    @ManyToOne
+    @JoinColumn
+    private BookpubOrder order;
 
     @ManyToOne
     @JoinColumn(name = "order_product_code_number", nullable = false)

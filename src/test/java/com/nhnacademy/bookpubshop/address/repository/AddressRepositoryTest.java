@@ -36,13 +36,12 @@ class AddressRepositoryTest {
     @Test
     @DisplayName("주소 등록 테스트")
     void AddressSaveTest() {
-        entityManager.persist(address);
-        entityManager.clear();
+        Address persist = entityManager.persist(address);
 
-        Optional<Address> findAddress = addressRepository.findById(1);
+        Optional<Address> findAddress = addressRepository.findById(persist.getAddressNo());
 
         assertThat(findAddress).isPresent();
         assertThat(findAddress.get().getAddressZipcode()).isEqualTo("61910");
-        assertThat(findAddress.get().getAddressBase().contains("광주광역시")).isTrue();
+        assertThat(findAddress.get().getAddressBase()).contains("광주광역시");
     }
 }

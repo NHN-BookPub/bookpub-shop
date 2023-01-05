@@ -36,10 +36,9 @@ class ReviewPolicyRepositoryTest {
     @Test
     @DisplayName("상품평 정책 저장 테스트")
     void reviewPolicySaveTest() {
-        entityManager.persist(reviewPolicy);
-        entityManager.clear();
+        ReviewPolicy persist = entityManager.persist(reviewPolicy);
 
-        Optional<ReviewPolicy> findReviewPolicy = reviewPolicyRepository.findById(1);
+        Optional<ReviewPolicy> findReviewPolicy = reviewPolicyRepository.findById(persist.getPolicyNo());
 
         assertThat(findReviewPolicy).isPresent();
         assertThat(findReviewPolicy.get().getSendPoint()).isEqualTo(100);

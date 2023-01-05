@@ -35,10 +35,9 @@ class TierRepositoryTest {
     @Test
     @DisplayName("회원 등급 레포지토리 저장 테스트")
     void TierSaveTest() {
-        entityManager.persist(tier);
-        entityManager.clear();
+        Tier persist = entityManager.persist(tier);
 
-        Optional<Tier> findTier = tierRepository.findById(1);
+        Optional<Tier> findTier = tierRepository.findById(persist.getTierNo());
 
         assertThat(findTier).isPresent();
         assertThat(findTier.get().getTierName()).isEqualTo("tier");

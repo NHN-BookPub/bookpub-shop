@@ -3,7 +3,7 @@ package com.nhnacademy.bookpubshop.coupon.dummy;
 import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.order.entity.Order;
+import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import java.time.LocalDateTime;
 
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
  **/
 public class CouponDummy {
     public static Coupon dummy(CouponTemplate couponTemplate,
-                               Order order,
+                               BookpubOrder order,
                                OrderProduct orderProduct,
                                Member member) {
         return new Coupon(

@@ -2,7 +2,7 @@ package com.nhnacademy.bookpubshop.coupon.entity;
 
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.order.entity.Order;
+import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -41,7 +41,7 @@ public class Coupon {
 
     @ManyToOne
     @JoinColumn(name = "order_number", nullable = false)
-    private Order order;
+    private BookpubOrder order;
 
     @ManyToOne
     @JoinColumn(name = "order_product_number", nullable = false)

@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.payment.entity;
 
-import com.nhnacademy.bookpubshop.order.entity.Order;
+import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.paymentstatecode.entity.PaymentStateCode;
 import com.nhnacademy.bookpubshop.paymenttypestatecode.entity.PaymentTypeStateCode;
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ public class Payment {
 
     @OneToOne
     @JoinColumn(name = "order_number", nullable = false)
-    private Order order;
+    private BookpubOrder order;
 
     @ManyToOne
     @JoinColumn(name = "payment_state_code_number", nullable = false)

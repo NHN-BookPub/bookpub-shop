@@ -16,7 +16,7 @@ import com.nhnacademy.bookpubshop.coupontype.dummy.CouponTypeDummy;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.order.entity.Order;
+import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProductStateCode;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
@@ -61,7 +61,7 @@ class CouponRepositoryTest {
     PricePolicy packagePricePolicy;
     Tier tier;
     Member member;
-    Order order;
+    BookpubOrder order;
     OrderStateCode orderStateCode;
     Address address;
     CouponPolicy couponPolicy;
@@ -84,7 +84,7 @@ class CouponRepositoryTest {
         tier = TierDummy.dummy();
         member = MemberDummy.dummy(tier);
         address = AddressDummy.dummy();
-        order = new Order(
+        order = new BookpubOrder(
                 null,
                 member,
                 new PricePolicy(null, "배송비", 3000L),
@@ -158,7 +158,7 @@ class CouponRepositoryTest {
         packagePricePolicy = new PricePolicy(null, "포장비", 1500L);
         deliveryPricePolicy = new PricePolicy(null, "배송비", 3000L);
 
-        order = new Order(
+        order = new BookpubOrder(
                 null,
                 member,
                 deliveryPricePolicy,
@@ -194,6 +194,7 @@ class CouponRepositoryTest {
         orderProduct = new OrderProduct(
                 null,
                 product,
+                order,
                 orderProductStateCode,
                 10,
                 1000L,

@@ -1,5 +1,7 @@
 package com.nhnacademy.bookpubshop.inquiry.entity;
 
+import com.nhnacademy.bookpubshop.inquirycode.entity.InquiryCode;
+import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -14,7 +16,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 상품문의(inquiry) 테이블.
@@ -25,7 +26,6 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "inquiry")
 public class Inquiry {
@@ -33,18 +33,21 @@ public class Inquiry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inquiry_number", nullable = false, unique = true)
     private Long inquiryNo;
-
     @ManyToOne
     @JoinColumn(name = "inquiry_parent_number")
-    private Inquiry inquiry;
+    private Inquiry parentInquiry;
 
-    //Todo 회원번호 join
+    @ManyToOne
+    @JoinColumn(name = "member_number")
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "product_number", nullable = false)
     private Product product;
 
-    //Todo 문의상태코드번호 join
+    @ManyToOne
+    @JoinColumn(name = "inquiry_state_code_number")
+    private InquiryCode stateCode;
 
     @Column(name = "inquiry_content", nullable = false)
     private String inquiryContent;

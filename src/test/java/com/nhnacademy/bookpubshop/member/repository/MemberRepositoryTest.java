@@ -39,11 +39,10 @@ class MemberRepositoryTest {
     @Test
     @DisplayName("멤버 save 테스트")
     void memberSaveTest() {
-        entityManager.persist(TierDummy.dummy());
-        entityManager.persist(member);
-        entityManager.clear();
+        entityManager.persist(tier);
+        Member persist = entityManager.persist(member);
 
-        Optional<Member> member = memberRepository.findById(1L);
+        Optional<Member> member = memberRepository.findById(persist.getMemberNo());
 
         assertThat(member).isPresent();
         assertThat(member.get().getMemberId()).isEqualTo("id");

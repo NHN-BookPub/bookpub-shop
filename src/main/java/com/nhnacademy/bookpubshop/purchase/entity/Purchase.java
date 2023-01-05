@@ -14,7 +14,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 매입이력(purchase) 테이블.
@@ -25,7 +24,6 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "purchase")
 public class Purchase {
@@ -33,6 +31,10 @@ public class Purchase {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "purchase_number", nullable = false, unique = true)
     private Long purchaseNo;
+
+    @ManyToOne
+    @JoinColumn(name = "product_number", nullable = false)
+    private Product product;
 
     @Column(name = "purchase_price", nullable = false)
     private Long purchasePrice;
@@ -43,7 +45,5 @@ public class Purchase {
     @Column(name = "purchase_amount", nullable = false)
     private Long purchaseAmount;
 
-    @ManyToOne
-    @JoinColumn(name = "product_number", nullable = false)
-    private Product productNo;
+
 }
