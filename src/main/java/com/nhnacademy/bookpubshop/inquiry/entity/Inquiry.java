@@ -1,5 +1,7 @@
 package com.nhnacademy.bookpubshop.inquiry.entity;
 
+import com.nhnacademy.bookpubshop.inquirycode.entity.InquiryCode;
+import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -38,13 +40,17 @@ public class Inquiry {
     @JoinColumn(name = "inquiry_parent_number")
     private Inquiry inquiry;
 
-    //Todo 회원번호 join
+    @ManyToOne
+    @JoinColumn(name = "member_number")
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "product_number", nullable = false)
     private Product product;
 
-    //Todo 문의상태코드번호 join
+    @ManyToOne
+    @JoinColumn(name = "inquiry_state_code_number")
+    private InquiryCode stateCode;
 
     @Column(name = "inquiry_content", nullable = false)
     private String inquiryContent;
