@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.file.entity;
 
-import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
+import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.service.entity.CustomerService;
@@ -44,8 +44,8 @@ public class File {
     private PersonalInquiry personalInquiry;
 
     @ManyToOne
-    @JoinColumn(name = "coupon_number")
-    private Coupon coupon;
+    @JoinColumn(name = "coupon_template_number")
+    private CouponTemplate couponTemplate;
 
     @ManyToOne
     @JoinColumn(name = "product_number")
