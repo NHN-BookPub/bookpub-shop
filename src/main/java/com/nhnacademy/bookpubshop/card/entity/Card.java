@@ -2,12 +2,12 @@ package com.nhnacademy.bookpubshop.card.entity;
 
 import com.nhnacademy.bookpubshop.cardstatecode.entity.CardStateCode;
 import com.nhnacademy.bookpubshop.payment.entity.Payment;
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.AccessLevel;
@@ -26,9 +26,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "card")
-public class Card implements Serializable {
+public class Card {
 
     @Id
+    @Column(name = "payment_number", nullable = false)
+    private Long paymentNo;
+
+    @MapsId(value = "paymentNo")
     @OneToOne
     @JoinColumn(name = "payment_number", nullable = false)
     private Payment payment;
