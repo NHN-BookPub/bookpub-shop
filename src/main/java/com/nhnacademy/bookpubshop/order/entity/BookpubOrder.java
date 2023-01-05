@@ -1,5 +1,7 @@
 package com.nhnacademy.bookpubshop.order.entity;
 
+import com.nhnacademy.bookpubshop.address.entity.Address;
+import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import java.time.LocalDateTime;
@@ -26,16 +28,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "order")
-public class Order {
+@Table(name = "bookpub_order")
+public class BookpubOrder {
 
     @Id
     @Column(name = "order_number", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderNo;
 
-    //TODO : member_id join
-
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name = "price_policy_delivery_number", nullable = false)
@@ -45,7 +48,9 @@ public class Order {
     @JoinColumn(name = "price_policy_packaging_number", nullable = false)
     private PricePolicy packagingPricePolicy;
 
-    //TODO : address_number join
+    @ManyToOne
+    @JoinColumn(name = "address_number", nullable = false)
+    private Address address;
 
     @ManyToOne
     @JoinColumn(name = "order_state_code_number", nullable = false)
