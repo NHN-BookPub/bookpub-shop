@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,4 +31,14 @@ public class Authority {
 
     @Column(name = "authority_name", nullable = false, unique = true)
     private String authorityName;
+
+    /**
+     * pk 를 제외한 권한을 처리하기위한 생성자클래스.
+     *
+     * @param authorityName 권한명이들어간다.
+     */
+    @Builder
+    public Authority(String authorityName) {
+        this.authorityName = authorityName;
+    }
 }

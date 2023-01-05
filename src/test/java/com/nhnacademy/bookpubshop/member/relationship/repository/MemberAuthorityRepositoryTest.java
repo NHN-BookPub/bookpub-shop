@@ -1,15 +1,13 @@
 package com.nhnacademy.bookpubshop.member.relationship.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
-import com.nhnacademy.bookpubshop.authority.entity.Authority;
-import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
+import com.nhnacademy.bookpubshop.member.dummy.MemberAuthorityDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.member.relationship.dummy.MemberAuthorityDummy;
 import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
-import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,50 +17,46 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 /**
- * 멤버 권한 연관관계 레포지토리 테스트.
+ * 멤버권한 Repo 테스트입니다.
  *
- * @author : 임태원
+ * @author : 유호철
  * @since : 1.0
  **/
 @DataJpaTest
 class MemberAuthorityRepositoryTest {
     @Autowired
-    TestEntityManager entityManager;
+    private TestEntityManager entityManager;
 
     @Autowired
-    MemberAuthorityRepository memberAuthorityRepository;
+    private MemberAuthorityRepository memberAuthorityRepository;
 
-    Tier tier;
-    Member member;
-    Authority authority;
     MemberAuthority memberAuthority;
+    @Autowired
+    private TierRepository tierRepository;
 
     @BeforeEach
     void setUp() {
-        tier = TierDummy.dummy();
-        member = MemberDummy.dummy(tier);
-        authority = AuthorityDummy.dummy();
-
-        entityManager.persist(tier);
-        entityManager.persist(member);
-        entityManager.persist(authority);
-        memberAuthority = MemberAuthorityDummy.dummy(member, authority);
+        memberAuthority = MemberAuthorityDummy.dummy(
+                memberDummy(new Tier(null,"tier")), AuthorityDummy.dummy());
     }
 
+    @DisplayName("멤버권한관계테이블 세이브 테스트")
     @Test
-    @DisplayName("멤버 권한 연관관계 저장 테스트")
-    void MemberAuthoritySaveTest() {
-        entityManager.persist(memberAuthority);
-        entityManager.flush();
-        entityManager.clear();
+    void memberAuthoritySaveTest() {
+        entityManager.persist(memberAuthority.getAuthority());
+        MemberAuthority persist = entityManager.persist(memberAuthority);
 
-        Optional<MemberAuthority> findMemberAuthority
-                = memberAuthorityRepository.findById(memberAuthority.getId());
+        Optional<MemberAuthority> result = memberAuthorityRepository.findById(persist.getId());
+        assertThat(result).isPresent();
+        assertThat(result.get().getAuthority()).isEqualTo(persist.getAuthority());
+        assertThat(result.get().getMember()).isEqualTo(persist.getMember());
+        assertThat(result.get().getId()).isEqualTo(persist.getId());
+    }
 
-        assertThat(findMemberAuthority).isPresent();
-        assertThat(findMemberAuthority.get().getAuthority().getAuthorityName())
-                .isEqualTo("ROLE_ADMIN");
-        assertThat(findMemberAuthority.get().getMember().getMemberNickname())
-                .isEqualTo("nickname");
+    private Member memberDummy(Tier tier) {
+        Member testMember = new Member(null, tier, "test_id", "test_nickname", "test_name", "남", 22, 819, "test_pwd", "01012341234",
+                "test@test.com", LocalDateTime.now(), false, false, null, 0L, false);
+        entityManager.persist(testMember.getTier());
+        return entityManager.persist(testMember);
     }
 }
