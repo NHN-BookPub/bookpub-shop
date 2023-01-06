@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.order.relationship.entity;
 
+import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import com.nhnacademy.bookpubshop.subscribe.relationship.entity.OrderSubscribeStateCode;
 import java.time.LocalDateTime;
@@ -15,7 +16,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 구독주문상품(order_and_subscribe) 테이블.
@@ -27,7 +27,6 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "order_and_subscribe")
 public class OrderSubscribe {
@@ -40,7 +39,9 @@ public class OrderSubscribe {
     @JoinColumn(name = "subscribe_number", nullable = false)
     private Subscribe subscribe;
 
-    // TODO 주문번호 Join
+    @ManyToOne
+    @JoinColumn(name = "order_number", nullable = false)
+    private BookpubOrder order;
 
     @ManyToOne
     @JoinColumn(name = "order_subscribe_state_code_number", nullable = false)
