@@ -71,6 +71,8 @@ class SubscribeProductListRepositoryTest {
         assertThat(subscribeProductList).isPresent();
         assertThat(subscribeProductList.get().getListNumber()).isEqualTo(persist.getListNumber());
         assertThat(subscribeProductList.get().getPublishedAt()).isEqualTo(persist.getPublishedAt());
+        assertThat(subscribeProductList.get().getProduct().getProductNo()).isEqualTo(persist.getProduct().getProductNo());
+        assertThat(subscribeProductList.get().getSubscribe().getSubscribeNo()).isEqualTo(persist.getSubscribe().getSubscribeNo());
 
     }
 }
