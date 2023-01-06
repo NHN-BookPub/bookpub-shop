@@ -35,7 +35,7 @@ import com.nhnacademy.bookpubshop.reviewpolicy.dummy.ReviewPolicyDummy;
 import com.nhnacademy.bookpubshop.reviewpolicy.entity.ReviewPolicy;
 import com.nhnacademy.bookpubshop.servicecode.dummy.CustomerServiceStateCodeDummy;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -142,12 +142,12 @@ class FileRepositoryTest {
     }
 
     private Member memberDummy() {
-        Member testMember = new Member(null, new Tier(null, "tie2r"),
+        Member testMember = new Member(null, new BookPubTier(null, "tie2r"),
                 "test_id", "test_nickname", "test_name", "남",
                 22, 819, "test_pwd", "01012341234",
                 "test@test.com", LocalDateTime.now(), false, false,
                 null, 0L, false);
-        entityManager.persist(testMember.getTier());
+        entityManager.persist(testMember.getBookPubTier());
         return entityManager.persist(testMember);
     }
 
@@ -156,14 +156,14 @@ class FileRepositoryTest {
     }
 
     private BookpubOrder orderDummy() {
-        Tier tier = TierDummy.dummy();
-        Member member2 = MemberDummy.dummy(tier);
+        BookPubTier bookPubTier = TierDummy.dummy();
+        Member member2 = MemberDummy.dummy(bookPubTier);
         PricePolicy pricePolicy = PricePolicyDummy.dummy();
         PricePolicy packagePricePolicy = PricePolicyDummy.dummy();
         Address address = AddressDummy.dummy();
         OrderStateCode orderStateCode = OrderStateCodeDummy.dummy();
 
-        entityManager.persist(tier);
+        entityManager.persist(bookPubTier);
         entityManager.persist(member2);
         entityManager.persist(pricePolicy);
         entityManager.persist(packagePricePolicy);

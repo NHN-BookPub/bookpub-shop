@@ -5,7 +5,7 @@ import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
 import com.nhnacademy.bookpubshop.member.dummy.MemberAuthorityDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -37,7 +37,7 @@ class MemberAuthorityRepositoryTest {
     @BeforeEach
     void setUp() {
         memberAuthority = MemberAuthorityDummy.dummy(
-                memberDummy(new Tier(null,"tier")), AuthorityDummy.dummy());
+                memberDummy(new BookPubTier(null,"tier")), AuthorityDummy.dummy());
     }
 
     @DisplayName("멤버권한관계테이블 세이브 테스트")
@@ -53,10 +53,10 @@ class MemberAuthorityRepositoryTest {
         assertThat(result.get().getId()).isEqualTo(persist.getId());
     }
 
-    private Member memberDummy(Tier tier) {
-        Member testMember = new Member(null, tier, "test_id", "test_nickname", "test_name", "남", 22, 819, "test_pwd", "01012341234",
+    private Member memberDummy(BookPubTier bookPubTier) {
+        Member testMember = new Member(null, bookPubTier, "test_id", "test_nickname", "test_name", "남", 22, 819, "test_pwd", "01012341234",
                 "test@test.com", LocalDateTime.now(), false, false, null, 0L, false);
-        entityManager.persist(testMember.getTier());
+        entityManager.persist(testMember.getBookPubTier());
         return entityManager.persist(testMember);
     }
 }

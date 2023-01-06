@@ -22,7 +22,7 @@ import com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import com.nhnacademy.bookpubshop.subscribe.relationship.entity.OrderSubscribeStateCode;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +57,7 @@ class OrderSubscribeRepositoryTest {
     PricePolicy pricePolicy;
     PricePolicy deliveryPricePolicy;
     Member member;
-    Tier tier;
+    BookPubTier bookPubTier;
     Address address;
     Subscribe subscribe;
     OrderStateCode orderStateCode;
@@ -72,13 +72,13 @@ class OrderSubscribeRepositoryTest {
         productTypeStateCode = new ProductTypeStateCode(null, "기본", true, "기본입니다.");
         productSaleStateCode = new ProductSaleStateCode(null, "판타지", true, "판타지 소설");
         pricePolicy = PricePolicyDummy.dummy();
-        tier = TierDummy.dummy();
+        bookPubTier = TierDummy.dummy();
         address = AddressDummy.dummy();
         orderStateCode = OrderStateCodeDummy.dummy();
         deliveryPricePolicy = PricePolicyDummy.dummy();
         orderSubscribeStateCode = new OrderSubscribeStateCode(null, "test", true, "test_info");
         orderProductStateCode = new OrderProductStateCode(null, "test", true, "test_info");
-        member = MemberDummy.dummy(tier);
+        member = MemberDummy.dummy(bookPubTier);
         order = OrderDummy.dummy(member, pricePolicy, deliveryPricePolicy, address, orderStateCode);
         subscribe = SubscribeDummy.dummy();
         product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, "1231231231", "인어공주",
@@ -91,7 +91,7 @@ class OrderSubscribeRepositoryTest {
         entityManager.persist(productTypeStateCode);
         entityManager.persist(productSaleStateCode);
         entityManager.persist(pricePolicy);
-        entityManager.persist(tier);
+        entityManager.persist(bookPubTier);
         entityManager.persist(address);
         entityManager.persist(orderStateCode);
         entityManager.persist(deliveryPricePolicy);

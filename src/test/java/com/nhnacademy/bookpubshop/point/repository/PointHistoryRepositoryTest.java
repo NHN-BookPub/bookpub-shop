@@ -6,7 +6,7 @@ import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.point.dummy.PointHistoryDummy;
 import com.nhnacademy.bookpubshop.point.entity.PointHistory;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,17 +29,17 @@ class PointHistoryRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
 
-    Tier tier;
+    BookPubTier bookPubTier;
     Member member;
     PointHistory pointHistory;
 
     @BeforeEach
     void setUp() {
-        tier = TierDummy.dummy();
-        member = MemberDummy.dummy(tier);
+        bookPubTier = TierDummy.dummy();
+        member = MemberDummy.dummy(bookPubTier);
         pointHistory = PointHistoryDummy.dummy(member);
 
-        entityManager.persist(tier);
+        entityManager.persist(bookPubTier);
         entityManager.persist(member);
     }
 
