@@ -16,7 +16,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCo
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,7 +48,7 @@ class OrderProductRepositoryTest {
     OrderProductStateCode orderProductStateCode;
     OrderProduct orderProduct;
     Member member;
-    Tier tier;
+    BookPubTier bookPubTier;
 
     @BeforeEach
     void setUp() {
@@ -61,9 +61,9 @@ class OrderProductRepositoryTest {
 
         orderProductStateCode = new OrderProductStateCode(null, OrderProductState.CONFIRMED.getName(), OrderProductState.CONFIRMED.isUsed(), "주문완료되었습니다.");
 
-        tier = TierDummy.dummy();
+        bookPubTier = TierDummy.dummy();
 
-        member = MemberDummy.dummy(tier);
+        member = MemberDummy.dummy(bookPubTier);
 
         order = new BookpubOrder(
                 null,
@@ -85,7 +85,7 @@ class OrderProductRepositoryTest {
                 null,
                 1000L
         );
-        entityManager.persist(tier);
+        entityManager.persist(bookPubTier);
         entityManager.persist(member);
         entityManager.persist(productPolicy);
         entityManager.persist(order.getPackagingPricePolicy());

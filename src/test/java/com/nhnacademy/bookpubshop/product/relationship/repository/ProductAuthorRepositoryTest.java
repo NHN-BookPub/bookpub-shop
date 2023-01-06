@@ -65,8 +65,8 @@ class ProductAuthorRepositoryTest {
         Optional<ProductAuthor> result = productAuthorRepository.findById(persist.getPk());
 
         assertThat(result).isPresent();
-        assertThat(result.get().getProduct().getTitle()).isEqualTo("인어공주");
-        assertThat(result.get().getAuthor().getAuthorName()).isEqualTo("사람");
+        assertThat(result.get().getProduct().getTitle()).isEqualTo(persist.getProduct().getTitle());
+        assertThat(result.get().getAuthor().getAuthorName()).isEqualTo(persist.getAuthor().getAuthorName());
 
     }
 }
