@@ -96,7 +96,9 @@ public class Member {
      * @param memberEmail      사용자 이메일
      */
     @Builder
-    public Member(Tier tier, String memberId, String memberNickname, String memberName, String memberGender, Integer memberBirthYear, Integer memberBirthMonth, String memberPwd, String memberPhone, String memberEmail) {
+    public Member(Tier tier, String memberId, String memberNickname, String memberName,
+                  String memberGender, Integer memberBirthYear, Integer memberBirthMonth,
+                  String memberPwd, String memberPhone, String memberEmail) {
         this.tier = tier;
         this.memberId = memberId;
         this.memberNickname = memberNickname;

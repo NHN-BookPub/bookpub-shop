@@ -1,10 +1,9 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
-import com.nhnacademy.bookpubshop.member.dto.MemberSignupResponse;
+import com.nhnacademy.bookpubshop.member.dto.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,8 +34,10 @@ public class MemberController {
      * @return 회원정보 저장성공 or 실패정보가 담긴 엔티티 반환.
      */
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody MemberSignupResponse memberSignupResponse) {
-        Member member = memberService.signup(memberSignupResponse);
+    public ResponseEntity<MultiValueMap<String, String>> signup(
+            @RequestBody SignUpMemberResponseDto memberDto) {
+
+        Member member = memberService.signup(memberDto);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

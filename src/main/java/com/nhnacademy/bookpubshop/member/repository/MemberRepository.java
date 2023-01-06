@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.member.repository;
 
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -10,5 +11,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since : 1.0
  **/
 public interface MemberRepository extends JpaRepository<Member, Long> {
+    Optional<Member> findByMemberNickname(String nickname);
 
+    Optional<Member> findByMemberId(String id);
+
+    Optional<Member> findByMemberEmail(String email);
 }
