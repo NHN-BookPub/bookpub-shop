@@ -34,18 +34,29 @@ class MemberRepositoryTest {
     void setUp() {
         tier = TierDummy.dummy();
         member = MemberDummy.dummy(tier);
+
+        entityManager.persist(tier);
     }
 
     @Test
     @DisplayName("멤버 save 테스트")
     void memberSaveTest() {
-        entityManager.persist(tier);
         Member persist = entityManager.persist(member);
 
         Optional<Member> member = memberRepository.findById(persist.getMemberNo());
 
         assertThat(member).isPresent();
-        assertThat(member.get().getMemberId()).isEqualTo("id");
-        assertThat(member.get().getMemberNickname()).isEqualTo("nickname");
+        assertThat(member.get().getMemberId()).isEqualTo(persist.getMemberId());
+        assertThat(member.get().getMemberNickname()).isEqualTo(persist.getMemberNickname());
+        assertThat(member.get().getMemberGender()).isEqualTo(persist.getMemberGender());
+        assertThat(member.get().getMemberNo()).isEqualTo(persist.getMemberNo());
+        assertThat(member.get().getMemberEmail()).isEqualTo(persist.getMemberEmail());
+        assertThat(member.get().getMemberPhone()).isEqualTo(persist.getMemberPhone());
+        assertThat(member.get().getTier().getTierNo()).isEqualTo(persist.getTier().getTierNo());
+        assertThat(member.get().getBlockedAt()).isEqualTo(persist.getBlockedAt());
+        assertThat(member.get().getCreatedAt()).isEqualTo(persist.getCreatedAt());
+        assertThat(member.get().getMemberBirthYear()).isEqualTo(persist.getMemberBirthYear());
+        assertThat(member.get().getMemberBirthMonth()).isEqualTo(persist.getMemberBirthMonth());
+        assertThat(member.get().isSocialJoined()).isEqualTo(persist.isSocialJoined());
     }
 }
