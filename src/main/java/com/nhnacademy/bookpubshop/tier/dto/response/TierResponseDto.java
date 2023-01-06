@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.tier.dto.response;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +12,7 @@ import lombok.NoArgsConstructor;
  **/
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class TierResponseDto {
     private String tierName;
-
 }
