@@ -5,7 +5,7 @@ import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.customer_service.dummy.CustomerServiceDummy;
 import com.nhnacademy.bookpubshop.customer_service.entity.CustomerService;
 import com.nhnacademy.bookpubshop.servicecode.dummy.CustomerServiceStateCodeDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,9 +55,9 @@ class CustomerServiceRepositoryTest {
     }
 
     private Member memberDummy(){
-        Member testMember = new Member(null, new Tier(null,"tier"), "test_id", "test_nickname", "test_name", "남", 22, 819, "test_pwd", "01012341234",
+        Member testMember = new Member(null, new BookPubTier(null,"tier"), "test_id", "test_nickname", "test_name", "남", 22, 819, "test_pwd", "01012341234",
                 "test@test.com", LocalDateTime.now(), false, false, null, 0L, false);
-        entityManager.persist(testMember.getTier());
+        entityManager.persist(testMember.getBookPubTier());
         return entityManager.persist(testMember);
     }
 }

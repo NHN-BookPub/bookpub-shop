@@ -18,7 +18,7 @@ import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleSta
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +58,7 @@ class InquiryRepositoryTest {
     @Autowired
     InquiryRepository inquiryRepository;
 
-    Tier tier;
+    BookPubTier bookPubTier;
     Member member;
     Product product;
     ProductPolicy productPolicy;
@@ -68,9 +68,9 @@ class InquiryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        tier = TierDummy.dummy();
-        member = MemberDummy.dummy(tier);
-        entityManager.persist(tier);
+        bookPubTier = TierDummy.dummy();
+        member = MemberDummy.dummy(bookPubTier);
+        entityManager.persist(bookPubTier);
         entityManager.persist(member);
 
         productPolicy = new ProductPolicy(null, "실구매가가기준", true, 5);

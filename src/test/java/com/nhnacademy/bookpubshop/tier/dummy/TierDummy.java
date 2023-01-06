@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.tier.dummy;
 
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 
 /**
  * 회원등급 더미 클래스
@@ -11,7 +11,7 @@ import com.nhnacademy.bookpubshop.tier.entity.Tier;
  * @since : 1.0
  **/
 public class TierDummy {
-    public static Tier dummy() {
-        return new Tier(null, "tier");
+    public static BookPubTier dummy() {
+        return new BookPubTier(null, "tier");
     }
 }

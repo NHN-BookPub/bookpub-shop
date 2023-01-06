@@ -18,7 +18,7 @@ import com.nhnacademy.bookpubshop.paymenttypestatecode.entity.PaymentTypeStateCo
 import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +46,7 @@ class PaymentRepositoryTest {
 
     BookpubOrder order;
 
-    Tier tier;
+    BookPubTier bookPubTier;
     Member member;
 
     PricePolicy pricePolicy;
@@ -60,8 +60,8 @@ class PaymentRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        tier = TierDummy.dummy();
-        member = MemberDummy.dummy(tier);
+        bookPubTier = TierDummy.dummy();
+        member = MemberDummy.dummy(bookPubTier);
         pricePolicy = PricePolicyDummy.dummy();
         packagePricePolicy = PricePolicyDummy.dummy();
         address = AddressDummy.dummy();
@@ -76,7 +76,7 @@ class PaymentRepositoryTest {
     @Test
     @DisplayName("결제 save 테스트")
     void paymentSaveTest() {
-        entityManager.persist(tier);
+        entityManager.persist(bookPubTier);
         entityManager.persist(member);
         entityManager.persist(pricePolicy);
         entityManager.persist(packagePricePolicy);
