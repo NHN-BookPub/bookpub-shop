@@ -47,11 +47,16 @@ public class MemberService {
     }
 
     private void duplicateCheck(String nickname, String email, String id) {
-        memberRepository.findByMemberNickname(nickname)
-                .orElseThrow(() -> new DuplicateMemberFieldException("닉네임(" + nickname + ")"));
-        memberRepository.findByMemberEmail(email)
-                .orElseThrow(() -> new DuplicateMemberFieldException("이메일(" + email + ")"));
-        memberRepository.findByMemberId(id)
-                .orElseThrow(() -> new DuplicateMemberFieldException("아이디(" + id + ")"));
+        if (memberRepository.findByMemberNickname(nickname).isPresent()) {
+            throw new DuplicateMemberFieldException("닉네임(" + nickname + ")");
+        }
+
+        if (memberRepository.findByMemberId(id).isPresent()) {
+            throw new DuplicateMemberFieldException("아이디(" + id + ")");
+        }
+
+        if (memberRepository.findByMemberEmail(email).isPresent()) {
+            throw new DuplicateMemberFieldException("이메일(" + email + ")");
+        }
     }
 }
