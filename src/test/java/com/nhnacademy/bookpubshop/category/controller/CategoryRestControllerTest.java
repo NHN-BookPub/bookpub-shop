@@ -25,7 +25,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * Some description here.
+ * CategoryRestController 테스트 입니다.
  *
  * @author : 김서현
  * @since : 1.0
