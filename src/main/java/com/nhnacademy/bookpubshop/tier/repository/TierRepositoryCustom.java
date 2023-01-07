@@ -13,10 +13,30 @@ import org.springframework.data.repository.NoRepositoryBean;
  **/
 @NoRepositoryBean
 public interface TierRepositoryCustom {
+    /**
+     * 등급명을 통회 관련등급을 반환.
+     *
+     * @param tierName 등급명 기입.
+     * @return optional 로되어있는 등급정보 반환.
+     * @author : 유호철
+     */
     Optional<TierResponseDto> findTierName(String tierName);
 
+    /**
+     * 등급번호를 통해 관련등급 정보를 반환.
+     *
+     * @param tierNo 등급번호 기입.
+     * @return optional 로되어있는 등급정보 반환.
+     * @author : 유호철
+     */
     Optional<TierResponseDto> findTier(Integer tierNo);
 
+    /**
+     * 등급의 전체 정보를 반환.
+     *
+     * @return list 전체등급 정보반환.
+     * @author : 유호철
+     */
     List<TierResponseDto> findTiers();
 
 }

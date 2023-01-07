@@ -22,6 +22,9 @@ public class TierRepositoryImpl extends QuerydslRepositorySupport
         super(BookPubTier.class);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<TierResponseDto> findTierName(String tierName) {
         QBookPubTier tier = QBookPubTier.bookPubTier;
@@ -34,6 +37,9 @@ public class TierRepositoryImpl extends QuerydslRepositorySupport
                 .fetchOne());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<TierResponseDto> findTier(Integer tierNo) {
         QBookPubTier tier = QBookPubTier.bookPubTier;
@@ -45,6 +51,9 @@ public class TierRepositoryImpl extends QuerydslRepositorySupport
                 .fetchOne());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<TierResponseDto> findTiers() {
         QBookPubTier tier = QBookPubTier.bookPubTier;
