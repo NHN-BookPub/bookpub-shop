@@ -40,7 +40,7 @@ class CouponStateCodeRestControllerTest {
         given(couponStateCodeService.getCouponStateCode(1))
                 .willReturn(dto);
 
-        mockMvc.perform(get("/api/coupon-state-code/{codeNo}", 1))
+        mockMvc.perform(get("/api/coupon-state-codes/{codeNo}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.codeTarget", equalTo(dto.getCodeTarget())));
