@@ -2,8 +2,8 @@ package com.nhnacademy.bookpubshop.tier.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import com.nhnacademy.bookpubshop.tier.dto.request.TierCreateRequestDto;
-import com.nhnacademy.bookpubshop.tier.dto.request.TierModifyRequestDto;
+import com.nhnacademy.bookpubshop.tier.dto.request.CreateTierRequestDto;
+import com.nhnacademy.bookpubshop.tier.dto.request.ModifyTierRequestDto;
 import com.nhnacademy.bookpubshop.tier.dto.response.TierResponseDto;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
@@ -46,17 +46,17 @@ class TierServiceTest {
     BookPubTier tier;
 
     ArgumentCaptor<BookPubTier> captor;
-    TierCreateRequestDto tierCreateRequestDtoDummy;
+    CreateTierRequestDto createTierRequestDtoDummy;
 
     TierResponseDto tierResponseDto;
     String notFound = "등급이 존재하지않습니다.";
 
-    TierModifyRequestDto tierModifyRequestDto;
+    ModifyTierRequestDto modifyTierRequestDto;
     @BeforeEach
     void setUp() {
         tierResponseDto = new TierResponseDto();
-        tierModifyRequestDto = new TierModifyRequestDto();
-        tierCreateRequestDtoDummy = new TierCreateRequestDto();
+        modifyTierRequestDto = new ModifyTierRequestDto();
+        createTierRequestDtoDummy = new CreateTierRequestDto();
         captor = ArgumentCaptor.forClass(BookPubTier.class);
         tier = TierDummy.dummy();
     }
@@ -65,14 +65,14 @@ class TierServiceTest {
     @Test
     void addTierFailTest() {
         //given
-        ReflectionTestUtils.setField(tierCreateRequestDtoDummy,"tierName","GOLD");
+        ReflectionTestUtils.setField(createTierRequestDtoDummy,"tierName","GOLD");
 
         //when
         when(tierRepository.existsByTierName(anyString()))
                 .thenReturn(true);
 
         //then
-        assertThatThrownBy(() -> tierService.addTier(tierCreateRequestDtoDummy))
+        assertThatThrownBy(() -> tierService.addTier(createTierRequestDtoDummy))
                 .isInstanceOf(TierAlreadyExists.class)
                 .hasMessageContaining(" 은 이미존재하는 등급입니다.");
 
@@ -82,20 +82,20 @@ class TierServiceTest {
     @Test
     void addTierSuccessTest() {
         //given
-        ReflectionTestUtils.setField(tierCreateRequestDtoDummy,"tierName","GOLD");
+        ReflectionTestUtils.setField(createTierRequestDtoDummy,"tierName","GOLD");
 
         //when
         when(tierRepository.existsByTierName(anyString()))
                 .thenReturn(false);
 
         //then
-        tierService.addTier(tierCreateRequestDtoDummy);
+        tierService.addTier(createTierRequestDtoDummy);
 
         verify(tierRepository, times(1))
                 .save(captor.capture());
 
         BookPubTier result = captor.getValue();
-        assertThat(tierCreateRequestDtoDummy.getTierName())
+        assertThat(createTierRequestDtoDummy.getTierName())
                 .isEqualTo(result.getTierName());
     }
 
@@ -104,12 +104,12 @@ class TierServiceTest {
     @Test
     void modifyTierFindFail() {
         //given
-        ReflectionTestUtils.setField(tierModifyRequestDto, "tierName", "GOLD");
+        ReflectionTestUtils.setField(modifyTierRequestDto, "tierName", "GOLD");
         //when & then
         when(tierRepository.findTier(anyInt()))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> tierService.modifyTier(tierModifyRequestDto))
+        assertThatThrownBy(() -> tierService.modifyTier(modifyTierRequestDto))
                 .isInstanceOf(TierNotFoundException.class)
                 .hasMessageContaining(notFound);
 
@@ -118,15 +118,15 @@ class TierServiceTest {
     @Test
     void modifyTierNameFail() {
         //given
-        ReflectionTestUtils.setField(tierModifyRequestDto,"tierNo",1);
-        ReflectionTestUtils.setField(tierModifyRequestDto, "tierName", "GOLD");
+        ReflectionTestUtils.setField(modifyTierRequestDto,"tierNo",1);
+        ReflectionTestUtils.setField(modifyTierRequestDto, "tierName", "GOLD");
         //when & then
         when(tierRepository.findById(anyInt()))
                 .thenReturn(Optional.of(tier));
         when(tierRepository.existsByTierName(anyString()))
                 .thenReturn(true);
 
-        assertThatThrownBy(() -> tierService.modifyTier(tierModifyRequestDto))
+        assertThatThrownBy(() -> tierService.modifyTier(modifyTierRequestDto))
                 .isInstanceOf(TierAlreadyExists.class)
                 .hasMessageContaining(" 은 이미존재하는 등급입니다.");
     }
@@ -135,8 +135,8 @@ class TierServiceTest {
     @Test
     void modifyTierSuccess() {
         //given
-        ReflectionTestUtils.setField(tierModifyRequestDto, "tierNo",1);
-        ReflectionTestUtils.setField(tierModifyRequestDto, "tierName", "GOLD");
+        ReflectionTestUtils.setField(modifyTierRequestDto, "tierNo",1);
+        ReflectionTestUtils.setField(modifyTierRequestDto, "tierName", "GOLD");
 
         //when & then
         when(tierRepository.findById(anyInt()))
@@ -144,7 +144,7 @@ class TierServiceTest {
         when(tierRepository.existsByTierName(anyString()))
                 .thenReturn(false);
 
-        tierService.modifyTier(tierModifyRequestDto);
+        tierService.modifyTier(modifyTierRequestDto);
 
         verify(tierRepository, times(1))
                 .findById(anyInt());

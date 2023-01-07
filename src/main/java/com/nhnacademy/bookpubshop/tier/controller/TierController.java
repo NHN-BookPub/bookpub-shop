@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.tier.controller;
 
-import com.nhnacademy.bookpubshop.tier.dto.request.TierCreateRequestDto;
-import com.nhnacademy.bookpubshop.tier.dto.request.TierModifyRequestDto;
+import com.nhnacademy.bookpubshop.tier.dto.request.CreateTierRequestDto;
+import com.nhnacademy.bookpubshop.tier.dto.request.ModifyTierRequestDto;
 import com.nhnacademy.bookpubshop.tier.dto.response.TierResponseDto;
 import com.nhnacademy.bookpubshop.tier.service.TierService;
 import java.util.List;
@@ -33,13 +33,13 @@ public class TierController {
     /**
      * 등급을 등록을 요청할때 쓰이는 메서드입니다.
      *
-     * @param tierCreateRequestDto 등급을 생성하기위한 값기입.
+     * @param createTierRequestDto 등급을 생성하기위한 값기입.
      * @return 성공했을시 응답코드 CREATED 201이 반환된다.
      */
     @PostMapping
     public ResponseEntity<Void> tierAdd(
-            @Valid @RequestBody TierCreateRequestDto tierCreateRequestDto) {
-        tierService.addTier(tierCreateRequestDto);
+            @Valid @RequestBody CreateTierRequestDto createTierRequestDto) {
+        tierService.addTier(createTierRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
@@ -47,13 +47,13 @@ public class TierController {
     /**
      * 등급을 수정을 요청할때 쓰이는 메서드입니다.
      *
-     * @param tierModifyRequestDto 등급을 수정하기위한 값 기입.
+     * @param modifyTierRequestDto 등급을 수정하기위한 값 기입.
      * @return 성공했을시 응답코드 CREATED 201이 반환된다.
      */
     @PutMapping
     public ResponseEntity<Void> tierModify(
-            @Valid @RequestBody TierModifyRequestDto tierModifyRequestDto) {
-        tierService.modifyTier(tierModifyRequestDto);
+            @Valid @RequestBody ModifyTierRequestDto modifyTierRequestDto) {
+        tierService.modifyTier(modifyTierRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
                 .build();

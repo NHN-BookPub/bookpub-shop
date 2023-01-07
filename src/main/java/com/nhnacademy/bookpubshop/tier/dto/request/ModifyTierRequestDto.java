@@ -14,7 +14,7 @@ import org.hibernate.validator.constraints.Length;
  **/
 @Getter
 @NoArgsConstructor
-public class TierModifyRequestDto {
+public class ModifyTierRequestDto {
     @NotNull(message = "등급번호는 필수값입니다.")
     private Integer tierNo;
     @Length(max = 10, message = "등급명의 길이가 맞지않습니다.")

@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.tier.service.impl;
 
-import com.nhnacademy.bookpubshop.tier.dto.request.TierCreateRequestDto;
-import com.nhnacademy.bookpubshop.tier.dto.request.TierModifyRequestDto;
+import com.nhnacademy.bookpubshop.tier.dto.request.CreateTierRequestDto;
+import com.nhnacademy.bookpubshop.tier.dto.request.ModifyTierRequestDto;
 import com.nhnacademy.bookpubshop.tier.dto.response.TierResponseDto;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import com.nhnacademy.bookpubshop.tier.exception.TierAlreadyExists;
@@ -31,13 +31,13 @@ public class TierServiceImpl implements TierService {
      */
     @Transactional
     @Override
-    public void addTier(TierCreateRequestDto tierCreateRequestDto) {
+    public void addTier(CreateTierRequestDto createTierRequestDto) {
 
-        if (tierRepository.existsByTierName(tierCreateRequestDto.getTierName())) {
-            throw new TierAlreadyExists(tierCreateRequestDto.getTierName());
+        if (tierRepository.existsByTierName(createTierRequestDto.getTierName())) {
+            throw new TierAlreadyExists(createTierRequestDto.getTierName());
         }
 
-        tierRepository.save(new BookPubTier(tierCreateRequestDto.getTierName()));
+        tierRepository.save(new BookPubTier(createTierRequestDto.getTierName()));
     }
 
     /**
@@ -45,15 +45,15 @@ public class TierServiceImpl implements TierService {
      */
     @Transactional
     @Override
-    public void modifyTier(TierModifyRequestDto tierModifyRequestDto) {
-        BookPubTier tier = tierRepository.findById(tierModifyRequestDto.getTierNo())
+    public void modifyTier(ModifyTierRequestDto modifyTierRequestDto) {
+        BookPubTier tier = tierRepository.findById(modifyTierRequestDto.getTierNo())
                 .orElseThrow(TierNotFoundException::new);
 
-        if (tierRepository.existsByTierName(tierModifyRequestDto.getTierName())) {
-            throw new TierAlreadyExists(tierModifyRequestDto.getTierName());
+        if (tierRepository.existsByTierName(modifyTierRequestDto.getTierName())) {
+            throw new TierAlreadyExists(modifyTierRequestDto.getTierName());
         }
 
-        tier.modifyTierName(tierModifyRequestDto.getTierName());
+        tier.modifyTierName(modifyTierRequestDto.getTierName());
     }
 
     /**

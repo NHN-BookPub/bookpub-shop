@@ -7,8 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
-import com.nhnacademy.bookpubshop.tier.dto.request.TierCreateRequestDto;
-import com.nhnacademy.bookpubshop.tier.dto.request.TierModifyRequestDto;
+import com.nhnacademy.bookpubshop.tier.dto.request.CreateTierRequestDto;
+import com.nhnacademy.bookpubshop.tier.dto.request.ModifyTierRequestDto;
 import com.nhnacademy.bookpubshop.tier.dto.response.TierResponseDto;
 import com.nhnacademy.bookpubshop.tier.service.TierService;
 import java.util.List;
@@ -39,14 +39,14 @@ class TierControllerTest {
     TierService tierService;
 
     String path = "/api/tiers";
-    TierCreateRequestDto tierCreateRequestDto;
+    CreateTierRequestDto createTierRequestDto;
 
-    TierModifyRequestDto tierModifyRequestDto;
+    ModifyTierRequestDto modifyTierRequestDto;
 
     @BeforeEach
     void setUp() {
-        tierCreateRequestDto = new TierCreateRequestDto();
-        tierModifyRequestDto = new TierModifyRequestDto();
+        createTierRequestDto = new CreateTierRequestDto();
+        modifyTierRequestDto = new ModifyTierRequestDto();
         objectMapper = new ObjectMapper();
     }
 
@@ -54,12 +54,12 @@ class TierControllerTest {
     @Test
     void tierAddFailTest() throws Exception {
         //given
-        ReflectionTestUtils.setField(tierCreateRequestDto, "tierName", "");
-        doNothing().when(tierService).addTier(tierCreateRequestDto);
+        ReflectionTestUtils.setField(createTierRequestDto, "tierName", "");
+        doNothing().when(tierService).addTier(createTierRequestDto);
 
         //when && then
         mvc.perform(post(path)
-                        .content(objectMapper.writeValueAsString(tierCreateRequestDto))
+                        .content(objectMapper.writeValueAsString(createTierRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -72,12 +72,12 @@ class TierControllerTest {
     @Test
     void tierAddSuccessTest() throws Exception {
         //given
-        ReflectionTestUtils.setField(tierCreateRequestDto, "tierName", "GOLD");
-        doNothing().when(tierService).addTier(tierCreateRequestDto);
+        ReflectionTestUtils.setField(createTierRequestDto, "tierName", "GOLD");
+        doNothing().when(tierService).addTier(createTierRequestDto);
 
         //when && then
         mvc.perform(post(path)
-                        .content(objectMapper.writeValueAsString(tierCreateRequestDto))
+                        .content(objectMapper.writeValueAsString(createTierRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
@@ -87,13 +87,13 @@ class TierControllerTest {
     @Test
     void tierModifyFailTest() throws Exception {
         //given
-        ReflectionTestUtils.setField(tierModifyRequestDto, "tierName", "GOLD");
-        doNothing().when(tierService).modifyTier(tierModifyRequestDto);
+        ReflectionTestUtils.setField(modifyTierRequestDto, "tierName", "GOLD");
+        doNothing().when(tierService).modifyTier(modifyTierRequestDto);
 
         //when && then
         mvc.perform(put(path)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(tierModifyRequestDto)))
+                        .content(objectMapper.writeValueAsString(modifyTierRequestDto)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("등급번호는 필수값입니다."))
                 .andDo(print());
@@ -103,17 +103,17 @@ class TierControllerTest {
     @Test
     void tierModifySuccessTest() throws Exception {
         //given
-        ReflectionTestUtils.setField(tierModifyRequestDto,"tierNo",1);
-        ReflectionTestUtils.setField(tierModifyRequestDto, "tierName", "GOLD");
-        doNothing().when(tierService).modifyTier(tierModifyRequestDto);
+        ReflectionTestUtils.setField(modifyTierRequestDto,"tierNo",1);
+        ReflectionTestUtils.setField(modifyTierRequestDto, "tierName", "GOLD");
+        doNothing().when(tierService).modifyTier(modifyTierRequestDto);
 
         mvc.perform(put(path)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(tierModifyRequestDto)))
+                        .content(objectMapper.writeValueAsString(modifyTierRequestDto)))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
 
-        then(tierService).should().modifyTier(any(TierModifyRequestDto.class));
+        then(tierService).should().modifyTier(any(ModifyTierRequestDto.class));
     }
 
     @DisplayName("등급에 대한 단일값 조회 테스트")

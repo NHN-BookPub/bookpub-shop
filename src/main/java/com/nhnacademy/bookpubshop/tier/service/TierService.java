@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.tier.service;
 
-import com.nhnacademy.bookpubshop.tier.dto.request.TierCreateRequestDto;
-import com.nhnacademy.bookpubshop.tier.dto.request.TierModifyRequestDto;
+import com.nhnacademy.bookpubshop.tier.dto.request.CreateTierRequestDto;
+import com.nhnacademy.bookpubshop.tier.dto.request.ModifyTierRequestDto;
 import com.nhnacademy.bookpubshop.tier.dto.response.TierResponseDto;
 import java.util.List;
 
@@ -16,18 +16,18 @@ public interface TierService {
     /**
      * 등급을생성하기 위한 메소드입니다.
      *
-     * @param tierCreateRequestDto 등급생성을위한정보들이 기입됩니다.
+     * @param createTierRequestDto 등급생성을위한정보들이 기입됩니다.
      * @author : 유호철
      */
-    void addTier(TierCreateRequestDto tierCreateRequestDto);
+    void addTier(CreateTierRequestDto createTierRequestDto);
 
     /**
      * 등급수정을위한 메서드입니다.
      *
-     * @param tierModifyRequestDto 등급수정에대한 정보들이 기입됩니다.
+     * @param modifyTierRequestDto 등급수정에대한 정보들이 기입됩니다.
      * @author : 유호철
      */
-    void modifyTier(TierModifyRequestDto tierModifyRequestDto);
+    void modifyTier(ModifyTierRequestDto modifyTierRequestDto);
 
     /**
      * 등급에대한 단건조회를 위한 메소드입니다.

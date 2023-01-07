@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  **/
 @NoArgsConstructor
 @Getter
-public class TierCreateRequestDto {
+public class CreateTierRequestDto {
     @NotBlank(message = "등급의 이름을 기입하여야 합니다.")
     private String tierName;
 }
