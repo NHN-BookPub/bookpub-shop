@@ -46,16 +46,16 @@ class PointHistoryRepositoryTest {
     @Test
     @DisplayName("포인트내역 저장 테스트")
     void PointHistorySaveTest() {
-        entityManager.persist(pointHistory);
-        entityManager.clear();
+        PointHistory persist = entityManager.persist(pointHistory);
 
         Optional<PointHistory> findPointHistory
                 = pointHistoryRepository.findById(1L);
 
         assertThat(findPointHistory).isPresent();
-        assertThat(findPointHistory.get().getPointHistoryAmount())
-                .isEqualTo(981008L);
-        assertThat(findPointHistory.get().getMember().getMemberNickname())
-                .isEqualTo("nickname");
+        assertThat(findPointHistory.get().getPointHistoryAmount()).isEqualTo(persist.getPointHistoryAmount());
+        assertThat(findPointHistory.get().getMember().getMemberNickname()).isEqualTo(persist.getMember().getMemberNickname());
+        assertThat(findPointHistory.get().getPointHistoryNo()).isEqualTo(persist.getPointHistoryNo());
+        assertThat(findPointHistory.get().isPointHistoryIncreased()).isEqualTo(persist.isPointHistoryIncreased());
+        assertThat(findPointHistory.get().getPointHistoryReason()).isEqualTo(persist.getPointHistoryReason());
     }
 }
