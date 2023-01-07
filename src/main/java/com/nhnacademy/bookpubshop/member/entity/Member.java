@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,38 +30,48 @@ import lombok.NoArgsConstructor;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_number", nullable = false, unique = true)
+    @Column(name = "member_number")
     private Long memberNo;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "tier_number", nullable = false)
+    @JoinColumn(name = "tier_number")
     private Tier tier;
 
-    @Column(name = "member_id", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "member_id", unique = true)
     private String memberId;
 
-    @Column(name = "member_nickname", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "member_nickname", unique = true)
     private String memberNickname;
 
-    @Column(name = "member_name", nullable = false)
+    @NotNull
+    @Column(name = "member_name")
     private String memberName;
 
-    @Column(name = "member_gender", nullable = false)
+    @NotNull
+    @Column(name = "member_gender")
     private String memberGender;
 
-    @Column(name = "member_birth_year", nullable = false)
+    @NotNull
+    @Column(name = "member_birth_year")
     private Integer memberBirthYear;
 
-    @Column(name = "member_birth_month", nullable = false)
+    @NotNull
+    @Column(name = "member_birth_month")
     private Integer memberBirthMonth;
 
-    @Column(name = "member_pwd", nullable = false)
+    @NotNull
+    @Column(name = "member_pwd")
     private String memberPwd;
 
-    @Column(name = "member_phone", nullable = false)
+    @NotNull
+    @Column(name = "member_phone")
     private String memberPhone;
 
-    @Column(name = "member_email", nullable = false)
+    @NotNull
+    @Column(name = "member_email")
     private String memberEmail;
 
     @Column(name = "member_created_at", nullable = false)

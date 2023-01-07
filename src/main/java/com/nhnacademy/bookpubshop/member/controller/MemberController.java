@@ -43,8 +43,7 @@ public class MemberController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        SignUpMemberResponseDto memberInfo
-                = new SignUpMemberResponseDto(
+        SignUpMemberResponseDto memberInfo = new SignUpMemberResponseDto(
                 member.getMemberId(),
                 member.getMemberNickname(),
                 member.getMemberEmail(),
