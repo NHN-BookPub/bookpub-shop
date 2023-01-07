@@ -29,7 +29,7 @@ public class CouponStateCodeRestController {
      * @param codeNo 쿠폰상태코드 번호
      * @return 쿠폰상태코드 적용타겟을 ResponseEntity 에 담아 반환합니다
      */
-    @GetMapping("/coupon-state-code/{codeNo}")
+    @GetMapping("/coupon-state-codes/{codeNo}")
     public ResponseEntity<GetCouponStateCodeResponseDto> couponStateCodeDetail(
             @PathVariable("codeNo") Integer codeNo) {
         return new ResponseEntity<>(
