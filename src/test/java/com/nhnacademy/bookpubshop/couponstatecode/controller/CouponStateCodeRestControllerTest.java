@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.couponstatecode.controller;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,6 +45,8 @@ class CouponStateCodeRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.codeTarget", equalTo(dto.getCodeTarget())));
+
+        verify(couponStateCodeService).getCouponStateCode(1);
     }
 
     @Test
@@ -60,5 +63,7 @@ class CouponStateCodeRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].codeTarget", equalTo(dto.get(0).getCodeTarget())));
+
+        verify(couponStateCodeService).getCouponStateCodes();
     }
 }
