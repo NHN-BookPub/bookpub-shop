@@ -14,8 +14,19 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface CategoryRepositoryCustom {
 
+    /**
+     * 카테고리 번호로 관련 카테고리 반환.
+     *
+     * @param categoryNo 카테고리 번호.
+     * @return Optional 로 카테고리 정보 반환.
+     */
     Optional<GetCategoryResponseDto> findCategory(Integer categoryNo);
 
+    /**
+     * 전체 카테고리 반환.
+     *
+     * @return Optional 로 전체 카테고리 정보 반환.
+     */
     List<GetCategoryResponseDto> findCategories();
 
 }
