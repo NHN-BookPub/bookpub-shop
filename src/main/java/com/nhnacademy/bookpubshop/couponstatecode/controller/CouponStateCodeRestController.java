@@ -5,6 +5,7 @@ import com.nhnacademy.bookpubshop.couponstatecode.service.CouponStateCodeService
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,8 +33,10 @@ public class CouponStateCodeRestController {
     @GetMapping("/coupon-state-codes/{codeNo}")
     public ResponseEntity<GetCouponStateCodeResponseDto> couponStateCodeDetail(
             @PathVariable("codeNo") Integer codeNo) {
-        return new ResponseEntity<>(
-                couponStateCodeService.getCouponStateCode(codeNo), HttpStatus.OK);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(couponStateCodeService.getCouponStateCode(codeNo));
     }
 
     /**
@@ -43,6 +46,9 @@ public class CouponStateCodeRestController {
      */
     @GetMapping("/coupon-state-codes")
     public ResponseEntity<List<GetCouponStateCodeResponseDto>> couponStateCodeList() {
-        return new ResponseEntity<>(couponStateCodeService.getCouponStateCodes(), HttpStatus.OK);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(couponStateCodeService.getCouponStateCodes());
     }
 }
