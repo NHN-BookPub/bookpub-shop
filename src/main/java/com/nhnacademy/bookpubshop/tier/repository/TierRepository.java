@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author : 임태원
  * @since : 1.0
  **/
-public interface TierRepository extends JpaRepository<BookPubTier, Integer> {
-
+public interface TierRepository extends JpaRepository<BookPubTier, Integer>, TierRepositoryCustom {
+    boolean existsByTierName(String tierName);
 }

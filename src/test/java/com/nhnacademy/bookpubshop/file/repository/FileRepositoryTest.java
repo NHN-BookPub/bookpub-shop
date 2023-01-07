@@ -151,10 +151,6 @@ class FileRepositoryTest {
         return entityManager.persist(testMember);
     }
 
-    private Address addressDummy() {
-        return entityManager.persist(AddressDummy.dummy());
-    }
-
     private BookpubOrder orderDummy() {
         BookPubTier bookPubTier = TierDummy.dummy();
         Member member2 = MemberDummy.dummy(bookPubTier);
@@ -173,13 +169,6 @@ class FileRepositoryTest {
                 pricePolicy, packagePricePolicy, address, orderStateCode));
 
     }
-
-    private Coupon couponDummy(Member member) {
-        Coupon coupon = new Coupon(null, couponTemplate, order, orderProductDummy(), member, false, LocalDateTime.now());
-        entityManager.persist(coupon.getCouponTemplate());
-        return entityManager.persist(coupon);
-    }
-
     private OrderProductStateCode orderProductStateCodeDummy() {
         return entityManager.persist(new OrderProductStateCode(null, "code", true, "info"));
     }
