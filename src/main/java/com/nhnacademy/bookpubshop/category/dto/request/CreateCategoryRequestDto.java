@@ -20,12 +20,10 @@ public class CreateCategoryRequestDto {
     @Length(max = 10, message = "카테고리명의 길이가 맞지않습니다.")
     private String categoryName;
 
-    private Category category;
+    private Category parentCategory;
 
-    @NotBlank(message = "등록할 카테고리 우선순위를 기입해주세요.")
     private Integer categoryPriority;
 
-    @NotBlank(message = "등록할 카테고리 노출여부를 기입해주세요.")
     private boolean categoryDisplayed;
 
 }

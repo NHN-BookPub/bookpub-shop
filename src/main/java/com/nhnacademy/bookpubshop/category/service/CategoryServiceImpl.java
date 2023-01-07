@@ -35,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryRepository.existsByCategoryName(createCategoryRequestDto.getCategoryName())) {
             throw new CategoryAlreadyExistsException(createCategoryRequestDto.getCategoryName());
         }
-        categoryRepository.save(new Category(null, createCategoryRequestDto.getCategory(),
+        categoryRepository.save(new Category(null, createCategoryRequestDto.getParentCategory(),
                 createCategoryRequestDto.getCategoryName(),
                 createCategoryRequestDto.getCategoryPriority(),
                 createCategoryRequestDto.isCategoryDisplayed()));
