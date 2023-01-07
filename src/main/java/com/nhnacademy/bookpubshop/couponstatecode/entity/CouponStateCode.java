@@ -30,10 +30,10 @@ public class CouponStateCode {
     @Column(name = "coupon_state_code_number")
     private Integer codeNo;
 
+    @NotNull
     @Column(name = "coupon_state_code_target", unique = true)
     private String codeTarget;
 
-    @NotNull
     @Column(name = "coupon_state_code_used")
     private boolean codeUsed;
 
