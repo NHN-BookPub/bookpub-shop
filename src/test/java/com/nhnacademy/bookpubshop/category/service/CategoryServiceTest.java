@@ -145,11 +145,9 @@ class CategoryServiceTest {
     @DisplayName("카테고리 단건 조회 실패 테스트.")
     void getCategoryFailTest() {
 
-        //given&when
         when(categoryRepository.findCategory(anyInt()))
                 .thenReturn(Optional.empty());
 
-        //then
         assertThatThrownBy(() -> categoryService.getCategory(1))
                 .isInstanceOf(CategoryNotFoundException.class)
                 .hasMessageContaining("카테고리가 존재하지않습니다.");
@@ -162,16 +160,13 @@ class CategoryServiceTest {
 
         String categoryName = "판타지도서";
 
-        //given
         categoryRepository.save(category);
         ReflectionTestUtils.setField(getCategoryResponseDto, "categoryName", categoryName);
 
-        //when
         when(categoryRepository.save(any())).thenReturn(category);
         when(categoryRepository.findCategory(anyInt())).thenReturn(
                 Optional.of(getCategoryResponseDto));
 
-        //then
         GetCategoryResponseDto result = categoryService.getCategory(anyInt());
         assertThat(result.getCategoryName()).isEqualTo(getCategoryResponseDto.getCategoryName());
 
