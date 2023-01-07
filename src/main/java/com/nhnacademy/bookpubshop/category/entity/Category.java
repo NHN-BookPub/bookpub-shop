@@ -34,7 +34,7 @@ public class Category {
 
     @ManyToOne
     @JoinColumn(name = "category_parent_number")
-    private Category category;
+    private Category parentCategory;
 
     @Column(name = "category_name", nullable = false, unique = true)
     private String categoryName;

@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.member.entity;
 
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,7 +33,7 @@ public class Member {
 
     @ManyToOne
     @JoinColumn(name = "tier_number", nullable = false)
-    private Tier tier;
+    private BookPubTier bookPubTier;
 
     @Column(name = "member_id", nullable = false, unique = true)
     private String memberId;

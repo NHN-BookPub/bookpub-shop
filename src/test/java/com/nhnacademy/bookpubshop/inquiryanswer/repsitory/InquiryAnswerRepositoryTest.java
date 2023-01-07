@@ -5,7 +5,7 @@ import com.nhnacademy.bookpubshop.inquiryanswer.dummy.InquiryAnswerDummy;
 import com.nhnacademy.bookpubshop.inquiryanswer.entity.InquiryAnswer;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.personalinquiry.dummy.PersonalInquiryDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,14 +52,14 @@ class InquiryAnswerRepositoryTest {
 
     }
 
-    private Tier tierDummy() {
-        return new Tier(null, "tier");
+    private BookPubTier tierDummy() {
+        return new BookPubTier(null, "tier");
     }
 
-    private Member memberDummy(Tier tier) {
-        Member testMember = new Member(null, tier, "test_id", "test_nickname", "test_name", "남", 22, 819, "test_pwd", "01012341234",
+    private Member memberDummy(BookPubTier bookPubTier) {
+        Member testMember = new Member(null, bookPubTier, "test_id", "test_nickname", "test_name", "남", 22, 819, "test_pwd", "01012341234",
                 "test@test.com", LocalDateTime.now(), false, false, null, 0L, false);
-        entityManager.persist(testMember.getTier());
+        entityManager.persist(testMember.getBookPubTier());
         return entityManager.persist(testMember);
     }
 }
