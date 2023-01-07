@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.tier.repository;
 
 import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -10,4 +11,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since : 1.0
  **/
 public interface TierRepository extends JpaRepository<Tier, Integer> {
+    Optional<Tier> findByTierName(String tierName);
 }
