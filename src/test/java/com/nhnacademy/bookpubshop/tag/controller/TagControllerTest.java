@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.tag.dto.request.AddTagRequestDto;
 import com.nhnacademy.bookpubshop.tag.dto.request.ModifyTagRequestDto;
 import com.nhnacademy.bookpubshop.tag.dto.response.GetTagResponseDto;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,7 +29,8 @@ import org.springframework.test.web.servlet.MockMvc;
  * @author : 박경서
  * @since : 1.0
  **/
-@WebMvcTest
+@WebMvcTest(TagController.class)
+@Import(ShopAdviceController.class)
 class TagControllerTest {
 
     @Autowired
