@@ -28,7 +28,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCo
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,7 +59,7 @@ class CouponRepositoryTest {
     OrderProductStateCode orderProductStateCode;
     PricePolicy deliveryPricePolicy;
     PricePolicy packagePricePolicy;
-    Tier tier;
+    BookPubTier bookPubTier;
     Member member;
     BookpubOrder order;
     OrderStateCode orderStateCode;
@@ -81,8 +81,8 @@ class CouponRepositoryTest {
                         OrderProductState.CONFIRMED.isUsed(),
                         "주문완료되었습니다.");
 
-        tier = TierDummy.dummy();
-        member = MemberDummy.dummy(tier);
+        bookPubTier = TierDummy.dummy();
+        member = MemberDummy.dummy(bookPubTier);
         address = AddressDummy.dummy();
         order = new BookpubOrder(
                 null,
@@ -145,9 +145,9 @@ class CouponRepositoryTest {
                 OrderProductState.CONFIRMED.isUsed(),
                 "주문완료되었습니다.");
 
-        tier = new Tier(null, "브론즈");
+        bookPubTier = new BookPubTier(null, "브론즈");
 
-        member = new Member(null, tier, "member", "멤버", "사람", "남", 2000, 12, "pwdpwdpwd", "01000000000", "asd@asd.com", LocalDateTime.now(), false, false, null, 0L, false);
+        member = new Member(null, bookPubTier, "member", "멤버", "사람", "남", 2000, 12, "pwdpwdpwd", "01000000000", "asd@asd.com", LocalDateTime.now(), false, false, null, 0L, false);
 
         orderStateCode = new OrderStateCode(
                 null,
@@ -209,7 +209,7 @@ class CouponRepositoryTest {
                 member
         );
 
-        entityManager.persist(tier);
+        entityManager.persist(bookPubTier);
         entityManager.persist(member);
         entityManager.persist(address);
         entityManager.persist(productPolicy);

@@ -49,15 +49,22 @@ class ProductRepositoryTest {
     }
 
     @Test
-    @DisplayName("멤버 save 테스트")
-    void memberSaveTest() {
+    @DisplayName("상품 save 테스트")
+    void productSaveTest() {
         Product persist = entityManager.persist(product);
         entityManager.clear();
 
         Optional<Product> product = productRepository.findById(persist.getProductNo());
         assertThat(product).isPresent();
         assertThat(product.get().getProductNo()).isEqualTo(persist.getProductNo());
-        assertThat(product.get().getTitle()).isEqualTo(persist.getTitle());
-
+        assertThat(product.get().getProductIsbn()).isEqualTo(persist.getProductIsbn());
+        assertThat(product.get().getProductDescription()).isEqualTo(persist.getProductDescription());
+        assertThat(product.get().getProductPriority()).isEqualTo(persist.getProductPriority());
+        assertThat(product.get().getProductStock()).isEqualTo(persist.getProductStock());
+        assertThat(product.get().getProductThumbnail()).isEqualTo(persist.getProductThumbnail());
+        assertThat(product.get().getSalesPrice()).isEqualTo(persist.getSalesPrice());
+        assertThat(product.get().getCreatedAt()).isEqualTo(persist.getCreatedAt());
+        assertThat(product.get().getEbookFilePath()).isEqualTo(persist.getEbookFilePath());
+        assertThat(product.get().getPageCount()).isEqualTo(persist.getPageCount());
     }
 }

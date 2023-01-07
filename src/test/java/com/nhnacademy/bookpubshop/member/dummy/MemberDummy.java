@@ -1,8 +1,7 @@
 package com.nhnacademy.bookpubshop.member.dummy;
 
-import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 
 /**
@@ -14,9 +13,9 @@ import java.time.LocalDateTime;
  * @since : 1.0
  **/
 public class MemberDummy {
-    public static Member dummy(Tier tier) {
+    public static Member dummy(BookPubTier bookPubTier) {
         return new Member(null,
-                tier,
+                bookPubTier,
                 "id",
                 "nickname",
                 "taewon",
