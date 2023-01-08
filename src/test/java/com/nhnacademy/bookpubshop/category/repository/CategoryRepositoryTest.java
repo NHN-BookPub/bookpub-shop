@@ -77,8 +77,6 @@ class CategoryRepositoryTest {
 
         List<GetCategoryResponseDto> result = categoryRepository.findCategories();
 
-        System.out.println(result.toString());
-
         assertThat(result)
                 .isNotEmpty()
                 .hasSize(2);
