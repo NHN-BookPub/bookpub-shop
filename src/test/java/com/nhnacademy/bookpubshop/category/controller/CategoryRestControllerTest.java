@@ -1,9 +1,9 @@
 package com.nhnacademy.bookpubshop.category.controller;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -17,6 +17,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -71,6 +72,8 @@ class CategoryRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
                 .andDo(print());
+
+        verify(categoryService, times(0)).addCategory(createCategoryRequestDto);
     }
 
 
@@ -80,6 +83,8 @@ class CategoryRestControllerTest {
         ReflectionTestUtils.setField(createCategoryRequestDto, "categoryName", "국내도서");
         ReflectionTestUtils.setField(createCategoryRequestDto, "categoryPriority", 0);
         ReflectionTestUtils.setField(createCategoryRequestDto, "categoryDisplayed", true);
+        ArgumentCaptor<CreateCategoryRequestDto> captor = ArgumentCaptor.forClass(
+                CreateCategoryRequestDto.class);
         doNothing().when(categoryService).addCategory(createCategoryRequestDto);
 
         mockMvc.perform(post(path)
@@ -87,6 +92,13 @@ class CategoryRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
+
+        verify(categoryService, times(1)).addCategory(captor.capture());
+        CreateCategoryRequestDto result = captor.getValue();
+        assertThat(result.getCategoryName()).isEqualTo(createCategoryRequestDto.getCategoryName());
+        assertThat(result.getCategoryPriority()).isEqualTo(
+                createCategoryRequestDto.getCategoryPriority());
+        assertThat(result.isCategoryDisplayed()).isTrue();
     }
 
     @Test
@@ -104,6 +116,8 @@ class CategoryRestControllerTest {
                         .content(objectMapper.writeValueAsString(modifyCategoryRequestDto)))
                 .andExpect(status().is4xxClientError())
                 .andDo(print());
+
+        verify(categoryService, times(0)).modifyCategory(modifyCategoryRequestDto);
     }
 
     @Test
@@ -115,6 +129,9 @@ class CategoryRestControllerTest {
         ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryPriority", 0);
         ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryDisplayed", true);
 
+        ArgumentCaptor<ModifyCategoryRequestDto> captor = ArgumentCaptor.forClass(
+                ModifyCategoryRequestDto.class);
+
         doNothing().when(categoryService).modifyCategory(modifyCategoryRequestDto);
 
         mockMvc.perform(put(path)
@@ -122,6 +139,14 @@ class CategoryRestControllerTest {
                         .content(objectMapper.writeValueAsString(modifyCategoryRequestDto)))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
+
+        verify(categoryService, times(1)).modifyCategory(captor.capture());
+        ModifyCategoryRequestDto result = captor.getValue();
+        assertThat(result.getCategoryNo()).isEqualTo(modifyCategoryRequestDto.getCategoryNo());
+        assertThat(result.getCategoryName()).isEqualTo(modifyCategoryRequestDto.getCategoryName());
+        assertThat(result.getCategoryPriority()).isEqualTo(
+                modifyCategoryRequestDto.getCategoryPriority());
+        assertThat(result.isCategoryDisplayed()).isTrue();
 
     }
 
@@ -140,6 +165,8 @@ class CategoryRestControllerTest {
                         jsonPath("$.categoryName").value(getCategoryResponseDto.getCategoryName()))
                 .andDo(print());
 
+        verify(categoryService, times(1)).getCategory(anyInt());
+
     }
 
     @Test
@@ -156,6 +183,8 @@ class CategoryRestControllerTest {
                 .andExpect(jsonPath("$[0].categoryName").value(
                         getCategoryResponseDto.getCategoryName()))
                 .andDo(print());
+
+        verify(categoryService, times(1)).getCategories();
 
     }
 }
