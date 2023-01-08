@@ -2,7 +2,6 @@ package com.nhnacademy.bookpubshop.category.dto.request;
 
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -17,7 +16,6 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 public class ModifyCategoryRequestDto {
 
-    @NotNull
     private Integer categoryNo;
 
     private Category parentCategory;
