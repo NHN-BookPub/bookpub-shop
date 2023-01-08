@@ -1,8 +1,10 @@
 package com.nhnacademy.bookpubshop.coupontype.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.coupontype.dto.response.GetCouponTypeResponseDto;
 import com.nhnacademy.bookpubshop.coupontype.dummy.CouponTypeDummy;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,14 +36,35 @@ class CouponTypeRepositoryTest {
     }
 
     @Test
-    @DisplayName(value = "쿠폰유형 save 테스트")
+    @DisplayName("쿠폰유형 save 테스트")
     void couponTypeSaveTest() {
         entityManager.persist(couponType);
-        entityManager.clear();
 
         Optional<CouponType> result = couponTypeRepository.findById(couponType.getTypeNo());
         assertThat(result).isPresent();
         assertThat(result.get().getTypeNo()).isEqualTo(couponType.getTypeNo());
         assertThat(result.get().getTypeName()).isEqualTo(couponType.getTypeName());
+    }
+
+    @Test
+    @DisplayName("쿠폰유형 단건 조회 성공 테스트")
+    void getCouponTypeTest() {
+        CouponType save = couponTypeRepository.save(couponType);
+
+        Optional<GetCouponTypeResponseDto> result = couponTypeRepository.findByTypeNo(save.getTypeNo());
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getTypeName()).isEqualTo(save.getTypeName());
+    }
+
+    @Test
+    @DisplayName("쿠폰유형 리스트 조회 성공 테스트")
+    void getCouponTypesTest() {
+        CouponType save = couponTypeRepository.save(couponType);
+
+        List<GetCouponTypeResponseDto> result = couponTypeRepository.findAllBy();
+
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getTypeName()).isEqualTo(save.getTypeName());
     }
 }
