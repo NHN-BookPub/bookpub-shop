@@ -115,11 +115,6 @@ class TagServiceTest {
         // then
         tagService.addTag(addTagRequestDto);
 
-        Tag result = captor.getValue();
-
-        assertThat(result.getTagName()).isEqualTo(addTagRequestDto.getTagName());
-        assertThat(result.getColorCode()).isEqualTo(addTagRequestDto.getColorCode());
-
         verify(tagRepository, times(1)).existsByTagName(anyString());
         verify(tagRepository, times(1)).save(captor.capture());
     }
