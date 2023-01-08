@@ -6,7 +6,6 @@ import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +38,6 @@ public class MemberController {
         String defaultTier = "basic";
 
         Member member = memberService.signup(memberDto, defaultTier);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
         SignUpMemberResponseDto memberInfo = new SignUpMemberResponseDto(
                 member.getMemberId(),
@@ -50,7 +47,7 @@ public class MemberController {
         );
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .headers(headers)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(memberInfo);
     }
 }

@@ -26,7 +26,7 @@ public class SignUpMemberRequestDto {
     private String nickname;
 
     @NotBlank
-    @Pattern(regexp = "^.*(?=.*\\d)(?=.{6}).*$", message = "생년월일은 숫자로 6글자 입력해주세요")
+    @Length(min = 6, max = 6, message = "생년월일은 숫자로 6글자 입력해주세요")
     private String birth;
 
     @NotBlank
@@ -42,7 +42,7 @@ public class SignUpMemberRequestDto {
     private String pwd;
 
     @NotBlank
-    @Pattern(regexp = "^.*(?=.*\\d)(?=.{11}).*$", message = "전화번호는 숫자 11글자로 입력해주세요.")
+    @Length(min = 11, max = 11, message = "전화번호는 숫자 11글자로 입력해주세요.")
     private String phone;
 
     @NotBlank
@@ -53,6 +53,9 @@ public class SignUpMemberRequestDto {
 
     @NotBlank
     private String detailAddress;
+
+    public SignUpMemberRequestDto() {
+    }
 
     /**
      * 멤버 엔티티 생성 메소드.
