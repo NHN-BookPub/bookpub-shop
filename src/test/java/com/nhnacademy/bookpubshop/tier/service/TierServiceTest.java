@@ -52,6 +52,7 @@ class TierServiceTest {
     String notFound = "등급이 존재하지않습니다.";
 
     ModifyTierRequestDto modifyTierRequestDto;
+
     @BeforeEach
     void setUp() {
         tierResponseDto = new TierResponseDto();
@@ -65,7 +66,7 @@ class TierServiceTest {
     @Test
     void addTierFailTest() {
         //given
-        ReflectionTestUtils.setField(createTierRequestDtoDummy,"tierName","GOLD");
+        ReflectionTestUtils.setField(createTierRequestDtoDummy, "tierName", "GOLD");
 
         //when
         when(tierRepository.existsByTierName(anyString()))
@@ -82,7 +83,7 @@ class TierServiceTest {
     @Test
     void addTierSuccessTest() {
         //given
-        ReflectionTestUtils.setField(createTierRequestDtoDummy,"tierName","GOLD");
+        ReflectionTestUtils.setField(createTierRequestDtoDummy, "tierName", "GOLD");
 
         //when
         when(tierRepository.existsByTierName(anyString()))
@@ -114,11 +115,12 @@ class TierServiceTest {
                 .hasMessageContaining(notFound);
 
     }
+
     @DisplayName("회원등급 수정시 등급명이 겹한경우")
     @Test
     void modifyTierNameFail() {
         //given
-        ReflectionTestUtils.setField(modifyTierRequestDto,"tierNo",1);
+        ReflectionTestUtils.setField(modifyTierRequestDto, "tierNo", 1);
         ReflectionTestUtils.setField(modifyTierRequestDto, "tierName", "GOLD");
         //when & then
         when(tierRepository.findById(anyInt()))
@@ -135,7 +137,7 @@ class TierServiceTest {
     @Test
     void modifyTierSuccess() {
         //given
-        ReflectionTestUtils.setField(modifyTierRequestDto, "tierNo",1);
+        ReflectionTestUtils.setField(modifyTierRequestDto, "tierNo", 1);
         ReflectionTestUtils.setField(modifyTierRequestDto, "tierName", "GOLD");
 
         //when & then
@@ -167,7 +169,7 @@ class TierServiceTest {
 
     @DisplayName("등급조회성공 테스트")
     @Test
-    void getTierSuccessTest(){
+    void getTierSuccessTest() {
         //given
         tierRepository.save(tier);
         ReflectionTestUtils.setField(tierResponseDto, "tierName", tier.getTierName());
@@ -180,7 +182,6 @@ class TierServiceTest {
         //then
         TierResponseDto result = tierService.getTier(anyInt());
         assertThat(result.getTierName()).isEqualTo(tierResponseDto.getTierName());
-
         verify(tierRepository, times(1))
                 .findTier(anyInt());
     }
@@ -188,11 +189,15 @@ class TierServiceTest {
     @Test
     void getTiersTest() {
         //given && when
+        ReflectionTestUtils.setField(tierResponseDto, "tierNo", 1);
+        ReflectionTestUtils.setField(tierResponseDto, "tierName", tier.getTierName());
+
         when(tierRepository.findTiers())
                 .thenReturn(List.of(tierResponseDto));
         // then
         List<TierResponseDto> tiers = tierService.getTiers();
         assertThat(tiers.get(0).getTierName()).isEqualTo(tierResponseDto.getTierName());
+        assertThat(tiers.get(0).getTierNo()).isEqualTo(tierResponseDto.getTierNo());
 
         verify(tierRepository, times(1))
                 .findTiers();
