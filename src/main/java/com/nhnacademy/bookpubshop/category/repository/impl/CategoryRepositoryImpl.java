@@ -22,6 +22,9 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
         super(Category.class);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<GetCategoryResponseDto> findCategory(Integer categoryNo) {
         QCategory category = QCategory.category;
@@ -37,7 +40,9 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                 .fetchFirst());
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<GetCategoryResponseDto> findCategories() {
 
