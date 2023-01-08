@@ -25,7 +25,7 @@ public interface CategoryRepositoryCustom {
     /**
      * 전체 카테고리 반환.
      *
-     * @return Optional 로 전체 카테고리 정보 반환.
+     * @return 전체 카테고리 정보 반환.
      */
     List<GetCategoryResponseDto> findCategories();
 
