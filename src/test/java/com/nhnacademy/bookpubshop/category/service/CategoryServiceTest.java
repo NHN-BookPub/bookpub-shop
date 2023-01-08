@@ -60,6 +60,7 @@ class CategoryServiceTest {
         String categoryName = "외국도서";
 
         ReflectionTestUtils.setField(createCategoryRequestDto, "categoryName", categoryName);
+        ReflectionTestUtils.setField(createCategoryRequestDto, "parentCategoryNo", null);
         ReflectionTestUtils.setField(createCategoryRequestDto, "categoryPriority", 0);
         ReflectionTestUtils.setField(createCategoryRequestDto, "categoryDisplayed", true);
 
@@ -72,12 +73,33 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("카테고리 등록시 존재하지 않는 부모카테고리 입력으로 실패")
+    void addCategoryNotExistParentCategoryFailTest() {
+
+        String categoryName = "외국도서";
+
+        ReflectionTestUtils.setField(createCategoryRequestDto, "categoryName", categoryName);
+        ReflectionTestUtils.setField(createCategoryRequestDto, "parentCategoryNo", 2);
+        ReflectionTestUtils.setField(createCategoryRequestDto, "categoryPriority", 0);
+        ReflectionTestUtils.setField(createCategoryRequestDto, "categoryDisplayed", true);
+
+        when(categoryRepository.existsByCategoryName(categoryName)).thenReturn(false);
+        when(categoryRepository.findById(2)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> categoryService.addCategory(createCategoryRequestDto))
+                .isInstanceOf(CategoryNotFoundException.class)
+                .hasMessageContaining("카테고리가 존재하지않습니다.");
+
+    }
+
+    @Test
     @DisplayName("카테고리 등록 성공 테스트.")
     void addCategorySuccessTest() {
 
         String categoryName = "국내도서";
 
         ReflectionTestUtils.setField(createCategoryRequestDto, "categoryName", categoryName);
+        ReflectionTestUtils.setField(createCategoryRequestDto, "parentCategoryNo", null);
         ReflectionTestUtils.setField(createCategoryRequestDto, "categoryPriority", 0);
         ReflectionTestUtils.setField(createCategoryRequestDto, "categoryDisplayed", true);
 
@@ -121,6 +143,25 @@ class CategoryServiceTest {
         assertThatThrownBy(() -> categoryService.modifyCategory(modifyCategoryRequestDto))
                 .isInstanceOf(CategoryAlreadyExistsException.class)
                 .hasMessageContaining(" 은 이미 존재하는 카테고리입니다.");
+    }
+
+    @Test
+    @DisplayName("카테고리 수정시 존재하지 않는 부모카테고리 입력으로 실패")
+    void modifyCategoryNotExistParentCategoryFailTest() {
+
+        String categoryName = "외국도서";
+
+        ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryNo", 1);
+        ReflectionTestUtils.setField(modifyCategoryRequestDto, "parentCategoryNo", 2);
+        ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryName", categoryName);
+
+        when(categoryRepository.existsByCategoryName(categoryName)).thenReturn(false);
+        when(categoryRepository.findById(2)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> categoryService.modifyCategory(modifyCategoryRequestDto))
+                .isInstanceOf(CategoryNotFoundException.class)
+                .hasMessageContaining("카테고리가 존재하지않습니다.");
+
     }
 
     @Test
@@ -181,7 +222,8 @@ class CategoryServiceTest {
         when(categoryRepository.findCategories()).thenReturn(List.of(getCategoryResponseDto));
 
         List<GetCategoryResponseDto> categories = categoryService.getCategories();
-        assertThat(categories.get(0).getCategoryName()).isEqualTo(getCategoryResponseDto.getCategoryName());
+        assertThat(categories.get(0).getCategoryName()).isEqualTo(
+                getCategoryResponseDto.getCategoryName());
 
         verify(categoryRepository, times(1)).findCategories();
     }
