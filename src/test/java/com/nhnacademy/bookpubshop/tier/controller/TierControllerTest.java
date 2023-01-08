@@ -120,7 +120,7 @@ class TierControllerTest {
     @Test
     void tierDetailsTest() throws Exception {
         //given
-        TierResponseDto tierResponseDto = new TierResponseDto("tierResponseDto");
+        TierResponseDto tierResponseDto = new TierResponseDto(1,"tierResponseDto");
         when(tierService.getTier(anyInt())).thenReturn(tierResponseDto);
 
         //when && then
@@ -128,6 +128,7 @@ class TierControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.tierName").value(tierResponseDto.getTierName()))
+                .andExpect(jsonPath("$.tierNo").value(tierResponseDto.getTierNo()))
                 .andDo(print());
 
         then(tierService).should().getTier(anyInt());
@@ -137,7 +138,7 @@ class TierControllerTest {
     @Test
     void tierListTest() throws Exception {
         //given
-        TierResponseDto tierResponseDto = new TierResponseDto("tierTest");
+        TierResponseDto tierResponseDto = new TierResponseDto(1,"tierTest");
         when(tierService.getTiers())
                 .thenReturn(List.of(tierResponseDto));
 
@@ -145,6 +146,7 @@ class TierControllerTest {
         mvc.perform(get(path)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].tierNo").value(tierResponseDto.getTierNo()))
                 .andExpect(jsonPath("$[0].tierName").value(tierResponseDto.getTierName()))
                 .andDo(print());
 

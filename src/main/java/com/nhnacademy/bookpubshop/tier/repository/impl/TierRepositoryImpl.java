@@ -33,6 +33,7 @@ public class TierRepositoryImpl extends QuerydslRepositorySupport
                 .where(tier.tierName.eq(tierName))
                 .select(Projections
                         .constructor(TierResponseDto.class,
+                                tier.tierNo,
                                 tier.tierName))
                 .fetchOne());
     }
@@ -47,6 +48,7 @@ public class TierRepositoryImpl extends QuerydslRepositorySupport
                 .where(tier.tierNo.eq(tierNo))
                 .select(Projections
                         .constructor(TierResponseDto.class,
+                                tier.tierNo,
                                 tier.tierName))
                 .fetchOne());
     }
@@ -61,6 +63,7 @@ public class TierRepositoryImpl extends QuerydslRepositorySupport
         return from(tier)
                 .select(Projections
                         .constructor(TierResponseDto.class,
+                                tier.tierNo,
                                 tier.tierName))
                 .fetch();
     }

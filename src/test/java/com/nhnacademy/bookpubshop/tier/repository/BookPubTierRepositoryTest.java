@@ -54,6 +54,7 @@ class BookPubTierRepositoryTest {
 
         assertThat(result).isPresent();
         assertThat(result.get().getTierName()).isEqualTo(save.getTierName());
+        assertThat(result.get().getTierNo()).isEqualTo(save.getTierNo());
     }
 
     @DisplayName("회원 등급 다건 조회")
@@ -65,6 +66,7 @@ class BookPubTierRepositoryTest {
 
         assertThat(result).isNotEmpty();
         assertThat(result.get(0).getTierName()).isEqualTo(save.getTierName());
+        assertThat(result.get(0).getTierNo()).isEqualTo(save.getTierNo());
     }
 
     @DisplayName("등급명을 통한 조회")
@@ -76,5 +78,6 @@ class BookPubTierRepositoryTest {
 
         assertThat(result).isPresent();
         assertThat(result.get().getTierName()).isEqualTo(save.getTierName());
+        assertThat(result.get().getTierNo()).isEqualTo(save.getTierNo());
     }
 }
