@@ -30,7 +30,7 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_number", nullable = false)
+    @Column(name = "category_number")
     private Integer categoryNo;
 
     @ManyToOne
@@ -42,11 +42,9 @@ public class Category {
     private String categoryName;
 
     @Column(name = "category_priority")
-    @NotNull
     private Integer categoryPriority;
 
     @Column(name = "category_displayed")
-    @NotNull
     private boolean categoryDisplayed;
 
 
