@@ -8,6 +8,7 @@ import com.nhnacademy.bookpubshop.category.exception.CategoryAlreadyExistsExcept
 import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,10 +33,12 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public void addCategory(CreateCategoryRequestDto createCategoryRequestDto) {
-        if (categoryRepository.existsByCategoryName(createCategoryRequestDto.getCategoryName())) {
-            throw new CategoryAlreadyExistsException(createCategoryRequestDto.getCategoryName());
-        }
-        categoryRepository.save(new Category(null, createCategoryRequestDto.getParentCategory(),
+        checkCategoryNameIsDuplicated(createCategoryRequestDto.getCategoryName());
+
+        Category parentCategory = tryGetParentCategory(
+                createCategoryRequestDto.getParentCategoryNo());
+
+        categoryRepository.save(new Category(null, parentCategory,
                 createCategoryRequestDto.getCategoryName(),
                 createCategoryRequestDto.getCategoryPriority(),
                 createCategoryRequestDto.isCategoryDisplayed()));
@@ -51,12 +54,12 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findById(modifyCategoryRequestDto.getCategoryNo())
                 .orElseThrow(CategoryNotFoundException::new);
 
-        if (categoryRepository.existsByCategoryName(modifyCategoryRequestDto.getCategoryName())) {
-            throw new CategoryAlreadyExistsException(modifyCategoryRequestDto.getCategoryName());
-        }
+        checkCategoryNameIsDuplicated(modifyCategoryRequestDto.getCategoryName());
+        Category parentCategory = tryGetParentCategory(
+                modifyCategoryRequestDto.getParentCategoryNo());
 
         category.modifyCategory(modifyCategoryRequestDto.getCategoryName(),
-                modifyCategoryRequestDto.getParentCategory(),
+                parentCategory,
                 modifyCategoryRequestDto.getCategoryPriority(),
                 modifyCategoryRequestDto.isCategoryDisplayed());
     }
@@ -82,4 +85,30 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findCategories();
     }
 
+    /**
+     * 부모카테고리 반환.
+     *
+     * @param parentCategoryNo 부모카테고리 번호.
+     * @return 부모카테고리 반환.
+     * @throws CategoryNotFoundException 존재하지않은 부모카테고리번호로 조회시 예외 발생.
+     */
+    private Category tryGetParentCategory(Integer parentCategoryNo) {
+        if (Objects.isNull(parentCategoryNo)) {
+            return null;
+        }
+        return categoryRepository.findById(parentCategoryNo)
+                .orElseThrow(CategoryNotFoundException::new);
+    }
+
+    /**
+     * 카테고리명 중복 확인.
+     *
+     * @param categoryName 카테고리명.
+     * @throws CategoryAlreadyExistsException 카테고리명 중복 시 예외 발생.
+     */
+    private void checkCategoryNameIsDuplicated(String categoryName) {
+        if (categoryRepository.existsByCategoryName(categoryName)) {
+            throw new CategoryAlreadyExistsException(categoryName);
+        }
+    }
 }
