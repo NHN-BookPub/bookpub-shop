@@ -4,6 +4,7 @@ import com.nhnacademy.bookpubshop.member.dto.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,7 +35,7 @@ public class MemberController {
      */
     @PostMapping("/signup")
     public ResponseEntity<SignUpMemberResponseDto> signup(
-            @RequestBody SignUpMemberRequestDto memberDto) {
+            @Valid @RequestBody SignUpMemberRequestDto memberDto) {
         String defaultTier = "basic";
 
         Member member = memberService.signup(memberDto, defaultTier);
