@@ -7,9 +7,9 @@ package com.nhnacademy.bookpubshop.coupontype.exception;
  * @since : 1.0
  **/
 public class CouponTypeNotFoundException extends RuntimeException {
-    private static final String MES = "Not Found CouponType : ";
+    private static final String MESSAGE = "Not Found CouponType : ";
 
     public CouponTypeNotFoundException(Long typeNo) {
-        super(MES + typeNo);
+        super(MESSAGE + typeNo);
     }
 }
