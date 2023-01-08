@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.category.dto.request;
 
-import com.nhnacademy.bookpubshop.category.entity.Category;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -20,10 +20,12 @@ public class CreateCategoryRequestDto {
     @Length(max = 10, message = "카테고리명의 길이가 맞지않습니다.")
     private String categoryName;
 
-    private Category parentCategory;
+    private Integer parentCategoryNo;
 
+    @NotNull(message = "카테고리 우선순위는 필수 사항입니다.")
     private Integer categoryPriority;
 
+    @NotNull(message = "카테고리 노출여부는 필수 사항입니다.")
     private boolean categoryDisplayed;
 
 }
