@@ -1,7 +1,5 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.member.dto.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
@@ -35,8 +33,8 @@ public class MemberController {
      * @return 회원정보 저장성공 or 실패정보가 담긴 엔티티 반환.
      */
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(
-            @RequestBody SignUpMemberRequestDto memberDto) throws JsonProcessingException {
+    public ResponseEntity<SignUpMemberResponseDto> signup(
+            @RequestBody SignUpMemberRequestDto memberDto) {
         String defaultTier = "basic";
 
         Member member = memberService.signup(memberDto, defaultTier);
@@ -50,11 +48,8 @@ public class MemberController {
                 member.getTier().getTierName()
         );
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String memberInfoJson = objectMapper.writeValueAsString(memberInfo);
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .headers(headers)
-                .body(memberInfoJson);
+                .body(memberInfo);
     }
 }
