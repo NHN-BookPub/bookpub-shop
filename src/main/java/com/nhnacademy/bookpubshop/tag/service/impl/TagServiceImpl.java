@@ -29,8 +29,6 @@ public class TagServiceImpl implements TagService {
     /**
      * {@inheritDoc}
      *
-     * @param tagNo 태그 번호
-     * @return 단건 태그
      * @throws TagNotFoundException 태그가 없는 경우 발생하는 에러
      */
     @Override
@@ -41,7 +39,6 @@ public class TagServiceImpl implements TagService {
     /**
      * {@inheritDoc}
      *
-     * @return 전체 태그 리스트
      */
     @Override
     public List<GetTagResponseDto> getTags() {
@@ -51,8 +48,6 @@ public class TagServiceImpl implements TagService {
     /**
      * {@inheritDoc}
      *
-     * @param request 태그 생성을 위한 정보
-     * @throws TagNameDuplicatedException 태그이름이 중복된 경우 발생하는 에러
      */
     @Override
     @Transactional
@@ -68,7 +63,7 @@ public class TagServiceImpl implements TagService {
     /**
      * {@inheritDoc}
      *
-     * @param request 태그 수정을 위한 정보
+     * @throws TagNotFoundException 태그 번호를 찾지 못한 경우 발생하는 에러
      * @throws TagNameDuplicatedException 태그이름이 중복된 경우 발생하는 에러
      */
     @Override
@@ -87,7 +82,6 @@ public class TagServiceImpl implements TagService {
     /**
      * {@inheritDoc}
      *
-     * @param tagNo 태그 번호
      * @throws TagNotFoundException 태그를 찾지 못하는 경우 발생하는 에러
      */
     @Override

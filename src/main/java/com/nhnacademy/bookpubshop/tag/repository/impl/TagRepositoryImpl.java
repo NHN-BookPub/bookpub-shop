@@ -24,8 +24,6 @@ public class TagRepositoryImpl extends QuerydslRepositorySupport implements TagR
     /**
      * {@inheritDoc}
      *
-     * @param tagName 태그 조회를 위한 태그 이름
-     * @return 태그 entity
      */
     @Override
     public Optional<GetTagResponseDto> findTagName(String tagName) {
@@ -45,8 +43,6 @@ public class TagRepositoryImpl extends QuerydslRepositorySupport implements TagR
     /**
      * {@inheritDoc}
      *
-     * @param tagNo 태그 조회를 위한 태그 번호
-     * @return 태그 entity
      */
     @Override
     public Optional<GetTagResponseDto> findTag(Integer tagNo) {
@@ -66,7 +62,6 @@ public class TagRepositoryImpl extends QuerydslRepositorySupport implements TagR
     /**
      * {@inheritDoc}
      *
-     * @return 전체 태그 리스트
      */
     @Override
     public List<GetTagResponseDto> findTags() {
