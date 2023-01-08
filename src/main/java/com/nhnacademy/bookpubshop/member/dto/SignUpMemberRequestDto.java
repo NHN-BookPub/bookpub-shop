@@ -39,8 +39,6 @@ public class SignUpMemberRequestDto {
     private String memberId;
 
     @NotBlank
-    @Pattern(regexp = "^.*(?=.{8,20}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=]).*$",
-            message = "패스워드는 대문자, 소문자, 숫자, 특수문자로 구성된 8글자에서 20글자로 입력해주세요.")
     private String pwd;
 
     @NotBlank
