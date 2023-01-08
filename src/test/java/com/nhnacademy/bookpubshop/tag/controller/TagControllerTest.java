@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.tag.controller;
 
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -112,6 +113,8 @@ class TagControllerTest {
                         .content(mapper.writeValueAsString(addTagRequestDto)))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
+
+        then(tagService).should().addTag(any(AddTagRequestDto.class));
     }
 
     @Test
@@ -150,6 +153,8 @@ class TagControllerTest {
                     .content(mapper.writeValueAsString(modifyTagRequestDto)))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
+
+        then(tagService).should().modifyTagInformation(any(ModifyTagRequestDto.class));
     }
 
     @Test
