@@ -26,10 +26,10 @@ public class CouponPolicy {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "coupon_policy_number", nullable = false)
+    @Column(name = "coupon_policy_number")
     private Integer policyNo;
 
-    @Column(name = "coupon_policy_fixed", nullable = false)
+    @Column(name = "coupon_policy_fixed")
     private boolean policyFixed;
 
     @Column(name = "coupon_policy_discount_rate", nullable = false)
@@ -41,4 +41,19 @@ public class CouponPolicy {
     @Column(name = "coupon_policy_max_discount", nullable = false)
     private Long maxDiscount;
 
+    /**
+     * 쿠폰정책 수정을 위한 메소드입니다.
+     *
+     * @param policyFixed   정액여부
+     * @param discountRate  할인가격
+     * @param policyMinimum 최소주문금액
+     * @param maxDiscount   최대할인가격
+     */
+    public void modifyCouponPolicy(boolean policyFixed, Long discountRate,
+                              Long policyMinimum, Long maxDiscount) {
+        this.policyFixed = policyFixed;
+        this.discountRate = discountRate;
+        this.policyMinimum = policyMinimum;
+        this.maxDiscount = maxDiscount;
+    }
 }
