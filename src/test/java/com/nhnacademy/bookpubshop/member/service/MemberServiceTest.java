@@ -12,7 +12,6 @@ import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
-import java.awt.print.Book;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -77,7 +76,7 @@ class MemberServiceTest {
         when(memberRepository.existsByMemberNickname(anyString()))
                 .thenReturn(false);
 
-        memberService.signup(signUpMemberRequestDto, tier.getTierName());
+        memberService.signup(signUpMemberRequestDto);
 
         verify(memberRepository, times(1))
                 .save(captor.capture());
@@ -99,7 +98,7 @@ class MemberServiceTest {
         when(memberRepository.existsByMemberNickname(anyString()))
                 .thenReturn(false);
 
-        assertThatThrownBy(() -> memberService.signup(signUpMemberRequestDto, tier.getTierName()))
+        assertThatThrownBy(() -> memberService.signup(signUpMemberRequestDto))
                 .isInstanceOf(DuplicateMemberFieldException.class)
                 .hasMessageContaining(duplicate);
     }
@@ -116,7 +115,7 @@ class MemberServiceTest {
         when(memberRepository.existsByMemberNickname(anyString()))
                 .thenReturn(true);
 
-        assertThatThrownBy(() -> memberService.signup(signUpMemberRequestDto, tier.getTierName()))
+        assertThatThrownBy(() -> memberService.signup(signUpMemberRequestDto))
                 .isInstanceOf(DuplicateMemberFieldException.class)
                 .hasMessageContaining(duplicate);
     }
@@ -133,7 +132,7 @@ class MemberServiceTest {
         when(memberRepository.existsByMemberNickname(anyString()))
                 .thenReturn(false);
 
-        assertThatThrownBy(() -> memberService.signup(signUpMemberRequestDto, tier.getTierName()))
+        assertThatThrownBy(() -> memberService.signup(signUpMemberRequestDto))
                 .isInstanceOf(DuplicateMemberFieldException.class)
                 .hasMessageContaining(duplicate);
     }

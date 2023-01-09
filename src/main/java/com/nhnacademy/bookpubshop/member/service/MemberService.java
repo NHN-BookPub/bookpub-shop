@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.member.service;
 
 import com.nhnacademy.bookpubshop.member.dto.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.DuplicateMemberFieldException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
@@ -24,6 +25,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final TierRepository tierRepository;
 
+    private static final String TIER_NAME = "basic";
+
     /**
      * 데이터베이스에 멤버의 정보를 저장합니다.
      *
@@ -31,20 +34,25 @@ public class MemberService {
      * @return member 테이블에 데이터를 저장한 후 반환받은 Member.
      */
     @Transactional
-    public Member signup(SignUpMemberRequestDto signUpMemberRequestDto,
-                         String tierName) {
+    public SignUpMemberResponseDto signup(SignUpMemberRequestDto signUpMemberRequestDto) {
         String nickname = signUpMemberRequestDto.getNickname();
         String email = signUpMemberRequestDto.getEmail();
         String id = signUpMemberRequestDto.getMemberId();
 
-        BookPubTier tier = tierRepository.findByTierName(tierName)
+        BookPubTier tier = tierRepository.findByTierName(TIER_NAME)
                 .orElseThrow(NotFoundTierException::new);
 
         duplicateCheck(nickname, email, id);
 
         Member member = signUpMemberRequestDto.createMember(tier);
+        memberRepository.save(member);
 
-        return memberRepository.save(member);
+        return new SignUpMemberResponseDto(
+                member.getMemberId(),
+                member.getMemberNickname(),
+                member.getMemberEmail(),
+                member.getTier().getTierName()
+        );
     }
 
     private void duplicateCheck(String nickname, String email, String id) {

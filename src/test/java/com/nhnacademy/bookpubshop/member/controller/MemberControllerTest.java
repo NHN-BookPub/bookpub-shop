@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -9,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.member.dto.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,11 +46,19 @@ class MemberControllerTest {
 
     SignUpMemberRequestDto signUpMemberRequestDto;
 
+    SignUpMemberResponseDto signUpMemberResponseDto;
+
     @BeforeEach
     void setUp() {
         basic = new BookPubTier("basic");
         objectMapper = new ObjectMapper();
         signUpMemberRequestDto = new SignUpMemberRequestDto();
+        signUpMemberResponseDto = new SignUpMemberResponseDto(
+                "tagkdj1",
+                "taewon",
+                "tagkdj1@naver.com",
+                "basic"
+        );
     }
 
     @Test
@@ -67,9 +75,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "address", "광주");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
-        when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(basic)
-        );
+        when(memberService.signup(any())).thenReturn(signUpMemberResponseDto);
 
         mvc.perform(post(path)
                         .content(objectMapper.writeValueAsString(signUpMemberRequestDto))
@@ -96,10 +102,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "address", "광주");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
-        basic = new BookPubTier(null, "basic");
-        when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(basic)
-        );
+        when(memberService.signup(any())).thenReturn(signUpMemberResponseDto);
 
         //when && then
         mvc.perform(post(path)
@@ -125,9 +128,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "address", "광주");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
-        when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(basic)
-        );
+        when(memberService.signup(any())).thenReturn(signUpMemberResponseDto);
 
         //when && then
         mvc.perform(post(path)
@@ -153,9 +154,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "address", "광주");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
-        when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(basic)
-        );
+        when(memberService.signup(any())).thenReturn(signUpMemberResponseDto);
 
         //when && then
         mvc.perform(post(path)
@@ -181,9 +180,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "address", "광주");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
-        when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(basic)
-        );
+        when(memberService.signup(any())).thenReturn(signUpMemberResponseDto);
 
         //when && then
         mvc.perform(post(path)
@@ -209,9 +206,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "address", "광주");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
-        when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(new BookPubTier(null, "basic"))
-        );
+        when(memberService.signup(any())).thenReturn(signUpMemberResponseDto);
 
         //when && then
         mvc.perform(post(path)
@@ -237,9 +232,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "address", "광주");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
-        when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(basic)
-        );
+        when(memberService.signup(any())).thenReturn(signUpMemberResponseDto);
 
         //when && then
         mvc.perform(post(path)

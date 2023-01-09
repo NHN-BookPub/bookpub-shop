@@ -2,7 +2,6 @@ package com.nhnacademy.bookpubshop.member.controller;
 
 import com.nhnacademy.bookpubshop.member.dto.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.SignUpMemberResponseDto;
-import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,16 +34,7 @@ public class MemberController {
     @PostMapping("/signup")
     public ResponseEntity<SignUpMemberResponseDto> signup(
             @Valid @RequestBody SignUpMemberRequestDto memberDto) {
-        String defaultTier = "basic";
-
-        Member member = memberService.signup(memberDto, defaultTier);
-
-        SignUpMemberResponseDto memberInfo = new SignUpMemberResponseDto(
-                member.getMemberId(),
-                member.getMemberNickname(),
-                member.getMemberEmail(),
-                member.getTier().getTierName()
-        );
+        SignUpMemberResponseDto memberInfo = memberService.signup(memberDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
