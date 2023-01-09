@@ -74,6 +74,23 @@ class CouponPolicyControllerTest {
     }
 
     @Test
+    @DisplayName("쿠폰정책 생성 validation 검증 실패 테스트_NotNull 컬럼이 null일 때")
+    void couponPolicyAddFail_Test_null() throws Exception {
+        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyFixed", true);
+        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "discountRate", null);
+        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyMinimum", null);
+        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "maxDiscount", 1000L);
+
+        doNothing().when(couponPolicyService).addCouponPolicy(createCouponPolicyRequestDto);
+
+        mockMvc.perform(post(path)
+                        .content(objectMapper.writeValueAsString(createCouponPolicyRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$[0].message").value("값을 기입하여야 합니다."));
+    }
+
+    @Test
     @DisplayName("쿠폰정책 생성 validation 검증 실패 테스트_discountRate 가 음수일 때")
     void couponPolicyAddFail_Test_DiscountRate() throws Exception {
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyFixed", true);
@@ -141,6 +158,24 @@ class CouponPolicyControllerTest {
                 .andExpect(status().is2xxSuccessful());
 
         then(couponPolicyService).should().modifyCouponPolicy(any(ModifyCouponPolicyRequestDto.class));
+    }
+
+    @Test
+    @DisplayName("쿠폰정책 수정 validation 검증 실패 테스트_Not null 컬럼이 null 일 때")
+    void couponPolicyModifyFail_Test_null() throws Exception {
+        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyNo", 1);
+        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyFixed", true);
+        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "discountRate", null);
+        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyMinimum", null);
+        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "maxDiscount", 1000L);
+
+        doNothing().when(couponPolicyService).modifyCouponPolicy(modifyCouponPolicyRequestDto);
+
+        mockMvc.perform(put(path)
+                        .content(objectMapper.writeValueAsString(modifyCouponPolicyRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$[0].message").value("값을 기입하여야 합니다."));
     }
 
     @Test
