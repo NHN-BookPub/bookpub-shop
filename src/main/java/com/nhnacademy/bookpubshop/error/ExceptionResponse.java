@@ -16,3 +16,5 @@ import lombok.NoArgsConstructor;
 public class ExceptionResponse {
     private String message;
 }
+
+

@@ -47,7 +47,7 @@ class AddressMemberRepositoryTest {
     @Test
     @DisplayName("멤버와 주소의 연관관계 테이블 저장")
     void AddressMemberSaveTest() {
-        entityManager.persist(addressMember.getMember().getBookPubTier());
+        entityManager.persist(addressMember.getMember().getTier());
         entityManager.persist(addressMember.getMember());
         entityManager.persist(addressMember.getAddress());
         entityManager.persist(addressMember);

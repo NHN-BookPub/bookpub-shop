@@ -147,7 +147,7 @@ class FileRepositoryTest {
                 22, 819, "test_pwd", "01012341234",
                 "test@test.com", LocalDateTime.now(), false, false,
                 null, 0L, false);
-        entityManager.persist(testMember.getBookPubTier());
+        entityManager.persist(testMember.getTier());
         return entityManager.persist(testMember);
     }
 
