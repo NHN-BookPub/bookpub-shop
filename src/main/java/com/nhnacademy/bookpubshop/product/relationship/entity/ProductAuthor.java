@@ -3,7 +3,6 @@ package com.nhnacademy.bookpubshop.product.relationship.entity;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.io.Serializable;
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -36,7 +35,7 @@ public class ProductAuthor {
 
     @MapsId("authorNo")
     @ManyToOne
-    @JoinColumn(name = "author_number", nullable = false, unique = true)
+    @JoinColumn(name = "author_number")
     private Author author;
 
     @MapsId("productNo")
