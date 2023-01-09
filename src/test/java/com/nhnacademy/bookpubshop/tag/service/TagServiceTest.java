@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.tag.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -106,8 +105,8 @@ class TagServiceTest {
     @DisplayName("태그 등록 성공 경우")
     void addTagSuccess_Test() {
         // given
-        ReflectionTestUtils.setField(addTagRequestDto, "tagName", tagDummy.getTagName());
-        ReflectionTestUtils.setField(addTagRequestDto, "colorCode", tagDummy.getColorCode());
+        ReflectionTestUtils.setField(addTagRequestDto, "addTagName", tagDummy.getTagName());
+        ReflectionTestUtils.setField(addTagRequestDto, "addColorCode", tagDummy.getColorCode());
 
         // when
         when(tagRepository.existsByTagName(anyString())).thenReturn(false);
@@ -123,8 +122,8 @@ class TagServiceTest {
     @DisplayName("태그 이름이 겹쳐서 등록이 실패하는 경우")
     void addTagFail_Test() {
         // given
-        ReflectionTestUtils.setField(addTagRequestDto, "tagName", "비추");
-        ReflectionTestUtils.setField(addTagRequestDto, "colorCode", "#FFFFFF");
+        ReflectionTestUtils.setField(addTagRequestDto, "addTagName", "비추");
+        ReflectionTestUtils.setField(addTagRequestDto, "addColorCode", "#FFFFFF");
 
         // when
         when(tagRepository.existsByTagName(anyString())).thenReturn(true);
@@ -139,9 +138,9 @@ class TagServiceTest {
     @DisplayName("태그 정보 수정 성공 테스트")
     void modifyTagSuccess_Test() {
         // given
-        ReflectionTestUtils.setField(modifyTagRequestDto, "tagNo", 1);
-        ReflectionTestUtils.setField(modifyTagRequestDto, "tagName", "변경 태그 이름");
-        ReflectionTestUtils.setField(modifyTagRequestDto, "colorCode", "#000000");
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyTagNo", 1);
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyTagName", "변경 태그 이름");
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyColorCode", "#000000");
 
         // when
         when(tagRepository.findById(anyInt())).thenReturn(Optional.of(tagDummy));
@@ -153,16 +152,16 @@ class TagServiceTest {
         verify(tagRepository, times(1))
                 .findById(anyInt());
         verify(tagRepository, times(1))
-                .existsByTagName(modifyTagRequestDto.getTagName());
+                .existsByTagName(modifyTagRequestDto.getModifyTagName());
     }
 
     @Test
     @DisplayName("태그 정보 수정 실패 테스트(태그 번호가 없는 경우)")
     void modifyTagFail_NotFound_TagNo_Test() {
         // given
-        ReflectionTestUtils.setField(modifyTagRequestDto, "tagNo", 1);
-        ReflectionTestUtils.setField(modifyTagRequestDto, "tagName", "변경 태그 이름");
-        ReflectionTestUtils.setField(modifyTagRequestDto, "colorCode", "#000000");
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyTagNo", 1);
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyTagName", "변경 태그 이름");
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyColorCode", "#000000");
 
         // then
         assertThatThrownBy(() -> tagService.modifyTagInformation(modifyTagRequestDto))
@@ -174,9 +173,9 @@ class TagServiceTest {
     @DisplayName("태그 정보 수정 실패 테스트(태그 이름이 중복인 경우)")
     void modifyTagFail_Duplicated_TagName_Test() {
         // given
-        ReflectionTestUtils.setField(modifyTagRequestDto, "tagNo", 1);
-        ReflectionTestUtils.setField(modifyTagRequestDto, "tagName", "변경 태그 이름");
-        ReflectionTestUtils.setField(modifyTagRequestDto, "colorCode", "#000000");
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyTagNo", 1);
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyTagName", "변경 태그 이름");
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyColorCode", "#000000");
 
         // when
         when(tagRepository.findById(anyInt())).thenReturn(Optional.of(tagDummy));

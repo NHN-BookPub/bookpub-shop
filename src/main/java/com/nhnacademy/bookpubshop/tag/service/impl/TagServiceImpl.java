@@ -52,11 +52,11 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional
     public void addTag(AddTagRequestDto request) {
-        if (tagRepository.existsByTagName(request.getTagName())) {
-            throw new TagNameDuplicatedException(request.getTagName());
+        if (tagRepository.existsByTagName(request.getAddTagName())) {
+            throw new TagNameDuplicatedException(request.getAddTagName());
         }
 
-        Tag tag = new Tag(null, request.getTagName(), request.getColorCode());
+        Tag tag = new Tag(null, request.getAddTagName(), request.getAddColorCode());
         tagRepository.save(tag);
     }
 
@@ -69,14 +69,14 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional
     public void modifyTagInformation(ModifyTagRequestDto request) {
-        Tag tag = tagRepository.findById(request.getTagNo())
-                .orElseThrow(() -> new TagNotFoundException(request.getTagNo()));
+        Tag tag = tagRepository.findById(request.getModifyTagNo())
+                .orElseThrow(() -> new TagNotFoundException(request.getModifyTagNo()));
 
-        if (tagRepository.existsByTagName(request.getTagName())) {
-            throw new TagNameDuplicatedException(request.getTagName());
+        if (tagRepository.existsByTagName(request.getModifyTagName())) {
+            throw new TagNameDuplicatedException(request.getModifyTagName());
         }
 
-        tag.modifyTagInfo(request.getTagName(), request.getColorCode());
+        tag.modifyTagInfo(request.getModifyTagName(), request.getModifyColorCode());
     }
 
     /**
