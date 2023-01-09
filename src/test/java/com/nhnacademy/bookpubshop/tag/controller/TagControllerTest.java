@@ -101,8 +101,8 @@ class TagControllerTest {
     @DisplayName("태그 생성 성공 테스트")
     void add_tagSuccess_test() throws Exception {
         // given
-        ReflectionTestUtils.setField(addTagRequestDto, "tagName", "강추");
-        ReflectionTestUtils.setField(addTagRequestDto, "colorCode", "#E1FFE1");
+        ReflectionTestUtils.setField(addTagRequestDto, "addTagName", "강추");
+        ReflectionTestUtils.setField(addTagRequestDto, "addColorCode", "#E1FFE1");
 
         // when
         doNothing().when(tagService).addTag(addTagRequestDto);
@@ -121,8 +121,8 @@ class TagControllerTest {
     @DisplayName("태그 생성 실패 테스트 (Validation Exception)")
     void add_tag_fail_validation_exception_test() throws Exception {
         // given
-        ReflectionTestUtils.setField(addTagRequestDto, "tagName", "태그");
-        ReflectionTestUtils.setField(addTagRequestDto, "colorCode", "#PIUYT1");
+        ReflectionTestUtils.setField(addTagRequestDto, "addTagName", "태그");
+        ReflectionTestUtils.setField(addTagRequestDto, "addColorCode", "#PIUYT1");
 
         // when
         doNothing().when(tagService).addTag(addTagRequestDto);
@@ -140,9 +140,9 @@ class TagControllerTest {
     @DisplayName("태그 수정 성공 테스트")
     void modify_tag_success_test() throws Exception {
         // given
-        ReflectionTestUtils.setField(modifyTagRequestDto, "tagNo", 1);
-        ReflectionTestUtils.setField(modifyTagRequestDto, "tagName", "변경태그");
-        ReflectionTestUtils.setField(modifyTagRequestDto, "colorCode", "#47FF9C");
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyTagNo", 1);
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyTagName", "변경태그");
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyColorCode", "#47FF9C");
 
         // when
         doNothing().when(tagService).modifyTagInformation(modifyTagRequestDto);
@@ -161,15 +161,15 @@ class TagControllerTest {
     @DisplayName("태그 수정 실패 테스트 (Validation Exception)")
     void modify_tag_fail_validation_exception_test() throws Exception {
         // given
-        ReflectionTestUtils.setField(modifyTagRequestDto, "tagNo", 1);
-        ReflectionTestUtils.setField(modifyTagRequestDto, "tagName", "태그A");
-        ReflectionTestUtils.setField(modifyTagRequestDto, "colorCode", "#47F1ZZ");
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyTagNo", 1);
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyTagName", "태그A");
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyColorCode", "#47F1ZZdaf");
 
         // when
         doNothing().when(tagService).modifyTagInformation(modifyTagRequestDto);
 
         // then
-        mockMvc.perform(post("/api/tags")
+        mockMvc.perform(put("/api/tags")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(modifyTagRequestDto)))
                 .andExpect(status().is4xxClientError())
