@@ -8,7 +8,7 @@ import com.nhnacademy.bookpubshop.address.relationship.dummy.AddressMemberDummy;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,15 +31,15 @@ class AddressMemberRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
 
-    Tier tier;
+    BookPubTier bookPubTier;
     Member member;
     Address address;
     AddressMember addressMember;
 
     @BeforeEach
     void setUp() {
-        tier = TierDummy.dummy();
-        member = MemberDummy.dummy(tier);
+        bookPubTier = TierDummy.dummy();
+        member = MemberDummy.dummy(bookPubTier);
         address = AddressDummy.dummy();
         addressMember = AddressMemberDummy.dummy(member,address);
     }
@@ -47,7 +47,7 @@ class AddressMemberRepositoryTest {
     @Test
     @DisplayName("멤버와 주소의 연관관계 테이블 저장")
     void AddressMemberSaveTest() {
-        entityManager.persist(addressMember.getMember().getTier());
+        entityManager.persist(addressMember.getMember().getBookPubTier());
         entityManager.persist(addressMember.getMember());
         entityManager.persist(addressMember.getAddress());
         entityManager.persist(addressMember);

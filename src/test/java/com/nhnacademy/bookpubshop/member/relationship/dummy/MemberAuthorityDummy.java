@@ -1,11 +1,8 @@
 package com.nhnacademy.bookpubshop.member.relationship.dummy;
 
-import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
-import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
 
 /**
  * 멤버 권한 연관관계 더미 클래스

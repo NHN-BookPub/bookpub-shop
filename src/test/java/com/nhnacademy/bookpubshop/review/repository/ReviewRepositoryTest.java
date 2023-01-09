@@ -12,7 +12,7 @@ import com.nhnacademy.bookpubshop.review.entity.Review;
 import com.nhnacademy.bookpubshop.reviewpolicy.dummy.ReviewPolicyDummy;
 import com.nhnacademy.bookpubshop.reviewpolicy.entity.ReviewPolicy;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +36,7 @@ class ReviewRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
 
-    Tier tier;
+    BookPubTier bookPubTier;
     Member member;
     Review review;
     Product product;
@@ -44,13 +44,13 @@ class ReviewRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        tier = TierDummy.dummy();
-        member = MemberDummy.dummy(tier);
+        bookPubTier = TierDummy.dummy();
+        member = MemberDummy.dummy(bookPubTier);
         product = productDummy();
         reviewPolicy = ReviewPolicyDummy.dummy();
         review = ReviewDummy.dummy(member, product, reviewPolicy);
 
-        entityManager.persist(tier);
+        entityManager.persist(bookPubTier);
         entityManager.persist(member);
         entityManager.persist(product);
         entityManager.persist(reviewPolicy);

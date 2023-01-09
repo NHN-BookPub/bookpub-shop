@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,10 +28,11 @@ public class CouponType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "coupon_type_number", nullable = false)
+    @Column(name = "coupon_type_number")
     private Long typeNo;
 
-    @Column(name = "coupon_type_name", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "coupon_type_name", unique = true)
     private String typeName;
 
 }

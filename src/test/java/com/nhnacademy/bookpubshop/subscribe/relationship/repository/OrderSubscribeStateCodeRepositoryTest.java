@@ -33,14 +33,16 @@ class OrderSubscribeStateCodeRepositoryTest {
     }
 
     @Test
-    @DisplayName("구독상태코드 save 테스트")
-    void memberSaveTest() {
+    @DisplayName("주문구독상태코드 save 테스트")
+    void orderSubscribeStateCodeSaveTest() {
         OrderSubscribeStateCode persist = entityManager.persist(stateCode);
 
-        Optional<OrderSubscribeStateCode> orderSubscribeStateCode = orderSubscribeStateCodeRepository.findById(1);
+        Optional<OrderSubscribeStateCode> orderSubscribeStateCode = orderSubscribeStateCodeRepository.findById(persist.getCodeNo());
 
         assertThat(orderSubscribeStateCode).isPresent();
         assertThat(orderSubscribeStateCode.get().getCodeNo()).isEqualTo(persist.getCodeNo());
         assertThat(orderSubscribeStateCode.get().getCodeName()).isEqualTo(persist.getCodeName());
+        assertThat(orderSubscribeStateCode.get().getCodeInfo()).isEqualTo(persist.getCodeInfo());
+        assertThat(orderSubscribeStateCode.get().isCodeUsed()).isEqualTo(persist.isCodeUsed());
     }
 }
