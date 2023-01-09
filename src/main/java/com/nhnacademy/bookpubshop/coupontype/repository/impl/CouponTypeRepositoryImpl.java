@@ -32,6 +32,7 @@ public class CouponTypeRepositoryImpl extends QuerydslRepositorySupport
         return Optional.of(from(couponType)
                 .where(couponType.typeNo.eq(typeNo))
                 .select(Projections.constructor(GetCouponTypeResponseDto.class,
+                        couponType.typeNo,
                         couponType.typeName))
                 .fetchOne());
     }
@@ -45,6 +46,7 @@ public class CouponTypeRepositoryImpl extends QuerydslRepositorySupport
 
         return from(couponType)
                 .select(Projections.constructor(GetCouponTypeResponseDto.class,
+                        couponType.typeNo,
                         couponType.typeName))
                 .fetch();
     }
