@@ -4,6 +4,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +12,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,25 +37,34 @@ import lombok.ToString;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_number", nullable = false, unique = true)
+    @Column(name = "product_number")
     private Long productNo;
 
     @ManyToOne
-    @JoinColumn(name = "product_policy_number", nullable = false)
+    @NotNull
+    @JoinColumn(name = "product_policy_number")
     private ProductPolicy productPolicy;
 
     @ManyToOne
-    @JoinColumn(name = "product_type_code_number", nullable = false)
+    @NotNull
+    @JoinColumn(name = "product_type_code_number")
     private ProductTypeStateCode productTypeStateCode;
 
     @ManyToOne
-    @JoinColumn(name = "product_sale_code_number", nullable = false)
+    @NotNull
+    @JoinColumn(name = "product_sale_code_number")
     private ProductSaleStateCode productSaleStateCode;
 
-    @Column(name = "product_isbn", nullable = false, unique = true)
+    @OneToMany
+    @JoinColumn(name = "product_relation_number")
+    private List<Product> relationProduct;
+
+    @NotNull
+    @Column(name = "product_isbn", unique = true)
     private String productIsbn;
 
-    @Column(name = "product_title", nullable = false)
+    @NotNull
+    @Column(name = "product_title")
     private String title;
 
     @Column(name = "product_page_count")
@@ -67,30 +79,42 @@ public class Product {
     @Column(name = "product_ebook_file_path")
     private String ebookFilePath;
 
-    @Column(name = "product_sales_price", nullable = false)
+    @NotNull
+    @Column(name = "product_sales_price")
     private Long salesPrice;
 
-    @Column(name = "product_sales_rate", nullable = false)
+    @NotNull
+    @Column(name = "product_price")
+    private Long productPrice;
+
+    @NotNull
+    @Column(name = "product_sales_rate")
     private Integer salesRate;
 
-    @Column(name = "product_view_count", nullable = false)
+    @Column(name = "product_view_count")
     private Long viewCount;
 
-    @Column(name = "product_priority", nullable = false)
+    @NotNull
+    @Column(name = "product_priority")
     private Integer productPriority;
 
-    @Column(name = "product_deleted", nullable = false)
+    @NotNull
+    @Column(name = "product_deleted")
     private boolean productDeleted;
 
-    @Column(name = "product_stock", nullable = false)
+    @NotNull
+    @Column(name = "product_stock")
     private Integer productStock;
 
-    @Column(name = "product_published_at", nullable = false)
+    @NotNull
+    @Column(name = "product_published_at")
     private LocalDateTime publishDate;
 
-    @Column(name = "product_created_at", nullable = false)
+    @NotNull
+    @Column(name = "product_created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "product_subscribed", nullable = false)
+    @NotNull
+    @Column(name = "product_subscribed")
     private boolean productSubscribed;
 }
