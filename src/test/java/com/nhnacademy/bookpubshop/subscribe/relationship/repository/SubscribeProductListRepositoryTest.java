@@ -8,6 +8,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCo
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import com.nhnacademy.bookpubshop.subscribe.relationship.entity.SubscribeProductList;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,9 +47,9 @@ class SubscribeProductListRepositoryTest {
         productSaleStateCode = new ProductSaleStateCode(null, "판타지", true, "판타지 소설");
         subscribe =  new Subscribe(null, "좋은생각", 80000L, 100000L,
                 20, 100L, false, LocalDateTime.now(), true);
-        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, "1231231231", "인어공주",
+        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, Collections.EMPTY_LIST,"1231231231", "인어공주",
                 100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 1000L,
-                10, 300L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
+                10000L, 90, 3L, 2,false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
 
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);

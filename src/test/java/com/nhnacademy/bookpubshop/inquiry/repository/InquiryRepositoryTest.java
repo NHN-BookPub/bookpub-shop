@@ -20,6 +20,7 @@ import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -85,9 +86,9 @@ class InquiryRepositoryTest {
         productSaleStateCodeRepository.save(productSaleStateCode);
 
         product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode,
-                "Isbn:123-1111", "title", 100, "설명",
-                "썸네일.png", "eBook path", 20000L,5,
-                300L, 1, false, 100,
+                Collections.EMPTY_LIST, "Isbn:123-1111", "title", 100, "설명",
+                "썸네일.png", "eBook path", 20000L,5000L,
+                10, 1L, 3,  false, 100,
                 LocalDateTime.now(), LocalDateTime.now(), false);
         productRepository.save(product);
 

@@ -6,6 +6,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,9 +44,9 @@ class ProductRepositoryTest {
         entityManager.persist(productTypeStateCode);
         entityManager.persist(productSaleStateCode);
 
-        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, "1231231231", "인어공주",
+        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, Collections.EMPTY_LIST, "1231231231", "인어공주",
                 100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 1000L,
-                10, 300L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
+                100L, 10, 3L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
     }
 
     @Test

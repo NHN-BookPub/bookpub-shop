@@ -24,6 +24,7 @@ import com.nhnacademy.bookpubshop.subscribe.relationship.entity.OrderSubscribeSt
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -81,9 +82,9 @@ class OrderSubscribeRepositoryTest {
         member = MemberDummy.dummy(bookPubTier);
         order = OrderDummy.dummy(member, pricePolicy, deliveryPricePolicy, address, orderStateCode);
         subscribe = SubscribeDummy.dummy();
-        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, "1231231231", "인어공주",
+        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, Collections.EMPTY_LIST, "1231231231", "인어공주",
                 100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 1000L,
-                10, 300L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
+                10L, 10, 3L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode, 1, 100L, 5000L, "테스트");
         orderSubscribe = new OrderSubscribe(null, subscribe, order, orderSubscribeStateCode, 1000L, 10000L, null, LocalDateTime.now());
 

@@ -17,6 +17,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -76,10 +77,10 @@ class CouponMonthRepositoryTest {
 
     private Product productDummy() {
         Product product = new Product(null, productPolicyDummy(), productTypeStateCodeDummy(),
-                productSaleStateCodeDummy(), "isbn",
+                productSaleStateCodeDummy(), Collections.EMPTY_LIST, "isbn",
                 "title", 10, "description",
-                "test", "file_path", 10L, 1,
-                1L, 1, false,
+                "test", "file_path", 10L, 1L,
+                10, 13L, 3, false,
                 1, LocalDateTime.now(), LocalDateTime.now(), false);
         return entityManager.persist(product);
     }
