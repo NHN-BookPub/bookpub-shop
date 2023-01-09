@@ -14,5 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TierResponseDto {
+    private Integer tierNo;
     private String tierName;
 }

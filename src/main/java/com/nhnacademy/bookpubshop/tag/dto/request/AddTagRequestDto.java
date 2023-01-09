@@ -16,8 +16,8 @@ import org.hibernate.validator.constraints.Length;
 public class AddTagRequestDto {
 
     @Length(min = 1, max = 20, message = "태그 이름은 최소 1글자, 최대 20글자 가능헙니다.")
-    private String tagName;
+    private String addTagName;
 
     @Pattern(regexp = "#([a-fA-F0-9]{6})", message = "지원하지 않는 색상 코드입니다.")
-    private String colorCode;
+    private String addColorCode;
 }

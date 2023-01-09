@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,16 +37,19 @@ public class Payment {
     @Column(name = "payment_number", nullable = false)
     private Long paymentNo;
 
+    @NotNull
     @OneToOne
-    @JoinColumn(name = "order_number", nullable = false)
+    @JoinColumn(name = "order_number")
     private BookpubOrder order;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "payment_state_code_number", nullable = false)
+    @JoinColumn(name = "payment_state_code_number")
     private PaymentStateCode paymentStateCode;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "payment_type_state_code_number", nullable = false)
+    @JoinColumn(name = "payment_type_state_code_number")
     private PaymentTypeStateCode paymentTypeStateCode;
 
     @Column(name = "payment_created_at", nullable = false)

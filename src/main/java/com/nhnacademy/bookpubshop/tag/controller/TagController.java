@@ -98,7 +98,7 @@ public class TagController {
      * @return 성공 경우 200 응답
      */
     @DeleteMapping("/{tagNo}")
-    public ResponseEntity<String> tagDelete(@PathVariable("tagNo") Integer tagNo) {
+    public ResponseEntity<Void> tagDelete(@PathVariable("tagNo") Integer tagNo) {
         tagService.deleteTagByTagNumber(tagNo);
 
         return ResponseEntity.ok()
