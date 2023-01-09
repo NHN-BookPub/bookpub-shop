@@ -10,7 +10,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 /**
- * Some description here.
+ * 쿠폰정책 Repo 구현체입니다.
  *
  * @author : 정유진
  * @since : 1.0
