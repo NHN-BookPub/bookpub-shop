@@ -14,5 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetCouponTypeResponseDto {
-    String typeName;
+    private Long typeNo;
+    private String typeName;
 }
