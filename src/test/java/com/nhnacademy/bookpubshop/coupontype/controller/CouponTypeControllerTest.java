@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.coupontype.controller;
 
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -45,7 +46,7 @@ class CouponTypeControllerTest {
     @DisplayName("쿠폰유형 단건 조회 테스트")
     void CouponTypeDetailTest() throws Exception {
         //given
-        GetCouponTypeResponseDto dto = new GetCouponTypeResponseDto("test_target");
+        GetCouponTypeResponseDto dto = new GetCouponTypeResponseDto(1L, "test_target");
         given(couponTypeService.getCouponType(anyLong()))
                 .willReturn(dto);
 
@@ -53,6 +54,7 @@ class CouponTypeControllerTest {
         mockMvc.perform(get(path + "/{typeNo}", anyLong()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.typeNo", is(dto.getTypeNo()), Long.class))
                 .andExpect(jsonPath("$.typeName", equalTo(dto.getTypeName())));
 
         verify(couponTypeService).getCouponType(anyLong());
@@ -62,13 +64,14 @@ class CouponTypeControllerTest {
     @DisplayName("쿠폰유형 리스트 조회 테스트")
     void CouponTypeListTest() throws Exception {
         //given
-        GetCouponTypeResponseDto dto = new GetCouponTypeResponseDto("test_target");
+        GetCouponTypeResponseDto dto = new GetCouponTypeResponseDto(1L, "test_target");
         given(couponTypeService.getCouponTypes()).willReturn(List.of(dto));
 
         //when && then
         mockMvc.perform(get(path))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].typeNo", is(dto.getTypeNo()), Long.class))
                 .andExpect(jsonPath("$[0].typeName", equalTo(dto.getTypeName())));
 
         verify(couponTypeService).getCouponTypes();
