@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.member.dto;
 
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.Getter;
@@ -63,7 +63,7 @@ public class SignUpMemberRequestDto {
      * @param tier 멤버 생성 시 필요한 tier 객체.
      * @return Member entity 생성 후 반환
      */
-    public Member createMember(Tier tier) {
+    public Member createMember(BookPubTier tier) {
         Integer memberYear = Integer.parseInt(birth.substring(0, 2));
         Integer memberMonthDay = Integer.parseInt(birth.substring(2));
 

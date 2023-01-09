@@ -7,15 +7,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.member.dto.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,7 +28,8 @@ import org.springframework.test.web.servlet.MockMvc;
  * @author : 임태원
  * @since : 1.0
  **/
-@WebMvcTest
+@WebMvcTest(MemberController.class)
+@Import(ShopAdviceController.class)
 class MemberControllerTest {
 
     @Autowired
@@ -39,10 +42,13 @@ class MemberControllerTest {
 
     String path = "/api/signup";
 
+    BookPubTier basic;
+
     SignUpMemberRequestDto signUpMemberRequestDto;
 
     @BeforeEach
     void setUp() {
+        basic = new BookPubTier("basic");
         objectMapper = new ObjectMapper();
         signUpMemberRequestDto = new SignUpMemberRequestDto();
     }
@@ -62,7 +68,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
         when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(new Tier(null, "basic"))
+                signUpMemberRequestDto.createMember(basic)
         );
 
         mvc.perform(post(path)
@@ -90,8 +96,9 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "address", "광주");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
+        basic = new BookPubTier(null, "basic");
         when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(new Tier(null, "basic"))
+                signUpMemberRequestDto.createMember(basic)
         );
 
         //when && then
@@ -119,7 +126,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
         when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(new Tier(null, "basic"))
+                signUpMemberRequestDto.createMember(basic)
         );
 
         //when && then
@@ -147,7 +154,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
         when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(new Tier(null, "basic"))
+                signUpMemberRequestDto.createMember(basic)
         );
 
         //when && then
@@ -175,7 +182,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
         when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(new Tier(null, "basic"))
+                signUpMemberRequestDto.createMember(basic)
         );
 
         //when && then
@@ -203,7 +210,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
         when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(new Tier(null, "basic"))
+                signUpMemberRequestDto.createMember(new BookPubTier(null, "basic"))
         );
 
         //when && then
@@ -231,7 +238,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
         when(memberService.signup(any(), anyString())).thenReturn(
-                signUpMemberRequestDto.createMember(new Tier(null, "basic"))
+                signUpMemberRequestDto.createMember(basic)
         );
 
         //when && then

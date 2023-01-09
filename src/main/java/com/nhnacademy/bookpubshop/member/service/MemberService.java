@@ -4,7 +4,7 @@ import com.nhnacademy.bookpubshop.member.dto.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.DuplicateMemberFieldException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import com.nhnacademy.bookpubshop.tier.exception.NotFoundTierException;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class MemberService {
         String email = signUpMemberRequestDto.getEmail();
         String id = signUpMemberRequestDto.getMemberId();
 
-        Tier tier = tierRepository.findByTierName(tierName)
+        BookPubTier tier = tierRepository.findByTierName(tierName)
                 .orElseThrow(NotFoundTierException::new);
 
         duplicateCheck(nickname, email, id);

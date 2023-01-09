@@ -10,8 +10,9 @@ import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.DuplicateMemberFieldException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
+import java.awt.print.Book;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,7 +43,7 @@ class MemberServiceTest {
     SignUpMemberRequestDto signUpMemberRequestDto;
     final String duplicate = "중복되는 항목";
     Member member;
-    Tier tier;
+    BookPubTier tier;
     ArgumentCaptor<Member> captor;
 
     @BeforeEach
