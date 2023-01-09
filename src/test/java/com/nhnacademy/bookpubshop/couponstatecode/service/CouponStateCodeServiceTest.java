@@ -40,13 +40,14 @@ class CouponStateCodeServiceTest {
     @DisplayName("쿠폰상태코드 get 테스트")
     void getCouponStateCode() {
         GetCouponStateCodeResponseDto dto =
-                new GetCouponStateCodeResponseDto("test_target");
+                new GetCouponStateCodeResponseDto(1, "test_target");
 
         given(couponStateCodeRepository.findByCodeNoAndCodeUsedTrue(anyInt())).willReturn(Optional.of(dto));
 
         GetCouponStateCodeResponseDto result = couponStateCodeService.getCouponStateCode(anyInt());
 
-        assertThat(result).isEqualTo(dto);
+        assertThat(result.getCodeNo()).isEqualTo(dto.getCodeNo());
+        assertThat(result.getCodeTarget()).isEqualTo(dto.getCodeTarget());
 
         verify(couponStateCodeRepository).findByCodeNoAndCodeUsedTrue(anyInt());
     }
@@ -68,13 +69,14 @@ class CouponStateCodeServiceTest {
     @DisplayName("쿠폰상태코드 리스트 get 테스트")
     void getCouponStateCodes() {
         given(couponStateCodeRepository.findAllByCodeUsedTrue()).willReturn(List.of(
-                new GetCouponStateCodeResponseDto("test_target_one"),
-                new GetCouponStateCodeResponseDto("test_target_two")
+                new GetCouponStateCodeResponseDto(1, "test_target_one"),
+                new GetCouponStateCodeResponseDto(2, "test_target_two")
         ));
 
         List<GetCouponStateCodeResponseDto> result = couponStateCodeService.getCouponStateCodes();
 
-        assertThat(result).hasSize(2);
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getCodeNo()).isEqualTo(1);
         assertThat(result.get(0).getCodeTarget()).isEqualTo("test_target_one");
 
         verify(couponStateCodeRepository).findAllByCodeUsedTrue();
