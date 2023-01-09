@@ -54,6 +54,7 @@ class CouponTypeRepositoryTest {
         Optional<GetCouponTypeResponseDto> result = couponTypeRepository.findByTypeNo(save.getTypeNo());
 
         assertThat(result).isPresent();
+        assertThat(result.get().getTypeNo()).isEqualTo(save.getTypeNo());
         assertThat(result.get().getTypeName()).isEqualTo(save.getTypeName());
     }
 
@@ -65,6 +66,7 @@ class CouponTypeRepositoryTest {
         List<GetCouponTypeResponseDto> result = couponTypeRepository.findAllBy();
 
         assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getTypeNo()).isEqualTo(save.getTypeNo());
         assertThat(result.get(0).getTypeName()).isEqualTo(save.getTypeName());
     }
 }

@@ -60,6 +60,7 @@ class CouponStateCodeRepositoryTest {
         Optional<GetCouponStateCodeResponseDto> result = couponStateCodeRepository.findByCodeNoAndCodeUsedTrue(save.getCodeNo());
 
         assertThat(result).isPresent();
+        assertThat(result.get().getCodeNo()).isEqualTo(save.getCodeNo());
         assertThat(result.get().getCodeTarget()).isEqualTo(save.getCodeTarget());
     }
 
@@ -74,7 +75,8 @@ class CouponStateCodeRepositoryTest {
 
         List<GetCouponStateCodeResponseDto> result = couponStateCodeRepository.findAllByCodeUsedTrue();
 
-        assertThat(result).hasSize(1);
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getCodeNo()).isEqualTo(save_one.getCodeNo());
         assertThat(result.get(0).getCodeTarget()).isEqualTo(save_one.getCodeTarget());
     }
 }

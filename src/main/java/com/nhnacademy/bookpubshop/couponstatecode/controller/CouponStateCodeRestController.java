@@ -40,7 +40,7 @@ public class CouponStateCodeRestController {
     }
 
     /**
-     * Gets coupon state codes.
+     * 쿠폰상태코드 리스트 조회.
      *
      * @return 쿠폰상태코드 적용타겟 리스트를 ResponseEntity 에 담아 반환합니다.
      */

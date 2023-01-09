@@ -51,6 +51,7 @@ class CouponTypeServiceTest {
     @DisplayName("쿠폰유형 단건 조회 성공 테스트")
     void getCouponTypeSuccessTest() {
         //given
+        ReflectionTestUtils.setField(getCouponResponseDto, "typeNo", 1L);
         ReflectionTestUtils.setField(getCouponResponseDto, "typeName", "일반");
 
         //when
@@ -59,6 +60,7 @@ class CouponTypeServiceTest {
 
         //then
         GetCouponTypeResponseDto result = couponTypeService.getCouponType(anyLong());
+        assertThat(result.getTypeNo()).isEqualTo(getCouponResponseDto.getTypeNo());
         assertThat(result.getTypeName()).isEqualTo(getCouponResponseDto.getTypeName());
 
         verify(couponTypeRepository).findByTypeNo(anyLong());
@@ -79,6 +81,7 @@ class CouponTypeServiceTest {
     @DisplayName("쿠폰유형 리스트 조회 성공 테스트")
     void getCouponTypesSuccessTest() {
         //given
+        ReflectionTestUtils.setField(getCouponResponseDto, "typeNo", 1L);
         ReflectionTestUtils.setField(getCouponResponseDto, "typeName", "일반");
 
         //when
@@ -86,6 +89,7 @@ class CouponTypeServiceTest {
 
         //then
         List<GetCouponTypeResponseDto> result = couponTypeService.getCouponTypes();
+        assertThat(result.get(0).getTypeNo()).isEqualTo(getCouponResponseDto.getTypeNo());
         assertThat(result.get(0).getTypeName()).isEqualTo(getCouponResponseDto.getTypeName());
 
         verify(couponTypeRepository).findAllBy();

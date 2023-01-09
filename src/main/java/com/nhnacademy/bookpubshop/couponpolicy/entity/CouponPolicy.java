@@ -38,7 +38,7 @@ public class CouponPolicy {
     @Column(name = "coupon_policy_minimum", nullable = false)
     private Long policyMinimum;
 
-    @Column(name = "coupon_policy_max_discount", nullable = false)
+    @Column(name = "coupon_policy_max_discount")
     private Long maxDiscount;
 
     /**

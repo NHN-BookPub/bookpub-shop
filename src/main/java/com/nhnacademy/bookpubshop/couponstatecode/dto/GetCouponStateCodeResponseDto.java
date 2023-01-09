@@ -14,5 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetCouponStateCodeResponseDto {
+    private Integer codeNo;
     private String codeTarget;
 }

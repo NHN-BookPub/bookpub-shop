@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.couponstatecode.controller;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,13 +38,14 @@ class CouponStateCodeRestControllerTest {
     @Test
     @DisplayName("사용 쿠폰상태코드 가져오기")
     void getCouponStateCode() throws Exception {
-        GetCouponStateCodeResponseDto dto = new GetCouponStateCodeResponseDto("test_target");
-        given(couponStateCodeService.getCouponStateCode(1))
+        GetCouponStateCodeResponseDto dto = new GetCouponStateCodeResponseDto(1, "test_target");
+        given(couponStateCodeService.getCouponStateCode(anyInt()))
                 .willReturn(dto);
 
         mockMvc.perform(get("/api/coupon-state-codes/{codeNo}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.codeNo", equalTo(dto.getCodeNo())))
                 .andExpect(jsonPath("$.codeTarget", equalTo(dto.getCodeTarget())));
 
         verify(couponStateCodeService).getCouponStateCode(1);
@@ -53,8 +55,8 @@ class CouponStateCodeRestControllerTest {
     @DisplayName("사용 쿠폰상태코드 리스트 가져오기")
     void getCouponStateCodes() throws Exception {
         List<GetCouponStateCodeResponseDto> dto = List.of(
-                new GetCouponStateCodeResponseDto("test_target_one"),
-                new GetCouponStateCodeResponseDto("test_target_two")
+                new GetCouponStateCodeResponseDto(1, "test_target_one"),
+                new GetCouponStateCodeResponseDto(2, "test_target_two")
         );
         given(couponStateCodeService.getCouponStateCodes())
                 .willReturn(dto);
@@ -62,6 +64,7 @@ class CouponStateCodeRestControllerTest {
         mockMvc.perform(get("/api/coupon-state-codes"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].codeNo", equalTo(dto.get(0).getCodeNo())))
                 .andExpect(jsonPath("$[0].codeTarget", equalTo(dto.get(0).getCodeTarget())));
 
         verify(couponStateCodeService).getCouponStateCodes();

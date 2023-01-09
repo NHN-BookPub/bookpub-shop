@@ -32,6 +32,7 @@ public class CouponStateCodeRepositoryImpl extends QuerydslRepositorySupport
                 .where(couponStateCode.codeNo.eq(codeNo)
                         .and(couponStateCode.codeUsed.isTrue()))
                 .select(Projections.constructor(GetCouponStateCodeResponseDto.class,
+                        couponStateCode.codeNo,
                         couponStateCode.codeTarget))
                 .fetchOne());
     }
@@ -47,6 +48,7 @@ public class CouponStateCodeRepositoryImpl extends QuerydslRepositorySupport
                 .where(couponStateCode.codeUsed.eq(true)
                         .and(couponStateCode.codeUsed.isTrue()))
                 .select(Projections.constructor(GetCouponStateCodeResponseDto.class,
+                        couponStateCode.codeNo,
                         couponStateCode.codeTarget
                 ))
                 .fetch();
