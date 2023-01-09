@@ -35,14 +35,10 @@ public class MemberService {
      */
     @Transactional
     public SignUpMemberResponseDto signup(SignUpMemberRequestDto signUpMemberRequestDto) {
-        String nickname = signUpMemberRequestDto.getNickname();
-        String email = signUpMemberRequestDto.getEmail();
-        String id = signUpMemberRequestDto.getMemberId();
-
         BookPubTier tier = tierRepository.findByTierName(TIER_NAME)
                 .orElseThrow(NotFoundTierException::new);
 
-        duplicateCheck(nickname, email, id);
+        duplicateCheck(signUpMemberRequestDto);
 
         Member member = signUpMemberRequestDto.createMember(tier);
         memberRepository.save(member);
@@ -55,17 +51,17 @@ public class MemberService {
         );
     }
 
-    private void duplicateCheck(String nickname, String email, String id) {
-        if (memberRepository.existsByMemberNickname(nickname)) {
-            throw new DuplicateMemberFieldException("닉네임(" + nickname + ")");
+    private void duplicateCheck(SignUpMemberRequestDto member) {
+        if (memberRepository.existsByMemberNickname(member.getNickname())) {
+            throw new DuplicateMemberFieldException("닉네임(" + member.getNickname() + ")");
         }
 
-        if (memberRepository.existsByMemberId(id)) {
-            throw new DuplicateMemberFieldException("아이디(" + id + ")");
+        if (memberRepository.existsByMemberId(member.getMemberId())) {
+            throw new DuplicateMemberFieldException("아이디(" + member.getMemberId() + ")");
         }
 
-        if (memberRepository.existsByMemberEmail(email)) {
-            throw new DuplicateMemberFieldException("이메일(" + email + ")");
+        if (memberRepository.existsByMemberEmail(member.getEmail())) {
+            throw new DuplicateMemberFieldException("이메일(" + member.getEmail() + ")");
         }
     }
 }
