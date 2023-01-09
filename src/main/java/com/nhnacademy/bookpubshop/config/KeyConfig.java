@@ -24,8 +24,6 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -35,6 +33,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
+ * 키 매니저를 사용하기위한 Config 입니다.
+ *
  * @author : 유호철, 임태원
  * @since : 1.0
  **/
@@ -62,7 +62,8 @@ public class KeyConfig {
      * @throws KeyManagementException    모든 조작에 대한 일반적인 키 에러.
      */
     public String keyStore(String keyId) throws KeyStoreException, IOException,
-            CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyManagementException {
+            CertificateException, NoSuchAlgorithmException,
+            UnrecoverableKeyException, KeyManagementException {
         KeyStore clientStore = KeyStore.getInstance("PKCS12");
         ClassPathResource resource = new ClassPathResource("book-pub.p12");
         clientStore.load(new FileInputStream(resource.getFile()), password.toCharArray());
@@ -73,12 +74,14 @@ public class KeyConfig {
                 .loadTrustMaterial(new TrustSelfSignedStrategy())
                 .build();
 
-        SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext);
+        SSLConnectionSocketFactory sslConnectionSocketFactory =
+                new SSLConnectionSocketFactory(sslContext);
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setSSLSocketFactory(sslConnectionSocketFactory)
                 .build();
 
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+        HttpComponentsClientHttpRequestFactory requestFactory =
+                new HttpComponentsClientHttpRequestFactory(httpClient);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -93,7 +96,7 @@ public class KeyConfig {
                 .build()
                 .expand(appKey, keyId)
                 .toUri();
-        String secret = Objects.requireNonNull(restTemplate.exchange(uri,
+        return Objects.requireNonNull(restTemplate.exchange(uri,
                                 HttpMethod.GET,
                                 new HttpEntity<>(headers),
                                 KeyResponseDto.class)
@@ -101,7 +104,6 @@ public class KeyConfig {
                 .getBody()
                 .getSecret();
 
-        return secret;
     }
 
     public String getPassword() {

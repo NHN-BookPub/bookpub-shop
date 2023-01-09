@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * mysql 접속 설정 클래스.
  *
- * @author : 임태원
+ * @author : 임태원, 유호철
  * @since : 1.0
  **/
 @Slf4j
@@ -38,7 +38,7 @@ public class DataSourceConfig {
 
     /**
      * 데이터소스 설정을 빈으로 등록합니다.
-     * @return 데이터소스를 리턴합니다.
+     * @return dataSource 데이터소스를 리턴합니다.
      */
     @Bean
     public DataSource dataSource() throws UnrecoverableKeyException, CertificateException,
