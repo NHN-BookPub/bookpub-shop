@@ -3,15 +3,15 @@ package com.nhnacademy.bookpubshop.product.relationship.controller;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductTypeStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductTypeStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductTypeStateCodeService;
-import lombok.RequiredArgsConstructor;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -62,7 +62,7 @@ public class ProductTypeStateCodeController {
      * @param requestDto 수정에 사용할 Dto 클래스입니다.
      * @return 성공시 200, 수정된 객체를 반환합니다.
      */
-    @PostMapping("/{codeNo}")
+    @PutMapping("/{codeNo}")
     public ResponseEntity<GetProductTypeStateCodeResponseDto> modifyTypeCodeById(
             @PathVariable Integer codeNo,
             @RequestBody CreateProductTypeStateCodeRequestDto requestDto) {
