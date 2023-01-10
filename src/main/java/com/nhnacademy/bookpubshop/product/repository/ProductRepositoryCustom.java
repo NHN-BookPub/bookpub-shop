@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.product.repository;
 
 import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
-import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -10,10 +10,23 @@ import org.springframework.data.repository.NoRepositoryBean;
  *
  * @author : 여운석
  * @since : 1.0
- **/
+ */
 @NoRepositoryBean
 public interface ProductRepositoryCustom {
-    List<GetProductListResponseDto> getAllProducts(Pageable pageable);
+    /**
+     * 페이징 처리된 모든 상품을 얻습니다.
+     *
+     * @param pageable pageable 객체를 받습니다.
+     * @return 전체 상품을 반환합니다.
+     */
+    Page<GetProductListResponseDto> getAllProducts(Pageable pageable);
 
-    List<GetProductListResponseDto> getProductListLikeTitle(String title, Pageable pageable);
+    /**
+     * 제목으로 상품을 검색합니다(like).
+     *
+     * @param title    제목입니다.
+     * @param pageable pageable 객체를 받습니다.
+     * @return 제목이 비슷한 모든 상품을 반환합니다.
+     */
+    Page<GetProductListResponseDto> getProductListLikeTitle(String title, Pageable pageable);
 }

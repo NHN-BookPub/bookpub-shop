@@ -3,7 +3,7 @@ package com.nhnacademy.bookpubshop.product.service;
 import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
-import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -37,16 +37,16 @@ public interface ProductService {
      * @param pageable 페이징을 위한 객체
      * @return 페이징에 따라 모든 상품을 반환합니다.
      */
-    List<GetProductListResponseDto> getAllProducts(Pageable pageable);
+    Page<GetProductListResponseDto> getAllProducts(Pageable pageable);
 
     /**
      * 제목과 비슷한 상품 리스트를 페이징하여 조회합니다.
      *
-     * @param title    the title
-     * @param pageable the pageable
-     * @return the product list like title
+     * @param title    상품 제목입니다.
+     * @param pageable pageable 객체를 받습니다.
+     * @return 제목이 비슷한 모든 상품을 반환합니다.
      */
-    List<GetProductListResponseDto> getProductListLikeTitle(String title, Pageable pageable);
+    Page<GetProductListResponseDto> getProductListLikeTitle(String title, Pageable pageable);
 
     /**
      * 상품을 수정합니다.
