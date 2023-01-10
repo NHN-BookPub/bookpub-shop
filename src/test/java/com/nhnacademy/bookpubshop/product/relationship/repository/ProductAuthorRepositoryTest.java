@@ -8,6 +8,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,9 +43,9 @@ class ProductAuthorRepositoryTest {
         productPolicy = new ProductPolicy(null, "실구매가", true, 5);
         productTypeStateCode = new ProductTypeStateCode(null, "기본", true, "기본입니다.");
         productSaleStateCode = new ProductSaleStateCode(null, "판타지", true, "판타지 소설");
-        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, "1231231231", "인어공주",
+        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, Collections.EMPTY_LIST, "1231231301", "인어공주",
                 100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 1000L,
-                10, 300L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
+                1000L, 10, 3L, 3,false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
         author = new Author(null, "사람");
 
         entityManager.persist(productPolicy);

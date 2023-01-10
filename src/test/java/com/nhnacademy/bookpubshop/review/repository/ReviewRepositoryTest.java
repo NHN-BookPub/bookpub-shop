@@ -14,6 +14,7 @@ import com.nhnacademy.bookpubshop.reviewpolicy.entity.ReviewPolicy;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,10 +74,10 @@ class ReviewRepositoryTest {
 
     private Product productDummy() {
         Product product = new Product(null, productPolicyDummy(), productTypeStateCodeDummy(),
-                productSaleStateCodeDummy(), "isbn",
+                productSaleStateCodeDummy(), Collections.EMPTY_LIST, "isbn",
                 "title", 10, "description",
-                "test", "file_path", 10L, 1,
-                1L, 1, false,
+                "test", "file_path", 10L, 1L,
+                10, 1L, 3, false,
                 1, LocalDateTime.now(), LocalDateTime.now(), false);
         return entityManager.persist(product);
     }

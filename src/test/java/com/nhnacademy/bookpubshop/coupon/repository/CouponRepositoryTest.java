@@ -30,6 +30,7 @@ import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -124,6 +125,7 @@ class CouponRepositoryTest {
                 productPolicy,
                 productTypeStateCode,
                 productSaleStateCode,
+                Collections.EMPTY_LIST,
                 "1231231231",
                 "인어공주",
                 100,
@@ -131,8 +133,9 @@ class CouponRepositoryTest {
                 "mermaid.png",
                 "mermaid_ebook.pdf",
                 10000L,
-                10,
-                300L,
+                100L,
+                20,
+                3L,
                 3,
                 false,
                 30,

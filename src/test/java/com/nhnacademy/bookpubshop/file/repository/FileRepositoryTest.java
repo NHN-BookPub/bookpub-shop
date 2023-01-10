@@ -37,6 +37,7 @@ import com.nhnacademy.bookpubshop.servicecode.dummy.CustomerServiceStateCodeDumm
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -118,11 +119,11 @@ class FileRepositoryTest {
 
     private Product productDummy() {
         Product product = new Product(null, productPolicyDummy(), productTypeStateCodeDummy(),
-                productSaleStateCodeDummy(), "isbn",
+                productSaleStateCodeDummy(), Collections.EMPTY_LIST, "isbn",
                 "title", 10, "description",
-                "test", "file_path", 10L, 1,
-                1L, 1, false,
-                1, LocalDateTime.now(), LocalDateTime.now(), false);
+                "test", "file_path", 10L, 100L,
+                90, 1L, 0,
+                false, 10, LocalDateTime.now(), LocalDateTime.now(), false);
         return entityManager.persist(product);
     }
 

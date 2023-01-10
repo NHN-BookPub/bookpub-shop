@@ -18,6 +18,7 @@ import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -55,9 +56,9 @@ class OrderProductRepositoryTest {
         productPolicy = new ProductPolicy(null, "실구매가", true, 5);
         productTypeStateCode = new ProductTypeStateCode(null, "기본", true, "기본입니다.");
         productSaleStateCode = new ProductSaleStateCode(null, "판타지", true, "판타지 소설");
-        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, "1231231231", "인어공주",
+        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, Collections.EMPTY_LIST, "1231231231", "인어공주",
                 100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 10000L,
-                10, 300L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
+                10L, 10, 3L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
 
         orderProductStateCode = new OrderProductStateCode(null, OrderProductState.CONFIRMED.getName(), OrderProductState.CONFIRMED.isUsed(), "주문완료되었습니다.");
 
