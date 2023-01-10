@@ -39,10 +39,9 @@ public class Wishlist {
     @JoinColumn(name = "member_number")
     private Member member;
 
-    @NotNull
     @MapsId("productNo")
     @ManyToOne
-    @JoinColumn(name = "product_number", unique = true)
+    @JoinColumn(name = "product_number")
     private Product product;
 
     @Column(name = "wishlist_applied")

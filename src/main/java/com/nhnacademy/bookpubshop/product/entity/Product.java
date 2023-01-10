@@ -41,6 +41,7 @@ public class Product extends BaseCreateTimeEntity {
     @Column(name = "product_number")
     private Long productNo;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "product_policy_number")
     private ProductPolicy productPolicy;
@@ -60,7 +61,7 @@ public class Product extends BaseCreateTimeEntity {
     private List<Product> relationProduct = new ArrayList<>();
 
     @NotNull
-    @Column(name = "product_isbn", unique = true)
+    @Column(name = "product_isbn")
     private String productIsbn;
 
     @NotNull

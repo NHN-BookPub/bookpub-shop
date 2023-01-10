@@ -59,7 +59,6 @@ public class PurchaseServiceImpl implements PurchaseService {
                 new Purchase(null,
                         product,
                         request.getPurchasePrice(),
-                        request.getCreatedAt(),
                         request.getPurchaseAmount()));
 
         return new GetPurchaseResponseDto(
@@ -88,7 +87,6 @@ public class PurchaseServiceImpl implements PurchaseService {
                 new Purchase(purchase.getPurchaseNo(),
                         product,
                         request.getPurchasePrice(),
-                        request.getCreatedAt(),
                         request.getPurchaseAmount()));
 
         return new GetPurchaseResponseDto(

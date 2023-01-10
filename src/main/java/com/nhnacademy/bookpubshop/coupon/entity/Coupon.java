@@ -41,7 +41,6 @@ public class Coupon {
     @JoinColumn(name = "coupon_template_number")
     private CouponTemplate couponTemplate;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "order_number")
     private BookpubOrder order;

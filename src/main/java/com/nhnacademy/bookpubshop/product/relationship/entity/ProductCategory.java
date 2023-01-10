@@ -32,16 +32,14 @@ public class ProductCategory {
     @EmbeddedId
     private Pk pk;
 
-    @NotNull
     @MapsId("categoryNo")
     @ManyToOne
-    @JoinColumn(name = "category_number", unique = true)
+    @JoinColumn(name = "category_number")
     private Category category;
 
-    @NotNull
     @MapsId("productNo")
     @ManyToOne
-    @JoinColumn(name = "product_number", unique = true)
+    @JoinColumn(name = "product_number")
     private Product product;
 
     /**

@@ -48,11 +48,9 @@ public class OrderProduct {
     @JoinColumn(name = "order_product_code_number")
     private OrderProductStateCode orderProductStateCode;
 
-    @NotNull
     @Column(name = "order_product_amount")
     private Integer productAmount;
 
-    @NotNull
     @Column(name = "order_product_coupon_amount")
     private Long couponAmount;
 

@@ -30,7 +30,7 @@ public class OrderProductStateCode {
     private Integer codeNo;
 
     @NotNull
-    @Column(name = "order_product_state_code_name")
+    @Column(name = "order_product_state_code_name", unique = true)
     private String codeName;
 
     @Column(name = "order_product_state_code_used")

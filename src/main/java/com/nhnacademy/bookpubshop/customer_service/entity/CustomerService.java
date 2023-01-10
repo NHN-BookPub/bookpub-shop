@@ -45,6 +45,7 @@ public class CustomerService extends BaseCreateTimeEntity {
     @JoinColumn(name = "member_number")
     private Member member;
 
+    @NotNull
     @Column(name = "customer_service_category")
     private String serviceCategory;
 

@@ -39,6 +39,7 @@ public class DeliveryLocation extends BaseCreateTimeEntity {
     @JoinColumn(name = "delivery_number")
     private Delivery delivery;
 
+    @NotNull
     @Column(name = "delivery_location_name")
     private String locationName;
 }

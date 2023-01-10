@@ -51,6 +51,7 @@ public class Inquiry extends BaseCreateTimeEntity {
     @JoinColumn(name = "product_number")
     private Product product;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "inquiry_state_code_number")
     private InquiryCode inquiryCode;
