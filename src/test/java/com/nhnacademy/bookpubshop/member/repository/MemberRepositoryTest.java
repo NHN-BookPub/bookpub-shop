@@ -10,7 +10,9 @@ import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,6 +58,8 @@ class MemberRepositoryTest {
     @Test
     @DisplayName("멤버 save 테스트")
     void memberSaveTest() {
+        LocalDateTime now = LocalDateTime.now();
+
         Member persist = entityManager.persist(member);
 
         Optional<Member> member = memberRepository.findById(persist.getMemberNo());
@@ -73,6 +77,10 @@ class MemberRepositoryTest {
         assertThat(member.get().getMemberBirthYear()).isEqualTo(persist.getMemberBirthYear());
         assertThat(member.get().getMemberBirthMonth()).isEqualTo(persist.getMemberBirthMonth());
         assertThat(member.get().isSocialJoined()).isEqualTo(persist.isSocialJoined());
+        assertThat(member.get().isMemberDeleted()).isFalse();
+        assertThat(member.get().isMemberBlocked()).isFalse();
+        assertThat(member.get().getMemberPoint()).isEqualTo(persist.getMemberPoint());
+        assertThat(member.get().getCreatedAt()).isAfter(now);
     }
 
     @DisplayName("멤버 상세조회 테스트")

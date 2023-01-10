@@ -1,9 +1,11 @@
 package com.nhnacademy.bookpubshop.product.relationship.repository;
 
-import static com.nhnacademy.bookpubshop.state.ProductSaleState.SALE;
-import static com.nhnacademy.bookpubshop.state.ProductTypeState.BEST_SELLER;
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTag;
@@ -11,8 +13,6 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCo
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.tag.entity.Tag;
 import com.nhnacademy.bookpubshop.tag.repository.TagRepository;
-import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -62,35 +62,33 @@ class ProductTagRepositoryTest {
         productPolicy = new ProductPolicy(null, "실구매가가기준", true, 5);
         productPolicyRepository.save(productPolicy);
 
-        productTypeStateCode = new ProductTypeStateCode(null,
-                BEST_SELLER.getName(), BEST_SELLER.isUsed(), "이 책은 베스트셀러입니다.");
-        productTypeStateCodeRepository.save(productTypeStateCode);
-
-        productSaleStateCode = new ProductSaleStateCode(null,
-                SALE.getName(), SALE.isUsed(), "이 상품은 판매중입니다.");
-        productSaleStateCodeRepository.save(productSaleStateCode);
-
-        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode,
-                Collections.EMPTY_LIST, "00123-1111", "title", 100, "설명",
-                "썸네일.png", "eBook path", 20000L,10L,
-                1, 1L, 3, false, 100,
-                LocalDateTime.now(), LocalDateTime.now(), false);
-        productRepository.save(product);
+        productPolicy = ProductPolicyDummy.dummy();
+        productTypeStateCode = ProductTypeStateCodeDummy.dummy();
+        productSaleStateCode = ProductSaleStateCodeDummy.dummy();
+        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
         tag = new Tag(null, "강추", "#FFFFFF");
         tagRepository.save(tag);
+
+        entityManager.persist(productPolicy);
+        entityManager.persist(productTypeStateCode);
+        entityManager.persist(productSaleStateCode);
+        entityManager.persist(product);
     }
 
     @Test
     @DisplayName(value = "상품태그(product_and_tag) 레포지토리 save 테스트")
     void productTagSaveTest() {
         ProductTag productTag = new ProductTag(new ProductTag.Pk(tag.getTagNo(), product.getProductNo()), tag, product);
-        productTagRepository.save(productTag);
+        ProductTag persist = productTagRepository.save(productTag);
 
-        Optional<ProductTag> optional = productTagRepository.findById(new ProductTag.Pk(tag.getTagNo(), product.getProductNo()));
+        Optional<ProductTag> optional = productTagRepository.findById(persist.getPk());
         assertThat(optional).isPresent();
-        assertThat(optional.get().getPk().getTagNo()).isEqualTo(tag.getTagNo());
-        assertThat(optional.get().getPk().getProductNo()).isEqualTo(product.getProductNo());
+        assertThat(optional.get().getPk()).isEqualTo(persist.getPk());
+        assertThat(optional.get().getPk().getTagNo()).isEqualTo(persist.getPk().getTagNo());
+        assertThat(optional.get().getPk().getProductNo()).isEqualTo(persist.getPk().getProductNo());
+        assertThat(optional.get().getTag().getTagNo()).isEqualTo(persist.getTag().getTagNo());
+        assertThat(optional.get().getProduct().getProductNo()).isEqualTo(persist.getProduct().getProductNo());
 
         entityManager.clear();
     }

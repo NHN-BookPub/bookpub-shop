@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.address.relationship.entity;
 
 import com.nhnacademy.bookpubshop.address.entity.Address;
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -30,24 +32,24 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class AddressMember {
+public class AddressMember extends BaseCreateTimeEntity {
     @EmbeddedId
     private Pk id;
 
     @MapsId("memberNo")
     @ManyToOne
-    @JoinColumn(name = "member_number", nullable = false, unique = true)
+    @NotNull
+    @JoinColumn(name = "member_number", unique = true)
     private Member member;
 
     @MapsId("addressNo")
     @ManyToOne
-    @JoinColumn(name = "address_number", nullable = false, unique = true)
+    @NotNull
+    @JoinColumn(name = "address_number", unique = true)
     private Address address;
 
-    @Column(name = "address_member_created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "address_member_based", nullable = false)
+    @NotNull
+    @Column(name = "address_member_based")
     private boolean memberBased;
 
     /**

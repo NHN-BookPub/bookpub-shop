@@ -7,6 +7,8 @@ import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
+import com.nhnacademy.bookpubshop.order.relationship.dummy.OrderSubscribeDummy;
+import com.nhnacademy.bookpubshop.order.relationship.dummy.OrderSubscribeStateCodeDummy;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProductStateCode;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderSubscribe;
@@ -14,7 +16,11 @@ import com.nhnacademy.bookpubshop.orderstatecode.dummy.OrderStateCodeDummy;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
@@ -23,8 +29,6 @@ import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import com.nhnacademy.bookpubshop.subscribe.relationship.entity.OrderSubscribeStateCode;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
-import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -64,29 +68,24 @@ class OrderSubscribeRepositoryTest {
     OrderStateCode orderStateCode;
     OrderSubscribeStateCode orderSubscribeStateCode;
 
-
-
     @BeforeEach
     void setUp() {
-
-        productPolicy = new ProductPolicy(null, "실구매가", true, 5);
-        productTypeStateCode = new ProductTypeStateCode(null, "기본", true, "기본입니다.");
-        productSaleStateCode = new ProductSaleStateCode(null, "판타지", true, "판타지 소설");
+        productPolicy = ProductPolicyDummy.dummy();
+        productTypeStateCode = ProductTypeStateCodeDummy.dummy();
+        productSaleStateCode = ProductSaleStateCodeDummy.dummy();
         pricePolicy = PricePolicyDummy.dummy();
         bookPubTier = TierDummy.dummy();
         address = AddressDummy.dummy();
         orderStateCode = OrderStateCodeDummy.dummy();
         deliveryPricePolicy = PricePolicyDummy.dummy();
-        orderSubscribeStateCode = new OrderSubscribeStateCode(null, "test", true, "test_info");
+        orderSubscribeStateCode = OrderSubscribeStateCodeDummy.dummy();
         orderProductStateCode = new OrderProductStateCode(null, "test", true, "test_info");
         member = MemberDummy.dummy(bookPubTier);
         order = OrderDummy.dummy(member, pricePolicy, deliveryPricePolicy, address, orderStateCode);
         subscribe = SubscribeDummy.dummy();
-        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, Collections.EMPTY_LIST, "1231231231", "인어공주",
-                100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 1000L,
-                10L, 10, 3L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
+        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode, 1, 100L, 5000L, "테스트");
-        orderSubscribe = new OrderSubscribe(null, subscribe, order, orderSubscribeStateCode, 1000L, 10000L, null, LocalDateTime.now());
+        orderSubscribe = OrderSubscribeDummy.dummy(subscribe, order, orderSubscribeStateCode);
 
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);

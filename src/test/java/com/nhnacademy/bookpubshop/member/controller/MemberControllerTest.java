@@ -27,6 +27,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,6 +40,7 @@ import org.springframework.test.web.servlet.MockMvc;
  **/
 @WebMvcTest(MemberController.class)
 @Import(ShopAdviceController.class)
+@MockBean(JpaMetamodelMappingContext.class)
 class MemberControllerTest {
 
     @Autowired

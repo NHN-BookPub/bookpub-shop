@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,14 +23,14 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Authority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "authority_number", nullable = false, unique = true)
+    @Column(name = "authority_number")
     private Integer authorityNo;
 
-    @Column(name = "authority_name", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "authority_name", unique = true)
     private String authorityName;
 
     /**

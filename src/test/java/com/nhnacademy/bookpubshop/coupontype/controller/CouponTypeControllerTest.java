@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.coupontype.controller;
 
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -27,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
  * @since : 1.0
  **/
 @WebMvcTest(CouponTypeController.class)
+@MockBean(JpaMetamodelMappingContext.class)
 class CouponTypeControllerTest {
     @Autowired
     MockMvc mockMvc;

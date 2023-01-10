@@ -1,9 +1,9 @@
 package com.nhnacademy.bookpubshop.payment.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.paymentstatecode.entity.PaymentStateCode;
 import com.nhnacademy.bookpubshop.paymenttypestatecode.entity.PaymentTypeStateCode;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,11 +30,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "payment")
-public class Payment {
+public class Payment extends BaseCreateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "payment_number", nullable = false)
+    @Column(name = "payment_number")
     private Long paymentNo;
 
     @NotNull
@@ -51,8 +51,5 @@ public class Payment {
     @ManyToOne
     @JoinColumn(name = "payment_type_state_code_number")
     private PaymentTypeStateCode paymentTypeStateCode;
-
-    @Column(name = "payment_created_at", nullable = false)
-    private LocalDateTime createdAt;
 
 }

@@ -10,11 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 주문상품(order_product_state_code) 테이블.
@@ -25,34 +25,37 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "order_and_product")
 public class OrderProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_product_number", nullable = false, unique = true)
+    @Column(name = "order_product_number")
     private Long orderProductNo;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "product_number", nullable = false)
+    @JoinColumn(name = "product_number")
     private Product product;
 
+    @NotNull
     @ManyToOne
     @JoinColumn
     private BookpubOrder order;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "order_product_code_number", nullable = false)
+    @JoinColumn(name = "order_product_code_number")
     private OrderProductStateCode orderProductStateCode;
 
-    @Column(name = "order_product_amount", nullable = false)
+    @Column(name = "order_product_amount")
     private Integer productAmount;
 
     @Column(name = "order_product_coupon_amount")
     private Long couponAmount;
 
-    @Column(name = "order_product_price", nullable = false)
+    @NotNull
+    @Column(name = "order_product_price")
     private Long productPrice;
 
     @Column(name = "order_product_reason_name")

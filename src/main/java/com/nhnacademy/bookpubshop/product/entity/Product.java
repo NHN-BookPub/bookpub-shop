@@ -1,9 +1,11 @@
 package com.nhnacademy.bookpubshop.product.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,7 +21,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+
 
 /**
  * 상품(product) 테이블.
@@ -31,17 +33,16 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "product")
-public class Product {
+public class Product extends BaseCreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_number")
     private Long productNo;
 
-    @ManyToOne
     @NotNull
+    @ManyToOne
     @JoinColumn(name = "product_policy_number")
     private ProductPolicy productPolicy;
 
@@ -57,10 +58,10 @@ public class Product {
 
     @OneToMany
     @JoinColumn(name = "product_relation_number")
-    private List<Product> relationProduct;
+    private List<Product> relationProduct = new ArrayList<>();
 
     @NotNull
-    @Column(name = "product_isbn", unique = true)
+    @Column(name = "product_isbn")
     private String productIsbn;
 
     @NotNull
@@ -87,18 +88,15 @@ public class Product {
     @Column(name = "product_price")
     private Long productPrice;
 
-    @NotNull
     @Column(name = "product_sales_rate")
     private Integer salesRate;
 
     @Column(name = "product_view_count")
     private Long viewCount;
 
-    @NotNull
     @Column(name = "product_priority")
     private Integer productPriority;
 
-    @NotNull
     @Column(name = "product_deleted")
     private boolean productDeleted;
 
@@ -110,11 +108,6 @@ public class Product {
     @Column(name = "product_published_at")
     private LocalDateTime publishDate;
 
-    @NotNull
-    @Column(name = "product_created_at")
-    private LocalDateTime createdAt;
-
-    @NotNull
     @Column(name = "product_subscribed")
     private boolean productSubscribed;
 }

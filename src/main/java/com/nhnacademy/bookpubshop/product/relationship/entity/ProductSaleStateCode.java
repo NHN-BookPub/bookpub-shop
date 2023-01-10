@@ -11,7 +11,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 상품판매여부코드(product_sale_state_code) 테이블.
@@ -22,7 +21,6 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "product_sale_state_code")
 public class ProductSaleStateCode {
@@ -32,10 +30,9 @@ public class ProductSaleStateCode {
     private Integer codeNumber;
 
     @NotNull
-    @Column(name = "product_sale_state_code_category", unique = true)
+    @Column(name = "product_sale_state_code_category")
     private String codeCategory;
 
-    @NotNull
     @Column(name = "product_sale_state_code_used")
     private boolean codeUsed;
 

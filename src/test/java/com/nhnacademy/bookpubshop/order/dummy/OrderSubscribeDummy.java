@@ -24,7 +24,6 @@ public class OrderSubscribeDummy {
                         new OrderSubscribeStateCode(null, "테스트", true, "테스트"),
                         1000L,
                         8000L,
-                LocalDateTime.of(2000, 12, 12, 14, 30),
-                LocalDateTime.now());
+                LocalDateTime.of(2000, 12, 12, 14, 30));
     }
 }

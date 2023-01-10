@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.subscribe.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,33 +25,33 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "subscribe")
-public class Subscribe {
+public class Subscribe extends BaseCreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "subscribe_number", nullable = false, unique = true)
+    @Column(name = "subscribe_number")
     private Long subscribeNo;
 
-    @Column(name = "subscribe_name", nullable = false)
+    @NotNull
+    @Column(name = "subscribe_name")
     private String subscribeName;
 
-    @Column(name = "subscribe_sales_price", nullable = false)
+    @NotNull
+    @Column(name = "subscribe_sales_price")
     private Long salesPrice;
 
-    @Column(name = "subscribe_price", nullable = false)
+    @NotNull
+    @Column(name = "subscribe_price")
     private Long subscribePrice;
 
-    @Column(name = "subscribe_sales_rate", nullable = false)
+    @Column(name = "subscribe_sales_rate")
     private Integer salesRate;
 
-    @Column(name = "subscribe_view_count", nullable = false)
+    @Column(name = "subscribe_view_count")
     private Long viewCount;
 
-    @Column(name = "subscribe_deleted", nullable = false)
+    @Column(name = "subscribe_deleted")
     private boolean subscribeDeleted;
 
-    @Column(name = "subscribe_created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "subscribe_renewed", nullable = false)
+    @Column(name = "subscribe_renewed")
     private boolean subscribeRenewed;
 }

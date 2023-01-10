@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,13 +27,14 @@ public class OrderStateCode {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_state_code_number", nullable = false)
+    @Column(name = "order_state_code_number")
     private Integer codeNo;
 
-    @Column(name = "order_state_code_name", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "order_state_code_name", unique = true)
     private String codeName;
 
-    @Column(name = "order_state_code_used", nullable = false)
+    @Column(name = "order_state_code_used")
     private boolean codeUsed;
 
     @Column(name = "order_state_code_info")

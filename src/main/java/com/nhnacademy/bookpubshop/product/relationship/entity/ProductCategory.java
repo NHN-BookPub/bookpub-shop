@@ -10,12 +10,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 상품카테고리관계(product_and_category) 테이블.
@@ -26,7 +26,6 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "product_and_category")
 public class ProductCategory {
@@ -35,12 +34,12 @@ public class ProductCategory {
 
     @MapsId("categoryNo")
     @ManyToOne
-    @JoinColumn(name = "category_number", nullable = false, unique = true)
+    @JoinColumn(name = "category_number")
     private Category category;
 
     @MapsId("productNo")
     @ManyToOne
-    @JoinColumn(name = "product_number", nullable = false, unique = true)
+    @JoinColumn(name = "product_number")
     private Product product;
 
     /**

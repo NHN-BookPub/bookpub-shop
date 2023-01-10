@@ -14,22 +14,17 @@ import java.time.LocalDateTime;
  **/
 public class MemberDummy {
     public static Member dummy(BookPubTier bookPubTier) {
-        return new Member(null,
-                bookPubTier,
-                "id",
-                "nickname",
-                "taewon",
-                "남성",
-                1234,
-                1231,
-                "!@!#@ASD",
-                "12345678",
-                "email@email.com",
-                LocalDateTime.now(),
-                false,
-                false,
-                null,
-                0L,
-                false);
+        return Member.builder()
+                .tier(bookPubTier)
+                .memberId("test_id")
+                .memberNickname("test_nickname")
+                .memberName("test_name")
+                .memberGender("남")
+                .memberBirthYear(2022)
+                .memberBirthMonth(819)
+                .memberPwd("test_pwd")
+                .memberPhone("010-1111-2222")
+                .memberEmail("test@gmail.com")
+                .build();
     }
 }

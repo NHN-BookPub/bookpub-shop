@@ -3,7 +3,11 @@ package com.nhnacademy.bookpubshop.review.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
@@ -14,7 +18,6 @@ import com.nhnacademy.bookpubshop.reviewpolicy.entity.ReviewPolicy;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,15 +45,24 @@ class ReviewRepositoryTest {
     Review review;
     Product product;
     ReviewPolicy reviewPolicy;
+    ProductPolicy productPolicy;
+    ProductTypeStateCode productTypeStateCode;
+    ProductSaleStateCode productSaleStateCode;
 
     @BeforeEach
     void setUp() {
         bookPubTier = TierDummy.dummy();
         member = MemberDummy.dummy(bookPubTier);
-        product = productDummy();
+        productPolicy = ProductPolicyDummy.dummy();
+        productTypeStateCode = ProductTypeStateCodeDummy.dummy();
+        productSaleStateCode = ProductSaleStateCodeDummy.dummy();
+        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
         reviewPolicy = ReviewPolicyDummy.dummy();
         review = ReviewDummy.dummy(member, product, reviewPolicy);
 
+        entityManager.persist(productPolicy);
+        entityManager.persist(productTypeStateCode);
+        entityManager.persist(productSaleStateCode);
         entityManager.persist(bookPubTier);
         entityManager.persist(member);
         entityManager.persist(product);
@@ -60,40 +72,20 @@ class ReviewRepositoryTest {
     @Test
     @DisplayName("상품평 저장 테스트")
     void reviewSaveTest() {
-        entityManager.persist(review);
-        entityManager.clear();
+        LocalDateTime now = LocalDateTime.now();
 
-        Optional<Review> findReview = reviewRepository.findById(1L);
+        Review persist = entityManager.persist(review);
+
+        Optional<Review> findReview = reviewRepository.findById(persist.getReviewNo());
 
         assertThat(findReview).isPresent();
-        assertThat(findReview.get().getReviewStar()).isEqualTo(5L);
-        assertThat(findReview.get().getProduct().getProductIsbn()).isEqualTo("isbn");
-        assertThat(findReview.get().getProduct().getProductSaleStateCode().getCodeInfo())
-                .isEqualTo("info");
-    }
-
-    private Product productDummy() {
-        Product product = new Product(null, productPolicyDummy(), productTypeStateCodeDummy(),
-                productSaleStateCodeDummy(), Collections.EMPTY_LIST, "isbn",
-                "title", 10, "description",
-                "test", "file_path", 10L, 1L,
-                10, 1L, 3, false,
-                1, LocalDateTime.now(), LocalDateTime.now(), false);
-        return entityManager.persist(product);
-    }
-
-    private ProductTypeStateCode productTypeStateCodeDummy() {
-        return entityManager.persist(new ProductTypeStateCode(null, "code",
-                true, "info"));
-    }
-
-    private ProductPolicy productPolicyDummy() {
-        return entityManager.persist(new ProductPolicy(null, "test_policy",
-                false, 1));
-    }
-
-    private ProductSaleStateCode productSaleStateCodeDummy() {
-        return entityManager.persist(new ProductSaleStateCode(null, "category",
-                true, "info"));
+        assertThat(findReview.get().getMember().getMemberNo()).isEqualTo(member.getMemberNo());
+        assertThat(findReview.get().getReviewStar()).isEqualTo(persist.getReviewStar());
+        assertThat(findReview.get().getProduct().getProductIsbn()).isEqualTo(persist.getProduct().getProductIsbn());
+        assertThat(findReview.get().getProduct().getProductSaleStateCode().getCodeInfo()).isEqualTo(persist.getProduct().getProductSaleStateCode().getCodeInfo());
+        assertThat(findReview.get().getReviewPolicy().getPolicyNo()).isEqualTo(reviewPolicy.getPolicyNo());
+        assertThat(findReview.get().getReviewContent()).isEqualTo(persist.getReviewContent());
+        assertThat(findReview.get().getImagePath()).isEqualTo(persist.getImagePath());
+        assertThat(findReview.get().getCreatedAt()).isAfter(now);
     }
 }
