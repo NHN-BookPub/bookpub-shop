@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 저자 Custom repository의 구현체입니다.
@@ -38,7 +37,6 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    @Transactional(readOnly = true)
     public Page<GetAuthorResponseDto> getAuthorsByPage(Pageable pageable) {
         QAuthor author = QAuthor.author;
 
@@ -61,7 +59,6 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    @Transactional(readOnly = true)
     public List<GetAuthorResponseDto> getAuthorsByProductNo(Long productNo) {
         QAuthor author = QAuthor.author;
         QProductAuthor productAuthor = QProductAuthor.productAuthor;
