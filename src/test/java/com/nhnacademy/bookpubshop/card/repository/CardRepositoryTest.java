@@ -89,11 +89,17 @@ class CardRepositoryTest {
         entityManager.persist(order);
         Payment persist = entityManager.persist(payment);
         card = CardDummy.dummy(persist, cardStateCode);
-        entityManager.persist(card);
+        Card testCard = entityManager.persist(card);
 
-        Optional<Card> result = cardRepository.findById(card.getPaymentNo());
+        Optional<Card> result = cardRepository.findById(testCard.getPaymentNo());
 
         assertThat(result).isPresent();
-        assertThat(result.get().getPaymentNo()).isEqualTo(card.getPaymentNo());
+        assertThat(result.get().getPaymentNo()).isEqualTo(testCard.getPaymentNo());
+        assertThat(result.get().getPayment().getPaymentNo()).isEqualTo(testCard.getPayment().getPaymentNo());
+        assertThat(result.get().getCardStateCode().getCodeNo()).isEqualTo(testCard.getCardStateCode().getCodeNo());
+        assertThat(result.get().getCardCompany()).isEqualTo(testCard.getCardCompany());
+        assertThat(result.get().getCardNo()).isEqualTo(testCard.getCardNo());
+        assertThat(result.get().isCodeSucceed()).isTrue();
+        assertThat(result.get().getInstallmentMonth()).isEqualTo(testCard.getInstallmentMonth());
     }
 }

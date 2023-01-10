@@ -21,7 +21,6 @@ public class CustomerServiceDummy {
                 .serviceCategory("category")
                 .serviceContent("content")
                 .serviceTitle("title")
-                .createdAt(LocalDateTime.now())
                 .member(member)
                 .build();
     }

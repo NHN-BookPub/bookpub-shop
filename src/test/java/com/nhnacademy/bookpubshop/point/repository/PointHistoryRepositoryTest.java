@@ -7,6 +7,7 @@ import com.nhnacademy.bookpubshop.point.dummy.PointHistoryDummy;
 import com.nhnacademy.bookpubshop.point.entity.PointHistory;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +47,7 @@ class PointHistoryRepositoryTest {
     @Test
     @DisplayName("포인트내역 저장 테스트")
     void PointHistorySaveTest() {
+        LocalDateTime now = LocalDateTime.now();
         PointHistory persist = entityManager.persist(pointHistory);
 
         Optional<PointHistory> findPointHistory
@@ -57,5 +59,6 @@ class PointHistoryRepositoryTest {
         assertThat(findPointHistory.get().getPointHistoryNo()).isEqualTo(persist.getPointHistoryNo());
         assertThat(findPointHistory.get().isPointHistoryIncreased()).isEqualTo(persist.isPointHistoryIncreased());
         assertThat(findPointHistory.get().getPointHistoryReason()).isEqualTo(persist.getPointHistoryReason());
+        assertThat(findPointHistory.get().getCreatedAt()).isAfter(now);
     }
 }

@@ -43,5 +43,6 @@ class CustomerServiceStateCodeRepositoryTest {
         assertThat(result.get().getServiceCodeNo()).isEqualTo(persist.getServiceCodeNo());
         assertThat(result.get().getServiceCodeName()).isEqualTo(persist.getServiceCodeName());
         assertThat(result.get().getServiceCodeInfo()).isEqualTo(persist.getServiceCodeInfo());
+        assertThat(result.get().isServiceCodeUsed()).isTrue();
     }
 }
