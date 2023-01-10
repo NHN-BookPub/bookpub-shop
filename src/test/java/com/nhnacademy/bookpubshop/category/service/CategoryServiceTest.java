@@ -228,4 +228,17 @@ class CategoryServiceTest {
         verify(categoryRepository, times(1)).findCategories();
     }
 
+    @Test
+    @DisplayName("노출여부 true 인 카테고리 다건 조회 성공 테스트.")
+    void getCategoriesDisplayedTrueSuccessTest() {
+
+        when(categoryRepository.findCategoriesDisplayedTrue()).thenReturn(List.of(getCategoryResponseDto));
+
+        List<GetCategoryResponseDto> categories = categoryService.getCategoriesDisplayedTrue();
+        assertThat(categories.get(0).getCategoryName()).isEqualTo(
+                getCategoryResponseDto.getCategoryName());
+
+        verify(categoryRepository, times(1)).findCategoriesDisplayedTrue();
+    }
+
 }

@@ -64,6 +64,8 @@ class CategoryRepositoryTest {
         assertThat(result.get().getCategoryName()).isEqualTo(child.getCategoryName());
         assertThat(result.get().getParent().getCategoryName()).isEqualTo(
                 savedParent.getCategoryName());
+        assertThat(result.get().getCategoryPriority()).isEqualTo(savedChild.getCategoryPriority());
+        assertThat(result.get().isCategoryDisplayed()).isEqualTo(savedChild.isCategoryDisplayed());
     }
 
     @Test
@@ -80,9 +82,35 @@ class CategoryRepositoryTest {
         assertThat(result)
                 .isNotEmpty()
                 .hasSize(2);
+
         assertThat(result.get(0).getCategoryName()).isEqualTo(category.getCategoryName());
         assertThat(result.get(1).getCategoryName()).isEqualTo(romanceCategory.getCategoryName());
+        assertThat(result.get(1).getParent().getCategoryName()).isEqualTo(category.getCategoryName());
 
+    }
+
+    @Test
+    @DisplayName("카테고리 다건 조회 노출여부 테스트 입니다.")
+    void displayedTrueCategoriesGetTest(){
+        String romance = "로맨스소설";
+        String fantasy = "판타지소설";
+        Category romanceCategory = new Category(null, category, romance,0,false);
+        Category fantasyCategory = new Category(null, category, fantasy,1,true);
+        categoryRepository.save(category);
+        categoryRepository.save(fantasyCategory);
+        categoryRepository.save(romanceCategory);
+
+
+        List<GetCategoryResponseDto> result = categoryRepository.findCategoriesDisplayedTrue();
+
+        assertThat(result)
+                .isNotEmpty()
+                .hasSize(2);
+
+        assertThat(result.get(0).getCategoryName()).isEqualTo(fantasyCategory.getCategoryName());
+        assertThat(result.get(0).getParent().getCategoryName()).isEqualTo(category.getCategoryName());
+        assertThat(result.get(0).isCategoryDisplayed()).isEqualTo(category.isCategoryDisplayed());
+        assertThat(result.get(1).getCategoryName()).isEqualTo(category.getCategoryName());
 
     }
 }
