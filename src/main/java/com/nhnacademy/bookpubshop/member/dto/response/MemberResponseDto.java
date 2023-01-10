@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.member.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * 멤버 전체정보 조회시 보여할 정보들이다.
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
  **/
 
 @Getter
-@NoArgsConstructor
+@AllArgsConstructor
 public class MemberResponseDto {
     private Long memberNo;
     private String tier;

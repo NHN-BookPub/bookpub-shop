@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ModifyMemberNicknameRequestDto {
-    @NotBlank
+    @NotBlank(message = "닉네임은 null 이 될수없습니다.")
     @Pattern(regexp = "^.*(?=.*[a-z])(?=.*[a-z\\d])(?=.{2,8}).*$",
             message = "닉네임은 영어는 필수 숫자는 선택으로 2글자 이상 8글자 이하로 입력해주세요.")
     private String nickname;

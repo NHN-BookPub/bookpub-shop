@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.member.dto.request;
 
+import javax.validation.constraints.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,5 +13,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ModifyMemberEmailRequestDto {
+    @Email(message = "이메일 형식으로 입력해야합니다.")
     private String email;
 }
