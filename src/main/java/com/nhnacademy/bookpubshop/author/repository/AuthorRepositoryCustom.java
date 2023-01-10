@@ -29,5 +29,11 @@ public interface AuthorRepositoryCustom {
      */
     List<GetAuthorResponseDto> getAuthorsByProductNo(Long productNo);
 
+    /**
+     * 저자 이름으로 저자들을 반환하는 메서드입니다.
+     *
+     * @param name 저자 이름입니다.
+     * @return 같은 이름의 저자 리스트를 반환합니다.
+     */
     List<GetAuthorResponseDto> getAuthorByName(String name);
 }
