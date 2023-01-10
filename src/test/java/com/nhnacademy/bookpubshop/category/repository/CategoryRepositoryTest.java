@@ -70,12 +70,11 @@ class CategoryRepositoryTest {
 
     @Test
     @DisplayName("카테고리 다건 조회 테스트 입니다.")
-    void categoriesGetTest(){
+    void categoriesGetTest() {
         String categoryName = "로맨스소설";
-        Category romanceCategory = new Category(null, category, categoryName,0,true);
+        Category romanceCategory = new Category(null, category, categoryName, 0, true);
         categoryRepository.save(category);
         categoryRepository.save(romanceCategory);
-
 
         List<GetCategoryResponseDto> result = categoryRepository.findCategories();
 
@@ -85,21 +84,21 @@ class CategoryRepositoryTest {
 
         assertThat(result.get(0).getCategoryName()).isEqualTo(category.getCategoryName());
         assertThat(result.get(1).getCategoryName()).isEqualTo(romanceCategory.getCategoryName());
-        assertThat(result.get(1).getParent().getCategoryName()).isEqualTo(category.getCategoryName());
+        assertThat(result.get(1).getParent().getCategoryName()).isEqualTo(
+                category.getCategoryName());
 
     }
 
     @Test
     @DisplayName("카테고리 다건 조회 노출여부 테스트 입니다.")
-    void displayedTrueCategoriesGetTest(){
+    void displayedTrueCategoriesGetTest() {
         String romance = "로맨스소설";
         String fantasy = "판타지소설";
-        Category romanceCategory = new Category(null, category, romance,0,false);
-        Category fantasyCategory = new Category(null, category, fantasy,1,true);
+        Category romanceCategory = new Category(null, category, romance, 0, false);
+        Category fantasyCategory = new Category(null, category, fantasy, 1, true);
         categoryRepository.save(category);
         categoryRepository.save(fantasyCategory);
         categoryRepository.save(romanceCategory);
-
 
         List<GetCategoryResponseDto> result = categoryRepository.findCategoriesDisplayedTrue();
 
@@ -108,9 +107,9 @@ class CategoryRepositoryTest {
                 .hasSize(2);
 
         assertThat(result.get(0).getCategoryName()).isEqualTo(fantasyCategory.getCategoryName());
-        assertThat(result.get(0).getParent().getCategoryName()).isEqualTo(category.getCategoryName());
-        assertThat(result.get(0).isCategoryDisplayed()).isEqualTo(category.isCategoryDisplayed());
+        assertThat(result.get(0).getParent().getCategoryName()).isEqualTo(
+                category.getCategoryName());
         assertThat(result.get(1).getCategoryName()).isEqualTo(category.getCategoryName());
-
+        result.forEach(value -> assertThat(value.isCategoryDisplayed()).isTrue());
     }
 }

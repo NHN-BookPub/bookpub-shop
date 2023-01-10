@@ -31,8 +31,8 @@ import org.springframework.test.web.servlet.MockMvc;
  * @author : 김서현
  * @since : 1.0
  **/
-@WebMvcTest(CategoryRestController.class)
-class CategoryRestControllerTest {
+@WebMvcTest(CategoryController.class)
+class CategoryControllerTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -185,6 +185,26 @@ class CategoryRestControllerTest {
                 .andDo(print());
 
         verify(categoryService, times(1)).getCategories();
+    }
 
+    @Test
+    @DisplayName("노출 여부 true 인 카테고리 리스트 조회")
+    void getCategoryDisplayedTrueListTest() throws Exception {
+
+        ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryNo", 1);
+        ReflectionTestUtils.setField(getCategoryResponseDto, "categoryName", "국내도서");
+        ReflectionTestUtils.setField(getCategoryResponseDto, "categoryDisplayed", true);
+        ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryPriority", 0);
+
+
+        when(categoryService.getCategoriesDisplayedTrue()).thenReturn(List.of(getCategoryResponseDto));
+
+        mockMvc.perform(get(path).param("display", "true")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].categoryName").value(getCategoryResponseDto.getCategoryName()))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(categoryService, times(1)).getCategoriesDisplayedTrue();
     }
 }
