@@ -21,6 +21,10 @@ public class GetCategoryResponseDto {
 
     private GetCategoryResponseDto parent;
 
+    private Integer categoryPriority;
+
+    private boolean categoryDisplayed;
+
     public GetCategoryResponseDto(Integer categoryNo, String categoryName) {
         this.categoryNo = categoryNo;
         this.categoryName = categoryName;

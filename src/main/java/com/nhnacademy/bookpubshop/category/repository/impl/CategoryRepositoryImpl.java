@@ -21,6 +21,7 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
     public CategoryRepositoryImpl() {
         super(Category.class);
     }
+    QCategory parent = new QCategory("parent");
 
     /**
      * {@inheritDoc}
@@ -28,14 +29,14 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
     @Override
     public Optional<GetCategoryResponseDto> findCategory(Integer categoryNo) {
         QCategory category = QCategory.category;
-        QCategory parent = new QCategory("parent");
 
         return Optional.ofNullable(from(category, parent)
                 .where(category.categoryNo.eq(categoryNo))
                 .select(Projections.constructor(GetCategoryResponseDto.class, category.categoryNo,
                         category.categoryName,
                         Projections.constructor(GetCategoryResponseDto.class, parent.categoryNo,
-                                parent.categoryName)))
+                                parent.categoryName), category.categoryPriority,
+                        category.categoryDisplayed))
                 .leftJoin(category.parentCategory, parent).on(parent.eq(category.parentCategory))
                 .fetchFirst());
     }
@@ -51,8 +52,33 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
         return from(category)
                 .select(Projections.constructor(GetCategoryResponseDto.class,
                         category.categoryNo,
-                        category.categoryName))
-                .orderBy(category.categoryNo.asc())
+                        category.categoryName,
+                        Projections.constructor(GetCategoryResponseDto.class, parent.categoryNo,
+                                parent.categoryName),category.categoryPriority,
+                        category.categoryDisplayed))
+                .leftJoin(category.parentCategory, parent).on(parent.eq(category.parentCategory))
+                .orderBy(category.categoryPriority.desc()).orderBy(category.categoryName.asc())
                 .fetch();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<GetCategoryResponseDto> findCategoriesDisplayedTrue() {
+        QCategory category = QCategory.category;
+
+        return from(category)
+                .where(category.categoryDisplayed.isTrue())
+                .select(Projections.constructor(GetCategoryResponseDto.class,
+                        category.categoryNo,
+                        category.categoryName,
+                        Projections.constructor(GetCategoryResponseDto.class, parent.categoryNo,
+                                parent.categoryName),category.categoryPriority,
+                        category.categoryDisplayed))
+                .leftJoin(category.parentCategory, parent).on(parent.eq(category.parentCategory))
+                .orderBy(category.categoryPriority.desc()).orderBy(category.categoryName.asc())
+                .fetch();
+    }
+
 }

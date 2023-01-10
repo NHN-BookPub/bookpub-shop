@@ -76,6 +76,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(CategoryNotFoundException::new);
     }
 
+
     /**
      * {@inheritDoc}
      */
@@ -83,6 +84,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     public List<GetCategoryResponseDto> getCategories() {
         return categoryRepository.findCategories();
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetCategoryResponseDto> getCategoriesDisplayedTrue() {
+        return categoryRepository.findCategoriesDisplayedTrue();
     }
 
     /**

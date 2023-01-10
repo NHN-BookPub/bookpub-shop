@@ -23,10 +23,18 @@ public interface CategoryRepositoryCustom {
     Optional<GetCategoryResponseDto> findCategory(Integer categoryNo);
 
     /**
-     * 전체 카테고리 반환.
+     * 전체 카테고리 반환 ( 관리자용 - 노출 여부 상관없이 전체 반환 , 우선 순위 높은 순, 동일 시 이름 순).
      *
      * @return 전체 카테고리 정보 반환.
      */
     List<GetCategoryResponseDto> findCategories();
+
+    /**
+     * 전체 카테고리 반환 (노출 여부 true 인 카테고리 반환, 우선 순위 높은 순, 동일 시 이름 순).
+     *
+     * @return 노출 여부 true 인 카테고리 정보 반환.
+     */
+    List<GetCategoryResponseDto> findCategoriesDisplayedTrue();
+
 
 }

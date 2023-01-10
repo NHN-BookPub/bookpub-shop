@@ -33,7 +33,7 @@ public interface CategoryService {
      * 카테고리에대한 단건조회를 위한 메소드입니다.
      *
      * @param categoryNo 조회할 카테고리 번호입니다.
-     * @return GetCategoryResponseDto 카테고리 이름과 부모 카테고리 이름이 반환됩니다.
+     * @return GetCategoryResponseDto 카테고리 정보 반환됩니다.
      */
     GetCategoryResponseDto getCategory(Integer categoryNo);
 
@@ -43,5 +43,12 @@ public interface CategoryService {
      * @return 전체 카테고리가 반환됩니다.
      */
     List<GetCategoryResponseDto> getCategories();
+
+    /**
+     * 노출 여부 true 인 카테고리에 대한 전체 조회를 위한 메소드입니다.
+     *
+     * @return 노출 여부 true 인 전체 카테고리가 반환됩니다.
+     */
+    List<GetCategoryResponseDto> getCategoriesDisplayedTrue();
 
 }
