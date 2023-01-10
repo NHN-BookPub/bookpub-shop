@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.author.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * 저자 생성을 위한 Dto 클래스입니다.
@@ -10,7 +10,7 @@ import lombok.Getter;
  * @since : 1.0
  **/
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class CreateAuthorRequestDto {
     private String authorName;
 }

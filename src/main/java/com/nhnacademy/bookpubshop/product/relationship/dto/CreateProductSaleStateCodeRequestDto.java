@@ -1,8 +1,8 @@
 package com.nhnacademy.bookpubshop.product.relationship.dto;
 
 import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -12,9 +12,8 @@ import org.hibernate.validator.constraints.Length;
  * @since : 1.0
  **/
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class CreateProductSaleStateCodeRequestDto {
-    @NotNull
     @Length(min = 1, max = 20, message = "상품판매여부코드 길이는 20자를 넘을 수 없습니다.")
     private String codeCategory;
     @NotNull

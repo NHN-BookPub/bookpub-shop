@@ -1,8 +1,8 @@
 package com.nhnacademy.bookpubshop.product.relationship.dto;
 
 import javax.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * 상품저자생성시 사용하는 Dto.
@@ -11,7 +11,7 @@ import lombok.Getter;
  * @since : 1.0
  **/
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class CreateProductAuthorRequestDto {
     @NotNull
     private Long productNo;
