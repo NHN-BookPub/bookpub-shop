@@ -71,6 +71,7 @@ public class ProductTypeStateCodeServiceImpl implements ProductTypeStateCodeServ
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public GetProductTypeStateCodeResponseDto getTypeStateCodeById(Integer codeNo) {
         ProductTypeStateCode stateCode =
                 productTypeStateCodeRepository
@@ -88,6 +89,7 @@ public class ProductTypeStateCodeServiceImpl implements ProductTypeStateCodeServ
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public List<GetProductTypeStateCodeResponseDto> getAllTypeStateCodes() {
         List<ProductTypeStateCode> codes = productTypeStateCodeRepository.findAll();
 

@@ -46,6 +46,7 @@ public class ProductServiceImpl implements ProductService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public GetProductDetailResponseDto getProductDetailById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(ProductNotFoundException::new);
@@ -156,6 +157,7 @@ public class ProductServiceImpl implements ProductService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<GetProductListResponseDto> getAllProducts(Pageable pageable) {
         Page<GetProductListResponseDto> response =
                 productRepository.getAllProducts(pageable);
@@ -171,6 +173,7 @@ public class ProductServiceImpl implements ProductService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<GetProductListResponseDto> getProductListLikeTitle(
             String title, Pageable pageable) {
         return productRepository.getProductListLikeTitle(title, pageable);
@@ -180,6 +183,7 @@ public class ProductServiceImpl implements ProductService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public GetProductDetailResponseDto modifyProduct(CreateProductRequestDto request, Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(ProductNotFoundException::new);
@@ -243,6 +247,7 @@ public class ProductServiceImpl implements ProductService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void setDeleteProduct(Long id, boolean deleted) {
         Product product = productRepository.findById(id)
                 .orElseThrow(ProductNotFoundException::new);

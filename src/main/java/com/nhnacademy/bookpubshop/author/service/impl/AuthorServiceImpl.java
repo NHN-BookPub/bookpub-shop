@@ -40,6 +40,7 @@ public class AuthorServiceImpl implements AuthorService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<GetAuthorResponseDto> getAuthorsByPage(Pageable pageable) {
         return authorRepository.getAuthorsByPage(pageable);
     }
@@ -48,6 +49,7 @@ public class AuthorServiceImpl implements AuthorService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public List<GetAuthorResponseDto> getAuthorsByName(String name) {
         return authorRepository.getAuthorByName(name);
     }
@@ -56,6 +58,7 @@ public class AuthorServiceImpl implements AuthorService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public List<GetAuthorResponseDto> getAuthorsByProductNo(Long productNo) {
         List<GetAuthorResponseDto> response = authorRepository.getAuthorsByProductNo(productNo);
 
