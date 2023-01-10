@@ -6,11 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 태그(tag) 테이블.
@@ -21,18 +21,26 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "tag")
 public class Tag {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "tag_number", nullable = false, unique = true)
+    @Column(name = "tag_number")
     private Integer tagNo;
 
-    @Column(name = "tag_name", nullable = false, unique = true)
+    @Column(name = "tag_name", unique = true)
+    @NotNull
     private String tagName;
 
-    @Column(name = "tag_color_code", nullable = false)
+    @Column(name = "tag_color_code")
+    @NotNull
     private String colorCode;
+
+    public void modifyTagInfo(String tagName, String colorCode) {
+        this.tagName = tagName;
+        this.colorCode = colorCode;
+    }
+
 }

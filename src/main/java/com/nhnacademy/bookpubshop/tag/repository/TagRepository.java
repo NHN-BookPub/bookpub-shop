@@ -9,5 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author : 박경서
  * @since : 1.0
  **/
-public interface TagRepository extends JpaRepository<Tag, Integer> {
+public interface TagRepository extends JpaRepository<Tag, Integer>, TagRepositoryCustom {
+
+    boolean existsByTagName(String tagName);
 }

@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,12 +30,14 @@ public class PaymentStateCode {
     @Column(name = "payment_state_code_number", nullable = false)
     private Integer codeNo;
 
-    @Column(name = "payment_state_code_name", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "payment_state_code_name", unique = true)
     private String codeName;
 
     @Column(name = "payment_state_code_used", nullable = false)
     private boolean codeUsed;
 
+    @NotNull
     @Column(name = "payment_state_code_info")
     private String codeInfo;
 }

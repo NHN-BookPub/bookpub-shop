@@ -148,12 +148,8 @@ class FileRepositoryTest {
                 22, 819, "test_pwd", "01012341234",
                 "test@test.com", LocalDateTime.now(), false, false,
                 null, 0L, false);
-        entityManager.persist(testMember.getBookPubTier());
+        entityManager.persist(testMember.getTier());
         return entityManager.persist(testMember);
-    }
-
-    private Address addressDummy() {
-        return entityManager.persist(AddressDummy.dummy());
     }
 
     private BookpubOrder orderDummy() {
@@ -174,13 +170,6 @@ class FileRepositoryTest {
                 pricePolicy, packagePricePolicy, address, orderStateCode));
 
     }
-
-    private Coupon couponDummy(Member member) {
-        Coupon coupon = new Coupon(null, couponTemplate, order, orderProductDummy(), member, false, LocalDateTime.now());
-        entityManager.persist(coupon.getCouponTemplate());
-        return entityManager.persist(coupon);
-    }
-
     private OrderProductStateCode orderProductStateCodeDummy() {
         return entityManager.persist(new OrderProductStateCode(null, "code", true, "info"));
     }
