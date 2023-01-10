@@ -123,4 +123,39 @@ public class Member {
         this.createdAt = LocalDateTime.now();
         this.memberPoint = 0L;
     }
+
+    /**
+     * 멤버 닉네임을 수정할때 쓰이는 메서드입니다.
+     *
+     * @param memberNickname 수정할 멤버 닉네임.
+     * @author : 유호철
+     */
+    public void modifyNickname(String memberNickname) {
+        this.memberNickname = memberNickname;
+    }
+
+    /**
+     * 멤버 이메일을 수정할때 쓰이는 메서드입니다.
+     *
+     * @param memberEmail 수정할 멤버 이메일.
+     * @author : 유호철
+     */
+    public void modifyEmail(String memberEmail) {
+        this.memberEmail = memberEmail;
+
+    }
+
+    /**
+     * 회원이 탈퇴했을경우 사용되는 메서드입니다.
+     */
+    public void memberDelete() {
+        this.memberDeleted = !this.memberDeleted;
+    }
+
+    /**
+     * 회원을 차단했을경우나 차단을 풀었을경우 사용되는 메서드 입니다.
+     */
+    public void memberBlock() {
+        this.memberBlocked = !this.memberBlocked;
+    }
 }

@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.member.dto;
+package com.nhnacademy.bookpubshop.member.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,4 +17,6 @@ public class SignUpMemberResponseDto {
     private String memberNickname;
     private String memberEmail;
     private String tierName;
+
+
 }
