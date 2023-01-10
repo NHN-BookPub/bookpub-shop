@@ -1,10 +1,17 @@
 package com.nhnacademy.bookpubshop.member.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
+import com.nhnacademy.bookpubshop.authority.entity.Authority;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dummy.MemberAuthorityDummy;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
+import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +19,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 멤버 레포지토리 테스트
@@ -30,12 +40,17 @@ class MemberRepositoryTest {
     BookPubTier bookPubTier;
     Member member;
 
+    Authority authority;
+
+    MemberAuthority memberAuthority;
+
     @BeforeEach
     void setUp() {
         bookPubTier = TierDummy.dummy();
         member = MemberDummy.dummy(bookPubTier);
-
+        authority = AuthorityDummy.dummy();
         entityManager.persist(bookPubTier);
+        memberAuthority = MemberAuthorityDummy.dummy(member, authority);
     }
 
     @Test
@@ -58,5 +73,51 @@ class MemberRepositoryTest {
         assertThat(member.get().getMemberBirthYear()).isEqualTo(persist.getMemberBirthYear());
         assertThat(member.get().getMemberBirthMonth()).isEqualTo(persist.getMemberBirthMonth());
         assertThat(member.get().isSocialJoined()).isEqualTo(persist.isSocialJoined());
+    }
+
+    @DisplayName("멤버 상세조회 테스트")
+    @Test
+    void findByMemberDetailsTest() {
+        Member persist = entityManager.persist(member);
+        entityManager.persist(authority);
+        entityManager.persist(memberAuthority);
+        entityManager.flush();
+        entityManager.clear();
+
+        Optional<MemberDetailResponseDto> result = memberRepository.findByMemberDetails(persist.getMemberNo());
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getMemberNo()).isEqualTo(persist.getMemberNo());
+        assertThat(result.get().getEmail()).isEqualTo(persist.getMemberEmail());
+        assertThat(result.get().getNickname()).isEqualTo(persist.getMemberNickname());
+        assertThat(result.get().getTierName()).isEqualTo(bookPubTier.getTierName());
+        assertThat(result.get().getAuthority()).isEqualTo(authority.getAuthorityName());
+        assertThat(result.get().getGender()).isEqualTo(persist.getMemberGender());
+        assertThat(result.get().getBirthMonth()).isEqualTo(persist.getMemberBirthMonth());
+        assertThat(result.get().getBirthYear()).isEqualTo(persist.getMemberBirthYear());
+        assertThat(result.get().getPhone()).isEqualTo(persist.getMemberPhone());
+        assertThat(result.get().getPoint()).isEqualTo(persist.getMemberPoint());
+    }
+
+    @DisplayName("멤버 전체조회 테스트")
+    @Test
+    void findMembersTest(){
+        Member persist = entityManager.persist(member);
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<MemberResponseDto> result = memberRepository.findMembers(pageable);
+
+        List<MemberResponseDto> content = result.getContent();
+        assertThat(content).isNotEmpty();
+        assertThat(content.get(0).getMemberNo()).isEqualTo(persist.getMemberNo());
+        assertThat(content.get(0).getTier()).isEqualTo(persist.getTier().getTierName());
+        assertThat(content.get(0).getNickname()).isEqualTo(persist.getMemberNickname());
+        assertThat(content.get(0).getName()).isEqualTo(persist.getMemberName());
+        assertThat(content.get(0).getGender()).isEqualTo(persist.getMemberGender());
+        assertThat(content.get(0).getBirthYear()).isEqualTo(persist.getMemberBirthYear());
+        assertThat(content.get(0).getBirthMonth()).isEqualTo(persist.getMemberBirthMonth());
+        assertThat(content.get(0).getEmail()).isEqualTo(persist.getMemberEmail());
+        assertThat(content.get(0).getPoint()).isEqualTo(persist.getMemberPoint());
+        assertThat(content.get(0).isSocial()).isEqualTo(persist.isSocialJoined());
     }
 }
