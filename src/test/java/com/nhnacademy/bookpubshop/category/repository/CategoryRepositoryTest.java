@@ -112,4 +112,26 @@ class CategoryRepositoryTest {
         assertThat(result.get(1).getCategoryName()).isEqualTo(category.getCategoryName());
         result.forEach(value -> assertThat(value.isCategoryDisplayed()).isTrue());
     }
+
+    @Test
+    @DisplayName("최상위 카테고리만 조회하는 테스트입니다.")
+    void parentCategoryGetTest(){
+        String romance = "로맨스소설";
+        String fantasy = "판타지소설";
+        Category romanceCategory = new Category(null, category, romance, 0, true);
+        Category fantasyCategory = new Category(null, category, fantasy, 0, true);
+        categoryRepository.save(category);
+        categoryRepository.save(fantasyCategory);
+        categoryRepository.save(romanceCategory);
+
+        List<GetCategoryResponseDto> result = categoryRepository.findParentCategories();
+
+        assertThat(result)
+                .isNotEmpty()
+                .hasSize(1);
+
+        assertThat(result.get(0).getCategoryName()).isEqualTo(category.getCategoryName());
+        assertThat(result.get(0).getParent()).isNull();
+
+    }
 }

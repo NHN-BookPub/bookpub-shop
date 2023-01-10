@@ -134,10 +134,11 @@ class CategoryServiceTest {
     void modifyCategoryNameFailTest() {
 
         ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryNo", 1);
-        ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryName", "외국도서");
+        ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryName", "국내도서");
 
         when(categoryRepository.findById(anyInt()))
                 .thenReturn(Optional.of(category));
+
         when(categoryRepository.existsByCategoryName(anyString())).thenReturn(true);
 
         assertThatThrownBy(() -> categoryService.modifyCategory(modifyCategoryRequestDto))
@@ -165,7 +166,7 @@ class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("카테고리 수정 성공 테스트.")
+    @DisplayName("카테고리 기존 이름으로 수정 성공 테스트.")
     void modifyCategorySuccessTest() {
 
         ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryNo", 1);
@@ -173,12 +174,10 @@ class CategoryServiceTest {
 
         when(categoryRepository.findById(anyInt()))
                 .thenReturn(Optional.of(category));
-        when(categoryRepository.existsByCategoryName(anyString())).thenReturn(false);
 
         categoryService.modifyCategory(modifyCategoryRequestDto);
 
         verify(categoryRepository, times(1)).findById(anyInt());
-        verify(categoryRepository, times(1)).existsByCategoryName(anyString());
 
     }
 
@@ -232,13 +231,27 @@ class CategoryServiceTest {
     @DisplayName("노출여부 true 인 카테고리 다건 조회 성공 테스트.")
     void getCategoriesDisplayedTrueSuccessTest() {
 
-        when(categoryRepository.findCategoriesDisplayedTrue()).thenReturn(List.of(getCategoryResponseDto));
+        when(categoryRepository.findCategoriesDisplayedTrue()).thenReturn(
+                List.of(getCategoryResponseDto));
 
         List<GetCategoryResponseDto> categories = categoryService.getCategoriesDisplayedTrue();
         assertThat(categories.get(0).getCategoryName()).isEqualTo(
                 getCategoryResponseDto.getCategoryName());
 
         verify(categoryRepository, times(1)).findCategoriesDisplayedTrue();
+    }
+
+    @Test
+    @DisplayName("최상위 카테고리만 조회 성공 테스트")
+    void getParentCategoriesSuccessTest() {
+
+        when(categoryRepository.findParentCategories()).thenReturn(List.of(getCategoryResponseDto));
+        List<GetCategoryResponseDto> categories = categoryService.getParentCategories();
+        assertThat(categories.get(0).getCategoryName()).isEqualTo(
+                getCategoryResponseDto.getCategoryName());
+
+        verify(categoryRepository, times(1)).findParentCategories();
+
     }
 
 }

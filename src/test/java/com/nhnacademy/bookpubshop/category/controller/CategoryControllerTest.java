@@ -191,10 +191,10 @@ class CategoryControllerTest {
     @DisplayName("노출 여부 true 인 카테고리 리스트 조회")
     void getCategoryDisplayedTrueListTest() throws Exception {
 
-        ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryNo", 1);
+        ReflectionTestUtils.setField(getCategoryResponseDto, "categoryNo", 1);
         ReflectionTestUtils.setField(getCategoryResponseDto, "categoryName", "국내도서");
         ReflectionTestUtils.setField(getCategoryResponseDto, "categoryDisplayed", true);
-        ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryPriority", 0);
+        ReflectionTestUtils.setField(getCategoryResponseDto, "categoryPriority", 0);
 
 
         when(categoryService.getCategoriesDisplayedTrue()).thenReturn(List.of(getCategoryResponseDto));
@@ -206,5 +206,26 @@ class CategoryControllerTest {
                 .andDo(print());
 
         verify(categoryService, times(1)).getCategoriesDisplayedTrue();
+    }
+
+    @Test
+    @DisplayName("최상의 카테고리 조회")
+    void getParentCategoriesTest() throws Exception {
+        ReflectionTestUtils.setField(getCategoryResponseDto, "categoryNo", 1);
+        ReflectionTestUtils.setField(getCategoryResponseDto, "categoryName", "국내도서");
+        ReflectionTestUtils.setField(getCategoryResponseDto, "parent", null);
+        ReflectionTestUtils.setField(getCategoryResponseDto, "categoryDisplayed", true);
+        ReflectionTestUtils.setField(getCategoryResponseDto, "categoryPriority", 0);
+
+
+        when(categoryService.getParentCategories()).thenReturn(List.of(getCategoryResponseDto));
+
+        mockMvc.perform(get(path+"/parent")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].categoryName").value(getCategoryResponseDto.getCategoryName()))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(categoryService, times(1)).getParentCategories();
     }
 }
