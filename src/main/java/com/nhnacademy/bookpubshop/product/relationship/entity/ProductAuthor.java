@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -35,12 +36,14 @@ public class ProductAuthor {
 
     @MapsId("authorNo")
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "author_number")
     private Author author;
 
     @MapsId("productNo")
     @ManyToOne
-    @JoinColumn(name = "product_number", nullable = false, unique = true)
+    @NotNull
+    @JoinColumn(name = "product_number")
     private Product product;
 
     /**
