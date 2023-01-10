@@ -3,7 +3,6 @@ package com.nhnacademy.bookpubshop.product.relationship.entity;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.io.Serializable;
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -11,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -27,6 +27,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@ToString
 @Entity
 @Table(name = "product_and_author")
 public class ProductAuthor {
@@ -35,11 +36,13 @@ public class ProductAuthor {
 
     @MapsId("authorNo")
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "author_number")
     private Author author;
 
     @MapsId("productNo")
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "product_number")
     private Product product;
 

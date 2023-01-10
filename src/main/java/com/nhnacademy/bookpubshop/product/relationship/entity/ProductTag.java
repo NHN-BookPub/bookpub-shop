@@ -10,11 +10,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * 상품태그(product_and_tag) 테이블.
@@ -25,6 +27,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@ToString
 @Entity
 @Table(name = "product_and_tag")
 public class ProductTag {
@@ -34,11 +37,13 @@ public class ProductTag {
     @MapsId("tagNo")
     @ManyToOne
     @JoinColumn(name = "tag_number")
+    @NotNull
     private Tag tag;
 
     @MapsId("productNo")
     @ManyToOne
     @JoinColumn(name = "product_number")
+    @NotNull
     private Product product;
 
     /**

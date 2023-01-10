@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author : 여운석
  * @since : 1.0
  **/
-public interface AuthorRepository extends JpaRepository<Author, Integer> {
+public interface AuthorRepository extends JpaRepository<Author, Integer>, AuthorRepositoryCustom {
 }
