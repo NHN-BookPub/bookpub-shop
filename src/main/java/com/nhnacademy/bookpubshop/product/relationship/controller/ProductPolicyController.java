@@ -3,8 +3,8 @@ package com.nhnacademy.bookpubshop.product.relationship.controller;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateModifyProductPolicyRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductPolicyService;
-import lombok.RequiredArgsConstructor;
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,9 +65,10 @@ public class ProductPolicyController {
      * @param policy 수정을 위한 Dto 입니다.
      * @return response entity
      */
-    @PostMapping("/{policyNo}")
+    @PutMapping("/{policyNo}")
     public ResponseEntity<GetProductPolicyResponseDto> modifyProductPolicy(
-            @PathVariable Integer policyNo, @RequestBody CreateModifyProductPolicyRequestDto policy) {
+            @PathVariable Integer policyNo,
+            @Valid @RequestBody CreateModifyProductPolicyRequestDto policy) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productPolicyService.modifyProductPolicyById(policyNo, policy));

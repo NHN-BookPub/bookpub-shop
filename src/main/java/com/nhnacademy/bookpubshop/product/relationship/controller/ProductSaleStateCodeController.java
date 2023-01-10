@@ -3,14 +3,16 @@ package com.nhnacademy.bookpubshop.product.relationship.controller;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductSaleStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductSaleStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductSaleStateCodeService;
-import lombok.RequiredArgsConstructor;
 import java.util.List;
+import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,7 +50,7 @@ public class ProductSaleStateCodeController {
      */
     @PostMapping
     public ResponseEntity<GetProductSaleStateCodeResponseDto> createProductSaleStateCode(
-            @RequestBody CreateProductSaleStateCodeRequestDto requestDto) {
+            @Valid @RequestBody CreateProductSaleStateCodeRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productSaleStateCodeService.createSaleCode(requestDto));
@@ -69,13 +71,13 @@ public class ProductSaleStateCodeController {
     }
 
     /**
-     * 판매정책을 사용 여부를 수정하는 api
+     * 판매정책을 사용 여부를 수정하는 api.
      *
      * @param codeNo 정책번호입니다.
      * @param used   사용여부입니다.
      * @return 성공시 200, 수정된 객체를 반환합니다.
      */
-    @PostMapping("/{codeNo}")
+    @PutMapping("/{codeNo}")
     public ResponseEntity<GetProductSaleStateCodeResponseDto> setUsedSaleCodeById(
             @PathVariable Integer codeNo,
             @RequestParam boolean used) {
