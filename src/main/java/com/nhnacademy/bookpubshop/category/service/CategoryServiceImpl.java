@@ -54,7 +54,10 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findById(modifyCategoryRequestDto.getCategoryNo())
                 .orElseThrow(CategoryNotFoundException::new);
 
-        checkCategoryNameIsDuplicated(modifyCategoryRequestDto.getCategoryName());
+        if(!category.getCategoryName().equals(modifyCategoryRequestDto.getCategoryName())){
+            checkCategoryNameIsDuplicated(modifyCategoryRequestDto.getCategoryName());
+        }
+
         Category parentCategory = tryGetParentCategory(
                 modifyCategoryRequestDto.getParentCategoryNo());
 
