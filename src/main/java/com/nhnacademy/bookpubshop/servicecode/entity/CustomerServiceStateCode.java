@@ -6,8 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,17 +22,17 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class CustomerServiceStateCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_service_state_code_number", nullable = false, unique = true)
+    @Column(name = "customer_service_state_code_number")
     private Integer serviceCodeNo;
 
-    @Column(name = "customer_service_state_code_name", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "customer_service_state_code_name")
     private String serviceCodeName;
 
-    @Column(name = "customer_service_state_code_used", nullable = false)
+    @Column(name = "customer_service_state_code_used")
     private boolean serviceCodeUsed;
 
     @Column(name = "customer_service_state_code_info")

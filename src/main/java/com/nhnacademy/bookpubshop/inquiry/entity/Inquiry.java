@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.inquiry.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.inquirycode.entity.InquiryCode;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.product.entity.Product;
@@ -12,8 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,36 +31,38 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "inquiry")
-public class Inquiry {
+public class Inquiry extends BaseCreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "inquiry_number", nullable = false, unique = true)
+    @Column(name = "inquiry_number")
     private Long inquiryNo;
+
     @ManyToOne
     @JoinColumn(name = "inquiry_parent_number")
     private Inquiry parentInquiry;
 
     @ManyToOne
+    @NotNull
     @JoinColumn(name = "member_number")
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "product_number", nullable = false)
+    @NotNull
+    @JoinColumn(name = "product_number")
     private Product product;
 
     @ManyToOne
     @JoinColumn(name = "inquiry_state_code_number")
-    private InquiryCode stateCode;
+    private InquiryCode inquiryCode;
 
-    @Column(name = "inquiry_content", nullable = false)
+    @NotNull
+    @Column(name = "inquiry_content")
     private String inquiryContent;
 
-    @Column(name = "inquiry_displayed", nullable = false)
+    @Column(name = "inquiry_displayed")
     private boolean inquiryDisplayed;
 
-    @Column(name = "inquiry_created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "inquiry_answered", nullable = false)
+    @Column(name = "inquiry_answered")
     private boolean inquiryAnswered;
+
 }

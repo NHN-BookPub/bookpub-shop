@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -29,19 +30,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Wishlist {
+
     @EmbeddedId
     private Pk pk;
-
 
     @MapsId("memberNo")
     @ManyToOne
     @JoinColumn(name = "member_number")
     private Member member;
 
+    @NotNull
     @MapsId("productNo")
     @ManyToOne
-    @JoinColumn(name = "product_number", nullable = false, unique = true)
+    @JoinColumn(name = "product_number", unique = true)
     private Product product;
+
     @Column(name = "wishlist_applied")
     private boolean wishlistApplied;
     /**

@@ -1,11 +1,11 @@
 package com.nhnacademy.bookpubshop.file.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.customer_service.entity.CustomerService;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.review.entity.Review;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,10 +31,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class File {
+public class File extends BaseCreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "file_number", nullable = false)
+    @Column(name = "file_number")
     private Long fileNo;
 
     @ManyToOne
@@ -56,21 +57,24 @@ public class File {
     @JoinColumn(name = "customer_service_number")
     private CustomerService customerService;
 
-    @Column(name = "file_category", nullable = false)
+    @NotNull
+    @Column(name = "file_category")
     private String fileCategory;
 
-    @Column(name = "file_path", nullable = false)
+    @NotNull
+    @Column(name = "file_path")
     private String filePath;
 
-    @Column(name = "file_extension", nullable = false)
+    @NotNull
+    @Column(name = "file_extension")
     private String fileExtension;
 
-    @Column(name = "file_name_origin", nullable = false)
+    @NotNull
+    @Column(name = "file_name_origin")
     private String nameOrigin;
 
-    @Column(name = "file_name_saved", nullable = false)
+    @NotNull
+    @Column(name = "file_name_saved")
     private String nameSaved;
 
-    @Column(name = "file_created_at", nullable = false)
-    private LocalDateTime createdAt;
 }

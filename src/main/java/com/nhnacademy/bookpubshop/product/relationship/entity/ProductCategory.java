@@ -3,7 +3,6 @@ package com.nhnacademy.bookpubshop.product.relationship.entity;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.io.Serializable;
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -11,12 +10,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 상품카테고리관계(product_and_category) 테이블.
@@ -27,21 +26,22 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "product_and_category")
 public class ProductCategory {
     @EmbeddedId
     private Pk pk;
 
+    @NotNull
     @MapsId("categoryNo")
     @ManyToOne
-    @JoinColumn(name = "category_number", nullable = false, unique = true)
+    @JoinColumn(name = "category_number", unique = true)
     private Category category;
 
+    @NotNull
     @MapsId("productNo")
     @ManyToOne
-    @JoinColumn(name = "product_number", nullable = false, unique = true)
+    @JoinColumn(name = "product_number", unique = true)
     private Product product;
 
     /**

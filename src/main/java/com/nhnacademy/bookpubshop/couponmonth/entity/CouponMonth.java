@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,17 +31,20 @@ public class CouponMonth {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "coupon_month_number", nullable = false)
+    @Column(name = "coupon_month_number")
     private Long monthNumber;
 
+    @NotNull
     @OneToOne
-    @JoinColumn(name = "coupon_number", nullable = false)
+    @JoinColumn(name = "coupon_template_number")
     private CouponTemplate couponTemplate;
 
-    @Column(name = "coupon_month_opened_at", nullable = false)
+    @NotNull
+    @Column(name = "coupon_month_opened_at")
     private LocalDateTime openedAt;
 
-    @Column(name = "coupon_month_quantity", nullable = false)
+    @NotNull
+    @Column(name = "coupon_month_quantity")
     private Integer monthQuantity;
 
 }

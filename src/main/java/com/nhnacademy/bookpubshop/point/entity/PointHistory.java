@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.point.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,11 +27,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PointHistory {
+public class PointHistory extends BaseCreateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "point_history_number", nullable = false, unique = true)
+    @Column(name = "point_history_number")
     private Long pointHistoryNo;
 
     @NotNull

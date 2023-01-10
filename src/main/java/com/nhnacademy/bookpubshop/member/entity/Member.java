@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.member.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -27,7 +28,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Member {
+public class Member extends BaseCreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_number")
@@ -74,19 +75,16 @@ public class Member {
     @Column(name = "member_email")
     private String memberEmail;
 
-    @Column(name = "member_created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "member_deleted", nullable = false)
+    @Column(name = "member_deleted")
     private boolean memberDeleted;
 
-    @Column(name = "member_blocked", nullable = false)
+    @Column(name = "member_blocked")
     private boolean memberBlocked;
 
     @Column(name = "member_blocked_at")
     private LocalDateTime blockedAt;
 
-    @Column(name = "member_point", nullable = false)
+    @Column(name = "member_point")
     private Long memberPoint;
 
     @Column(name = "member_social_joined")
@@ -120,7 +118,6 @@ public class Member {
         this.memberPwd = memberPwd;
         this.memberPhone = memberPhone;
         this.memberEmail = memberEmail;
-        this.createdAt = LocalDateTime.now();
         this.memberPoint = 0L;
     }
 }

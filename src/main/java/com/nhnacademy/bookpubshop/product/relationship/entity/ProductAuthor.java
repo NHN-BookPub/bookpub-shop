@@ -27,7 +27,6 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "product_and_author")
 public class ProductAuthor {
@@ -36,12 +35,12 @@ public class ProductAuthor {
 
     @MapsId("authorNo")
     @ManyToOne
-    @JoinColumn(name = "author_number", nullable = false, unique = true)
+    @JoinColumn(name = "author_number")
     private Author author;
 
     @MapsId("productNo")
     @ManyToOne
-    @JoinColumn(name = "product_number", nullable = false, unique = true)
+    @JoinColumn(name = "product_number")
     private Product product;
 
     /**

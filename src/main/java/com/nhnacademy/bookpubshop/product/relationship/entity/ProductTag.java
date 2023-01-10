@@ -3,7 +3,6 @@ package com.nhnacademy.bookpubshop.product.relationship.entity;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.tag.entity.Tag;
 import java.io.Serializable;
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -16,7 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 상품태그(product_and_tag) 테이블.
@@ -27,7 +25,6 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "product_and_tag")
 public class ProductTag {
@@ -36,12 +33,12 @@ public class ProductTag {
 
     @MapsId("tagNo")
     @ManyToOne
-    @JoinColumn(name = "tag_number", nullable = false, unique = true)
+    @JoinColumn(name = "tag_number")
     private Tag tag;
 
     @MapsId("productNo")
     @ManyToOne
-    @JoinColumn(name = "product_number", nullable = false, unique = true)
+    @JoinColumn(name = "product_number")
     private Product product;
 
     /**
