@@ -95,6 +95,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetCategoryResponseDto> getParentCategories() {
+        return categoryRepository.findParentCategories();
+    }
+
+
+    /**
      * 부모카테고리 반환.
      *
      * @param parentCategoryNo 부모카테고리 번호.

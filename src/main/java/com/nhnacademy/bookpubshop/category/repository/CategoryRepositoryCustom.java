@@ -37,4 +37,10 @@ public interface CategoryRepositoryCustom {
     List<GetCategoryResponseDto> findCategoriesDisplayedTrue();
 
 
+    /**
+     * 최상위 카테고리를 조회.
+     *
+     * @return 최상위 카테고리 반환.
+     */
+    List<GetCategoryResponseDto> findParentCategories();
 }

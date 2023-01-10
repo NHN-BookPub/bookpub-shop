@@ -81,4 +81,23 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                 .fetch();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<GetCategoryResponseDto> findParentCategories() {
+        QCategory category = QCategory.category;
+
+        return from(category)
+                .where(category.parentCategory.isNull())
+                .select(Projections.constructor(GetCategoryResponseDto.class,
+                        category.categoryNo,
+                        category.categoryName,
+                        Projections.constructor(GetCategoryResponseDto.class, parent.categoryNo,
+                                parent.categoryName),category.categoryPriority,
+                        category.categoryDisplayed))
+                .leftJoin(category.parentCategory, parent).on(parent.eq(category.parentCategory))
+                .orderBy(category.categoryPriority.desc()).orderBy(category.categoryName.asc())
+                .fetch();
+    }
 }

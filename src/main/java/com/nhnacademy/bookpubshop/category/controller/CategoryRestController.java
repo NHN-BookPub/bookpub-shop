@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -74,15 +75,32 @@ public class CategoryRestController {
     }
 
     /**
+     * 최상위 카테고리 조회시 사용되는 메소드입니다.
+     *
+     * @return 최상위 카테고리 리스트 반환.
+     */
+    @GetMapping("/parent")
+    public ResponseEntity<List<GetCategoryResponseDto>> parentCategoryList() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(categoryService.getParentCategories());
+    }
+
+    /**
      * 카테고리 다건 조회시 사용되는 메소드입니다.
      *
      * @return 성공했을 때 응답코드 OK 200이 반환.
      */
     @GetMapping
-    public ResponseEntity<List<GetCategoryResponseDto>> categoryList() {
+    public ResponseEntity<List<GetCategoryResponseDto>> categoryList(
+            @RequestParam(defaultValue = "false") boolean display) {
+        if (display) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(categoryService.getCategoriesDisplayedTrue());
+        }
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(categoryService.getCategories());
     }
-
 }

@@ -51,4 +51,10 @@ public interface CategoryService {
      */
     List<GetCategoryResponseDto> getCategoriesDisplayedTrue();
 
+    /**
+     * 최상위 카테고리 조회를 위한 메소드입니다.
+     *
+     * @return 최상위 카테고리 정보 반환됩니다.
+     */
+    List<GetCategoryResponseDto> getParentCategories();
 }
