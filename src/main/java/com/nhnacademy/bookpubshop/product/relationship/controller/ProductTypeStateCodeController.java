@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.product.relationship.controller;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductTypeStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductTypeStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductTypeStateCodeService;
+import lombok.RequiredArgsConstructor;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,16 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since : 1.0
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("api/state/productType")
 public class ProductTypeStateCodeController {
     private final ProductTypeStateCodeService productTypeStateCodeService;
-
-    /**
-     * 생성자입니다.
-     */
-    public ProductTypeStateCodeController(ProductTypeStateCodeService productTypeStateCodeService) {
-        this.productTypeStateCodeService = productTypeStateCodeService;
-    }
 
     /**
      * 모든 유형코드를 조회하는 api.

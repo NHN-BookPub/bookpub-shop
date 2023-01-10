@@ -3,8 +3,9 @@ package com.nhnacademy.bookpubshop.author.controller;
 import com.nhnacademy.bookpubshop.author.dto.CreateAuthorRequestDto;
 import com.nhnacademy.bookpubshop.author.dto.GetAuthorResponseDto;
 import com.nhnacademy.bookpubshop.author.service.AuthorService;
-import java.util.ArrayList;
+import lombok.RequiredArgsConstructor;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,13 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since : 1.0
  **/
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/author")
 public class AuthorController {
     private final AuthorService authorService;
-
-    public AuthorController(AuthorService authorService) {
-        this.authorService = authorService;
-    }
 
     /**
      * 저자 생성 메서드입니다.
@@ -55,9 +53,9 @@ public class AuthorController {
      * @return 모든 저자를 반환합니다.
      */
     @GetMapping("/list")
-    public ResponseEntity<List<GetAuthorResponseDto>> getAuthorsByPage(Pageable pageable) {
-        List<GetAuthorResponseDto> authors = new ArrayList<>(authorService
-                .getAuthorsByPage(pageable));
+    public ResponseEntity<Page<GetAuthorResponseDto>> getAuthorsByPage(Pageable pageable) {
+        Page<GetAuthorResponseDto> authors =
+                authorService.getAuthorsByPage(pageable);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -82,13 +80,13 @@ public class AuthorController {
     }
 
     /**
-     * 책 제목으로 모든 저자를 검색하여 반환하는 메서드입니다.
+     * 상품 번호로 모든 저자를 검색하여 반환하는 메서드입니다.
      *
      * @param productNo 상품 번호입니다.
      * @return 같은 책에 대한 모든 저자를 반환합니다.
      */
     @GetMapping("/title")
-    public ResponseEntity<List<GetAuthorResponseDto>> getAuthorsByProductTitle(
+    public ResponseEntity<List<GetAuthorResponseDto>> getAuthorsByProductNo(
             @RequestParam Long productNo) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

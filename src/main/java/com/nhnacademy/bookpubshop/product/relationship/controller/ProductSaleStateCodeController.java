@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.product.relationship.controller;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductSaleStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductSaleStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductSaleStateCodeService;
+import lombok.RequiredArgsConstructor;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,16 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since : 1.0
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/state/productSale")
 public class ProductSaleStateCodeController {
     private final ProductSaleStateCodeService productSaleStateCodeService;
-
-    /**
-     * 생성자입니다.
-     */
-    public ProductSaleStateCodeController(ProductSaleStateCodeService productSaleStateCodeService) {
-        this.productSaleStateCodeService = productSaleStateCodeService;
-    }
 
     /**
      * 모든 정책코드를 조회하는 api.

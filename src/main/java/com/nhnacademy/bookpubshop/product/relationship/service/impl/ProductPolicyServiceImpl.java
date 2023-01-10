@@ -1,11 +1,12 @@
 package com.nhnacademy.bookpubshop.product.relationship.service.impl;
 
 import com.nhnacademy.bookpubshop.product.exception.NotFoundProductPolicyException;
-import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductPolicyRequestDto;
+import com.nhnacademy.bookpubshop.product.relationship.dto.CreateModifyProductPolicyRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductPolicyRepository;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductPolicyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,19 +17,16 @@ import org.springframework.transaction.annotation.Transactional;
  * @since : 1.0
  **/
 @Service
+@RequiredArgsConstructor
 public class ProductPolicyServiceImpl implements ProductPolicyService {
     private final ProductPolicyRepository productPolicyRepository;
-
-    public ProductPolicyServiceImpl(ProductPolicyRepository productPolicyRepository) {
-        this.productPolicyRepository = productPolicyRepository;
-    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional
-    public GetProductPolicyResponseDto createProductPolicy(CreateProductPolicyRequestDto request) {
+    public GetProductPolicyResponseDto createProductPolicy(CreateModifyProductPolicyRequestDto request) {
         ProductPolicy productPolicy = productPolicyRepository.save(
                 new ProductPolicy(
                         null,
@@ -68,7 +66,7 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
     @Override
     @Transactional
     public GetProductPolicyResponseDto modifyProductPolicyById(Integer policyNo,
-                                                 CreateProductPolicyRequestDto policy) {
+                                                 CreateModifyProductPolicyRequestDto policy) {
         ProductPolicy productPolicy =
                 productPolicyRepository
                         .findById(policyNo)

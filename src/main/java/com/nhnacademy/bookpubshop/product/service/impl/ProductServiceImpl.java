@@ -20,9 +20,11 @@ import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleSta
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 상품 서비스의 구현체입니다.
  */
 @Service
+@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductPolicyRepository productPolicyRepository;
@@ -38,24 +41,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductTypeStateCodeRepository typeStateCodeRepository;
     private final ProductAuthorRepository productAuthorRepository;
     private final AuthorRepository authorRepository;
-
-    /**
-     * 생성자 입니다.
-     */
-    public ProductServiceImpl(ProductRepository productRepository,
-                              ProductPolicyRepository productPolicyRepository,
-                              ProductSaleStateCodeRepository saleStateCodeRepository,
-                              ProductTypeStateCodeRepository typeStateCodeRepository,
-                              ProductAuthorRepository productAuthorRepository,
-                              AuthorRepository authorRepository) {
-        this.productRepository = productRepository;
-        this.productPolicyRepository = productPolicyRepository;
-        this.saleStateCodeRepository = saleStateCodeRepository;
-        this.typeStateCodeRepository = typeStateCodeRepository;
-        this.productAuthorRepository = productAuthorRepository;
-        this.authorRepository = authorRepository;
-    }
-
 
     /**
      * {@inheritDoc}
@@ -171,11 +156,11 @@ public class ProductServiceImpl implements ProductService {
      * {@inheritDoc}
      */
     @Override
-    public List<GetProductListResponseDto> getAllProducts(Pageable pageable) {
-        List<GetProductListResponseDto> response =
+    public Page<GetProductListResponseDto> getAllProducts(Pageable pageable) {
+        Page<GetProductListResponseDto> response =
                 productRepository.getAllProducts(pageable);
 
-        if (response.isEmpty()) {
+        if (response.getContent().isEmpty() || response.getTotalElements() == 0) {
             throw new ProductNotFoundException();
         }
 
@@ -186,16 +171,9 @@ public class ProductServiceImpl implements ProductService {
      * {@inheritDoc}
      */
     @Override
-    public List<GetProductListResponseDto> getProductListLikeTitle(
+    public Page<GetProductListResponseDto> getProductListLikeTitle(
             String title, Pageable pageable) {
-        List<GetProductListResponseDto> response =
-                productRepository.getProductListLikeTitle(title, pageable);
-
-        if (response.isEmpty()) {
-            throw new ProductNotFoundException();
-        }
-
-        return response;
+        return productRepository.getProductListLikeTitle(title, pageable);
     }
 
     /**

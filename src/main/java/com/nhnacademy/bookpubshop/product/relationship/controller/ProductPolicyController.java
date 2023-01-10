@@ -1,8 +1,9 @@
 package com.nhnacademy.bookpubshop.product.relationship.controller;
 
-import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductPolicyRequestDto;
+import com.nhnacademy.bookpubshop.product.relationship.dto.CreateModifyProductPolicyRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductPolicyService;
+import lombok.RequiredArgsConstructor;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,16 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since : 1.0
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/policy/product")
 public class ProductPolicyController {
     private final ProductPolicyService productPolicyService;
-
-    /**
-     * 생성자입니다.
-     */
-    public ProductPolicyController(ProductPolicyService productPolicyService) {
-        this.productPolicyService = productPolicyService;
-    }
 
     /**
      * 상품생성을 위한 api 입니다.
@@ -41,7 +36,7 @@ public class ProductPolicyController {
      */
     @PostMapping
     public ResponseEntity<GetProductPolicyResponseDto> createProductPolicy(
-            @Valid @RequestBody CreateProductPolicyRequestDto requestDto) {
+            @Valid @RequestBody CreateModifyProductPolicyRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productPolicyService.createProductPolicy(requestDto));
@@ -71,7 +66,7 @@ public class ProductPolicyController {
      */
     @PostMapping("/{policyNo}")
     public ResponseEntity<GetProductPolicyResponseDto> modifyProductPolicy(
-            @PathVariable Integer policyNo, @RequestBody CreateProductPolicyRequestDto policy) {
+            @PathVariable Integer policyNo, @RequestBody CreateModifyProductPolicyRequestDto policy) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productPolicyService.modifyProductPolicyById(policyNo, policy));

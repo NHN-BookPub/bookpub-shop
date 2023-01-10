@@ -7,6 +7,7 @@ import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductSaleStateCo
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductSaleStateCodeService;
+import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -19,13 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @since : 1.0
  **/
 @Service
+@RequiredArgsConstructor
 public class ProductSaleStateCodeServiceImpl implements ProductSaleStateCodeService {
     private final ProductSaleStateCodeRepository productSaleStateCodeRepository;
-
-    public ProductSaleStateCodeServiceImpl(
-            ProductSaleStateCodeRepository productSaleStateCodeRepository) {
-        this.productSaleStateCodeRepository = productSaleStateCodeRepository;
-    }
 
     /**
      * {@inheritDoc}

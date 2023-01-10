@@ -4,12 +4,12 @@ import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,18 +26,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since : 1.0
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/product")
 public class ProductController {
     private final ProductService productService;
-
-    /**
-     * 생성자 입니다.
-     *
-     * @param productService ProductService 를 주입받습니다.
-     */
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
 
     /**
      * 페이징 처리 된
@@ -47,7 +39,7 @@ public class ProductController {
      * @return the all products
      */
     @GetMapping
-    public ResponseEntity<List<GetProductListResponseDto>> getAllProducts(Pageable pageable) {
+    public ResponseEntity<Page<GetProductListResponseDto>> getAllProducts(Pageable pageable) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productService.getAllProducts(pageable));
@@ -90,7 +82,7 @@ public class ProductController {
      * @return 상품리스트가 담겨있습니다.
      */
     @GetMapping("/search")
-    public ResponseEntity<List<GetProductListResponseDto>> getProductLikeTitle(
+    public ResponseEntity<Page<GetProductListResponseDto>> getProductLikeTitle(
             @RequestParam String title, Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -122,7 +114,7 @@ public class ProductController {
      * @return 성공시 200을 반환합니다.
      * @author : 여운석
      */
-    @DeleteMapping("/{id}")
+    @PostMapping("/{id}")
     public ResponseEntity<Void> setDeletedProduct(
             @PathVariable Long id,
             @RequestParam boolean deleted) {

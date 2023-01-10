@@ -6,8 +6,9 @@ import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.author.exception.NotFoundAuthorException;
 import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
 import com.nhnacademy.bookpubshop.author.service.AuthorService;
-import java.util.ArrayList;
+import lombok.RequiredArgsConstructor;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
  * @since : 1.0
  **/
 @Service
+@RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;
-
-    public AuthorServiceImpl(AuthorRepository authorRepository) {
-        this.authorRepository = authorRepository;
-    }
 
     /**
      * {@inheritDoc}
@@ -42,7 +40,7 @@ public class AuthorServiceImpl implements AuthorService {
      * {@inheritDoc}
      */
     @Override
-    public List<GetAuthorResponseDto> getAuthorsByPage(Pageable pageable) {
+    public Page<GetAuthorResponseDto> getAuthorsByPage(Pageable pageable) {
         return authorRepository.getAuthorsByPage(pageable);
     }
 
@@ -51,16 +49,7 @@ public class AuthorServiceImpl implements AuthorService {
      */
     @Override
     public List<GetAuthorResponseDto> getAuthorsByName(String name) {
-        List<Author> authors = authorRepository.getAuthorByAuthorName(name);
-
-        List<GetAuthorResponseDto> returnAuthor = new ArrayList<>();
-
-        for (Author author : authors) {
-            returnAuthor.add(
-                    new GetAuthorResponseDto(author.getAuthorNo(), author.getAuthorName()));
-        }
-
-        return returnAuthor;
+        return authorRepository.getAuthorByName(name);
     }
 
     /**
