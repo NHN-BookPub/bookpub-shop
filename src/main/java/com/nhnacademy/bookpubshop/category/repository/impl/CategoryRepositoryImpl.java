@@ -93,10 +93,8 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                 .select(Projections.constructor(GetCategoryResponseDto.class,
                         category.categoryNo,
                         category.categoryName,
-                        Projections.constructor(GetCategoryResponseDto.class, parent.categoryNo,
-                                parent.categoryName),category.categoryPriority,
+                        category.categoryPriority,
                         category.categoryDisplayed))
-                .leftJoin(category.parentCategory, parent).on(parent.eq(category.parentCategory))
                 .orderBy(category.categoryPriority.desc()).orderBy(category.categoryName.asc())
                 .fetch();
     }

@@ -29,4 +29,12 @@ public class GetCategoryResponseDto {
         this.categoryNo = categoryNo;
         this.categoryName = categoryName;
     }
+
+    public GetCategoryResponseDto(Integer categoryNo, String categoryName, Integer categoryPriority,
+            boolean categoryDisplayed) {
+        this.categoryNo = categoryNo;
+        this.categoryName = categoryName;
+        this.categoryPriority = categoryPriority;
+        this.categoryDisplayed = categoryDisplayed;
+    }
 }
