@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.product.relationship.service;
 
-import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductPolicyRequestDto;
+import com.nhnacademy.bookpubshop.product.relationship.dto.CreateModifyProductPolicyRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyResponseDto;
 
 /**
@@ -16,7 +16,7 @@ public interface ProductPolicyService {
      * @param requestDto 생성시 필요한 dto class.
      * @return 생성된 객체를 반환합니다.
      */
-    GetProductPolicyResponseDto createProductPolicy(CreateProductPolicyRequestDto requestDto);
+    GetProductPolicyResponseDto createProductPolicy(CreateModifyProductPolicyRequestDto requestDto);
 
     /**
      * 번호를 이용하여 상품 정책을 조회합니다.
@@ -34,7 +34,7 @@ public interface ProductPolicyService {
      * @return 수정된 객체를 반환합니다.
      */
     GetProductPolicyResponseDto modifyProductPolicyById(Integer policyNo,
-                                                        CreateProductPolicyRequestDto policy);
+                                                        CreateModifyProductPolicyRequestDto policy);
 
     /**
      * 상품정책을 삭제합니다.
