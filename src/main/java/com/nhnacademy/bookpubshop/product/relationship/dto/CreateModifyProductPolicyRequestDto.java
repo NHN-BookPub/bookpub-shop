@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.product.relationship.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -13,7 +14,9 @@ import org.hibernate.validator.constraints.Length;
 @Getter
 @NoArgsConstructor
 public class CreateModifyProductPolicyRequestDto {
+    @Length(max = 10)
     private String policyMethod;
+    @NotNull
     private boolean policySaved;
     @Length(max = 100)
     private Integer saveRate;
