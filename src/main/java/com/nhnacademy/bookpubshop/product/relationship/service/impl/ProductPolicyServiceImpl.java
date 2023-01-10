@@ -46,6 +46,7 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public GetProductPolicyResponseDto getProductPolicyById(Integer policyNo) {
         ProductPolicy productPolicy =
                 productPolicyRepository
