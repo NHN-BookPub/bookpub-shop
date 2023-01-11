@@ -1,8 +1,13 @@
 package com.nhnacademy.bookpubshop.member.entity;
 
+import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
+import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -90,6 +96,9 @@ public class Member extends BaseCreateTimeEntity {
     @Column(name = "member_social_joined")
     private boolean socialJoined;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+    private Set<MemberAuthority> memberAuthorities = new HashSet<>();
+
     /**
      * front서버에서 전달해 준 DTO 매핑 생성자.
      * Builder를 이용해 default값이 있는 값은 null값을 넣어준다.
@@ -139,7 +148,6 @@ public class Member extends BaseCreateTimeEntity {
      */
     public void modifyEmail(String memberEmail) {
         this.memberEmail = memberEmail;
-
     }
 
     /**
@@ -154,5 +162,9 @@ public class Member extends BaseCreateTimeEntity {
      */
     public void memberBlock() {
         this.memberBlocked = !this.memberBlocked;
+    }
+
+    public void addMemberAuthority(MemberAuthority memberAuthority) {
+        this.memberAuthorities.add(memberAuthority);
     }
 }

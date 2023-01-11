@@ -1,8 +1,10 @@
 package com.nhnacademy.bookpubshop.member.service;
 
+import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
@@ -70,4 +72,12 @@ public interface MemberService {
      * @param memberNo 멤버 번호기입.
      */
     void deleteMember(Long memberNo);
+
+    /**
+     * 멤버가 로그인할 때 사용되는 메서드입니다.
+     *
+     * @param requestDto 멤버 로그인 정보.
+     * @return 로그인 성공정보 리턴.
+     */
+    LoginMemberResponseDto loginMember(LoginMemberRequestDto requestDto);
 }
