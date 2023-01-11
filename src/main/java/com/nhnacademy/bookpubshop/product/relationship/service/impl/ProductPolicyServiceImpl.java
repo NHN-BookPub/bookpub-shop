@@ -6,9 +6,9 @@ import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyRespo
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductPolicyRepository;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductPolicyService;
-import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +28,8 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
      */
     @Override
     @Transactional
-    public GetProductPolicyResponseDto createProductPolicy(CreateModifyProductPolicyRequestDto request) {
+    public GetProductPolicyResponseDto createProductPolicy(
+            CreateModifyProductPolicyRequestDto request) {
         ProductPolicy productPolicy = productPolicyRepository.save(
                 new ProductPolicy(
                         null,

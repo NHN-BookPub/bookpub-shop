@@ -17,7 +17,8 @@ public interface ProductTypeStateCodeService {
      * @param requestDto 생성시 필요한 dto class.
      * @return 생성된 객체를 반환합니다.
      */
-    GetProductTypeStateCodeResponseDto createTypeStateCode(CreateProductTypeStateCodeRequestDto requestDto);
+    GetProductTypeStateCodeResponseDto createTypeStateCode(
+            CreateProductTypeStateCodeRequestDto requestDto);
 
     /**
      * 유형 번호로 조회합니다.

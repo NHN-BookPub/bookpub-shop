@@ -7,9 +7,9 @@ import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductTypeStateCo
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductTypeStateCodeService;
-import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

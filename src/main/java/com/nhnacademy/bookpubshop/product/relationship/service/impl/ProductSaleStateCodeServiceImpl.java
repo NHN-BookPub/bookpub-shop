@@ -7,9 +7,9 @@ import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductSaleStateCo
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductSaleStateCodeService;
-import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +38,6 @@ public class ProductSaleStateCodeServiceImpl implements ProductSaleStateCodeServ
                                 request.getCodeCategory(),
                                 request.isCodeUsed(),
                                 request.getCodeInfo()));
-
-
 
         return new GetProductSaleStateCodeResponseDto(
                 stateCode.getCodeNumber(),
@@ -72,8 +70,7 @@ public class ProductSaleStateCodeServiceImpl implements ProductSaleStateCodeServ
     @Override
     @Transactional
     public GetProductSaleStateCodeResponseDto setUsedSaleCodeById(Integer id, boolean used) {
-        ProductSaleStateCode stateCode =
-                productSaleStateCodeRepository
+        ProductSaleStateCode stateCode = productSaleStateCodeRepository
                         .findById(id)
                         .orElseThrow(NotFoundStateCodeException::new);
 
