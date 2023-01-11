@@ -7,6 +7,7 @@ import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
+import com.nhnacademy.bookpubshop.utils.PageResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -108,10 +109,11 @@ public class MemberController {
      * @return response entity
      */
     @GetMapping("/admin/members")
-    public ResponseEntity<Page<MemberResponseDto>> memberList(Pageable pageable) {
+    public ResponseEntity<PageResponse<MemberResponseDto>> memberList(Pageable pageable) {
+        Page<MemberResponseDto> members = memberService.getMembers(pageable);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(memberService.getMembers(pageable));
+                .body(new PageResponse<>(members));
     }
 
     /**

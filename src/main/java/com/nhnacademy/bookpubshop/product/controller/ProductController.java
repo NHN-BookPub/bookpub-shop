@@ -4,6 +4,7 @@ import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
+import com.nhnacademy.bookpubshop.utils.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,10 +40,13 @@ public class ProductController {
      * @return the all products
      */
     @GetMapping
-    public ResponseEntity<Page<GetProductListResponseDto>> getAllProducts(Pageable pageable) {
+    public ResponseEntity<PageResponse<GetProductListResponseDto>> getAllProducts(
+            Pageable pageable) {
+        Page<GetProductListResponseDto> content =
+                productService.getAllProducts(pageable);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productService.getAllProducts(pageable));
+                .body(new PageResponse<>(content));
     }
 
     /**
@@ -82,11 +86,13 @@ public class ProductController {
      * @return 상품리스트가 담겨있습니다.
      */
     @GetMapping("/search")
-    public ResponseEntity<Page<GetProductListResponseDto>> getProductLikeTitle(
+    public ResponseEntity<PageResponse<GetProductListResponseDto>> getProductLikeTitle(
             @RequestParam String title, Pageable pageable) {
+        Page<GetProductListResponseDto> content =
+                productService.getProductListLikeTitle(title, pageable);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productService.getProductListLikeTitle(title, pageable));
+                .body(new PageResponse<>(content));
     }
 
     /**
