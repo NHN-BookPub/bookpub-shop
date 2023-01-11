@@ -4,7 +4,6 @@ import static com.nhnacademy.bookpubshop.state.ProductTypeState.BEST_SELLER;
 import static com.nhnacademy.bookpubshop.state.ProductTypeState.NEW;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import com.nhnacademy.bookpubshop.author.entity.Author;
@@ -166,8 +165,8 @@ class ProductServiceTest {
     @Test
     @DisplayName("상품 번호로 조회 성공")
     void getProductDetailById() {
-        when(productRepository.findById(product.getProductNo()))
-                .thenReturn(Optional.ofNullable(product));
+        when(productRepository.getProductDetailById(product.getProductNo()))
+                .thenReturn(Optional.ofNullable(responseDto));
 
         assertThat(productService.getProductDetailById(product.getProductNo()).getProductNo())
                 .isEqualTo(product.getProductNo());

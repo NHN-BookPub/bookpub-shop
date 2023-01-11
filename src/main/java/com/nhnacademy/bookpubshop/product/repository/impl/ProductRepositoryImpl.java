@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.product.repository.impl;
 
+import com.nhnacademy.bookpubshop.product.dto.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
@@ -8,6 +9,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import javax.persistence.EntityManager;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -90,5 +92,32 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .fetchOne();
 
         return new PageImpl<>(query.fetch(), pageable, count);
+    }
+
+    @Override
+    public Optional<GetProductDetailResponseDto> getProductDetailById(Long id) {
+        QProduct product = QProduct.product;
+
+        return Optional.of(from(product)
+                .select(Projections.constructor(GetProductDetailResponseDto.class,
+                        product.productNo,
+                        product.productIsbn,
+                        product.title,
+                        product.pageCount,
+                        product.productDescription,
+                        product.productThumbnail,
+                        product.salesPrice,
+                        product.salesRate,
+                        product.productPriority,
+                        product.productStock,
+                        product.publishDate,
+                        product.productDeleted,
+                        product.productSubscribed,
+                        product.productSaleStateCode,
+                        product.productTypeStateCode,
+                        product.productPolicy
+                        ))
+                .where(product.productNo.eq(id))
+                .fetchOne());
     }
 }

@@ -19,10 +19,10 @@ import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleSta
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
-import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -47,26 +47,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public GetProductDetailResponseDto getProductDetailById(Long id) {
-        Product product = productRepository.findById(id)
+        return productRepository.getProductDetailById(id)
                 .orElseThrow(ProductNotFoundException::new);
-
-        return new GetProductDetailResponseDto(
-                product.getProductNo(),
-                product.getProductIsbn(),
-                product.getTitle(),
-                product.getPageCount(),
-                product.getProductDescription(),
-                product.getProductThumbnail(),
-                product.getSalesPrice(),
-                product.getSalesRate(),
-                product.getProductPriority(),
-                product.getProductStock(),
-                product.getPublishDate(),
-                product.isProductDeleted(),
-                product.isProductSubscribed(),
-                product.getProductSaleStateCode(),
-                product.getProductTypeStateCode(),
-                product.getProductPolicy());
     }
 
     /**
