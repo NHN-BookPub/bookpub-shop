@@ -40,7 +40,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
 
         JPAQuery<GetProductListResponseDto> query = queryFactory
                 .from(product)
-                .orderBy(product.createdAt.asc())
+                .orderBy(product.publishDate.desc())
                 .select(Projections.constructor(GetProductListResponseDto.class,
                         product.productNo,
                         product.productThumbnail,
@@ -48,7 +48,8 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         product.productStock,
                         product.salesPrice,
                         product.salesRate,
-                        product.createdAt))
+                        product.productDeleted,
+                        product.publishDate))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
@@ -76,9 +77,10 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         product.productStock,
                         product.salesPrice,
                         product.salesRate,
-                        product.createdAt))
+                        product.productDeleted,
+                        product.publishDate))
                 .where(product.title.like(title))
-                .orderBy(product.createdAt.asc())
+                .orderBy(product.publishDate.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
