@@ -20,15 +20,6 @@ public interface ProductTypeStateCodeService {
     GetProductTypeStateCodeResponseDto createTypeStateCode(CreateProductTypeStateCodeRequestDto requestDto);
 
     /**
-     * 상품유형코드를 수정합니다.
-     *
-     * @param codeNo 상품유형번호입니다.
-     * @param requestDto 수정할 dto class.
-     * @return 수정된 객체를 반환합니다.
-     */
-    GetProductTypeStateCodeResponseDto modifyTypeStateCode(Integer codeNo, CreateProductTypeStateCodeRequestDto requestDto);
-
-    /**
      * 유형 번호로 조회합니다.
      *
      * @param codeNo 유형번호입니다.

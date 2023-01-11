@@ -50,27 +50,6 @@ public class ProductTypeStateCodeServiceImpl implements ProductTypeStateCodeServ
      * {@inheritDoc}
      */
     @Override
-    @Transactional
-    public GetProductTypeStateCodeResponseDto modifyTypeStateCode(Integer codeNo,
-                                           CreateProductTypeStateCodeRequestDto requestDto) {
-        ProductTypeStateCode stateCode =
-                productTypeStateCodeRepository.save(
-                        new ProductTypeStateCode(codeNo,
-                                requestDto.getCodeName(),
-                                requestDto.isCodeUsed(),
-                                requestDto.getCodeInfo()));
-
-        return new GetProductTypeStateCodeResponseDto(
-                stateCode.getCodeNo(),
-                stateCode.getCodeName(),
-                stateCode.isCodeUsed(),
-                stateCode.getCodeInfo());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     @Transactional(readOnly = true)
     public GetProductTypeStateCodeResponseDto getTypeStateCodeById(Integer codeNo) {
         ProductTypeStateCode stateCode =
