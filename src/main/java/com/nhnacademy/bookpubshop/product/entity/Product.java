@@ -19,7 +19,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 상품(product) 테이블.
@@ -31,7 +30,6 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "product")
 public class Product {
@@ -60,12 +58,16 @@ public class Product {
     private List<Product> relationProduct;
 
     @NotNull
-    @Column(name = "product_isbn", unique = true)
+    @Column(name = "product_isbn")
     private String productIsbn;
 
     @NotNull
     @Column(name = "product_title")
     private String title;
+
+    @NotNull
+    @Column(name = "product_publisher")
+    private String productPublisher;
 
     @Column(name = "product_page_count")
     private Integer pageCount;
