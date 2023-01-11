@@ -18,6 +18,6 @@ public class CreateModifyProductPolicyRequestDto {
     private String policyMethod;
     @NotNull
     private boolean policySaved;
-    @Length(max = 100)
+    @NotNull
     private Integer saveRate;
 }
