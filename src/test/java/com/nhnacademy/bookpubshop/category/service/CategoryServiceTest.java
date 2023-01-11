@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import com.nhnacademy.bookpubshop.category.dto.request.CreateCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.request.ModifyCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
+import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.exception.CategoryAlreadyExistsException;
 import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
@@ -227,19 +228,6 @@ class CategoryServiceTest {
         verify(categoryRepository, times(1)).findCategories();
     }
 
-    @Test
-    @DisplayName("노출여부 true 인 카테고리 다건 조회 성공 테스트.")
-    void getCategoriesDisplayedTrueSuccessTest() {
-
-        when(categoryRepository.findCategoriesDisplayedTrue()).thenReturn(
-                List.of(getCategoryResponseDto));
-
-        List<GetCategoryResponseDto> categories = categoryService.getCategoriesDisplayedTrue();
-        assertThat(categories.get(0).getCategoryName()).isEqualTo(
-                getCategoryResponseDto.getCategoryName());
-
-        verify(categoryRepository, times(1)).findCategoriesDisplayedTrue();
-    }
 
     @Test
     @DisplayName("최상위 카테고리만 조회 성공 테스트")
@@ -251,6 +239,20 @@ class CategoryServiceTest {
                 getCategoryResponseDto.getCategoryName());
 
         verify(categoryRepository, times(1)).findParentCategories();
+
+    }
+
+    @Test
+    @DisplayName("최상위 카레고리와 그 하위 카테고리 조회 성공 테스트")
+    void getParentCategoryWithChildrenSuccessTest() {
+        GetParentCategoryWithChildrenResponseDto dto = mock(
+                GetParentCategoryWithChildrenResponseDto.class);
+
+        when(categoryRepository.findParentCategoryWithChildren()).thenReturn(List.of(dto));
+        List<GetParentCategoryWithChildrenResponseDto> parentCategoryWithChildren = categoryService.getParentCategoryWithChildren();
+        assertThat(parentCategoryWithChildren.get(0)).isEqualTo(dto);
+
+        verify(categoryRepository, times(1)).findParentCategoryWithChildren();
 
     }
 

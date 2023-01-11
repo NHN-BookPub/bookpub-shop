@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.category.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
+import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +32,7 @@ class CategoryRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        category = new Category(null, null, "국내소설", 0, true);
+        category = new Category(null, null, "국내도서", 0, true);
 
     }
 
@@ -90,30 +91,6 @@ class CategoryRepositoryTest {
     }
 
     @Test
-    @DisplayName("카테고리 다건 조회 노출여부 테스트 입니다.")
-    void displayedTrueCategoriesGetTest() {
-        String romance = "로맨스소설";
-        String fantasy = "판타지소설";
-        Category romanceCategory = new Category(null, category, romance, 0, false);
-        Category fantasyCategory = new Category(null, category, fantasy, 1, true);
-        categoryRepository.save(category);
-        categoryRepository.save(fantasyCategory);
-        categoryRepository.save(romanceCategory);
-
-        List<GetCategoryResponseDto> result = categoryRepository.findCategoriesDisplayedTrue();
-
-        assertThat(result)
-                .isNotEmpty()
-                .hasSize(2);
-
-        assertThat(result.get(0).getCategoryName()).isEqualTo(fantasyCategory.getCategoryName());
-        assertThat(result.get(0).getParent().getCategoryName()).isEqualTo(
-                category.getCategoryName());
-        assertThat(result.get(1).getCategoryName()).isEqualTo(category.getCategoryName());
-        result.forEach(value -> assertThat(value.isCategoryDisplayed()).isTrue());
-    }
-
-    @Test
     @DisplayName("최상위 카테고리만 조회하는 테스트입니다.")
     void parentCategoryGetTest(){
         String romance = "로맨스소설";
@@ -132,6 +109,33 @@ class CategoryRepositoryTest {
 
         assertThat(result.get(0).getCategoryName()).isEqualTo(category.getCategoryName());
         assertThat(result.get(0).getParent()).isNull();
+
+    }
+
+    @Test
+    @DisplayName("메인메이지에서 조회할 공개여부 true, 우선순위 카테고리(상,하위) 조회 테스트입니다.")
+    void parentCategoryWithChildrenGetTest() {
+        Category foreignCategory = new Category(null, null, "외국도서", 1, true);
+        Category romanceCategory = new Category(null, category, "로맨스소설", 0, true);
+        Category newspaperCategory = new Category(null, category, "신문", 0, false);
+        Category detectiveCategory = new Category(null, category, "추리소설", 1, true);
+        Category fantasyCategory = new Category(null, foreignCategory, "판타지소설", 0, true);
+        categoryRepository.save(category);
+        categoryRepository.save(foreignCategory);
+        categoryRepository.save(newspaperCategory);
+        categoryRepository.save(detectiveCategory);
+        categoryRepository.save(fantasyCategory);
+        categoryRepository.save(romanceCategory);
+
+        List<GetParentCategoryWithChildrenResponseDto> result = categoryRepository.findParentCategoryWithChildren();
+
+        assertThat(result).hasSize(2);
+
+        assertThat(result.get(0).getCategoryName()).isEqualTo(foreignCategory.getCategoryName());
+        assertThat(result.get(0).getChildList()).hasSize(1);
+        assertThat(result.get(1).getChildList()).hasSize(2);
+        assertThat(result.get(1).getChildList().get(0).getCategoryName()).isEqualTo(
+                detectiveCategory.getCategoryName());
 
     }
 }
