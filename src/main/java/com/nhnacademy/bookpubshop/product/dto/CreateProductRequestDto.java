@@ -5,8 +5,8 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -16,7 +16,7 @@ import org.hibernate.validator.constraints.Length;
  * @since : 1.0
  **/
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class CreateProductRequestDto {
     @NotNull
     @Length(min = 10, max = 13, message = "ISBN은 10자 혹은 13자입니다.")
@@ -57,7 +57,7 @@ public class CreateProductRequestDto {
     @NotNull
     private Integer typeCodeNo;
     @NotBlank
-    private String[] authorNos;
+    private List<Integer> authorNos;
     @NotNull
     private List<Long> relationProducts;
 }
