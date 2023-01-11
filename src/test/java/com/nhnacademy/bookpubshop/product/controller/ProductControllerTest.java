@@ -66,7 +66,7 @@ class ProductControllerTest {
     @BeforeEach
     void setUp() {
         mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        url = "/api/product";
+        url = "/api/products";
 
         productPolicy = new ProductPolicy(1,"method",true,1);
         typeStateCode = new ProductTypeStateCode(1,BEST_SELLER.getName(),BEST_SELLER.isUsed(),"info");
@@ -265,7 +265,7 @@ class ProductControllerTest {
     void setDeletedProduct() throws Exception {
         doNothing().when(productService).setDeleteProduct(product.getProductNo(), false);
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url + "/" + product.getProductNo() + "?deleted=false")
+        mockMvc.perform(MockMvcRequestBuilders.delete(url + "/" + product.getProductNo() + "?deleted=false")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());

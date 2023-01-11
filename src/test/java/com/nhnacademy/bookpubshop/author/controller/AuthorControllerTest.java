@@ -41,7 +41,7 @@ class AuthorControllerTest {
     ObjectMapper objectMapper;
     CreateAuthorRequestDto requestDto;
     GetAuthorResponseDto responseDto;
-    String path = "/api/author";
+    String path = "/api/authors";
 
     @BeforeEach
     void setUp() {
@@ -84,7 +84,7 @@ class AuthorControllerTest {
         when(authorService.getAuthorsByPage(pageable))
                 .thenReturn(page);
 
-        mockMvc.perform(get(path + "/list?page=0&size=5")
+        mockMvc.perform(get(path + "?page=0&size=5")
                 .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(page)))
                 .andExpect(status().isOk())
@@ -108,7 +108,7 @@ class AuthorControllerTest {
         when(authorService.getAuthorsByName(responseDto.getAuthorName()))
                 .thenReturn(responses);
 
-        mockMvc.perform(get(path + "?name=" + responseDto.getAuthorName())
+        mockMvc.perform(get(path + "/search/name?name=" + responseDto.getAuthorName())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(responses)))
                 .andExpect(status().isOk())
@@ -128,7 +128,7 @@ class AuthorControllerTest {
         when(authorService.getAuthorsByProductNo(1L))
                 .thenReturn(responses);
 
-        mockMvc.perform(get(path + "/get?productNo=" + 1)
+        mockMvc.perform(get(path + "/search/productNo?productNo=" + 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(responses)))
                 .andExpect(status().isOk())
