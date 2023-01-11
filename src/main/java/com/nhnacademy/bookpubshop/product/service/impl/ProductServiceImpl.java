@@ -8,7 +8,6 @@ import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundProductPolicyException;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
-import com.nhnacademy.bookpubshop.product.exception.ProductDeletedException;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductAuthor;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
@@ -51,10 +50,6 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(ProductNotFoundException::new);
 
-        if (product.isProductDeleted()) {
-            throw new ProductDeletedException(id);
-        }
-
         return new GetProductDetailResponseDto(
                 product.getProductNo(),
                 product.getProductIsbn(),
@@ -67,6 +62,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getProductPriority(),
                 product.getProductStock(),
                 product.getPublishDate(),
+                product.isProductDeleted(),
                 product.isProductSubscribed(),
                 product.getProductSaleStateCode(),
                 product.getProductTypeStateCode(),
@@ -107,13 +103,16 @@ public class ProductServiceImpl implements ProductService {
                         relationProducts,
                         request.getProductIsbn(),
                         request.getTitle(),
+                        request.getProductPublisher(),
                         request.getPageCount(),
                         request.getProductDescription(),
                         request.getThumbnailPath(),
                         request.getEbookPath(),
                         request.getSalePrice(),
                         request.getProductPrice(),
-                        getSaleRateWithSalePrice(request.getProductPrice(), request.getSalePrice()),
+                        getSaleRateWithSalePrice(
+                                request.getProductPrice(),
+                                request.getSalePrice()),
                         0L,
                         request.getProductPriority(),
                         false,
@@ -122,16 +121,18 @@ public class ProductServiceImpl implements ProductService {
                         LocalDateTime.now(),
                         request.isSubscribed()));
 
-        for (String authorNo : request.getAuthorNos()) {
-            productAuthorRepository.save(
-                    new ProductAuthor(
-                            new ProductAuthor.Pk(Integer.parseInt(authorNo),
-                                    product.getProductNo()),
-                            authorRepository.findById(Integer.parseInt(authorNo))
-                                    .orElseThrow(NotFoundAuthorException::new),
-                            productRepository.findById(product.getProductNo())
-                                    .orElseThrow(ProductNotFoundException::new))
-            );
+        if (!request.getAuthorNos().isEmpty()) {
+            for (Integer authorNo : request.getAuthorNos()) {
+                productAuthorRepository.save(
+                        new ProductAuthor(
+                                new ProductAuthor.Pk(authorNo,
+                                        product.getProductNo()),
+                                authorRepository.findById(authorNo)
+                                        .orElseThrow(NotFoundAuthorException::new),
+                                productRepository.findById(product.getProductNo())
+                                        .orElseThrow(ProductNotFoundException::new))
+                );
+            }
         }
 
         return new GetProductDetailResponseDto(
@@ -146,6 +147,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getProductPriority(),
                 product.getProductStock(),
                 product.getPublishDate(),
+                product.isProductDeleted(),
                 product.isProductSubscribed(),
                 product.getProductSaleStateCode(),
                 product.getProductTypeStateCode(),
@@ -200,21 +202,31 @@ public class ProductServiceImpl implements ProductService {
                 .findById(request.getTypeCodeNo())
                 .orElseThrow(NotFoundStateCodeException::new);
 
+        List<Product> relationProducts = new ArrayList<>();
+
+        for (Long relationProductNo : request.getRelationProducts()) {
+            relationProducts.add(
+                    productRepository.findById(relationProductNo)
+                            .orElseThrow(ProductNotFoundException::new));
+        }
+
         Product save = productRepository.save(new Product(
                             product.getProductNo(),
                             productPolicy,
                             typeStateCode,
                             saleStateCode,
-                            product.getRelationProduct(),
+                            relationProducts,
                             request.getProductIsbn(),
                             request.getTitle(),
+                            request.getProductPublisher(),
                             request.getPageCount(),
                             request.getProductDescription(),
                             request.getThumbnailPath(),
                             request.getEbookPath(),
                             request.getSalePrice(),
                             request.getProductPrice(),
-                            getSaleRateWithSalePrice(product.getProductPrice(),
+                            getSaleRateWithSalePrice(
+                                    request.getProductPrice(),
                                     request.getSalePrice()),
                             product.getViewCount(),
                             request.getProductPriority(),
@@ -236,6 +248,7 @@ public class ProductServiceImpl implements ProductService {
                 save.getProductPriority(),
                 save.getProductStock(),
                 save.getPublishDate(),
+                save.isProductDeleted(),
                 save.isProductSubscribed(),
                 saleStateCode,
                 typeStateCode,
@@ -260,6 +273,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getRelationProduct(),
                 product.getProductIsbn(),
                 product.getTitle(),
+                product.getProductPublisher(),
                 product.getPageCount(),
                 product.getProductDescription(),
                 product.getProductThumbnail(),
@@ -285,7 +299,7 @@ public class ProductServiceImpl implements ProductService {
      * @param salePrice   할인가입니다.
      * @return 할인율을 반환합니다.
      */
-    public Integer getSaleRateWithSalePrice(Long originPrice, Long salePrice) {
+    private Integer getSaleRateWithSalePrice(Long originPrice, Long salePrice) {
         return Math.toIntExact((originPrice - salePrice) / originPrice * 100);
     }
 }
