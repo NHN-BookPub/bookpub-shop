@@ -5,6 +5,7 @@ import com.nhnacademy.bookpubshop.dto.KeyResponseDto;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -23,7 +24,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -65,8 +65,10 @@ public class KeyConfig {
             CertificateException, NoSuchAlgorithmException,
             UnrecoverableKeyException, KeyManagementException {
         KeyStore clientStore = KeyStore.getInstance("PKCS12");
-        ClassPathResource resource = new ClassPathResource("book-pub.p12");
-        clientStore.load(new FileInputStream(resource.getFile()), password.toCharArray());
+
+        URL systemResource = ClassLoader.getSystemResource("book-pub.p12");
+
+        clientStore.load(new FileInputStream(systemResource.getFile()), password.toCharArray());
 
         SSLContext sslContext = SSLContextBuilder.create()
                 .setProtocol("TLS")
