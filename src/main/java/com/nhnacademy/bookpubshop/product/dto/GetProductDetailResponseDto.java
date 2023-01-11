@@ -29,6 +29,7 @@ public class GetProductDetailResponseDto {
     private Integer productPriority;
     private Integer productStock;
     private LocalDateTime publishDate;
+    private boolean deleted;
     private boolean productSubscribed;
     private ProductSaleStateCode saleCode;
     private ProductTypeStateCode typeCode;
