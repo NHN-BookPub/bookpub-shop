@@ -14,12 +14,12 @@ import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.EmailAlreadyExistsException;
 import com.nhnacademy.bookpubshop.member.exception.IdAlreadyExistsException;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.exception.NicknameAlreadyExistsException;
 import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
-import com.nhnacademy.bookpubshop.tier.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.tier.exception.TierNotFoundException;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
 import java.util.Objects;
@@ -166,9 +166,8 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public LoginMemberResponseDto loginMember(LoginMemberRequestDto requestDto) {
-        return null;
+        return memberRepository.findByMemberLoginInfo(requestDto.getMemberId(), requestDto.getPassword());
     }
-
 
     private void duplicateCheck(SignUpMemberRequestDto member) {
         if (memberRepository.existsByMemberNickname(member.getNickname())) {

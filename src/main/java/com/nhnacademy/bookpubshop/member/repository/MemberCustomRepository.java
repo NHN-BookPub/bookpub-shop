@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.member.repository;
 
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import java.util.Optional;
@@ -19,4 +20,6 @@ public interface MemberCustomRepository {
     Optional<MemberDetailResponseDto> findByMemberDetails(Long meberNo);
 
     Page<MemberResponseDto> findMembers(Pageable pageable);
+
+    LoginMemberResponseDto findByMemberLoginInfo(String id, String pwd);
 }

@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.member.dto.response;
 
+import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,5 +15,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class LoginMemberResponseDto {
     private String memberId;
-    private List<String> authorities;
+    private List<Authority> authorities;
 }

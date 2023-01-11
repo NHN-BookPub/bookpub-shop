@@ -1,11 +1,15 @@
 package com.nhnacademy.bookpubshop.member.repository.impl;
 
+import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.authority.entity.QAuthority;
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.relationship.entity.QMemberAuthority;
+import com.nhnacademy.bookpubshop.member.relationship.exception.MemberAuthoritiesNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberCustomRepository;
 import com.nhnacademy.bookpubshop.tier.entity.QBookPubTier;
 import com.querydsl.core.types.Projections;
@@ -88,5 +92,28 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                 .fetch();
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    @Override
+    public LoginMemberResponseDto findByMemberLoginInfo(String id, String pwd) {
+        QMember member = QMember.member;
+        QMemberAuthority memberAuthority = QMemberAuthority.memberAuthority;
+
+        Optional<String> findMemberId = Optional.ofNullable(from(member)
+                .select(member.memberId)
+                .where(member.memberId.eq(id))
+                .where(member.memberPwd.eq(pwd))
+                .fetchOne());
+
+        Optional<List<Authority>> memberAuthorities = Optional.of(from(memberAuthority)
+                .innerJoin(memberAuthority.member, member)
+                .select(memberAuthority.authority)
+                .fetch());
+
+        String memberId = findMemberId.orElseThrow(() -> new MemberNotFoundException(id));
+
+        List<Authority> authorities = memberAuthorities.orElseThrow(MemberAuthoritiesNotFoundException::new);
+
+        return new LoginMemberResponseDto(memberId, authorities);
     }
 }
