@@ -53,11 +53,13 @@ public class ProductController {
      * @author : 여운석
      */
     @PostMapping
-    public ResponseEntity<GetProductDetailResponseDto> createProduct(
+    public ResponseEntity<Void> createProduct(
             CreateProductRequestDto request) {
+        productService.createProduct(request);
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productService.createProduct(request));
+                .body(null);
     }
 
     /**
@@ -98,12 +100,13 @@ public class ProductController {
      * @author : 여운석
      */
     @PutMapping("/{id}")
-    public ResponseEntity<GetProductDetailResponseDto> modifyProduct(
+    public ResponseEntity<Void> modifyProduct(
             @PathVariable Long id,
             @RequestBody CreateProductRequestDto request) {
+        productService.modifyProduct(request, id);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productService.modifyProduct(request, id));
+                .body(null);
     }
 
     /**
