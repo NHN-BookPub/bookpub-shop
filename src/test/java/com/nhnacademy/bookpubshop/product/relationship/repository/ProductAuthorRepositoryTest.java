@@ -44,7 +44,7 @@ class ProductAuthorRepositoryTest {
         productTypeStateCode = new ProductTypeStateCode(null, "기본", true, "기본입니다.");
         productSaleStateCode = new ProductSaleStateCode(null, "판타지", true, "판타지 소설");
         product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, Collections.EMPTY_LIST, "1231231301", "인어공주",
-                100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 1000L,
+                "publisher", 100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 1000L,
                 1000L, 10, 3L, 3,false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
         author = new Author(null, "사람");
 

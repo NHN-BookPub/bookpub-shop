@@ -120,7 +120,7 @@ class FileRepositoryTest {
     private Product productDummy() {
         Product product = new Product(null, productPolicyDummy(), productTypeStateCodeDummy(),
                 productSaleStateCodeDummy(), Collections.EMPTY_LIST, "isbn",
-                "title", 10, "description",
+                "title", "publisher",10, "description",
                 "test", "file_path", 10L, 100L,
                 90, 1L, 0,
                 false, 10, LocalDateTime.now(), LocalDateTime.now(), false);

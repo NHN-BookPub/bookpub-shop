@@ -48,7 +48,7 @@ class SubscribeProductListRepositoryTest {
         subscribe =  new Subscribe(null, "좋은생각", 80000L, 100000L,
                 20, 100L, false, LocalDateTime.now(), true);
         product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, Collections.EMPTY_LIST,"1231231231", "인어공주",
-                100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 1000L,
+                "publisher", 100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 1000L,
                 10000L, 90, 3L, 2,false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
 
         entityManager.persist(productPolicy);

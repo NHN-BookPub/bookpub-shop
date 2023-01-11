@@ -74,7 +74,7 @@ class ProductCategoryRepositoryTest {
         productSaleStateCodeRepository.save(productSaleStateCode);
 
         product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode,
-                Collections.EMPTY_LIST, "1231231111", "title", 100, "설명",
+                Collections.EMPTY_LIST, "1231231111", "title", "publisher",100, "설명",
                 "썸네일.png", "eBook path", 20000L,30000L,
                 10, 1L, 5, false, 100,
                 LocalDateTime.now(), LocalDateTime.now(), false);

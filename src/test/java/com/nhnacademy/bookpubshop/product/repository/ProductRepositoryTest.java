@@ -45,7 +45,7 @@ class ProductRepositoryTest {
         entityManager.persist(productSaleStateCode);
 
         product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, Collections.EMPTY_LIST, "1231231231", "인어공주",
-                100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 1000L,
+                "publisher", 100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 1000L,
                 100L, 10, 3L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
     }
 

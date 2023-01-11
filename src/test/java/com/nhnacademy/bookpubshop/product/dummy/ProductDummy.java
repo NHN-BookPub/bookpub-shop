@@ -26,6 +26,7 @@ public class ProductDummy {
                 Collections.EMPTY_LIST,
                 "isbn",
                 "title",
+                "publisher",
                 100,
                 "description",
                 "thumbnail",

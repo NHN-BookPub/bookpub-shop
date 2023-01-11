@@ -128,6 +128,7 @@ class CouponRepositoryTest {
                 Collections.EMPTY_LIST,
                 "1231231231",
                 "인어공주",
+                "publisher",
                 100,
                 "인어공주 이야기",
                 "mermaid.png",

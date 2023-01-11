@@ -78,7 +78,7 @@ class CouponMonthRepositoryTest {
     private Product productDummy() {
         Product product = new Product(null, productPolicyDummy(), productTypeStateCodeDummy(),
                 productSaleStateCodeDummy(), Collections.EMPTY_LIST, "isbn",
-                "title", 10, "description",
+                "title", "publisher", 10, "description",
                 "test", "file_path", 10L, 1L,
                 10, 13L, 3, false,
                 1, LocalDateTime.now(), LocalDateTime.now(), false);

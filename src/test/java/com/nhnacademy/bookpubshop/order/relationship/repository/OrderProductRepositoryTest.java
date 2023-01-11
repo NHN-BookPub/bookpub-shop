@@ -57,7 +57,7 @@ class OrderProductRepositoryTest {
         productTypeStateCode = new ProductTypeStateCode(null, "기본", true, "기본입니다.");
         productSaleStateCode = new ProductSaleStateCode(null, "판타지", true, "판타지 소설");
         product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, Collections.EMPTY_LIST, "1231231231", "인어공주",
-                100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 10000L,
+                "publisher", 100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 10000L,
                 10L, 10, 3L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
 
         orderProductStateCode = new OrderProductStateCode(null, OrderProductState.CONFIRMED.getName(), OrderProductState.CONFIRMED.isUsed(), "주문완료되었습니다.");
