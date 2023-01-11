@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.point.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,22 +27,27 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PointHistory {
+public class PointHistory extends BaseCreateTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "point_history_number", nullable = false, unique = true)
+    @Column(name = "point_history_number")
     private Long pointHistoryNo;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "member_number", nullable = false)
+    @JoinColumn(name = "member_number")
     private Member member;
 
-    @Column(name = "point_history_amount", nullable = false)
+    @NotNull
+    @Column(name = "point_history_amount")
     private Long pointHistoryAmount;
 
-    @Column(name = "point_history_increased", nullable = false)
+    @NotNull
+    @Column(name = "point_history_increased")
     private boolean pointHistoryIncreased;
 
-    @Column(name = "point_history_reason", nullable = false)
+    @NotNull
+    @Column(name = "point_history_reason")
     private String pointHistoryReason;
 }

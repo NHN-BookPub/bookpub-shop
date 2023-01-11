@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.personalinquiry.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,31 +27,31 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PersonalInquiry {
+public class PersonalInquiry extends BaseCreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "personal_inquiry_number", nullable = false, unique = true)
+    @Column(name = "personal_inquiry_number")
     private Long personalInquiryNo;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "member_number", nullable = false)
     private Member member;
 
-    @Column(name = "personal_inquiry_title", nullable = false)
+    @NotNull
+    @Column(name = "personal_inquiry_title")
     private String inquiryTitle;
 
-    @Column(name = "personal_inquiry_content", nullable = false)
+    @NotNull
+    @Column(name = "personal_inquiry_content")
     private String inquiryContent;
 
     @Column(name = "personal_inquiry_image_path")
     private String imagePath;
 
-    @Column(name = "personal_inquiry_answered", nullable = false)
+    @Column(name = "personal_inquiry_answered")
     private boolean inquiryAnswered;
 
-    @Column(name = "personal_inquiry_created_at", nullable = true)
-    private LocalDateTime createdAt;
-
-    @Column(name = "personal_inquiry_deleted", nullable = false)
+    @Column(name = "personal_inquiry_deleted")
     private boolean inquiryDeleted;
 }

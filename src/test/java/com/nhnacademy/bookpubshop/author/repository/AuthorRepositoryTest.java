@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.author.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,20 +29,20 @@ class AuthorRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        author = new Author(null, "사람");
+        author = AuthorDummy.dummy();
     }
 
     @Test
     @DisplayName("저자 save 테스트")
     void memberSaveTest() {
-        Author persist = entityManager.persist(author);
+        Author persist = authorRepository.save(author);
+        entityManager.persist(author);
 
         Optional<Author> author = authorRepository.findById(persist.getAuthorNo());
 
         assertThat(author).isPresent();
         assertThat(author.get().getAuthorNo()).isEqualTo(persist.getAuthorNo());
         assertThat(author.get().getAuthorName()).isEqualTo(persist.getAuthorName());
-
     }
 
 }

@@ -2,7 +2,6 @@ package com.nhnacademy.bookpubshop.personalinquiry.dummy;
 
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
-import java.time.LocalDateTime;
 
 /**
  * 1:1문의 더미클래스입니다.
@@ -21,7 +20,6 @@ public class PersonalInquiryDummy {
                 "test_content",
                 "test_image",
                 false,
-                LocalDateTime.now(),
                 false);
     }
 }

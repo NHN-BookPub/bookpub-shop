@@ -12,7 +12,8 @@ import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +39,7 @@ class OrderRepositoryTest {
 
     BookpubOrder order;
 
-    Tier tier;
+    BookPubTier bookPubTier;
     Member member;
 
     PricePolicy pricePolicy;
@@ -50,8 +51,8 @@ class OrderRepositoryTest {
     @BeforeEach
     void setUp() {
 
-        tier = TierDummy.dummy();
-        member = MemberDummy.dummy(tier);
+        bookPubTier = TierDummy.dummy();
+        member = MemberDummy.dummy(bookPubTier);
         pricePolicy = PricePolicyDummy.dummy();
         packagePricePolicy = PricePolicyDummy.dummy();
         address = AddressDummy.dummy();
@@ -62,8 +63,9 @@ class OrderRepositoryTest {
     @Test
     @DisplayName("주문 save 테스트")
     void orderSaveTest() {
+        LocalDateTime now = LocalDateTime.now();
 
-        entityManager.persist(tier);
+        entityManager.persist(bookPubTier);
         entityManager.persist(member);
         entityManager.persist(pricePolicy);
         entityManager.persist(packagePricePolicy);
@@ -75,17 +77,11 @@ class OrderRepositoryTest {
 
         assertThat(result).isPresent();
         assertThat(result.get().getOrderNo()).isEqualTo(order.getOrderNo());
-        assertThat(result.get().getMember().getMemberId()).isEqualTo(
-                order.getMember().getMemberId());
-        assertThat(result.get().getDeliveryPricePolicy().getPolicyNo()).isEqualTo(
-                order.getDeliveryPricePolicy().getPolicyNo());
-        assertThat(result.get().getDeliveryPricePolicy().getPolicyName()).isEqualTo(
-                order.getDeliveryPricePolicy().getPolicyName());
-        assertThat(result.get().getAddress().getAddressNo()).isEqualTo(
-                order.getAddress().getAddressNo());
-        assertThat(result.get().getOrderStateCode().getCodeNo()).isEqualTo(
-                order.getOrderStateCode().getCodeNo());
-        assertThat(result.get().getOrderedAt()).isEqualTo(order.getOrderedAt());
+        assertThat(result.get().getMember().getMemberId()).isEqualTo(order.getMember().getMemberId());
+        assertThat(result.get().getDeliveryPricePolicy().getPolicyNo()).isEqualTo(order.getDeliveryPricePolicy().getPolicyNo());
+        assertThat(result.get().getDeliveryPricePolicy().getPolicyName()).isEqualTo(order.getDeliveryPricePolicy().getPolicyName());
+        assertThat(result.get().getAddress().getAddressNo()).isEqualTo(order.getAddress().getAddressNo());
+        assertThat(result.get().getOrderStateCode().getCodeNo()).isEqualTo(order.getOrderStateCode().getCodeNo());
         assertThat(result.get().getOrderRecipient()).isEqualTo(order.getOrderRecipient());
         assertThat(result.get().getRecipientPhone()).isEqualTo(order.getRecipientPhone());
         assertThat(result.get().getOrderBuyer()).isEqualTo(order.getOrderBuyer());
@@ -97,7 +93,7 @@ class OrderRepositoryTest {
         assertThat(result.get().isOrderPackaged()).isEqualTo(order.isOrderPackaged());
         assertThat(result.get().getOrderRequest()).isEqualTo(order.getOrderRequest());
         assertThat(result.get().getCouponDiscount()).isEqualTo(order.getCouponDiscount());
-
+        assertThat(result.get().getCreatedAt()).isAfter(now);
     }
 
 }

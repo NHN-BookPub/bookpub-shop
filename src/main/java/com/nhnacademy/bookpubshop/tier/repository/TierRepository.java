@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.tier.repository;
 
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author : 임태원
  * @since : 1.0
  **/
-public interface TierRepository extends JpaRepository<Tier, Integer> {
-
+public interface TierRepository extends JpaRepository<BookPubTier, Integer>, TierRepositoryCustom {
+    boolean existsByTierName(String tierName);
+    Optional<BookPubTier> findByTierName(String tierName);
 }

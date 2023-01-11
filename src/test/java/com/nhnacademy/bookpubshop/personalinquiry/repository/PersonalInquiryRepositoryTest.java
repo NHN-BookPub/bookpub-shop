@@ -1,10 +1,12 @@
 package com.nhnacademy.bookpubshop.personalinquiry.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.personalinquiry.dummy.PersonalInquiryDummy;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,34 +31,38 @@ class PersonalInquiryRepositoryTest {
     PersonalInquiryRepository personalInquiryRepository;
 
     Member member;
-    Tier tier;
+    BookPubTier bookPubTier;
     PersonalInquiry personalInquiry;
 
     @BeforeEach
     void setUp(){
-        tier =  new Tier(null, "test");
-        member = memberDummy(tier);
+        bookPubTier = TierDummy.dummy();
+        member = MemberDummy.dummy(bookPubTier);
         personalInquiry = PersonalInquiryDummy.dummy(member);
+
+        entityManager.persist(bookPubTier);
+        entityManager.persist(member);
     }
+
     @Test
     @DisplayName(value = "1:1상품문의 save 테스트")
     void personalInquirySaveTest(){
+        LocalDateTime now = LocalDateTime.now();
+
         entityManager.persist(personalInquiry);
-        entityManager.clear();
 
         Optional<PersonalInquiry> result = personalInquiryRepository.findById(personalInquiry.getPersonalInquiryNo());
+
         assertThat(result).isPresent();
         assertThat(result.get().getPersonalInquiryNo()).isEqualTo(personalInquiry.getPersonalInquiryNo());
+        assertThat(result.get().getInquiryTitle()).isEqualTo(personalInquiry.getInquiryTitle());
         assertThat(result.get().getInquiryContent()).isEqualTo(personalInquiry.getInquiryContent());
         assertThat(result.get().getCreatedAt().getYear()).isEqualTo(personalInquiry.getCreatedAt().getYear());
         assertThat(result.get().getImagePath()).isEqualTo(personalInquiry.getImagePath());
         assertThat(result.get().getMember().getMemberId()).isEqualTo(personalInquiry.getMember().getMemberId());
-    }
-    private Member memberDummy(Tier tier){
-        Member testMember = new Member(null, tier, "test_id", "test_nickname", "test_name", "남", 22, 819, "test_pwd", "01012341234",
-                "test@test.com", LocalDateTime.now(), false, false, null, 0L, false);
-        entityManager.persist(testMember.getTier());
-        return entityManager.persist(testMember);
+        assertThat(result.get().isInquiryAnswered()).isFalse();
+        assertThat(result.get().isInquiryDeleted()).isFalse();
+        assertThat(result.get().getCreatedAt()).isAfter(now);
     }
 
 }

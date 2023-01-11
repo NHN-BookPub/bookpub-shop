@@ -1,22 +1,28 @@
 package com.nhnacademy.bookpubshop.order.relationship.repository;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProductStateCode;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,22 +54,20 @@ class OrderProductRepositoryTest {
     OrderProductStateCode orderProductStateCode;
     OrderProduct orderProduct;
     Member member;
-    Tier tier;
+    BookPubTier bookPubTier;
 
     @BeforeEach
     void setUp() {
-        productPolicy = new ProductPolicy(null, "실구매가", true, 5);
-        productTypeStateCode = new ProductTypeStateCode(null, "기본", true, "기본입니다.");
-        productSaleStateCode = new ProductSaleStateCode(null, "판타지", true, "판타지 소설");
-        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, "1231231231", "인어공주",
-                100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 10000L,
-                10, 300L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
+        productPolicy = ProductPolicyDummy.dummy();
+        productTypeStateCode = ProductTypeStateCodeDummy.dummy();
+        productSaleStateCode = ProductSaleStateCodeDummy.dummy();
+        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
         orderProductStateCode = new OrderProductStateCode(null, OrderProductState.CONFIRMED.getName(), OrderProductState.CONFIRMED.isUsed(), "주문완료되었습니다.");
 
-        tier = TierDummy.dummy();
+        bookPubTier = TierDummy.dummy();
 
-        member = MemberDummy.dummy(tier);
+        member = MemberDummy.dummy(bookPubTier);
 
         order = new BookpubOrder(
                 null,
@@ -72,7 +76,6 @@ class OrderProductRepositoryTest {
                 new PricePolicy(null, "포장비", 1500L),
                 new Address(null, "51550", "광주광역시 동구 어딘가", "상세"),
                 new OrderStateCode(null, OrderState.COMPLETE_DELIVERY.getName(), OrderState.COMPLETE_DELIVERY.isUsed(), "배송완료"),
-                LocalDateTime.now(),
                 "test_recipient",
                 "test_recipient_phone",
                 "test_buyer",
@@ -85,7 +88,7 @@ class OrderProductRepositoryTest {
                 null,
                 1000L
         );
-        entityManager.persist(tier);
+        entityManager.persist(bookPubTier);
         entityManager.persist(member);
         entityManager.persist(productPolicy);
         entityManager.persist(order.getPackagingPricePolicy());
@@ -111,6 +114,11 @@ class OrderProductRepositoryTest {
         assertThat(result).isPresent();
         assertThat(result.get().getOrderProductNo()).isEqualTo(persist.getOrderProductNo());
         assertThat(result.get().getProduct().getTitle()).isEqualTo(persist.getProduct().getTitle());
-
+        assertThat(result.get().getOrder().getOrderNo()).isEqualTo(order.getOrderNo());
+        assertThat(result.get().getOrderProductStateCode().getCodeNo()).isEqualTo(orderProductStateCode.getCodeNo());
+        assertThat(result.get().getProductAmount()).isEqualTo(persist.getProductAmount());
+        assertThat(result.get().getCouponAmount()).isEqualTo(persist.getCouponAmount());
+        assertThat(result.get().getProductPrice()).isEqualTo(persist.getProductPrice());
+        assertThat(result.get().getReasonName()).isEqualTo(persist.getReasonName());
     }
 }

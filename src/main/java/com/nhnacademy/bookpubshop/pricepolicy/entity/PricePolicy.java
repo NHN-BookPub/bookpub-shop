@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,9 +29,11 @@ public class PricePolicy {
     @Column(name = "price_policy_number", nullable = false)
     private Integer policyNo;
 
-    @Column(name = "price_policy_name", nullable = false)
+    @NotNull
+    @Column(name = "price_policy_name")
     private String policyName;
 
-    @Column(name = "price_policy_fee", nullable = false)
+    @NotNull
+    @Column(name = "price_policy_fee")
     private Long policyFee;
 }

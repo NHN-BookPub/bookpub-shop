@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,25 +31,29 @@ import lombok.NoArgsConstructor;
 public class Card implements Serializable {
 
     @Id
-    @Column(name = "payment_number", nullable = false)
+    @Column(name = "payment_number")
     private Long paymentNo;
 
+    @NotNull
     @MapsId(value = "paymentNo")
     @OneToOne
-    @JoinColumn(name = "payment_number", nullable = false)
+    @JoinColumn(name = "payment_number")
     private Payment payment;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "card_state_code_number", nullable = false)
+    @JoinColumn(name = "card_state_code_number")
     private CardStateCode cardStateCode;
 
-    @Column(name = "card_company", nullable = false)
+    @NotNull
+    @Column(name = "card_company")
     private String cardCompany;
 
-    @Column(name = "card_number", nullable = false)
+    @NotNull
+    @Column(name = "card_number")
     private String cardNo;
 
-    @Column(name = "card_code_succeed", nullable = false)
+    @Column(name = "card_code_succeed")
     private boolean codeSucceed;
 
     @Column(name = "card_installment_month")

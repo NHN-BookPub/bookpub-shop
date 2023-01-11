@@ -3,12 +3,13 @@ package com.nhnacademy.bookpubshop.address.relationship.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
 import com.nhnacademy.bookpubshop.address.entity.Address;
-import com.nhnacademy.bookpubshop.address.relationship.entity.AddressMember;
 import com.nhnacademy.bookpubshop.address.relationship.dummy.AddressMemberDummy;
+import com.nhnacademy.bookpubshop.address.relationship.entity.AddressMember;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,15 +32,15 @@ class AddressMemberRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
 
-    Tier tier;
+    BookPubTier bookPubTier;
     Member member;
     Address address;
     AddressMember addressMember;
 
     @BeforeEach
     void setUp() {
-        tier = TierDummy.dummy();
-        member = MemberDummy.dummy(tier);
+        bookPubTier = TierDummy.dummy();
+        member = MemberDummy.dummy(bookPubTier);
         address = AddressDummy.dummy();
         addressMember = AddressMemberDummy.dummy(member,address);
     }
@@ -47,19 +48,22 @@ class AddressMemberRepositoryTest {
     @Test
     @DisplayName("멤버와 주소의 연관관계 테이블 저장")
     void AddressMemberSaveTest() {
+        LocalDateTime now = LocalDateTime.now();
+
         entityManager.persist(addressMember.getMember().getTier());
         entityManager.persist(addressMember.getMember());
         entityManager.persist(addressMember.getAddress());
-        entityManager.persist(addressMember);
-        entityManager.flush();
-        entityManager.clear();
+        AddressMember persist = addressMemberRepository.save(addressMember);
 
         Optional<AddressMember> findAddressMember = addressMemberRepository.findById(addressMember.getId());
 
         assertThat(findAddressMember).isPresent();
-        assertThat(findAddressMember.get().getAddress().getAddressZipcode()).isEqualTo("61910");
-        assertThat(findAddressMember.get().getMember().getMemberNickname()).isEqualTo("nickname");
+        assertThat(findAddressMember.get().getAddress().getAddressZipcode()).isEqualTo(persist.getAddress().getAddressZipcode());
+        assertThat(findAddressMember.get().getMember().getMemberNickname()).isEqualTo(persist.getMember().getMemberNickname());
         assertThat(findAddressMember.get().getId()).isEqualTo(addressMember.getId());
-
+        assertThat(findAddressMember.get().isMemberBased()).isTrue();
+        assertThat(findAddressMember.get().getId().getMemberNo()).isEqualTo(member.getMemberNo());
+        assertThat(findAddressMember.get().getId().getAddressNo()).isEqualTo(address.getAddressNo());
+        assertThat(persist.getCreatedAt()).isAfter(now);
     }
 }

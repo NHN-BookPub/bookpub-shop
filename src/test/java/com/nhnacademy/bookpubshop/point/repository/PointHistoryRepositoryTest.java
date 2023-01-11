@@ -6,7 +6,8 @@ import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.point.dummy.PointHistoryDummy;
 import com.nhnacademy.bookpubshop.point.entity.PointHistory;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,33 +30,35 @@ class PointHistoryRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
 
-    Tier tier;
+    BookPubTier bookPubTier;
     Member member;
     PointHistory pointHistory;
 
     @BeforeEach
     void setUp() {
-        tier = TierDummy.dummy();
-        member = MemberDummy.dummy(tier);
+        bookPubTier = TierDummy.dummy();
+        member = MemberDummy.dummy(bookPubTier);
         pointHistory = PointHistoryDummy.dummy(member);
 
-        entityManager.persist(tier);
+        entityManager.persist(bookPubTier);
         entityManager.persist(member);
     }
 
     @Test
     @DisplayName("포인트내역 저장 테스트")
     void PointHistorySaveTest() {
-        entityManager.persist(pointHistory);
-        entityManager.clear();
+        LocalDateTime now = LocalDateTime.now();
+        PointHistory persist = entityManager.persist(pointHistory);
 
         Optional<PointHistory> findPointHistory
                 = pointHistoryRepository.findById(1L);
 
         assertThat(findPointHistory).isPresent();
-        assertThat(findPointHistory.get().getPointHistoryAmount())
-                .isEqualTo(981008L);
-        assertThat(findPointHistory.get().getMember().getMemberNickname())
-                .isEqualTo("nickname");
+        assertThat(findPointHistory.get().getPointHistoryAmount()).isEqualTo(persist.getPointHistoryAmount());
+        assertThat(findPointHistory.get().getMember().getMemberNickname()).isEqualTo(persist.getMember().getMemberNickname());
+        assertThat(findPointHistory.get().getPointHistoryNo()).isEqualTo(persist.getPointHistoryNo());
+        assertThat(findPointHistory.get().isPointHistoryIncreased()).isEqualTo(persist.isPointHistoryIncreased());
+        assertThat(findPointHistory.get().getPointHistoryReason()).isEqualTo(persist.getPointHistoryReason());
+        assertThat(findPointHistory.get().getCreatedAt()).isAfter(now);
     }
 }

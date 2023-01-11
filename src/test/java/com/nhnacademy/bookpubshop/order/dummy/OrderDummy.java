@@ -22,7 +22,6 @@ public class OrderDummy {
                 packagePricePolicy,
                 address,
                 orderStateCode,
-                LocalDateTime.now(),
                 "test_recipient",
                 "test_recipient_phone",
                 "test_buyer",

@@ -1,8 +1,8 @@
 package com.nhnacademy.bookpubshop.subscribe.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,8 +29,7 @@ class SubscribeRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        subscribe = new Subscribe(null, "좋은생각", 80000L, 100000L,
-                20, 100L, false, LocalDateTime.now(), true);
+        subscribe = SubscribeDummy.dummy();
     }
 
     @Test
@@ -43,6 +42,12 @@ class SubscribeRepositoryTest {
         assertThat(subscribe).isPresent();
         assertThat(subscribe.get().getSubscribeNo()).isEqualTo(persist.getSubscribeNo());
         assertThat(subscribe.get().getSubscribeName()).isEqualTo(persist.getSubscribeName());
-
+        assertThat(subscribe.get().getSubscribePrice()).isEqualTo(persist.getSubscribePrice());
+        assertThat(subscribe.get().getCreatedAt()).isEqualTo(persist.getCreatedAt());
+        assertThat(subscribe.get().isSubscribeDeleted()).isEqualTo(persist.isSubscribeDeleted());
+        assertThat(subscribe.get().isSubscribeRenewed()).isEqualTo(persist.isSubscribeRenewed());
+        assertThat(subscribe.get().getSalesPrice()).isEqualTo(persist.getSalesPrice());
+        assertThat(subscribe.get().getSalesRate()).isEqualTo(persist.getSalesRate());
+        assertThat(subscribe.get().getViewCount()).isEqualTo(persist.getViewCount());
     }
 }

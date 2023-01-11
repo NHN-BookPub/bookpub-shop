@@ -2,12 +2,13 @@ package com.nhnacademy.bookpubshop.member.relationship.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
+import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.member.dummy.MemberAuthorityDummy;
+import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
-import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
-import java.time.LocalDateTime;
+import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,18 +32,26 @@ class MemberAuthorityRepositoryTest {
     private MemberAuthorityRepository memberAuthorityRepository;
 
     MemberAuthority memberAuthority;
-    @Autowired
-    private TierRepository tierRepository;
+    BookPubTier bookPubTier;
+    Member member;
+    Authority authorityDummy;
 
     @BeforeEach
     void setUp() {
-        memberAuthority = MemberAuthorityDummy.dummy(
-                memberDummy(new Tier(null,"tier")), AuthorityDummy.dummy());
+        bookPubTier = TierDummy.dummy();
+        member = MemberDummy.dummy(bookPubTier);
+        authorityDummy = AuthorityDummy.dummy();
+        memberAuthority = MemberAuthorityDummy.dummy(member, authorityDummy);
     }
 
     @DisplayName("멤버권한관계테이블 세이브 테스트")
     @Test
     void memberAuthoritySaveTest() {
+        entityManager.persist(bookPubTier);
+        entityManager.persist(member);
+        entityManager.persist(authorityDummy);
+        entityManager.persist(memberAuthority);
+
         entityManager.persist(memberAuthority.getAuthority());
         MemberAuthority persist = entityManager.persist(memberAuthority);
 
@@ -51,12 +60,8 @@ class MemberAuthorityRepositoryTest {
         assertThat(result.get().getAuthority()).isEqualTo(persist.getAuthority());
         assertThat(result.get().getMember()).isEqualTo(persist.getMember());
         assertThat(result.get().getId()).isEqualTo(persist.getId());
+        assertThat(result.get().getId().getMemberNo()).isEqualTo(member.getMemberNo());
+        assertThat(result.get().getId().getAuthorityNo()).isEqualTo(authorityDummy.getAuthorityNo());
     }
 
-    private Member memberDummy(Tier tier) {
-        Member testMember = new Member(null, tier, "test_id", "test_nickname", "test_name", "남", 22, 819, "test_pwd", "01012341234",
-                "test@test.com", LocalDateTime.now(), false, false, null, 0L, false);
-        entityManager.persist(testMember.getTier());
-        return entityManager.persist(testMember);
-    }
 }

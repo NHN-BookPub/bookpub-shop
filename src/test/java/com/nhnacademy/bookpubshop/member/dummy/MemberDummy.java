@@ -1,8 +1,7 @@
 package com.nhnacademy.bookpubshop.member.dummy;
 
-import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 
 /**
@@ -14,23 +13,18 @@ import java.time.LocalDateTime;
  * @since : 1.0
  **/
 public class MemberDummy {
-    public static Member dummy(Tier tier) {
-        return new Member(null,
-                tier,
-                "id",
-                "nickname",
-                "taewon",
-                "남성",
-                1234,
-                1231,
-                "!@!#@ASD",
-                "12345678",
-                "email@email.com",
-                LocalDateTime.now(),
-                false,
-                false,
-                null,
-                0L,
-                false);
+    public static Member dummy(BookPubTier bookPubTier) {
+        return Member.builder()
+                .tier(bookPubTier)
+                .memberId("test_id")
+                .memberNickname("test_nickname")
+                .memberName("test_name")
+                .memberGender("남")
+                .memberBirthYear(2022)
+                .memberBirthMonth(819)
+                .memberPwd("test_pwd")
+                .memberPhone("010-1111-2222")
+                .memberEmail("test@gmail.com")
+                .build();
     }
 }

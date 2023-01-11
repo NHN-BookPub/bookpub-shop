@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.member.entity;
 
-import com.nhnacademy.bookpubshop.tier.entity.Tier;
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,60 +26,133 @@ import lombok.NoArgsConstructor;
 @Table(name = "member")
 @Entity
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+@NoArgsConstructor
+public class Member extends BaseCreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_number", nullable = false, unique = true)
+    @Column(name = "member_number")
     private Long memberNo;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "tier_number", nullable = false)
-    private Tier tier;
+    @JoinColumn(name = "tier_number")
+    private BookPubTier tier;
 
-    @Column(name = "member_id", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "member_id", unique = true)
     private String memberId;
 
-    @Column(name = "member_nickname", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "member_nickname", unique = true)
     private String memberNickname;
 
-    @Column(name = "member_name", nullable = false)
+    @NotNull
+    @Column(name = "member_name")
     private String memberName;
 
-    @Column(name = "member_gender", nullable = false)
+    @NotNull
+    @Column(name = "member_gender")
     private String memberGender;
 
-    @Column(name = "member_birth_year", nullable = false)
+    @NotNull
+    @Column(name = "member_birth_year")
     private Integer memberBirthYear;
 
-    @Column(name = "member_birth_month", nullable = false)
+    @NotNull
+    @Column(name = "member_birth_month")
     private Integer memberBirthMonth;
 
-    @Column(name = "member_pwd", nullable = false)
+    @NotNull
+    @Column(name = "member_pwd")
     private String memberPwd;
 
-    @Column(name = "member_phone", nullable = false)
+    @NotNull
+    @Column(name = "member_phone")
     private String memberPhone;
 
-    @Column(name = "member_email", nullable = false)
+    @NotNull
+    @Column(name = "member_email")
     private String memberEmail;
 
-    @Column(name = "member_created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "member_deleted", nullable = false)
+    @Column(name = "member_deleted")
     private boolean memberDeleted;
 
-    @Column(name = "member_blocked", nullable = false)
+    @Column(name = "member_blocked")
     private boolean memberBlocked;
 
     @Column(name = "member_blocked_at")
     private LocalDateTime blockedAt;
 
-    @Column(name = "member_point", nullable = false)
+    @Column(name = "member_point")
     private Long memberPoint;
 
     @Column(name = "member_social_joined")
     private boolean socialJoined;
+
+    /**
+     * front서버에서 전달해 준 DTO 매핑 생성자.
+     * Builder를 이용해 default값이 있는 값은 null값을 넣어준다.
+     *
+     * @param memberId         사용자 아이디
+     * @param memberNickname   사용자 닉네임
+     * @param memberName       사용자 이름
+     * @param memberGender     사용자 성별
+     * @param memberBirthYear  사용자 생년
+     * @param memberBirthMonth 사용자 월일
+     * @param memberPwd        사용자 비밀번호
+     * @param memberPhone      사용자 전화번호
+     * @param memberEmail      사용자 이메일
+     */
+    @Builder
+    public Member(BookPubTier tier, String memberId, String memberNickname, String memberName,
+                  String memberGender, Integer memberBirthYear, Integer memberBirthMonth,
+                  String memberPwd, String memberPhone, String memberEmail) {
+        this.tier = tier;
+        this.memberId = memberId;
+        this.memberNickname = memberNickname;
+        this.memberName = memberName;
+        this.memberGender = memberGender;
+        this.memberBirthYear = memberBirthYear;
+        this.memberBirthMonth = memberBirthMonth;
+        this.memberPwd = memberPwd;
+        this.memberPhone = memberPhone;
+        this.memberEmail = memberEmail;
+        this.memberPoint = 0L;
+    }
+
+    /**
+     * 멤버 닉네임을 수정할때 쓰이는 메서드입니다.
+     *
+     * @param memberNickname 수정할 멤버 닉네임.
+     * @author : 유호철
+     */
+    public void modifyNickname(String memberNickname) {
+        this.memberNickname = memberNickname;
+    }
+
+    /**
+     * 멤버 이메일을 수정할때 쓰이는 메서드입니다.
+     *
+     * @param memberEmail 수정할 멤버 이메일.
+     * @author : 유호철
+     */
+    public void modifyEmail(String memberEmail) {
+        this.memberEmail = memberEmail;
+
+    }
+
+    /**
+     * 회원이 탈퇴했을경우 사용되는 메서드입니다.
+     */
+    public void memberDelete() {
+        this.memberDeleted = !this.memberDeleted;
+    }
+
+    /**
+     * 회원을 차단했을경우나 차단을 풀었을경우 사용되는 메서드 입니다.
+     */
+    public void memberBlock() {
+        this.memberBlocked = !this.memberBlocked;
+    }
 }

@@ -2,10 +2,7 @@ package com.nhnacademy.bookpubshop.address.relationship.dummy;
 
 import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.address.relationship.entity.AddressMember;
-import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
-import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import java.time.LocalDateTime;
 
 /**
  * 주소 회원 관계 더미 클래스
@@ -21,7 +18,6 @@ public class AddressMemberDummy {
                 new AddressMember.Pk(1L, 1),
                 member,
                 address,
-                LocalDateTime.now(),
                 true
         );
     }
