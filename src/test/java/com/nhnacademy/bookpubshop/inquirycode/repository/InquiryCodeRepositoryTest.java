@@ -40,5 +40,7 @@ class InquiryCodeRepositoryTest {
 
         assertThat(findInquiryCode).isPresent();
         assertThat(findInquiryCode.get().getInquiryCodeInfo()).isEqualTo(persist.getInquiryCodeInfo());
+        assertThat(findInquiryCode.get().getInquiryCodeName()).isEqualTo(persist.getInquiryCodeName());
+        assertThat(findInquiryCode.get().isInquiryCodeUsed()).isTrue();
     }
 }

@@ -41,13 +41,14 @@ class AuthorRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        author = new Author(null, "사람");
+        author = new Author(null, "test");
     }
 
     @Test
     @DisplayName("저자 save 테스트")
-    void authorSaveTest() {
-        Author persist = entityManager.persist(author);
+    void memberSaveTest() {
+        Author persist = authorRepository.save(author);
+        entityManager.persist(author);
 
         Optional<Author> author = authorRepository.findById(persist.getAuthorNo());
 
@@ -109,7 +110,6 @@ class AuthorRepositoryTest {
                 10,
                 false,
                 100,
-                LocalDateTime.now(),
                 LocalDateTime.now(),
                 false);
 

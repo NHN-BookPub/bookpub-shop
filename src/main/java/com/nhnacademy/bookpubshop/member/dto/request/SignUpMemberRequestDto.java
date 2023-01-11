@@ -1,10 +1,11 @@
-package com.nhnacademy.bookpubshop.member.dto;
+package com.nhnacademy.bookpubshop.member.dto.request;
 
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -14,6 +15,7 @@ import org.hibernate.validator.constraints.Length;
  * @since : 1.0
  **/
 @Getter
+@NoArgsConstructor
 public class SignUpMemberRequestDto {
     @NotBlank
     @Pattern(regexp = "^.*(?=.*[가-힣a-z])(?=.{2,200}).*$",
@@ -53,9 +55,6 @@ public class SignUpMemberRequestDto {
 
     @NotBlank
     private String detailAddress;
-
-    public SignUpMemberRequestDto() {
-    }
 
     /**
      * 멤버 엔티티 생성 메소드.

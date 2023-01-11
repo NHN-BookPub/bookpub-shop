@@ -33,7 +33,6 @@ public class ProductPolicy {
     @Column(name = "product_policy_method")
     private String policyMethod;
 
-    @NotNull
     @Column(name = "product_policy_saved")
     private boolean policySaved;
 

@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.review.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.reviewpolicy.entity.ReviewPolicy;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,33 +30,35 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Review {
+public class Review extends BaseCreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "review_number", nullable = false)
+    @Column(name = "review_number")
     private Long reviewNo;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "member_number", nullable = false)
+    @JoinColumn(name = "member_number")
     private Member member;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "product_number", nullable = false)
+    @JoinColumn(name = "product_number")
     private Product product;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "product_review_policy_number", nullable = false)
+    @JoinColumn(name = "product_review_policy_number")
     private ReviewPolicy reviewPolicy;
 
-    @Column(name = "review_star", nullable = false)
+    @Column(name = "review_star")
     private Long reviewStar;
 
-    @Column(name = "review_content", nullable = false)
+    @NotNull
+    @Column(name = "review_content")
     private String reviewContent;
 
-    @Column(name = "review_created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "review_image_path", nullable = false)
+    @NotNull
+    @Column(name = "review_image_path")
     private String imagePath;
 }

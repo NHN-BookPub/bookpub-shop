@@ -30,10 +30,9 @@ public class ProductSaleStateCode {
     private Integer codeNumber;
 
     @NotNull
-    @Column(name = "product_sale_state_code_category", unique = true)
+    @Column(name = "product_sale_state_code_category")
     private String codeCategory;
 
-    @NotNull
     @Column(name = "product_sale_state_code_used")
     private boolean codeUsed;
 

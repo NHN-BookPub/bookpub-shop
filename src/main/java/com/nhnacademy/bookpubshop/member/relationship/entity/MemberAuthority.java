@@ -33,12 +33,12 @@ public class MemberAuthority {
 
     @MapsId("memberNo")
     @ManyToOne
-    @JoinColumn(name = "member_number", nullable = false, unique = true)
+    @JoinColumn(name = "member_number")
     private Member member;
 
     @MapsId("authorityNo")
     @ManyToOne
-    @JoinColumn(name = "authority_number", nullable = false, unique = true)
+    @JoinColumn(name = "authority_number")
     private Authority authority;
 
     /**

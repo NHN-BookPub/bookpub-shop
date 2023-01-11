@@ -1,9 +1,11 @@
 package com.nhnacademy.bookpubshop.purchase.repository;
 
-import static com.nhnacademy.bookpubshop.state.ProductSaleState.SALE;
-import static com.nhnacademy.bookpubshop.state.ProductTypeState.BEST_SELLER;
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
@@ -11,9 +13,9 @@ import com.nhnacademy.bookpubshop.product.relationship.repository.ProductPolicyR
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
+import com.nhnacademy.bookpubshop.purchase.dummy.PurchaseDummy;
 import com.nhnacademy.bookpubshop.purchase.entity.Purchase;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,41 +55,34 @@ class PurchaseRepositoryTest {
     ProductTypeStateCode productTypeStateCode;
     ProductSaleStateCode productSaleStateCode;
     Product product;
+    Purchase purchase;
 
     @BeforeEach
     void setUp() {
-        productPolicy = new ProductPolicy(null, "실구매가가기준", true, 5);
-        productPolicyRepository.save(productPolicy);
+        productPolicy = ProductPolicyDummy.dummy();
+        productTypeStateCode = ProductTypeStateCodeDummy.dummy();
+        productSaleStateCode = ProductSaleStateCodeDummy.dummy();
+        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
+        purchase = PurchaseDummy.dummy(product);
 
-        productTypeStateCode = new ProductTypeStateCode(null,
-                BEST_SELLER.getName(), BEST_SELLER.isUsed(), "이 책은 베스트셀러입니다.");
-        productTypeStateCodeRepository.save(productTypeStateCode);
-
-        productSaleStateCode = new ProductSaleStateCode(null,
-                SALE.getName(), SALE.isUsed(), "이 상품은 판매중입니다.");
-        productSaleStateCodeRepository.save(productSaleStateCode);
-
-        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode,
-                Collections.EMPTY_LIST, "Isbn:123-1111", "title", "publisher", 100, "설명",
-                "썸네일.png", "eBook path", 20000L,5L,
-                10, 1L, 3, false, 100,
-                LocalDateTime.now(), LocalDateTime.now(), false);
-        productRepository.save(product);
+        entityManager.persist(productPolicy);
+        entityManager.persist(productTypeStateCode);
+        entityManager.persist(productSaleStateCode);
+        entityManager.persist(product);
     }
 
     @Test
     @DisplayName(value = "매입이력(product) 레포지토리 save 테스트")
     void purchaseSaveTest() {
-        LocalDateTime time = LocalDateTime.now();
-        Purchase purchase = new Purchase(null, product, 1000L, time, 500L);
-        purchaseRepository.save(purchase);
+        LocalDateTime now = LocalDateTime.now();
+        Purchase persist = entityManager.persist(purchase);
 
-        Optional<Purchase> optional = purchaseRepository.findById(purchase.getPurchaseNo());
+        Optional<Purchase> optional = purchaseRepository.findById(persist.getPurchaseNo());
         assertThat(optional).isPresent();
-        assertThat(optional.get().getPurchaseNo()).isEqualTo(purchase.getPurchaseNo());
-        assertThat(optional.get().getPurchasePrice()).isEqualTo(purchase.getPurchasePrice());
-        assertThat(optional.get().getCreatedAt()).isEqualTo(time);
-        assertThat(optional.get().getPurchaseAmount()).isEqualTo(purchase.getPurchaseAmount());
+        assertThat(optional.get().getPurchaseNo()).isEqualTo(persist.getPurchaseNo());
+        assertThat(optional.get().getPurchasePrice()).isEqualTo(persist.getPurchasePrice());
+        assertThat(optional.get().getPurchaseAmount()).isEqualTo(persist.getPurchaseAmount());
+        assertThat(optional.get().getCreatedAt()).isAfter(now);
 
         entityManager.clear();
     }

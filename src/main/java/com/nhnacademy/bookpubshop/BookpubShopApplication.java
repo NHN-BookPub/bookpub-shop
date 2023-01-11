@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 /**
  * Book-pub 시작.
@@ -13,6 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author 김서현
  * @author 박경서
  */
+@EnableJpaAuditing
 @SpringBootApplication
 public class BookpubShopApplication {
 

@@ -28,8 +28,9 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "author_number")
     private Integer authorNo;
-    @Column(name = "author_name")
+
     @NotNull
+    @Column(name = "author_name")
     private String authorName;
 
 }

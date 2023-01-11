@@ -17,6 +17,7 @@ import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -70,6 +71,8 @@ class DeliveryLocationRepositoryTest {
     @Test
     @DisplayName("배송위치 save 테스트")
     void deliveryLocationSaveTest() {
+        LocalDateTime now = LocalDateTime.now();
+
         entityManager.persist(bookPubTier);
         entityManager.persist(member);
         entityManager.persist(pricePolicy);
@@ -89,6 +92,7 @@ class DeliveryLocationRepositoryTest {
                 deliveryLocation.getDelivery().getDeliveryNo());
         assertThat(result.get().getLocationName()).isEqualTo(deliveryLocation.getLocationName());
         assertThat(result.get().getCreatedAt()).isEqualTo(deliveryLocation.getCreatedAt());
+        assertThat(result.get().getCreatedAt()).isAfter(now);
     }
 
 }

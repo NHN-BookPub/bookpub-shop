@@ -100,7 +100,6 @@ public class ProductServiceImpl implements ProductService {
                         false,
                         request.getProductStock(),
                         request.getPublishedAt(),
-                        LocalDateTime.now(),
                         request.isSubscribed()));
 
         if (!request.getAuthorNos().isEmpty()) {
@@ -215,7 +214,6 @@ public class ProductServiceImpl implements ProductService {
                             product.isProductDeleted(),
                             request.getProductStock(),
                             request.getPublishedAt(),
-                            product.getCreatedAt(),
                             request.isSubscribed()));
 
         return new GetProductDetailResponseDto(
@@ -268,7 +266,6 @@ public class ProductServiceImpl implements ProductService {
                 deleted,
                 product.getProductStock(),
                 product.getPublishDate(),
-                product.getCreatedAt(),
                 product.isProductSubscribed());
 
         productRepository.save(modified);
