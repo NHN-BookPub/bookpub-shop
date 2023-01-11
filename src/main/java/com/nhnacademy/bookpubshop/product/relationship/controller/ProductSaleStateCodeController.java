@@ -49,11 +49,12 @@ public class ProductSaleStateCodeController {
      * @return 성공시 201, 생성된 객체를 반환합니다.
      */
     @PostMapping
-    public ResponseEntity<GetProductSaleStateCodeResponseDto> createProductSaleStateCode(
+    public ResponseEntity<Void> createProductSaleStateCode(
             @Valid @RequestBody CreateProductSaleStateCodeRequestDto requestDto) {
+        productSaleStateCodeService.createSaleCode(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productSaleStateCodeService.createSaleCode(requestDto));
+                .build();
     }
 
     /**
@@ -78,11 +79,12 @@ public class ProductSaleStateCodeController {
      * @return 성공시 201
      */
     @DeleteMapping("/{codeNo}")
-    public ResponseEntity<GetProductSaleStateCodeResponseDto> setUsedSaleCodeById(
+    public ResponseEntity<Void> setUsedSaleCodeById(
             @PathVariable Integer codeNo,
             @RequestParam boolean used) {
+        productSaleStateCodeService.setUsedSaleCodeById(codeNo, used);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productSaleStateCodeService.setUsedSaleCodeById(codeNo, used));
+                .build();
     }
 }
