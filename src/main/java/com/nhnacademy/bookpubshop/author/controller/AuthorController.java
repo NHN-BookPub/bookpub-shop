@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/author")
+@RequestMapping("/api/authors")
 public class AuthorController {
     private final AuthorService authorService;
 
@@ -52,7 +52,7 @@ public class AuthorController {
      * @param pageable 페이징을 위해 pageable을 받습니다.
      * @return 모든 저자를 반환합니다.
      */
-    @GetMapping("/list")
+    @GetMapping()
     public ResponseEntity<Page<GetAuthorResponseDto>> getAuthorsByPage(Pageable pageable) {
         Page<GetAuthorResponseDto> authors =
                 authorService.getAuthorsByPage(pageable);
@@ -69,7 +69,7 @@ public class AuthorController {
      * @param name 저자 이름입니다.
      * @return 같은 이름의 모든 저자를 반환합니다.
      */
-    @GetMapping()
+    @GetMapping("/search/name")
     public ResponseEntity<List<GetAuthorResponseDto>> getAuthorsByName(@RequestParam String name) {
         List<GetAuthorResponseDto> authors = authorService.getAuthorsByName(name);
 
@@ -85,7 +85,7 @@ public class AuthorController {
      * @param productNo 상품 번호입니다.
      * @return 같은 책에 대한 모든 저자를 반환합니다.
      */
-    @GetMapping("/get")
+    @GetMapping("/search/productNo")
     public ResponseEntity<List<GetAuthorResponseDto>> getAuthorsByProductNo(
             @RequestParam Long productNo) {
         return ResponseEntity.status(HttpStatus.OK)

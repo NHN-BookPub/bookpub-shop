@@ -4,8 +4,8 @@ import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductTypeStat
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductTypeStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductTypeStateCodeService;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/state/productType")
+@RequestMapping("/api/state/productType")
 public class ProductTypeStateCodeController {
     private final ProductTypeStateCodeService productTypeStateCodeService;
 
@@ -54,7 +54,7 @@ public class ProductTypeStateCodeController {
         productTypeStateCodeService.createTypeStateCode(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(null);
+                .build();
     }
 
     /**
@@ -79,11 +79,12 @@ public class ProductTypeStateCodeController {
      * @return 성공시 201, 객체를 반환합니다.
      */
     @DeleteMapping("/{codeNo}")
-    public ResponseEntity<GetProductTypeStateCodeResponseDto> setUsedTypeCodeById(
+    public ResponseEntity<Void> setUsedTypeCodeById(
             @PathVariable Integer codeNo,
             @RequestParam boolean used) {
+        productTypeStateCodeService.setUsedTypeCodeById(codeNo, used);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productTypeStateCodeService.setUsedTypeCodeById(codeNo, used));
+                .build();
     }
 }
