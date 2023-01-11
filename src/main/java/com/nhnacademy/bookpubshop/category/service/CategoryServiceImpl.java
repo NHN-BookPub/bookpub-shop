@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.category.service;
 import com.nhnacademy.bookpubshop.category.dto.request.CreateCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.request.ModifyCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
+import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.exception.CategoryAlreadyExistsException;
 import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
@@ -54,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findById(modifyCategoryRequestDto.getCategoryNo())
                 .orElseThrow(CategoryNotFoundException::new);
 
-        if(!category.getCategoryName().equals(modifyCategoryRequestDto.getCategoryName())){
+        if (!category.getCategoryName().equals(modifyCategoryRequestDto.getCategoryName())) {
             checkCategoryNameIsDuplicated(modifyCategoryRequestDto.getCategoryName());
         }
 
@@ -88,14 +89,6 @@ public class CategoryServiceImpl implements CategoryService {
     public List<GetCategoryResponseDto> getCategories() {
         return categoryRepository.findCategories();
     }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional(readOnly = true)
-    public List<GetCategoryResponseDto> getCategoriesDisplayedTrue() {
-        return categoryRepository.findCategoriesDisplayedTrue();
-    }
 
     /**
      * {@inheritDoc}
@@ -104,6 +97,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     public List<GetCategoryResponseDto> getParentCategories() {
         return categoryRepository.findParentCategories();
+    }
+
+    @Override
+    public List<GetParentCategoryWithChildrenResponseDto> getParentCategoryWithChildren() {
+        return categoryRepository.findParentCategoryWithChildren();
     }
 
 
