@@ -51,7 +51,7 @@ public class CouponController {
      * @return 성공 경우 200, 태그 정보 응답
      */
     @GetMapping("/coupons/{couponNo}")
-    public ResponseEntity<GetCouponResponseDto> couponList(
+    public ResponseEntity<GetCouponResponseDto> couponDetail(
             @PathVariable("couponNo") Long couponNo) {
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -80,7 +80,7 @@ public class CouponController {
      * @return 성공 경우 201 응답
      */
     @PutMapping("/coupons/modify")
-    public ResponseEntity<Void> couponAdd(ModifyCouponRequestDto request) {
+    public ResponseEntity<Void> couponModify(ModifyCouponRequestDto request) {
         couponService.modifyCouponUsed(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
