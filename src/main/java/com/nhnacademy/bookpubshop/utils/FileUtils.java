@@ -5,6 +5,7 @@ import com.nhnacademy.bookpubshop.utils.exception.FileException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -14,7 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
  * @since : 1.0
  **/
 public final class FileUtils {
-    private static final String BASE_PATH = "/static/image/";
+
+    @Value("${file.save.path}")
+    private static String basePath;
 
     private FileUtils() {
         throw new UnsupportedOperationException();
@@ -36,7 +39,7 @@ public final class FileUtils {
         String fileExtension = file.getName().substring(pos);
 
         try (
-                FileOutputStream fos = new FileOutputStream(BASE_PATH + uuid);
+                FileOutputStream fos = new FileOutputStream(basePath + uuid);
                 InputStream is = file.getInputStream()
         ) {
             int readCount;
@@ -49,8 +52,8 @@ public final class FileUtils {
         }
 
         new File(null, null, null, null, null, null,
-                name, BASE_PATH, fileExtension, fileName, uuid, null);
+                name, basePath, fileExtension, fileName, uuid);
 
-        return BASE_PATH + uuid;
+        return basePath + uuid;
     }
 }
