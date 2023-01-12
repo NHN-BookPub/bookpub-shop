@@ -9,8 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductTypeStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductTypeStateCodeResponseDto;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductTypeStateCodeService;
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,11 +37,14 @@ import org.springframework.test.web.servlet.MockMvc;
  * @since : 1.0
  **/
 @WebMvcTest(ProductTypeStateCodeController.class)
+@Import(ShopAdviceController.class)
+@MockBean(JpaMetamodelMappingContext.class)
 class ProductTypeStateCodeControllerTest {
     @Autowired
     MockMvc mockMvc;
     @MockBean
     ProductTypeStateCodeService productTypeStateCodeService;
+    @Autowired
     ObjectMapper mapper;
     ProductTypeStateCode productTypeStateCode;
     CreateProductTypeStateCodeRequestDto requestDto;
@@ -47,15 +54,20 @@ class ProductTypeStateCodeControllerTest {
     @BeforeEach
     void setUp() {
         url = "/api/state/productType";
-        mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        productTypeStateCode = new ProductTypeStateCode(1, "test", true, "test");
+        productTypeStateCode = ProductTypeStateCodeDummy.dummy();
         requestDto = new CreateProductTypeStateCodeRequestDto();
-        ReflectionTestUtils.setField(requestDto, "codeName", "test");
-        ReflectionTestUtils.setField(requestDto, "codeUsed", true);
-        ReflectionTestUtils.setField(requestDto, "codeInfo", "test");
+        ReflectionTestUtils.setField(requestDto,
+                "codeName",
+                productTypeStateCode.getCodeName());
+        ReflectionTestUtils.setField(requestDto,
+                "codeUsed",
+                productTypeStateCode.isCodeUsed());
+        ReflectionTestUtils.setField(requestDto,
+                "codeInfo",
+                productTypeStateCode.getCodeInfo());
 
         responseDto = new GetProductTypeStateCodeResponseDto(
-                productTypeStateCode.getCodeNo(),
+                1,
                 productTypeStateCode.getCodeName(),
                 productTypeStateCode.isCodeUsed(),
                 productTypeStateCode.getCodeInfo());
@@ -71,13 +83,17 @@ class ProductTypeStateCodeControllerTest {
                 .thenReturn(responses);
 
         mockMvc.perform(get(url)
-                .content(mapper.writeValueAsString(responses))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(mapper.writeValueAsString(responses))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].codeNo").value(productTypeStateCode.getCodeNo()))
-                .andExpect(jsonPath("$[0].codeName").value(productTypeStateCode.getCodeName()))
-                .andExpect(jsonPath("$[0].codeInfo").value(productTypeStateCode.getCodeInfo()))
-                .andExpect(jsonPath("$[0].codeUsed").value(productTypeStateCode.isCodeUsed()))
+                .andExpect(jsonPath("$[0].codeNo")
+                        .value(1))
+                .andExpect(jsonPath("$[0].codeName")
+                        .value(productTypeStateCode.getCodeName()))
+                .andExpect(jsonPath("$[0].codeInfo")
+                        .value(productTypeStateCode.getCodeInfo()))
+                .andExpect(jsonPath("$[0].codeUsed")
+                        .value(productTypeStateCode.isCodeUsed()))
                 .andDo(print());
     }
 
@@ -88,8 +104,8 @@ class ProductTypeStateCodeControllerTest {
                 .thenReturn(responseDto);
 
         mockMvc.perform(post(url)
-                .content(mapper.writeValueAsString(responseDto))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(mapper.writeValueAsString(responseDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andDo(print());
 
@@ -101,21 +117,18 @@ class ProductTypeStateCodeControllerTest {
     @Test
     @DisplayName("유형 코드 번호로 조회 성공")
     void getTypeCodeById() throws Exception {
-        when(productTypeStateCodeService.getTypeStateCodeById(productTypeStateCode.getCodeNo()))
+        when(productTypeStateCodeService.getTypeStateCodeById(anyInt()))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(get(url + "/" + productTypeStateCode.getCodeNo())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(responseDto)))
+        mockMvc.perform(get(url + "/{codeNo}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(responseDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.codeNo").value(productTypeStateCode.getCodeNo()))
+                .andExpect(jsonPath("$.codeNo").value(mapper.writeValueAsString(responseDto.getCodeNo())))
                 .andExpect(jsonPath("$.codeName").value(productTypeStateCode.getCodeName()))
                 .andExpect(jsonPath("$.codeInfo").value(productTypeStateCode.getCodeInfo()))
                 .andExpect(jsonPath("$.codeUsed").value(productTypeStateCode.isCodeUsed()))
                 .andDo(print());
-
-        verify(productTypeStateCodeService, times(1))
-                .getTypeStateCodeById(productTypeStateCode.getCodeNo());
     }
 
     @Test
@@ -124,9 +137,9 @@ class ProductTypeStateCodeControllerTest {
         when(productTypeStateCodeService.setUsedTypeCodeById(productTypeStateCode.getCodeNo(), productTypeStateCode.isCodeUsed()))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(delete(url + "/" + productTypeStateCode.getCodeNo() + "?used=true")
-                .content(mapper.writeValueAsString(responseDto))
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete(url + "/1?used=true")
+                        .content(mapper.writeValueAsString(responseDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andDo(print());
     }

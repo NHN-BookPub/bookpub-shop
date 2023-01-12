@@ -9,9 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductSaleStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductSaleStateCodeResponseDto;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductSaleStateCodeService;
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,6 +38,8 @@ import org.springframework.test.web.servlet.MockMvc;
  * @since : 1.0
  **/
 @WebMvcTest(ProductSaleStateCodeController.class)
+@Import(ShopAdviceController.class)
+@MockBean(JpaMetamodelMappingContext.class)
 class ProductSaleStateCodeControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -49,11 +55,17 @@ class ProductSaleStateCodeControllerTest {
     void setUp() {
         url = "/api/state/productSale";
         mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        productSaleStateCode = new ProductSaleStateCode(1, "test", true, "test");
+        productSaleStateCode = ProductSaleStateCodeDummy.dummy();
         requestDto = new CreateProductSaleStateCodeRequestDto();
-        ReflectionTestUtils.setField(requestDto, "codeCategory", "test");
-        ReflectionTestUtils.setField(requestDto, "codeUsed", true);
-        ReflectionTestUtils.setField(requestDto, "codeInfo", "test");
+        ReflectionTestUtils.setField(requestDto,
+                "codeCategory",
+                productSaleStateCode.getCodeCategory());
+        ReflectionTestUtils.setField(requestDto,
+                "codeUsed",
+                productSaleStateCode.isCodeUsed());
+        ReflectionTestUtils.setField(requestDto,
+                "codeInfo",
+                productSaleStateCode.getCodeInfo());
 
         responseDto = new GetProductSaleStateCodeResponseDto(
                 productSaleStateCode.getCodeNumber(),

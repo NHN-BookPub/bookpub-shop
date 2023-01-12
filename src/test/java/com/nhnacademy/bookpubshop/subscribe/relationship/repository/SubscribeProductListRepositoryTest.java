@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.subscribe.relationship.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;

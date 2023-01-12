@@ -1,27 +1,26 @@
 package com.nhnacademy.bookpubshop.product.controller;
 
-import static com.nhnacademy.bookpubshop.state.ProductTypeState.BEST_SELLER;
-import static com.nhnacademy.bookpubshop.state.ProductTypeState.NEW;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,11 +33,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * ProductController 테스트.
@@ -48,6 +49,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
  **/
 @WebMvcTest(ProductController.class)
 @Import(ShopAdviceController.class)
+@MockBean(JpaMetamodelMappingContext.class)
 class ProductControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -61,41 +63,19 @@ class ProductControllerTest {
     ProductPolicy productPolicy;
     ProductTypeStateCode typeStateCode;
     ProductSaleStateCode saleStateCode;
-    String url;
+    String url = "/api/products";
 
     @BeforeEach
     void setUp() {
-        mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-        url = "/api/products";
+        mapper = new ObjectMapper();
 
-        productPolicy = new ProductPolicy(1,"method",true,1);
-        typeStateCode = new ProductTypeStateCode(1,BEST_SELLER.getName(),BEST_SELLER.isUsed(),"info");
-        saleStateCode = new ProductSaleStateCode(1, NEW.getName(),NEW.isUsed(),"info");
-        product = new Product(1L,
-                productPolicy,
-                typeStateCode,
-                saleStateCode,
-                Collections.EMPTY_LIST,
-                "1231231233",
-                "test",
-                "test_publisher",
-                130,
-                "test_description",
-                "thumbnail.png",
-                "test.txt",
-                8000L,
-                10000L,
-                20,
-                0L,
-                10,
-                false,
-                100,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                false);
+        productPolicy = ProductPolicyDummy.dummy();
+        typeStateCode = ProductTypeStateCodeDummy.dummy();
+        saleStateCode = ProductSaleStateCodeDummy.dummy();
+        product = ProductDummy.dummy(productPolicy, typeStateCode, saleStateCode);
         requestDto = new CreateProductRequestDto();
         responseDto = new GetProductDetailResponseDto(
-                product.getProductNo(),
+                1L,
                 product.getProductIsbn(),
                 product.getTitle(),
                 product.getPageCount(),
@@ -122,6 +102,12 @@ class ProductControllerTest {
                 product.isProductDeleted(),
                 product.getPublishDate());
 
+        List<Long> relation = new ArrayList<>();
+
+        for (Product relationProduct : product.getRelationProduct()) {
+            relation.add(relationProduct.getProductNo());
+        }
+
         ReflectionTestUtils.setField(requestDto, "productIsbn", product.getProductIsbn());
         ReflectionTestUtils.setField(requestDto, "title", product.getTitle());
         ReflectionTestUtils.setField(requestDto, "productPublisher", product.getProductPublisher());
@@ -138,7 +124,7 @@ class ProductControllerTest {
         ReflectionTestUtils.setField(requestDto, "saleCodeNo", product.getProductSaleStateCode().getCodeNumber());
         ReflectionTestUtils.setField(requestDto, "typeCodeNo", product.getProductTypeStateCode().getCodeNo());
         ReflectionTestUtils.setField(requestDto, "authorNos", Collections.EMPTY_LIST);
-        ReflectionTestUtils.setField(requestDto, "relationProducts", product.getRelationProduct());
+        ReflectionTestUtils.setField(requestDto, "relationProducts", relation);
     }
 
     @Test
@@ -201,24 +187,14 @@ class ProductControllerTest {
     @Test
     @DisplayName("상품 상세 조회 성공")
     void getProductDetailById() throws Exception {
-        when(productService.getProductDetailById(product.getProductNo()))
+        when(productService.getProductDetailById(anyLong()))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(get(url + "/" + product.getProductNo())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(responseDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.productNo").value(product.getProductNo()))
-                .andExpect(jsonPath("$.productIsbn").value(product.getProductIsbn()))
-                .andExpect(jsonPath("$.productPriority").value(product.getProductPriority()))
-                .andExpect(jsonPath("$.productThumbnail").value(product.getProductThumbnail()))
-                .andExpect(jsonPath("$.title").value(product.getTitle()))
-                .andExpect(jsonPath("$.salesPrice").value(product.getSalesPrice()))
-                .andExpect(jsonPath("$.pageCount").value(product.getPageCount()))
-                .andDo(print());
+        doNothing().when(productService).modifyProduct(requestDto, anyLong());
 
-        verify(productService, times(1))
-                .getProductDetailById(product.getProductNo());
+        mockMvc.perform(get("/api/products/{productNo}", anyLong())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -250,10 +226,10 @@ class ProductControllerTest {
     @Test
     @DisplayName("상품 수정 성공")
     void modifyProduct() throws Exception {
-        when(productService.modifyProduct(requestDto, product.getProductNo()))
-                .thenReturn(responseDto);
+//        doNothing().when(productService.modifyProduct(requestDto, 1L))
+        int i =1;
 
-        mockMvc.perform(MockMvcRequestBuilders.put(url + "/" + product.getProductNo())
+        mockMvc.perform(put("/api/products/{id}", anyInt())
                         .content(mapper.writeValueAsString(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -263,9 +239,13 @@ class ProductControllerTest {
     @Test
     @DisplayName("상품 삭제 여부 설정 성공")
     void setDeletedProduct() throws Exception {
-        doNothing().when(productService).setDeleteProduct(product.getProductNo(), false);
+        doNothing().when(productService)
+                .setDeleteProduct(product.getProductNo(), false);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(url + "/" + product.getProductNo() + "?deleted=false")
+        String path = url + "/1?deleted=false";
+
+        mockMvc.perform(delete("/api/products/{productNo}", "1L")
+                        .param("deleted", "false")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());

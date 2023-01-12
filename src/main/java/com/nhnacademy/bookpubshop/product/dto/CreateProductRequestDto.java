@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.product.dto;
 
+import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.validation.constraints.NotBlank;

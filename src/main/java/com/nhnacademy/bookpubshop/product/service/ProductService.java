@@ -56,7 +56,7 @@ public interface ProductService {
      * @return 수정된 상품의 상세정보를 반환합니다.
      * @author : 여운석
      */
-    GetProductDetailResponseDto modifyProduct(CreateProductRequestDto request, Long id);
+    void modifyProduct(CreateProductRequestDto request, Long id);
 
     /**
      * 상품 삭제 여부를 설정합니다.

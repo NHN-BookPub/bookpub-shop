@@ -4,6 +4,7 @@ import static com.nhnacademy.bookpubshop.state.ProductTypeState.BEST_SELLER;
 import static com.nhnacademy.bookpubshop.state.ProductTypeState.NEW;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.author.dto.GetAuthorResponseDto;
+import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductAuthor;
@@ -41,7 +42,7 @@ class AuthorRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        author = new Author(null, "test");
+        author = AuthorDummy.dummy();
     }
 
     @Test
@@ -134,7 +135,7 @@ class AuthorRepositoryTest {
     void getAuthorByName() {
         Author persist = entityManager.persist(author);
 
-        assertThat(authorRepository.getAuthorByName("사람").get(0).getAuthorName())
+        assertThat(authorRepository.getAuthorByName(author.getAuthorName()).get(0).getAuthorName())
                 .isEqualTo(persist.getAuthorName());
     }
 }

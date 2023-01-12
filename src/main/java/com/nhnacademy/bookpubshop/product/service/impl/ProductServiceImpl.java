@@ -19,7 +19,6 @@ import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleSta
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -167,7 +166,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional
-    public GetProductDetailResponseDto modifyProduct(CreateProductRequestDto request, Long id) {
+    public void modifyProduct(CreateProductRequestDto request, Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(ProductNotFoundException::new);
 
@@ -215,25 +214,6 @@ public class ProductServiceImpl implements ProductService {
                             request.getProductStock(),
                             request.getPublishedAt(),
                             request.isSubscribed()));
-
-        return new GetProductDetailResponseDto(
-                save.getProductNo(),
-                save.getProductIsbn(),
-                save.getTitle(),
-                save.getPageCount(),
-                save.getProductDescription(),
-                save.getProductThumbnail(),
-                save.getSalesPrice(),
-                save.getSalesRate(),
-                save.getProductPriority(),
-                save.getProductStock(),
-                save.getPublishDate(),
-                save.isProductDeleted(),
-                save.isProductSubscribed(),
-                saleStateCode,
-                typeStateCode,
-                save.getProductPolicy()
-        );
     }
 
     /**

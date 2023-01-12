@@ -9,7 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.author.dto.CreateAuthorRequestDto;
 import com.nhnacademy.bookpubshop.author.dto.GetAuthorResponseDto;
+import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
+import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.author.service.AuthorService;
+import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,8 +22,10 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -33,27 +38,35 @@ import org.springframework.test.web.servlet.MockMvc;
  * @since : 1.0
  **/
 @WebMvcTest(AuthorController.class)
+@Import(ShopAdviceController.class)
+@MockBean(JpaMetamodelMappingContext.class)
 class AuthorControllerTest {
     @Autowired
     MockMvc mockMvc;
     @MockBean
     AuthorService authorService;
     ObjectMapper objectMapper;
+    Author author;
     CreateAuthorRequestDto requestDto;
     GetAuthorResponseDto responseDto;
     String path = "/api/authors";
 
     @BeforeEach
     void setUp() {
+        author = AuthorDummy.dummy();
         objectMapper = new ObjectMapper();
         requestDto = new CreateAuthorRequestDto();
-        responseDto = new GetAuthorResponseDto(1, "남기준");
+        responseDto = new GetAuthorResponseDto(
+                author.getAuthorNo(),
+                author.getAuthorName());
     }
 
     @Test
     @DisplayName("저자 등록 성공")
     void createAuthorTest() throws Exception {
-        ReflectionTestUtils.setField(requestDto, "authorName", "남기준");
+        ReflectionTestUtils.setField(requestDto,
+                "authorName",
+                author.getAuthorName());
 
         ArgumentCaptor<CreateAuthorRequestDto> captor =
                 ArgumentCaptor.forClass(CreateAuthorRequestDto.class);

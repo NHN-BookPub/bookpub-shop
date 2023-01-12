@@ -6,6 +6,7 @@ import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import lombok.RequiredArgsConstructor;
+import javax.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -69,14 +70,14 @@ public class ProductController {
     /**
      * 상품 상세 페이지에서 상품을 보여주기 위한 메서드입니다.
      *
-     * @param id 상품 번호를 파라미터로 받습니다.
+     * @param productNo 상품 번호를 파라미터로 받습니다.
      * @return 상품 정보를 반환합니다.
      */
-    @GetMapping("/{id}")
-    public ResponseEntity<GetProductDetailResponseDto> getProductDetailById(@PathVariable Long id) {
+    @GetMapping("/{productNo}")
+    public ResponseEntity<GetProductDetailResponseDto> getProductDetailById(@PathVariable Long productNo) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productService.getProductDetailById(id));
+                .body(productService.getProductDetailById(productNo));
     }
 
     /**
@@ -100,15 +101,15 @@ public class ProductController {
     /**
      * 상품을 수정합니다.
      *
-     * @param id 상품번호입니다.
+     * @param productNo 상품번호입니다.
      * @param request 수정할 내용의 상품 Dto입니다.
      * @return 성공시 201을 반환합니다.
      */
-    @PutMapping("/{id}")
+    @PutMapping("/{productNo}")
     public ResponseEntity<Void> modifyProduct(
-            @PathVariable Long id,
-            @RequestBody CreateProductRequestDto request) {
-        productService.modifyProduct(request, id);
+            @PathVariable(name = "productNo") Long productNo,
+            @Valid @RequestBody CreateProductRequestDto request) {
+        productService.modifyProduct(request, productNo);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
                 .build();

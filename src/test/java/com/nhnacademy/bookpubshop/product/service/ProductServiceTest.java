@@ -106,7 +106,6 @@ class ProductServiceTest {
                 false,
                 100,
                 LocalDateTime.now(),
-                LocalDateTime.now(),
                 false);
 
         requestDto = new CreateProductRequestDto();

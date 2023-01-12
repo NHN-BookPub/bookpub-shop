@@ -64,7 +64,6 @@ class ProductRepositoryTest {
                 false,
                 100,
                 LocalDateTime.now(),
-                LocalDateTime.now(),
                 false);
 
         productPersist = entityManager.persist(product);
