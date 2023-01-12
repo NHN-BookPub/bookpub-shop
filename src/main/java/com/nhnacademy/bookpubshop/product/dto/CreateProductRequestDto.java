@@ -43,7 +43,6 @@ public class CreateProductRequestDto {
     @NotNull
     private Long productPrice;
     @NotNull
-    @Size(min = -10, max = 10, message = "우선순위는 -10 ~ 10 으로 제한됩니다.")
     private int productPriority;
     @NotNull
     private Integer productStock;
@@ -57,7 +56,6 @@ public class CreateProductRequestDto {
     private Integer saleCodeNo;
     @NotNull
     private Integer typeCodeNo;
-    @NotBlank
     private List<Integer> authorNos;
     @NotNull
     private List<Long> relationProducts;
