@@ -303,7 +303,7 @@ class MemberServiceTest {
         MemberResponseDto memberResponseDto =
                 new MemberResponseDto(1L, "tier",
                         "id", "nick", "name", "gender",
-                        1, 1, "email", 1L, true);
+                        1, 1, "email", 1L, true,true,true);
 
         PageImpl<MemberResponseDto> page = new PageImpl<>(List.of(memberResponseDto), pageable,1);
         when(memberRepository.findMembers(pageable))
