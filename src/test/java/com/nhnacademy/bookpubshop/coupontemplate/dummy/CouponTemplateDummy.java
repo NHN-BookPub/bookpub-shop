@@ -27,7 +27,6 @@ public class CouponTemplateDummy {
                 category,
                 couponStateCode,
                 "test_templateName",
-                "test_templateImage",
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 false,
