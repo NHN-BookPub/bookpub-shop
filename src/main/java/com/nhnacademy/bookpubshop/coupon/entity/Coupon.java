@@ -59,4 +59,12 @@ public class Coupon {
 
     @Column(name = "coupon_used_at")
     private LocalDateTime usedAt;
+
+    public void modifyCouponUsed(boolean couponUsed) {
+        this.couponUsed = couponUsed;
+    }
+
+    public void modifyCouponUsedAt(LocalDateTime usedAt) {
+        this.usedAt = usedAt;
+    }
 }

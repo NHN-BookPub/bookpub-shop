@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -65,9 +66,6 @@ public class CouponTemplate {
     @Column(name = "coupon_template_name")
     private String templateName;
 
-    @Column(name = "coupon_template_image")
-    private String templateImage;
-
     @Column(name = "coupon_template_finished_at")
     private LocalDateTime finishedAt;
 
@@ -81,4 +79,37 @@ public class CouponTemplate {
 
     @Column(name = "coupon_template_bundled")
     private boolean templateBundled;
+
+
+    /**
+     * 쿠폰템플릿 빌더.
+     *
+     * @param couponPolicy       the coupon policy
+     * @param couponType         the coupon type
+     * @param product            the product
+     * @param category           the category
+     * @param couponStateCode    the coupon state code
+     * @param templateName       the template name
+     * @param finishedAt         the finished at
+     * @param issuedAt           the issued at
+     * @param templateOverlapped the template overlapped
+     * @param templateBundled    the template bundled
+     */
+    @Builder
+    public CouponTemplate(CouponPolicy couponPolicy, CouponType couponType,
+                          Product product, Category category,
+                          CouponStateCode couponStateCode, String templateName,
+                          LocalDateTime finishedAt, LocalDateTime issuedAt,
+                          boolean templateOverlapped, boolean templateBundled) {
+        this.couponPolicy = couponPolicy;
+        this.couponType = couponType;
+        this.product = product;
+        this.category = category;
+        this.couponStateCode = couponStateCode;
+        this.templateName = templateName;
+        this.finishedAt = finishedAt;
+        this.issuedAt = issuedAt;
+        this.templateOverlapped = templateOverlapped;
+        this.templateBundled = templateBundled;
+    }
 }

@@ -1,6 +1,6 @@
-package com.nhnacademy.bookpubshop.customer_service.repository;
+package com.nhnacademy.bookpubshop.customersupport.repository;
 
-import com.nhnacademy.bookpubshop.customer_service.entity.CustomerService;
+import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
