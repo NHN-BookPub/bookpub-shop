@@ -84,7 +84,6 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
     public List<GetParentCategoryWithChildrenResponseDto> findParentCategoryWithChildren() {
         QCategory child = QCategory.category;
 
-        //1. 부모 리스트 가져오기 - 공개, 순서
         List<GetParentCategoryWithChildrenResponseDto> parentList = from(parent)
                 .where(parent.parentCategory.isNull(), parent.categoryDisplayed.isTrue())
                 .select(Projections.constructor(GetParentCategoryWithChildrenResponseDto.class,
@@ -93,7 +92,6 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                 .orderBy(parent.categoryPriority.desc(), parent.categoryName.asc())
                 .fetch();
 
-        // 2. For 문 돌면서 쿼리 결과값을 setter 이용해서 집어넣기.
         parentList.forEach(p -> {
             List<GetChildCategoryResponseDto> childList = from(child)
                     .select(Projections.constructor(GetChildCategoryResponseDto.class,
