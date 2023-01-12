@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.utils;
 
-import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.utils.exception.FileException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -27,16 +26,11 @@ public final class FileUtils {
     /**
      * 파일을 저장하는 메소드입니다.
      *
-     * @param name 카테고리명
      * @param file 파일
      * @return 저장 위치 반환
      */
-    public static String saveFile(String name, MultipartFile file) {
-
+    public static String saveFile(MultipartFile file) {
         String uuid = UUID.randomUUID().toString();
-        int pos = file.getName().indexOf(".");
-        String fileName = file.getName().substring(0, pos);
-        String fileExtension = file.getName().substring(pos);
 
         try (
                 FileOutputStream fos = new FileOutputStream(basePath + uuid);
@@ -50,9 +44,6 @@ public final class FileUtils {
         } catch (Exception ex) {
             throw new FileException();
         }
-
-        new File(null, null, null, null, null, null,
-                name, basePath, fileExtension, fileName, uuid);
 
         return basePath + uuid;
     }
