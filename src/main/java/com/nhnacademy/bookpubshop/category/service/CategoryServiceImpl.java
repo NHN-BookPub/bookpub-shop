@@ -99,6 +99,9 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findParentCategories();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<GetParentCategoryWithChildrenResponseDto> getParentCategoryWithChildren() {
         return categoryRepository.findParentCategoryWithChildren();

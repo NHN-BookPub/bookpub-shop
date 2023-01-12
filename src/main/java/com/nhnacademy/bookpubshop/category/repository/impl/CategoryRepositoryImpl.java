@@ -80,6 +80,9 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                 .fetch();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<GetParentCategoryWithChildrenResponseDto> findParentCategoryWithChildren() {
         QCategory child = QCategory.category;
