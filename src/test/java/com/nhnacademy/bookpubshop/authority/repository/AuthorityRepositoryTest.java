@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.authority.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import java.util.Optional;

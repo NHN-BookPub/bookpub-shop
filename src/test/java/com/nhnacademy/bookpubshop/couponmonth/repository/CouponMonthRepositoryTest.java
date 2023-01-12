@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.couponmonth.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.couponmonth.dummy.CouponMonthDummy;
 import com.nhnacademy.bookpubshop.couponmonth.entity.CouponMonth;
@@ -12,11 +13,14 @@ import com.nhnacademy.bookpubshop.coupontemplate.dummy.CouponTemplateDummy;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontype.dummy.CouponTypeDummy;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,65 +49,46 @@ class CouponMonthRepositoryTest {
     CouponStateCode couponStateCode;
     CouponTemplate couponTemplate;
     CouponMonth couponMonth;
+    ProductPolicy productPolicy;
+    Category category;
+    ProductTypeStateCode productTypeStateCode;
+    ProductSaleStateCode productSaleStateCode;
+    Product product;
 
     @BeforeEach
     void setUp() {
         couponPolicy = CouponPolicyDummy.dummy();
         couponType = CouponTypeDummy.dummy();
         couponStateCode = CouponStateCodeDummy.dummy();
-        couponTemplate = CouponTemplateDummy.dummy(couponPolicy, couponType, productDummy(),
-                categoryDummy(), couponStateCode);
+
+        productPolicy = ProductPolicyDummy.dummy();
+        productTypeStateCode = ProductTypeStateCodeDummy.dummy();
+        productSaleStateCode = ProductSaleStateCodeDummy.dummy();
+        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
+        category = CategoryDummy.dummy();
+        couponTemplate = CouponTemplateDummy.dummy(couponPolicy, couponType, product, category, couponStateCode);
         couponMonth = CouponMonthDummy.dummy(couponTemplate);
+
+        entityManager.persist(couponPolicy);
+        entityManager.persist(couponType);
+        entityManager.persist(couponStateCode);
+        entityManager.persist(couponTemplate);
+        entityManager.persist(productPolicy);
+        entityManager.persist(productTypeStateCode);
+        entityManager.persist(productSaleStateCode);
+        entityManager.persist(product);
     }
 
     @Test
     @DisplayName(value = "이달의쿠폰 save 테스트")
     void couponMonthSaveTest() {
-        entityManager.persist(couponPolicy);
-        entityManager.persist(couponType);
-        entityManager.persist(couponStateCode);
-        entityManager.persist(couponTemplate);
-        entityManager.persist(couponMonth);
-
-        Optional<CouponMonth> result = couponMonthRepository.findById(couponMonth.getMonthNumber());
+        CouponMonth persist = entityManager.persist(couponMonth);
+        Optional<CouponMonth> result = couponMonthRepository.findById(persist.getMonthNumber());
 
         assertThat(result).isPresent();
-        assertThat(result.get().getMonthNumber()).isEqualTo(couponMonth.getMonthNumber());
-        assertThat(result.get().getCouponTemplate().getTemplateNo()).isEqualTo(couponMonth.getCouponTemplate().getTemplateNo());
-        assertThat(result.get().getOpenedAt()).isEqualTo(couponMonth.getOpenedAt());
-        assertThat(result.get().getMonthQuantity()).isEqualTo(couponMonth.getMonthQuantity());
+        assertThat(result.get().getMonthNumber()).isEqualTo(persist.getMonthNumber());
+        assertThat(result.get().getCouponTemplate().getTemplateNo()).isEqualTo(persist.getCouponTemplate().getTemplateNo());
+        assertThat(result.get().getOpenedAt()).isEqualTo(persist.getOpenedAt());
+        assertThat(result.get().getMonthQuantity()).isEqualTo(persist.getMonthQuantity());
     }
-
-    private Product productDummy() {
-        Product product = new Product(null, productPolicyDummy(), productTypeStateCodeDummy(),
-                productSaleStateCodeDummy(), "isbn",
-                "title", 10, "description",
-                "test", "file_path", 10L, 1,
-                1L, 1, false,
-                1, LocalDateTime.now(), LocalDateTime.now(), false);
-        return entityManager.persist(product);
-    }
-
-    private ProductTypeStateCode productTypeStateCodeDummy() {
-        return entityManager.persist(new ProductTypeStateCode(null, "code",
-                true, "info"));
-    }
-
-    private ProductPolicy productPolicyDummy() {
-        return entityManager.persist(new ProductPolicy(null, "test_policy",
-                false, 1));
-    }
-
-    private ProductSaleStateCode productSaleStateCodeDummy() {
-        return entityManager.persist(new ProductSaleStateCode(null, "category",
-                true, "info"));
-    }
-
-    private Category categoryDummy() {
-        Category category = new Category(null, null, "test_categoryName",
-                0, true);
-        return entityManager.persist(new Category(null, category,
-                "test_categoryName", 0, true));
-    }
-
 }

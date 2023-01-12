@@ -29,7 +29,7 @@ public class FileDummy {
                 "test_path",
                 "file_ex",
                 "file_name",
-                "saved",
-                LocalDateTime.now());
+                "saved"
+        );
     }
 }

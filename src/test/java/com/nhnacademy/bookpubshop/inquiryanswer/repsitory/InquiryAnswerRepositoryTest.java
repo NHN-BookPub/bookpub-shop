@@ -3,8 +3,11 @@ package com.nhnacademy.bookpubshop.inquiryanswer.repsitory;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.inquiryanswer.dummy.InquiryAnswerDummy;
 import com.nhnacademy.bookpubshop.inquiryanswer.entity.InquiryAnswer;
+import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.personalinquiry.dummy.PersonalInquiryDummy;
+import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
+import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -29,37 +32,37 @@ class InquiryAnswerRepositoryTest {
     @Autowired
     InquiryAnswerRepository inquiryAnswerRepository;
 
+    BookPubTier tier;
+    Member member;
+    PersonalInquiry personalInquiry;
     InquiryAnswer inquiryAnswer;
 
     @BeforeEach
     void setUp() {
-        inquiryAnswer = InquiryAnswerDummy.dummy(PersonalInquiryDummy.dummy(memberDummy(tierDummy())));
+        tier = TierDummy.dummy();
+        member = MemberDummy.dummy(tier);
+        personalInquiry = PersonalInquiryDummy.dummy(member);
+        inquiryAnswer = InquiryAnswerDummy.dummy(personalInquiry);
+
+        entityManager.persist(tier);
+        entityManager.persist(member);
+        entityManager.persist(personalInquiry);
     }
 
     @DisplayName("1:1문의답변 save 테스트")
     @Test
     void inquiryAnswerSaveTest() {
-        entityManager.persist(inquiryAnswer.getPersonalInquiry());
+        LocalDateTime now = LocalDateTime.now();
+
         InquiryAnswer persist = entityManager.persist(inquiryAnswer);
         Optional<InquiryAnswer> result = inquiryAnswerRepository.findById(persist.getAnswerNumber());
 
         assertThat(result).isPresent();
         assertThat(result.get().getAnswerContent()).isEqualTo(persist.getAnswerContent());
         assertThat(result.get().getAnswerNumber()).isEqualTo(persist.getAnswerNumber());
-        assertThat(result.get().getCreatedAt().getYear()).isEqualTo(persist.getCreatedAt().getYear());
         assertThat(result.get().getPersonalInquiry().getPersonalInquiryNo()).
                 isEqualTo(persist.getPersonalInquiry().getPersonalInquiryNo());
-
+        assertThat(result.get().getCreatedAt()).isAfter(now);
     }
 
-    private BookPubTier tierDummy() {
-        return new BookPubTier(null, "tier");
-    }
-
-    private Member memberDummy(BookPubTier bookPubTier) {
-        Member testMember = new Member(null, bookPubTier, "test_id", "test_nickname", "test_name", "남", 22, 819, "test_pwd", "01012341234",
-                "test@test.com", LocalDateTime.now(), false, false, null, 0L, false);
-        entityManager.persist(testMember.getTier());
-        return entityManager.persist(testMember);
-    }
 }

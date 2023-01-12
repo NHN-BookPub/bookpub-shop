@@ -41,7 +41,8 @@ class AddressRepositoryTest {
         Optional<Address> findAddress = addressRepository.findById(persist.getAddressNo());
 
         assertThat(findAddress).isPresent();
-        assertThat(findAddress.get().getAddressZipcode()).isEqualTo("61910");
-        assertThat(findAddress.get().getAddressBase()).contains("광주광역시");
+        assertThat(findAddress.get().getAddressZipcode()).isEqualTo(persist.getAddressZipcode());
+        assertThat(findAddress.get().getAddressBase()).contains(persist.getAddressBase());
+        assertThat(findAddress.get().getAddressMemberDetail()).isEqualTo(persist.getAddressMemberDetail());
     }
 }

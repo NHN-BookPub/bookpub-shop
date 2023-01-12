@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,15 +35,17 @@ public class CouponTemplate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "coupon_template_number", nullable = false)
+    @Column(name = "coupon_template_number")
     private Long templateNo;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "coupon_policy_number", nullable = false)
+    @JoinColumn(name = "coupon_policy_number")
     private CouponPolicy couponPolicy;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "coupon_type_number", nullable = false)
+    @JoinColumn(name = "coupon_type_number")
     private CouponType couponType;
 
     @ManyToOne
@@ -53,11 +56,13 @@ public class CouponTemplate {
     @JoinColumn(name = "category_number")
     private Category category;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "coupon_state_code_number", nullable = false)
+    @JoinColumn(name = "coupon_state_code_number")
     private CouponStateCode couponStateCode;
 
-    @Column(name = "coupon_template_name", nullable = false)
+    @NotNull
+    @Column(name = "coupon_template_name")
     private String templateName;
 
     @Column(name = "coupon_template_image")
@@ -66,12 +71,14 @@ public class CouponTemplate {
     @Column(name = "coupon_template_finished_at")
     private LocalDateTime finishedAt;
 
-    @Column(name = "coupon_template_issued_at", nullable = false)
+    @NotNull
+    @Column(name = "coupon_template_issued_at")
     private LocalDateTime issuedAt;
 
-    @Column(name = "coupon_template_overlapped", nullable = false)
+    @NotNull
+    @Column(name = "coupon_template_overlapped")
     private boolean templateOverlapped;
 
-    @Column(name = "coupon_template_bundled", nullable = false)
+    @Column(name = "coupon_template_bundled")
     private boolean templateBundled;
 }

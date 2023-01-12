@@ -30,13 +30,14 @@ class ProductTypeStateCodeRepositoryTest {
     void productTypeStateCodeSaveTest() {
         ProductTypeStateCode testProductTypeStateCode = new ProductTypeStateCode(null,
                 BEST_SELLER.getName(), BEST_SELLER.isUsed(), "이 책은 베스트셀러입니다.");
-        productTypeStateCodeRepository.save(testProductTypeStateCode);
+        ProductTypeStateCode persist = productTypeStateCodeRepository.save(testProductTypeStateCode);
 
-        Optional<ProductTypeStateCode> optional = productTypeStateCodeRepository.findById(testProductTypeStateCode.getCodeNo());
+        Optional<ProductTypeStateCode> optional = productTypeStateCodeRepository.findById(persist.getCodeNo());
         assertThat(optional).isPresent();
-        assertThat(optional.get().getCodeNo()).isEqualTo(testProductTypeStateCode.getCodeNo());
-        assertThat(optional.get().getCodeName()).isEqualTo(BEST_SELLER.getName());
-        assertThat(optional.get().isCodeUsed()).isEqualTo(BEST_SELLER.isUsed());
+        assertThat(optional.get().getCodeNo()).isEqualTo(persist.getCodeNo());
+        assertThat(optional.get().getCodeName()).isEqualTo(persist.getCodeName());
+        assertThat(optional.get().isCodeUsed()).isEqualTo(persist.isCodeUsed());
+        assertThat(optional.get().getCodeInfo()).isEqualTo(persist.getCodeInfo());
 
         entityManager.clear();
     }
