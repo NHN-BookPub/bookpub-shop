@@ -1,19 +1,17 @@
 package com.nhnacademy.bookpubshop.member.dto.response;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 로그인 멤버의 반환 dto 클래스.
+ * 멤버 테이블에서 아이디와 비밀번호만 빼오는 DTO.
  *
  * @author : 임태원
  * @since : 1.0
  **/
-@Getter
 @AllArgsConstructor
-public class LoginMemberResponseDto {
+@Getter
+public class IdPwdMemberDto {
     private String memberId;
     private String memberPwd;
-    private List<String> authorities;
 }

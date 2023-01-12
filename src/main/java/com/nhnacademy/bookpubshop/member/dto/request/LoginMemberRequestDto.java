@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.member.dto.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -10,8 +9,6 @@ import lombok.Getter;
  * @since : 1.0
  **/
 @Getter
-@AllArgsConstructor
 public class LoginMemberRequestDto {
     private String memberId;
-    private String password;
 }
