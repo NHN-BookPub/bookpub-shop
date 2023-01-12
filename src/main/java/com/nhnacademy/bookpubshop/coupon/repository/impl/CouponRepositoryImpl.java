@@ -6,15 +6,16 @@ import com.nhnacademy.bookpubshop.coupon.entity.QCoupon;
 import com.nhnacademy.bookpubshop.coupon.repository.CouponRepositoryCustom;
 import com.nhnacademy.bookpubshop.couponpolicy.entity.QCouponPolicy;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.QCouponTemplate;
+import com.nhnacademy.bookpubshop.file.entity.QFile;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.data.support.PageableExecutionUtils;
 
 /**
  * CouponRepositoryCustom 구현체.
@@ -34,7 +35,29 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
     @Override
     public Optional<GetCouponResponseDto> getCoupon(Long couponNo) {
 
-        return Optional.of(getDetailQuery()
+        QCoupon coupon = QCoupon.coupon;
+        QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
+        QCouponPolicy couponPolicy = QCouponPolicy.couponPolicy;
+        QMember member = QMember.member;
+        QFile file = QFile.file;
+
+        return Optional.of(from(coupon)
+                        .where(coupon.couponNo.eq(couponNo))
+                        .leftJoin(coupon.couponTemplate, file.couponTemplate)
+                .innerJoin(coupon.couponTemplate, couponTemplate)
+                .innerJoin(couponTemplate.couponPolicy, couponPolicy)
+                .innerJoin(coupon.member, member)
+                .select(Projections.constructor(GetCouponResponseDto.class,
+                        coupon.couponNo,
+                        member.memberId,
+                        couponTemplate.templateName,
+                        file.nameSaved.concat(file.fileExtension),
+                        couponPolicy.policyFixed,
+                        couponPolicy.discountRate,
+                        couponPolicy.policyMinimum,
+                        couponPolicy.maxDiscount,
+                        couponTemplate.finishedAt,
+                        coupon.couponUsed))
                 .fetchOne());
     }
 
@@ -44,31 +67,16 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
     @Override
     public Page<GetCouponResponseDto> getCoupons(Pageable pageable) {
         QCoupon coupon = QCoupon.coupon;
-
-        Long count = from(coupon)
-                .select(coupon.count())
-                .fetchOne();
-
-        List<GetCouponResponseDto> content = getDetailQuery()
-                .limit(pageable.getPageSize())
-                .offset(pageable.getOffset())
-                .fetch();
-
-        return new PageImpl<>(content, pageable, count);
-    }
-
-    /**
-     * 쿠폰 조회를 위한 쿼리문 메소드입니다.
-     *
-     * @return 조회를 위한 쿼리문
-     */
-    private JPQLQuery<GetCouponResponseDto> getDetailQuery() {
-        QCoupon coupon = QCoupon.coupon;
         QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
         QCouponPolicy couponPolicy = QCouponPolicy.couponPolicy;
         QMember member = QMember.member;
+        QFile file = QFile.file;
 
-        return from(coupon)
+        JPQLQuery<Long> count = from(coupon)
+                .select(coupon.count());
+
+        List<GetCouponResponseDto> content = from(coupon)
+                .leftJoin(coupon.couponTemplate, file.couponTemplate)
                 .innerJoin(coupon.couponTemplate, couponTemplate)
                 .innerJoin(couponTemplate.couponPolicy, couponPolicy)
                 .innerJoin(coupon.member, member)
@@ -76,12 +84,17 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                         coupon.couponNo,
                         member.memberId,
                         couponTemplate.templateName,
-                        couponTemplate.templateImage,
+                        file.nameSaved.concat(file.fileExtension),
                         couponPolicy.policyFixed,
                         couponPolicy.discountRate,
                         couponPolicy.policyMinimum,
                         couponPolicy.maxDiscount,
                         couponTemplate.finishedAt,
-                        coupon.couponUsed));
+                        coupon.couponUsed))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 }

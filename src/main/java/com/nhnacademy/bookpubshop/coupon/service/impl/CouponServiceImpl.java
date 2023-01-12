@@ -64,6 +64,8 @@ public class CouponServiceImpl implements CouponService {
         coupon.modifyCouponUsed(modifyRequestDto.isCouponUsed());
         if (coupon.isCouponUsed()) {
             coupon.modifyCouponUsedAt(LocalDateTime.now());
+        } else {
+            coupon.modifyCouponUsedAt(null);
         }
     }
 
