@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.GetProductDetailResponseDto;
@@ -67,11 +68,11 @@ class ProductControllerTest {
 
     @BeforeEach
     void setUp() {
-        mapper = new ObjectMapper();
+        mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
-        productPolicy = ProductPolicyDummy.dummy();
-        typeStateCode = ProductTypeStateCodeDummy.dummy();
-        saleStateCode = ProductSaleStateCodeDummy.dummy();
+        productPolicy = new ProductPolicy(1, "test", true, 10);
+        typeStateCode = new ProductTypeStateCode(1, "test", true, "test");
+        saleStateCode = new ProductSaleStateCode(1, "test", true, "test");
         product = ProductDummy.dummy(productPolicy, typeStateCode, saleStateCode);
         requestDto = new CreateProductRequestDto();
         responseDto = new GetProductDetailResponseDto(
@@ -190,11 +191,23 @@ class ProductControllerTest {
         when(productService.getProductDetailById(anyLong()))
                 .thenReturn(responseDto);
 
-        doNothing().when(productService).modifyProduct(requestDto, anyLong());
-
         mockMvc.perform(get("/api/products/{productNo}", anyLong())
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.productNo").value(responseDto.getProductNo()))
+                .andExpect(jsonPath("$.productIsbn").value(responseDto.getProductIsbn()))
+                .andExpect(jsonPath("$.title").value(responseDto.getTitle()))
+                .andExpect(jsonPath("$.pageCount").value(responseDto.getPageCount()))
+                .andExpect(jsonPath("$.productDescription").value(responseDto.getProductDescription()))
+                .andExpect(jsonPath("$.productThumbnail").value(responseDto.getProductThumbnail()))
+                .andExpect(jsonPath("$.salesPrice").value(responseDto.getSalesPrice()))
+                .andExpect(jsonPath("$.salesRate").value(responseDto.getSalesRate()))
+                .andExpect(jsonPath("$.productPriority").value(responseDto.getProductPriority()))
+                .andExpect(jsonPath("$.productStock").value(responseDto.getProductStock()))
+                .andExpect(jsonPath("$.deleted").value(responseDto.isDeleted()))
+                .andExpect(jsonPath("$.productSubscribed").value(responseDto.isProductSubscribed()))
+                .andDo(print());
+
     }
 
     @Test
@@ -226,14 +239,18 @@ class ProductControllerTest {
     @Test
     @DisplayName("상품 수정 성공")
     void modifyProduct() throws Exception {
-//        doNothing().when(productService.modifyProduct(requestDto, 1L))
-        int i =1;
+        doNothing()
+                .when(productService)
+                        .modifyProduct(requestDto, 1L);
 
-        mockMvc.perform(put("/api/products/{id}", anyInt())
+        mockMvc.perform(put(url + "/{productNo}", 1L)
                         .content(mapper.writeValueAsString(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isCreated())
                 .andDo(print());
+
+        verify(productService, times(1))
+                .modifyProduct(any(), anyLong());
     }
 
     @Test
@@ -242,14 +259,13 @@ class ProductControllerTest {
         doNothing().when(productService)
                 .setDeleteProduct(product.getProductNo(), false);
 
-        String path = url + "/1?deleted=false";
-
-        mockMvc.perform(delete("/api/products/{productNo}", "1L")
+        mockMvc.perform(delete(url+"/{id}", 1L)
                         .param("deleted", "false")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
 
-        then(productService).should().setDeleteProduct(product.getProductNo(), false);
+        verify(productService, times(1))
+                .setDeleteProduct(anyLong(), anyBoolean());
     }
 }

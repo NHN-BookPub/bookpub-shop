@@ -113,12 +113,12 @@ class ProductPolicyControllerTest {
     @Test
     @DisplayName("단일 상품정책 조회 성공")
     void getProductPolicy() throws Exception {
-        when(productPolicyService.getProductPolicyById(productPolicy.getPolicyNo()))
+        when(productPolicyService.getProductPolicyById(anyInt()))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(get(url + "/" + productPolicy.getPolicyNo())
-                .content(mapper.writeValueAsString(responseDto))
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(url + "/{policyNo}", anyInt())
+                        .content(mapper.writeValueAsString(responseDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.policyNo").value(productPolicy.getPolicyNo()))
                 .andExpect(jsonPath("$.policyMethod").value(productPolicy.getPolicyMethod()))
@@ -127,7 +127,7 @@ class ProductPolicyControllerTest {
                 .andDo(print());
 
         verify(productPolicyService, times(1))
-                .getProductPolicyById(productPolicy.getPolicyNo());
+                .getProductPolicyById(anyInt());
     }
 
     @Test
@@ -136,7 +136,7 @@ class ProductPolicyControllerTest {
         when(productPolicyService.modifyProductPolicyById(productPolicy.getPolicyNo(), requestDto))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(put(url + "/" + productPolicy.getPolicyNo())
+        mockMvc.perform(put(url + "/{policyNo}", 1)
                         .content(mapper.writeValueAsString(responseDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())

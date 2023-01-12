@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.product.relationship.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -11,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductSaleStateCodeRequestDto;
-import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductSaleStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
@@ -68,7 +66,7 @@ class ProductSaleStateCodeControllerTest {
                 productSaleStateCode.getCodeInfo());
 
         responseDto = new GetProductSaleStateCodeResponseDto(
-                productSaleStateCode.getCodeNumber(),
+                1,
                 productSaleStateCode.getCodeCategory(),
                 productSaleStateCode.isCodeUsed(),
                 productSaleStateCode.getCodeInfo());
@@ -86,7 +84,7 @@ class ProductSaleStateCodeControllerTest {
         mockMvc.perform(get(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(responses)))
-                .andExpect(jsonPath("$[0].codeNumber").value(productSaleStateCode.getCodeNumber()))
+                .andExpect(jsonPath("$[0].codeNumber").value(1))
                 .andExpect(jsonPath("$[0].codeCategory").value(productSaleStateCode.getCodeCategory()))
                 .andExpect(jsonPath("$[0].codeInfo").value(productSaleStateCode.getCodeInfo()))
                 .andExpect(jsonPath("$[0].codeUsed").value(productSaleStateCode.isCodeUsed()))
@@ -113,21 +111,21 @@ class ProductSaleStateCodeControllerTest {
     @Test
     @DisplayName("판매상태코드 번호로 조회 성공")
     void getProductSaleStateCodeById() throws Exception {
-        when(productSaleStateCodeService.getSaleCodeById(productSaleStateCode.getCodeNumber()))
+        when(productSaleStateCodeService.getSaleCodeById(1))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(get(url + "/" + productSaleStateCode.getCodeNumber())
+        mockMvc.perform(get(url + "/{codeNo}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(responseDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.codeNumber").value(productSaleStateCode.getCodeNumber()))
+                .andExpect(jsonPath("$.codeNumber").value(responseDto.getCodeNumber()))
                 .andExpect(jsonPath("$.codeCategory").value(productSaleStateCode.getCodeCategory()))
                 .andExpect(jsonPath("$.codeInfo").value(productSaleStateCode.getCodeInfo()))
                 .andExpect(jsonPath("$.codeUsed").value(productSaleStateCode.isCodeUsed()))
                 .andDo(print());
 
         verify(productSaleStateCodeService, times(1))
-                .getSaleCodeById(productSaleStateCode.getCodeNumber());
+                .getSaleCodeById(1);
     }
 
     @Test
@@ -136,7 +134,8 @@ class ProductSaleStateCodeControllerTest {
         when(productSaleStateCodeService.setUsedSaleCodeById(productSaleStateCode.getCodeNumber(), productSaleStateCode.isCodeUsed()))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(delete(url + "/" + productSaleStateCode.getCodeNumber() + "?used=true")
+        mockMvc.perform(put(url + "/{codeNo}", 1)
+                        .param("used", "true")
                 .content(mapper.writeValueAsString(responseDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
