@@ -132,9 +132,7 @@ public class MemberServiceImpl implements MemberService {
     public void blockMember(Long memberNo) {
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(MemberNotFoundException::new);
-        log.warn("member:{}", member.isMemberBlocked());
         member.memberBlock();
-        log.warn("member:{}", member.isMemberBlocked());
     }
 
     /**
