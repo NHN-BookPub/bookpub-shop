@@ -10,15 +10,16 @@ import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.QCouponTemplate;
 import com.nhnacademy.bookpubshop.coupontemplate.repository.CouponTemplateRepositoryCustom;
 import com.nhnacademy.bookpubshop.coupontype.entity.QCouponType;
+import com.nhnacademy.bookpubshop.file.entity.QFile;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.data.support.PageableExecutionUtils;
 
 /**
  * CouponTemplate 레포 구현체입니다.
@@ -38,66 +39,16 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public Optional<GetDetailCouponTemplateResponseDto> findDetailByTemplateNo(Long templateNo) {
-        return Optional.of(detailQuery().fetchOne());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Page<GetDetailCouponTemplateResponseDto> findDetailAllBy(Pageable pageable) {
-        QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
-
-        Long count = from(couponTemplate)
-                .select(couponTemplate.count())
-                .fetchOne();
-
-        List<GetDetailCouponTemplateResponseDto> content = detailQuery()
-                .limit(pageable.getPageSize())
-                .offset(pageable.getOffset())
-                .fetch();
-
-        return new PageImpl<>(content, pageable, count);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Page<GetCouponTemplateResponseDto> findAllBy(Pageable pageable) {
-        QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
-
-        Long count = from(couponTemplate)
-                .select(couponTemplate.count())
-                .fetchOne();
-
-        List<GetCouponTemplateResponseDto> content = from(couponTemplate)
-                .select(Projections.constructor(GetCouponTemplateResponseDto.class,
-                        couponTemplate.templateName,
-                        couponTemplate.templateImage,
-                        couponTemplate.issuedAt,
-                        couponTemplate.finishedAt))
-                .limit(pageable.getPageSize())
-                .offset(pageable.getOffset())
-                .fetch();
-
-        return new PageImpl<>(content, pageable, count);
-    }
-
-    /**
-     * 쿠폰템플릿 상세조회를 위한 쿼리문.
-     *
-     * @return 쿠폰템플릿 상세 조회 쿼리문
-     */
-    private JPQLQuery<GetDetailCouponTemplateResponseDto> detailQuery() {
         QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
         QProduct product = QProduct.product;
         QCouponPolicy couponPolicy = QCouponPolicy.couponPolicy;
         QCouponType couponType = QCouponType.couponType;
         QCategory category = QCategory.category;
         QCouponStateCode couponStateCode = QCouponStateCode.couponStateCode;
+        QFile file = QFile.file;
 
-        return from(couponTemplate)
+        return Optional.of(from(couponTemplate)
+                        .where(couponTemplate.templateNo.eq(templateNo))
                 .leftJoin(couponTemplate.couponPolicy, couponPolicy)
                 .leftJoin(couponTemplate.couponType, couponType)
                 .leftJoin(couponTemplate.product, product)
@@ -116,11 +67,85 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
                         category.categoryName,
                         couponStateCode.codeTarget,
                         couponTemplate.templateName,
-                        couponTemplate.templateImage,
+                        file.nameSaved.concat(file.fileExtension),
                         couponTemplate.finishedAt,
                         couponTemplate.issuedAt,
                         couponTemplate.templateOverlapped,
                         couponTemplate.templateBundled
-                ));
+                ))
+                .fetchOne());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetDetailCouponTemplateResponseDto> findDetailAllBy(Pageable pageable) {
+        QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
+        QProduct product = QProduct.product;
+        QCouponPolicy couponPolicy = QCouponPolicy.couponPolicy;
+        QCouponType couponType = QCouponType.couponType;
+        QCategory category = QCategory.category;
+        QCouponStateCode couponStateCode = QCouponStateCode.couponStateCode;
+        QFile file = QFile.file;
+
+        JPQLQuery<Long> count = from(couponTemplate)
+                .select(couponTemplate.count());
+
+        List<GetDetailCouponTemplateResponseDto> content = from(couponTemplate)
+                .leftJoin(couponTemplate.couponPolicy, couponPolicy)
+                .leftJoin(couponTemplate.couponType, couponType)
+                .leftJoin(couponTemplate.product, product)
+                .leftJoin(couponTemplate.category, category)
+                .leftJoin(couponTemplate.couponStateCode, couponStateCode)
+                .select(Projections.constructor(GetDetailCouponTemplateResponseDto.class,
+                        couponTemplate.templateNo,
+                        Projections.constructor(GetCouponPolicyResponseDto.class,
+                                couponPolicy.policyNo,
+                                couponPolicy.policyFixed,
+                                couponPolicy.discountRate,
+                                couponPolicy.policyMinimum,
+                                couponPolicy.maxDiscount),
+                        couponType.typeName,
+                        product.title.as("productTitle"),
+                        category.categoryName,
+                        couponStateCode.codeTarget,
+                        couponTemplate.templateName,
+                        file.nameSaved.concat(file.fileExtension),
+                        couponTemplate.finishedAt,
+                        couponTemplate.issuedAt,
+                        couponTemplate.templateOverlapped,
+                        couponTemplate.templateBundled
+                ))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetCouponTemplateResponseDto> findAllBy(Pageable pageable) {
+        QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
+        QFile file = QFile.file;
+
+        JPQLQuery<Long> count = from(couponTemplate)
+                .select(couponTemplate.count());
+
+        List<GetCouponTemplateResponseDto> content = from(couponTemplate)
+                .leftJoin(couponTemplate, file.couponTemplate)
+                .select(Projections.constructor(GetCouponTemplateResponseDto.class,
+                        couponTemplate.templateName,
+                        file.nameSaved.concat(file.fileExtension),
+                        couponTemplate.issuedAt,
+                        couponTemplate.finishedAt))
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .fetch();
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 }

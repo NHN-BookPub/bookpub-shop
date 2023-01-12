@@ -20,6 +20,8 @@ import com.nhnacademy.bookpubshop.coupontemplate.service.CouponTemplateService;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
 import com.nhnacademy.bookpubshop.coupontype.exception.CouponTypeNotFoundException;
 import com.nhnacademy.bookpubshop.coupontype.repository.CouponTypeRepository;
+import com.nhnacademy.bookpubshop.file.entity.File;
+import com.nhnacademy.bookpubshop.file.repository.FileRepository;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.utils.FileUtils;
@@ -47,6 +49,7 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final CouponStateCodeRepository couponStateCodeRepository;
+    private final FileRepository fileRepository;
 
     /**
      * {@inheritDoc}
@@ -81,31 +84,48 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
     public void createCouponTemplate(CreateCouponTemplateRequestDto createRequestDto,
                                      MultipartFile image) {
 
-        String uuid = FileUtils.saveFile("coupon", image);
+        String path = FileUtils.saveFile(image);
 
-        couponTemplateRepository.save(new CouponTemplate(
-                null,
+
+        int posImage = image.getName().indexOf(".");
+        String nameOrigin = image.getName().substring(0, posImage);
+        String fileExtension = image.getName().substring(posImage);
+        int posPath = path.indexOf(".");
+        String nameSaved = path.substring(0, posPath);
+
+        CouponTemplate couponTemplate = createRequestDto.createCouponTemplate(
                 getCouponPolicy(createRequestDto.getPolicyNo()),
                 getCouponType(createRequestDto.getTypeNo()),
                 getProduct(createRequestDto.getProductNo()),
                 getCategory(createRequestDto.getCategoryNo()),
-                getCouponStateCode(createRequestDto.getCodeNo()),
-                createRequestDto.getTemplateName(),
-                uuid,
-                createRequestDto.getFinishedAt(),
-                createRequestDto.getIssuedAt(),
-                createRequestDto.isTemplateOverlapped(),
-                createRequestDto.isTemplateBundled()
+                getCouponStateCode(createRequestDto.getCodeNo())
+        );
+
+        couponTemplateRepository.save(couponTemplate);
+
+        fileRepository.save(new File(
+                null,
+                null,
+                null,
+                couponTemplate,
+                null,
+                null,
+                "coupon",
+                path,
+                fileExtension,
+                nameOrigin,
+                nameSaved
         ));
     }
 
     /**
      * {@inheritDoc}
      */
+    // 이미지 첨부 이슈 해결 후 수정 해야함.
     @Override
     @Transactional
     public void modifyCouponTemplate(ModifyCouponTemplateRequestDto modifyRequestDto) {
-        String uuid = FileUtils.saveFile("coupon", modifyRequestDto.getTemplateImage());
+        FileUtils.saveFile(modifyRequestDto.getTemplateImage());
 
         if (!couponTemplateRepository.existsById(modifyRequestDto.getTemplateNo())) {
             throw new CouponTemplateNotFoundException(modifyRequestDto.getTemplateNo());
@@ -119,7 +139,6 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
                 getCategory(modifyRequestDto.getCategoryNo()),
                 getCouponStateCode(modifyRequestDto.getCodeNo()),
                 modifyRequestDto.getTemplateName(),
-                uuid,
                 modifyRequestDto.getFinishedAt(),
                 modifyRequestDto.getIssuedAt(),
                 modifyRequestDto.isTemplateOverlapped(),
