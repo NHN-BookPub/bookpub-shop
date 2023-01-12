@@ -1,5 +1,11 @@
 package com.nhnacademy.bookpubshop.coupontemplate.dto.request;
 
+import com.nhnacademy.bookpubshop.category.entity.Category;
+import com.nhnacademy.bookpubshop.couponpolicy.entity.CouponPolicy;
+import com.nhnacademy.bookpubshop.couponstatecode.entity.CouponStateCode;
+import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
+import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
+import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -34,9 +40,6 @@ public class CreateCouponTemplateRequestDto {
     @Length(max = 50, message = "쿠폰이름의 최대 글자는 50글자입니다.")
     private String templateName;
 
-    //이미지 관련 이슈때문에 주석처리함. 해결해야함.
-    //private MultipartFile templateImage;
-
     @DateTimeFormat
     private LocalDateTime finishedAt;
 
@@ -48,4 +51,31 @@ public class CreateCouponTemplateRequestDto {
     private boolean templateOverlapped;
 
     private boolean templateBundled;
+
+
+    /**
+     * 쿠폰템플릿 엔티티를 만들어주는 메소드입니다.
+     *
+     * @param policy      the policy
+     * @param couponType  the coupon type
+     * @param product     the product
+     * @param category    the category
+     * @param couponState the coupon state
+     * @return the coupon template
+     */
+    public CouponTemplate createCouponTemplate(CouponPolicy policy,
+                                               CouponType couponType,
+                                               Product product,
+                                               Category category,
+                                               CouponStateCode couponState) {
+        return CouponTemplate.builder()
+                .couponPolicy(policy)
+                .couponType(couponType)
+                .product(product)
+                .couponStateCode(couponState)
+                .category(category)
+                .templateName(this.templateName)
+                .finishedAt(this.finishedAt)
+                .build();
+    }
 }

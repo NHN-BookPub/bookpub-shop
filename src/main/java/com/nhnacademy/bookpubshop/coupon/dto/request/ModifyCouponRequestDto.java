@@ -3,7 +3,6 @@ package com.nhnacademy.bookpubshop.coupon.dto.request;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,7 +14,6 @@ import lombok.NoArgsConstructor;
  **/
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class ModifyCouponRequestDto {
     @NotNull(message = "쿠폰 번호를 입력해주세요.")
     @PositiveOrZero(message = "0이상의 번호를 입력해주세요.")

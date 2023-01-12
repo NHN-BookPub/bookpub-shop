@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,7 +16,6 @@ import org.springframework.format.annotation.DateTimeFormat;
  **/
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class CreateCouponMonthRequestDto {
     @NotNull(message = "쿠폰 템플릿 번호를 입력하세요.")
     @PositiveOrZero(message = "0이상의 번호를 입력하세요.")
