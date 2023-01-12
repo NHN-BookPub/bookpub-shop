@@ -1,6 +1,8 @@
 package com.nhnacademy.bookpubshop.author.repository;
 
+import com.nhnacademy.bookpubshop.author.dto.GetAuthorResponseDto;
 import com.nhnacademy.bookpubshop.author.entity.Author;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -10,4 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since : 1.0
  **/
 public interface AuthorRepository extends JpaRepository<Author, Integer>, AuthorRepositoryCustom {
+    List<GetAuthorResponseDto> findAuthorsByAuthorName(String name);
 }

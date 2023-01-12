@@ -32,4 +32,5 @@ public class Author {
     @NotNull
     @Column(name = "author_name")
     private String authorName;
+
 }

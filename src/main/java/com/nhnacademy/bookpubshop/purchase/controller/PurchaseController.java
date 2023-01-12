@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.purchase.controller;
 import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseResponseDto;
 import com.nhnacademy.bookpubshop.purchase.dto.SavePurchaseRequestDto;
 import com.nhnacademy.bookpubshop.purchase.service.PurchaseService;
+import lombok.RequiredArgsConstructor;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,16 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since : 1.0
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/purchase")
 public class PurchaseController {
     private final PurchaseService purchaseService;
-
-    /**
-     * 생성자입니다.
-     */
-    public PurchaseController(PurchaseService purchaseService) {
-        this.purchaseService = purchaseService;
-    }
 
     /**
      * 상품번호로 구매이력을 조회하는 api.

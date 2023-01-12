@@ -91,4 +91,27 @@ class CouponMonthRepositoryTest {
         assertThat(result.get().getOpenedAt()).isEqualTo(persist.getOpenedAt());
         assertThat(result.get().getMonthQuantity()).isEqualTo(persist.getMonthQuantity());
     }
+
+    private ProductTypeStateCode productTypeStateCodeDummy() {
+        return entityManager.persist(new ProductTypeStateCode(null, "code",
+                true, "info"));
+    }
+
+    private ProductPolicy productPolicyDummy() {
+        return entityManager.persist(new ProductPolicy(null, "test_policy",
+                false, 1));
+    }
+
+    private ProductSaleStateCode productSaleStateCodeDummy() {
+        return entityManager.persist(new ProductSaleStateCode(null, "category",
+                true, "info"));
+    }
+
+    private Category categoryDummy() {
+        Category category = new Category(null, null, "test_categoryName",
+                0, true);
+        return entityManager.persist(new Category(null, category,
+                "test_categoryName", 0, true));
+    }
+
 }

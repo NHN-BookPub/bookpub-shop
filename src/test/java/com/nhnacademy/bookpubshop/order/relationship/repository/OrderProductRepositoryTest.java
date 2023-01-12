@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.order.relationship.repository;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;

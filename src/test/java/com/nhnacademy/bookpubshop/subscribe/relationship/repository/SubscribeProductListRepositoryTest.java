@@ -51,7 +51,7 @@ class SubscribeProductListRepositoryTest {
         productSaleStateCode = ProductSaleStateCodeDummy.dummy();
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
         subscribe = SubscribeDummy.dummy();
-        
+
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);
         entityManager.persist(productSaleStateCode);

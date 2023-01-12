@@ -22,7 +22,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 /**
  * 상품(product) 테이블.
  *
@@ -68,6 +67,10 @@ public class Product extends BaseCreateTimeEntity {
     @Column(name = "product_title")
     private String title;
 
+    @NotNull
+    @Column(name = "product_publisher")
+    private String productPublisher;
+
     @Column(name = "product_page_count")
     private Integer pageCount;
 
@@ -94,9 +97,11 @@ public class Product extends BaseCreateTimeEntity {
     @Column(name = "product_view_count")
     private Long viewCount;
 
+    @NotNull
     @Column(name = "product_priority")
     private Integer productPriority;
 
+    @NotNull
     @Column(name = "product_deleted")
     private boolean productDeleted;
 

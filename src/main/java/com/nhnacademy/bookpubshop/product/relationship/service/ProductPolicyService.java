@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.product.relationship.service;
 
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateModifyProductPolicyRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyResponseDto;
+import java.util.List;
 
 /**
  * 상품정책 서비스입니다.
@@ -26,6 +27,8 @@ public interface ProductPolicyService {
      */
     GetProductPolicyResponseDto getProductPolicyById(Integer policyNo);
 
+    List<GetProductPolicyResponseDto> getProductPolicies();
+
     /**
      * 정책번호로 조회한 후 그 정책을 수정합니다.
      *
@@ -35,11 +38,4 @@ public interface ProductPolicyService {
      */
     GetProductPolicyResponseDto modifyProductPolicyById(Integer policyNo,
                                                         CreateModifyProductPolicyRequestDto policy);
-
-    /**
-     * 상품정책을 삭제합니다.
-     *
-     * @param policyNo 정책번호입니다.
-     */
-    void deleteProductPolicyById(Integer policyNo);
 }

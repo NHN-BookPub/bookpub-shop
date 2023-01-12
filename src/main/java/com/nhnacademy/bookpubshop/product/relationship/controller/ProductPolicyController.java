@@ -3,12 +3,12 @@ package com.nhnacademy.bookpubshop.product.relationship.controller;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateModifyProductPolicyRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductPolicyService;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,11 +36,12 @@ public class ProductPolicyController {
      * @return 성공시 201과 생성된 객체를 반환합니다.
      */
     @PostMapping
-    public ResponseEntity<GetProductPolicyResponseDto> createProductPolicy(
+    public ResponseEntity<Void> createProductPolicy(
             @Valid @RequestBody CreateModifyProductPolicyRequestDto requestDto) {
+        productPolicyService.createProductPolicy(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productPolicyService.createProductPolicy(requestDto));
+                .build();
 
     }
 
@@ -59,6 +60,18 @@ public class ProductPolicyController {
     }
 
     /**
+     * 모든 상품 정책들을 얻기 위한 api 입니다.
+     *
+     * @return 모든 상품 정책 리스트를 반환합니다.
+     */
+    @GetMapping()
+    public ResponseEntity<List<GetProductPolicyResponseDto>> getProductPolicies() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(productPolicyService.getProductPolicies());
+    }
+
+    /**
      * 상품정책 수정을 위한 api 입니다.
      *
      * @param policyNo 정책번호입니다.
@@ -66,24 +79,12 @@ public class ProductPolicyController {
      * @return response entity
      */
     @PutMapping("/{policyNo}")
-    public ResponseEntity<GetProductPolicyResponseDto> modifyProductPolicy(
+    public ResponseEntity<Void> modifyProductPolicy(
             @PathVariable Integer policyNo,
             @Valid @RequestBody CreateModifyProductPolicyRequestDto policy) {
-        return ResponseEntity.status(HttpStatus.OK)
+        productPolicyService.modifyProductPolicyById(policyNo, policy);
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productPolicyService.modifyProductPolicyById(policyNo, policy));
-    }
-
-    /**
-     * 정책을 삭제하기 위한 api 입니다.
-     *
-     * @param policyNo 정책번호입니다.
-     * @return 성공시 200을 반환합니다.
-     */
-    @DeleteMapping("/{policyNo}")
-    public ResponseEntity<Void> deleteProductPolicy(@PathVariable Integer policyNo) {
-        productPolicyService.deleteProductPolicyById(policyNo);
-
-        return ResponseEntity.status(HttpStatus.OK).build();
+                .build();
     }
 }

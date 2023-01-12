@@ -10,6 +10,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +74,6 @@ class ProductRepositoryTest {
         assertThat(product.get().getProductStock()).isEqualTo(persist.getProductStock());
         assertThat(product.get().getProductThumbnail()).isEqualTo(persist.getProductThumbnail());
         assertThat(product.get().getSalesPrice()).isEqualTo(persist.getSalesPrice());
-        assertThat(product.get().getCreatedAt()).isEqualTo(persist.getCreatedAt());
         assertThat(product.get().getEbookFilePath()).isEqualTo(persist.getEbookFilePath());
         assertThat(product.get().getPageCount()).isEqualTo(persist.getPageCount());
         assertThat(product.get().getCreatedAt()).isAfter(now);

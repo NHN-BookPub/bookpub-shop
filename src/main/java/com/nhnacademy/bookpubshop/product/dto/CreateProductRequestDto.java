@@ -1,12 +1,13 @@
 package com.nhnacademy.bookpubshop.product.dto;
 
+import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -16,7 +17,7 @@ import org.hibernate.validator.constraints.Length;
  * @since : 1.0
  **/
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class CreateProductRequestDto {
     @NotNull
     @Length(min = 10, max = 13, message = "ISBN은 10자 혹은 13자입니다.")
@@ -42,7 +43,6 @@ public class CreateProductRequestDto {
     @NotNull
     private Long productPrice;
     @NotNull
-    @Size(min = -10, max = 10, message = "우선순위는 -10 ~ 10 으로 제한됩니다.")
     private int productPriority;
     @NotNull
     private Integer productStock;
@@ -56,8 +56,7 @@ public class CreateProductRequestDto {
     private Integer saleCodeNo;
     @NotNull
     private Integer typeCodeNo;
-    @NotBlank
-    private String[] authorNos;
+    private List<Integer> authorNos;
     @NotNull
     private List<Long> relationProducts;
 }

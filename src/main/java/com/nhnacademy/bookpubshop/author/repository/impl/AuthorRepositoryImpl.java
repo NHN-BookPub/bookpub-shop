@@ -65,10 +65,11 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport
         QProduct product = QProduct.product;
 
         return from(author)
-                .innerJoin(productAuthor.author, author)
-                .innerJoin(product, productAuthor.product)
+                .innerJoin(productAuthor).on(author.eq(productAuthor.author))
+                .innerJoin(product).on(product.eq(productAuthor.product))
                 .where(product.productNo.eq(productNo))
-                .select(Projections.constructor(GetAuthorResponseDto.class, author.authorNo, author.authorName))
+                .select(Projections.constructor(GetAuthorResponseDto.class,
+                        author.authorNo, author.authorName))
                 .fetch();
     }
 
