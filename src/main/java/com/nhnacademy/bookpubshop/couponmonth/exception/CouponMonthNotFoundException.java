@@ -7,9 +7,9 @@ package com.nhnacademy.bookpubshop.couponmonth.exception;
  * @since : 1.0
  **/
 public class CouponMonthNotFoundException extends RuntimeException {
-    public static final String MES = "은 없는 이달의 쿠폰번호입니다.";
+    public static final String MESSAGE = "은 없는 이달의 쿠폰번호입니다.";
 
     public CouponMonthNotFoundException(Long monthNo) {
-        super(monthNo + MES);
+        super(monthNo + MESSAGE);
     }
 }
