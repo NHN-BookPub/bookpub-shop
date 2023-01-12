@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.customer_service.entity;
+package com.nhnacademy.bookpubshop.customersupport.entity;
 
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.member.entity.Member;
