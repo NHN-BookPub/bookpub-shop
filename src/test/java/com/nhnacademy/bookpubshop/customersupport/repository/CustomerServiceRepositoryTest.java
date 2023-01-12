@@ -1,8 +1,8 @@
-package com.nhnacademy.bookpubshop.customer_service.repository;
+package com.nhnacademy.bookpubshop.customersupport.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.nhnacademy.bookpubshop.customer_service.dummy.CustomerServiceDummy;
-import com.nhnacademy.bookpubshop.customer_service.entity.CustomerService;
+import com.nhnacademy.bookpubshop.customersupport.dummy.CustomerServiceDummy;
+import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.servicecode.dummy.CustomerServiceStateCodeDummy;

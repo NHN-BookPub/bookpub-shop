@@ -1,9 +1,8 @@
-package com.nhnacademy.bookpubshop.customer_service.dummy;
+package com.nhnacademy.bookpubshop.customersupport.dummy;
 
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.customer_service.entity.CustomerService;
+import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.servicecode.entity.CustomerServiceStateCode;
-import java.time.LocalDateTime;
 
 /**
  * Some description here.
