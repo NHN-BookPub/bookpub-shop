@@ -23,6 +23,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,6 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
  * @since : 1.0
  **/
 @WebMvcTest(CategoryController.class)
+@MockBean(JpaMetamodelMappingContext.class)
 class CategoryControllerTest {
 
     @Autowired
