@@ -83,35 +83,12 @@ class CouponMonthRepositoryTest {
     @DisplayName(value = "이달의쿠폰 save 테스트")
     void couponMonthSaveTest() {
         CouponMonth persist = entityManager.persist(couponMonth);
-        Optional<CouponMonth> result = couponMonthRepository.findById(persist.getMonthNumber());
+        Optional<CouponMonth> result = couponMonthRepository.findById(persist.getMonthNo());
 
         assertThat(result).isPresent();
-        assertThat(result.get().getMonthNumber()).isEqualTo(persist.getMonthNumber());
+        assertThat(result.get().getMonthNo()).isEqualTo(persist.getMonthNo());
         assertThat(result.get().getCouponTemplate().getTemplateNo()).isEqualTo(persist.getCouponTemplate().getTemplateNo());
         assertThat(result.get().getOpenedAt()).isEqualTo(persist.getOpenedAt());
         assertThat(result.get().getMonthQuantity()).isEqualTo(persist.getMonthQuantity());
     }
-
-    private ProductTypeStateCode productTypeStateCodeDummy() {
-        return entityManager.persist(new ProductTypeStateCode(null, "code",
-                true, "info"));
-    }
-
-    private ProductPolicy productPolicyDummy() {
-        return entityManager.persist(new ProductPolicy(null, "test_policy",
-                false, 1));
-    }
-
-    private ProductSaleStateCode productSaleStateCodeDummy() {
-        return entityManager.persist(new ProductSaleStateCode(null, "category",
-                true, "info"));
-    }
-
-    private Category categoryDummy() {
-        Category category = new Category(null, null, "test_categoryName",
-                0, true);
-        return entityManager.persist(new Category(null, category,
-                "test_categoryName", 0, true));
-    }
-
 }
