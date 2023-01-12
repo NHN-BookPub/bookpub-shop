@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.category.dto.request.CreateCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.request.ModifyCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
+import com.nhnacademy.bookpubshop.category.dto.response.GetChildCategoryResponseDto;
+import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import com.nhnacademy.bookpubshop.category.service.CategoryService;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,9 +34,9 @@ import org.springframework.test.web.servlet.MockMvc;
  * @author : 김서현
  * @since : 1.0
  **/
-@WebMvcTest(CategoryRestController.class)
+@WebMvcTest(CategoryController.class)
 @MockBean(JpaMetamodelMappingContext.class)
-class CategoryRestControllerTest {
+class CategoryControllerTest {
 
     @Autowired
     MockMvc mockMvc;
@@ -187,6 +189,45 @@ class CategoryRestControllerTest {
                 .andDo(print());
 
         verify(categoryService, times(1)).getCategories();
+    }
+
+    @Test
+    @DisplayName("최상의 카테고리 조회")
+    void getParentCategoriesTest() throws Exception {
+        ReflectionTestUtils.setField(getCategoryResponseDto, "categoryNo", 1);
+        ReflectionTestUtils.setField(getCategoryResponseDto, "categoryName", "국내도서");
+        ReflectionTestUtils.setField(getCategoryResponseDto, "parent", null);
+        ReflectionTestUtils.setField(getCategoryResponseDto, "categoryDisplayed", true);
+        ReflectionTestUtils.setField(getCategoryResponseDto, "categoryPriority", 0);
+
+        when(categoryService.getParentCategories()).thenReturn(List.of(getCategoryResponseDto));
+
+        mockMvc.perform(get(path + "/parent"))
+                .andExpect(jsonPath("$[0].categoryName").value(
+                        getCategoryResponseDto.getCategoryName()))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        verify(categoryService, times(1)).getParentCategories();
+    }
+
+    @Test
+    @DisplayName("메인페이지 에서 카테고리 조회")
+    void getParentWithChildrenTest() throws Exception {
+
+        GetParentCategoryWithChildrenResponseDto responseDto = new GetParentCategoryWithChildrenResponseDto(
+                1, "국내 도서");
+
+        GetChildCategoryResponseDto childDto = new GetChildCategoryResponseDto(2, "추리소설");
+
+        responseDto.setChildList(List.of(childDto));
+
+        when(categoryService.getParentCategoryWithChildren()).thenReturn(List.of(responseDto));
+
+        mockMvc.perform(get(path + "/parent-child"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].categoryName").value(responseDto.getCategoryName()))
+                .andDo(print());
 
     }
 }

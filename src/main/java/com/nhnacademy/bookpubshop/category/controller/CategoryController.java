@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.category.controller;
 import com.nhnacademy.bookpubshop.category.dto.request.CreateCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.request.ModifyCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
+import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import com.nhnacademy.bookpubshop.category.service.CategoryService;
 import java.util.List;
 import javax.validation.Valid;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/categories")
-public class CategoryRestController {
+public class CategoryController {
 
     private final CategoryService categoryService;
 
@@ -74,6 +75,18 @@ public class CategoryRestController {
     }
 
     /**
+     * 최상위 카테고리 조회시 사용되는 메소드입니다.
+     *
+     * @return 최상위 카테고리 리스트 반환.
+     */
+    @GetMapping("/parent")
+    public ResponseEntity<List<GetCategoryResponseDto>> parentCategoryList() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(categoryService.getParentCategories());
+    }
+
+    /**
      * 카테고리 다건 조회시 사용되는 메소드입니다.
      *
      * @return 성공했을 때 응답코드 OK 200이 반환.
@@ -85,4 +98,15 @@ public class CategoryRestController {
                 .body(categoryService.getCategories());
     }
 
+    /**
+     * 메인에서 상위, 하위 카테고리 조회시 사용되는 메소드입니다.
+     *
+     * @return 성공했을 때 응답코드 OK 200이 반환.
+     */
+    @GetMapping("/parent-child")
+    public ResponseEntity<List<GetParentCategoryWithChildrenResponseDto>> parentWithChildList() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(categoryService.getParentCategoryWithChildren());
+    }
 }
