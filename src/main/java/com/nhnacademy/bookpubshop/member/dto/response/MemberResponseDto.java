@@ -24,4 +24,6 @@ public class MemberResponseDto {
     private String email;
     private Long point;
     private boolean isSocial;
+    private boolean isDeleted;
+    private boolean isBlocked;
 }

@@ -18,6 +18,7 @@ import com.nhnacademy.bookpubshop.tier.exception.NotFoundTierException;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author : 임태원, 유호철
  * @since : 1.0
  **/
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -125,6 +127,7 @@ public class MemberServiceImpl implements MemberService {
      *
      * @throws MemberNotFoundException 멤버가 없을때 나오는 에러.
      */
+    @Transactional
     @Override
     public void blockMember(Long memberNo) {
         Member member = memberRepository.findById(memberNo)
@@ -137,6 +140,7 @@ public class MemberServiceImpl implements MemberService {
      *
      * @throws MemberNotFoundException 멤버가 없을때 나오는 에러.
      */
+    @Transactional
     @Override
     public void deleteMember(Long memberNo) {
         Member member = memberRepository.findById(memberNo)

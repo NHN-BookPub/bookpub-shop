@@ -380,7 +380,7 @@ class MemberControllerTest {
     void memberListTest() throws Exception {
         MemberResponseDto dto = new MemberResponseDto(1L, "tier", "id", "nick",
                 "name", "gender", 1, 1, "email",
-                1L, false);
+                1L, false,false,false);
         List<MemberResponseDto> content = List.of(dto);
         PageRequest request = PageRequest.of(0, 10);
 
@@ -405,6 +405,8 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.content[0].email").value(content.get(0).getEmail()))
                 .andExpect(jsonPath("$.content[0].point").value(objectMapper.writeValueAsString(content.get(0).getPoint())))
                 .andExpect(jsonPath("$.content[0].social").value(content.get(0).isSocial()))
+                .andExpect(jsonPath("$.content[0].deleted").value(content.get(0).isDeleted()))
+                .andExpect(jsonPath("$.content[0].blocked").value(content.get(0).isBlocked()))
                 .andDo(print());
 
         then(memberService)
