@@ -1,13 +1,17 @@
 package com.nhnacademy.bookpubshop.product.relationship.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductAuthor;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,13 +43,11 @@ class ProductAuthorRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        productPolicy = new ProductPolicy(null, "실구매가", true, 5);
-        productTypeStateCode = new ProductTypeStateCode(null, "기본", true, "기본입니다.");
-        productSaleStateCode = new ProductSaleStateCode(null, "판타지", true, "판타지 소설");
-        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, "1231231231", "인어공주",
-                100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 1000L,
-                10, 300L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
-        author = new Author(null, "사람");
+        author = AuthorDummy.dummy();
+        productPolicy = ProductPolicyDummy.dummy();
+        productTypeStateCode = ProductTypeStateCodeDummy.dummy();
+        productSaleStateCode = ProductSaleStateCodeDummy.dummy();
+        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);
@@ -59,14 +61,15 @@ class ProductAuthorRepositoryTest {
     @Test
     @DisplayName("상품저자 save 테스트")
     void memberSaveTest() {
-
-        ProductAuthor persist = entityManager.persist(productAuthor);
+        ProductAuthor persist = productAuthorRepository.save(productAuthor);
 
         Optional<ProductAuthor> result = productAuthorRepository.findById(persist.getPk());
 
         assertThat(result).isPresent();
         assertThat(result.get().getProduct().getTitle()).isEqualTo(persist.getProduct().getTitle());
         assertThat(result.get().getAuthor().getAuthorName()).isEqualTo(persist.getAuthor().getAuthorName());
-
+        assertThat(result.get().getPk().getAuthorNo()).isEqualTo(persist.getAuthor().getAuthorNo());
+        assertThat(result.get().getPk().getProductNo()).isEqualTo(persist.getProduct().getProductNo());
+        assertThat(result.get().getPk()).isEqualTo(persist.getPk());
     }
 }

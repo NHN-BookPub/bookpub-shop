@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.order.entity;
 
 import com.nhnacademy.bookpubshop.address.entity.Address;
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
@@ -13,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,10 +31,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "bookpub_order")
-public class BookpubOrder {
+public class BookpubOrder extends BaseCreateTimeEntity {
 
     @Id
-    @Column(name = "order_number", nullable = false)
+    @Column(name = "order_number")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderNo;
 
@@ -40,56 +42,62 @@ public class BookpubOrder {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "price_policy_delivery_number", nullable = false)
+    @JoinColumn(name = "price_policy_delivery_number")
     private PricePolicy deliveryPricePolicy;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "price_policy_packaging_number", nullable = false)
+    @JoinColumn(name = "price_policy_packaging_number")
     private PricePolicy packagingPricePolicy;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "address_number", nullable = false)
+    @JoinColumn(name = "address_number")
     private Address address;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "order_state_code_number", nullable = false)
+    @JoinColumn(name = "order_state_code_number")
     private OrderStateCode orderStateCode;
 
-    @Column(name = "order_ordered_at", nullable = false)
-    private LocalDateTime orderedAt;
-
-    @Column(name = "order_recipient", nullable = false)
+    @NotNull
+    @Column(name = "order_recipient")
     private String orderRecipient;
 
-    @Column(name = "order_recipient_phone", nullable = false)
+    @NotNull
+    @Column(name = "order_recipient_phone")
     private String recipientPhone;
 
-    @Column(name = "order_buyer", nullable = false)
+    @NotNull
+    @Column(name = "order_buyer")
     private String orderBuyer;
 
-    @Column(name = "order_buyer_phone", nullable = false)
+    @NotNull
+    @Column(name = "order_buyer_phone")
     private String buyerPhone;
 
-    @Column(name = "order_received_at", nullable = false)
+    @NotNull
+    @Column(name = "order_received_at")
     private LocalDateTime receivedAt;
 
     @Column(name = "order_invoice_number")
     private String invoiceNumber;
 
-    @Column(name = "order_price", nullable = false)
+    @Column(name = "order_price")
     private Long orderPrice;
 
-    @Column(name = "order_point_amount", nullable = false)
+    @Column(name = "order_point_amount")
     private Long pointAmount;
 
-    @Column(name = "order_packaged", nullable = false)
+    @Column(name = "order_packaged")
     private boolean orderPackaged;
 
     @Column(name = "order_request")
     private String orderRequest;
 
-    @Column(name = "order_coupon_discount", nullable = false)
+    @Column(name = "order_coupon_discount")
     private Long couponDiscount;
 
 }

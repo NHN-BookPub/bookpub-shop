@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.purchase.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.product.entity.Product;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,24 +27,22 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "purchase")
-public class Purchase {
+public class Purchase extends BaseCreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "purchase_number", nullable = false, unique = true)
+    @Column(name = "purchase_number")
     private Long purchaseNo;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "product_number", nullable = false)
+    @JoinColumn(name = "product_number")
     private Product product;
 
-    @Column(name = "purchase_price", nullable = false)
+    @NotNull
+    @Column(name = "purchase_price")
     private Long purchasePrice;
 
-    @Column(name = "purchase_created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "purchase_amount", nullable = false)
+    @NotNull
+    @Column(name = "purchase_amount")
     private Long purchaseAmount;
-
-
 }

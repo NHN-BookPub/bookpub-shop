@@ -14,9 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,14 +38,14 @@ public class CouponTemplate {
     @Column(name = "coupon_template_number")
     private Long templateNo;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "coupon_policy_number")
-    @NotNull
     private CouponPolicy couponPolicy;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "coupon_type_number")
-    @NotNull
     private CouponType couponType;
 
     @ManyToOne
@@ -58,14 +56,13 @@ public class CouponTemplate {
     @JoinColumn(name = "category_number")
     private Category category;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "coupon_state_code_number")
-    @NotNull
     private CouponStateCode couponStateCode;
 
+    @NotNull
     @Column(name = "coupon_template_name")
-    @NotBlank
-    @Size(max = 50)
     private String templateName;
 
     @Column(name = "coupon_template_image")
@@ -74,12 +71,12 @@ public class CouponTemplate {
     @Column(name = "coupon_template_finished_at")
     private LocalDateTime finishedAt;
 
-    @Column(name = "coupon_template_issued_at")
     @NotNull
+    @Column(name = "coupon_template_issued_at")
     private LocalDateTime issuedAt;
 
-    @Column(name = "coupon_template_overlapped")
     @NotNull
+    @Column(name = "coupon_template_overlapped")
     private boolean templateOverlapped;
 
     @Column(name = "coupon_template_bundled")

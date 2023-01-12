@@ -42,6 +42,7 @@ class OrderProductStateCodeRepositoryTest {
         assertThat(stateCode).isPresent();
         assertThat(stateCode.get().getCodeNo()).isEqualTo(persist.getCodeNo());
         assertThat(stateCode.get().getCodeName()).isEqualTo(OrderProductState.CONFIRMED.getName());
-
+        assertThat(stateCode.get().isCodeUsed()).isTrue();
+        assertThat(stateCode.get().getCodeInfo()).isEqualTo(persist.getCodeInfo());
     }
 }

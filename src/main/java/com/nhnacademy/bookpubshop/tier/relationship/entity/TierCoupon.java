@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TierCoupon {
     @EmbeddedId
-    private Pk id;
+    private Pk pk;
 
     @MapsId(value = "couponTemplateNo")
     @ManyToOne
@@ -53,10 +53,7 @@ public class TierCoupon {
     @EqualsAndHashCode
     @Getter
     public static class Pk implements Serializable {
-        @NotNull
         private Long couponTemplateNo;
-
-        @NotNull
         private Integer tierNo;
     }
 

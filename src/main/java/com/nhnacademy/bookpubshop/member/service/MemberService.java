@@ -1,67 +1,73 @@
 package com.nhnacademy.bookpubshop.member.service;
 
-import com.nhnacademy.bookpubshop.member.dto.SignUpMemberRequestDto;
-import com.nhnacademy.bookpubshop.member.dto.SignUpMemberResponseDto;
-import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.member.exception.DuplicateMemberFieldException;
-import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
-import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
-import com.nhnacademy.bookpubshop.tier.exception.NotFoundTierException;
-import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 회원 레포지토리의 메소드를 이용하여 구현한 서버스입니다.
  *
  * @author : 임태원
  * @since : 1.0
- **/
-@Service
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
-public class MemberService {
-    private final MemberRepository memberRepository;
-    private final TierRepository tierRepository;
-
-    private static final String TIER_NAME = "basic";
+ */
+public interface MemberService {
 
     /**
-     * 데이터베이스에 멤버의 정보를 저장합니다.
+     * 회원생성시 필요한 메서드입니다.
      *
-     * @param signUpMemberRequestDto member 엔티티에 들어갈 정보를 가지고 있는 DTO
-     * @return member 테이블에 데이터를 저장한 후 반환받은 Member.
+     * @param signUpMemberRequestDto 회원가입시 필요한 회원정보가 기입됩니다.
+     * @return signUpMemberResponseDto
      */
-    @Transactional
-    public SignUpMemberResponseDto signup(SignUpMemberRequestDto signUpMemberRequestDto) {
-        BookPubTier tier = tierRepository.findByTierName(TIER_NAME)
-                .orElseThrow(NotFoundTierException::new);
+    SignUpMemberResponseDto signup(SignUpMemberRequestDto signUpMemberRequestDto);
 
-        duplicateCheck(signUpMemberRequestDto);
+    /**
+     * 회원 정보중 닉네임의 수정을 위해 필요한 메서드입니다.
+     *
+     * @param memberNo   회원 번호.
+     * @param requestDto 수정할 회원의 닉네임이 기입된다.
+     */
+    void modifyMemberNickName(Long memberNo, ModifyMemberNicknameRequestDto requestDto);
 
-        Member member = signUpMemberRequestDto.createMember(tier);
-        memberRepository.save(member);
+    /**
+     * 회원 정보중 이메일을 수정하기위해 필요한 메서드입니다.
+     *
+     * @param memberNo   회원 번호.
+     * @param requestDto 수정할 회원의 email 정보가 기입된다.
+     */
+    void modifyMemberEmail(Long memberNo, ModifyMemberEmailRequestDto requestDto);
 
-        return new SignUpMemberResponseDto(
-                member.getMemberId(),
-                member.getMemberNickname(),
-                member.getMemberEmail(),
-                member.getTier().getTierName()
-        );
-    }
+    /**
+     * 회원에대한 상세정보가 반환됩니다.
+     *
+     * @param memberNo 멤버번호.
+     * @return MemberDetailResponseDto 멤버에대한 상세값 반환.
+     */
+    MemberDetailResponseDto getMemberDetails(Long memberNo);
 
-    private void duplicateCheck(SignUpMemberRequestDto member) {
-        if (memberRepository.existsByMemberNickname(member.getNickname())) {
-            throw new DuplicateMemberFieldException("닉네임(" + member.getNickname() + ")");
-        }
+    /**
+     * 멤버전체를 조회하기위한 메서드입니다.
+     *
+     * @param pageable 페이징 정보가 기입.
+     * @return page 페이징된 멤버정보가반환.
+     */
+    Page<MemberResponseDto> getMembers(Pageable pageable);
 
-        if (memberRepository.existsByMemberId(member.getMemberId())) {
-            throw new DuplicateMemberFieldException("아이디(" + member.getMemberId() + ")");
-        }
+    /**
+     * 사용자를 차단 혹은 차단풀기 할때 사용되는 메서드입니다.
+     *
+     * @param memberNo 멤버번호반환.
+     */
+    void blockMember(Long memberNo);
 
-        if (memberRepository.existsByMemberEmail(member.getEmail())) {
-            throw new DuplicateMemberFieldException("이메일(" + member.getEmail() + ")");
-        }
-    }
+    /**
+     * 멤버가 탈퇴할때 사용되는 메서드입니다.
+     *
+     * @param memberNo 멤버 번호기입.
+     */
+    void deleteMember(Long memberNo);
 }

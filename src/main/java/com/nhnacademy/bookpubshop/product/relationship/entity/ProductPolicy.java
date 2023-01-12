@@ -6,11 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 상품정책(product_policy) 테이블.
@@ -21,19 +21,19 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "product_policy")
 public class ProductPolicy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_policy_number", nullable = false)
+    @Column(name = "product_policy_number")
     private Integer policyNo;
 
-    @Column(name = "product_policy_method", nullable = false)
+    @NotNull
+    @Column(name = "product_policy_method")
     private String policyMethod;
 
-    @Column(name = "product_policy_saved", nullable = false)
+    @Column(name = "product_policy_saved")
     private boolean policySaved;
 
     @Column(name = "product_policy_save_rate")

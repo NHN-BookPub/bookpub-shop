@@ -1,10 +1,15 @@
 package com.nhnacademy.bookpubshop.subscribe.relationship.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import com.nhnacademy.bookpubshop.subscribe.relationship.entity.SubscribeProductList;
 import java.time.LocalDateTime;
@@ -41,14 +46,11 @@ class SubscribeProductListRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        productPolicy = new ProductPolicy(null, "실구매가", true, 5);
-        productTypeStateCode = new ProductTypeStateCode(null, "기본", true, "기본입니다.");
-        productSaleStateCode = new ProductSaleStateCode(null, "판타지", true, "판타지 소설");
-        subscribe =  new Subscribe(null, "좋은생각", 80000L, 100000L,
-                20, 100L, false, LocalDateTime.now(), true);
-        product = new Product(null, productPolicy, productTypeStateCode, productSaleStateCode, "1231231231", "인어공주",
-                100, "인어공주 이야기", "mermaid.png", "mermaid_ebook.pdf", 1000L,
-                10, 300L, 3, false, 30, LocalDateTime.now(), LocalDateTime.now(), false);
+        productPolicy = ProductPolicyDummy.dummy();
+        productTypeStateCode = ProductTypeStateCodeDummy.dummy();
+        productSaleStateCode = ProductSaleStateCodeDummy.dummy();
+        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
+        subscribe = SubscribeDummy.dummy();
 
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);

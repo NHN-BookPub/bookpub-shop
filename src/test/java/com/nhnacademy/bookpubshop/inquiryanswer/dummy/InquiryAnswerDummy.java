@@ -16,7 +16,6 @@ public class InquiryAnswerDummy {
         return InquiryAnswer.builder()
                 .answerContent("test_content")
                 .personalInquiry(personalInquiry)
-                .createdAt(LocalDateTime.now())
                 .build();
     }
 }

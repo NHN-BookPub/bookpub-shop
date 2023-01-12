@@ -16,8 +16,7 @@ public class DeliveryLocationDummy {
         return new DeliveryLocation(
                 null,
                 delivery,
-                "test_location_name",
-                LocalDateTime.now()
+                "test_location_name"
         );
     }
 

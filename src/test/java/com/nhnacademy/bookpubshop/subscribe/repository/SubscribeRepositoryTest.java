@@ -1,8 +1,8 @@
 package com.nhnacademy.bookpubshop.subscribe.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,8 +29,7 @@ class SubscribeRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        subscribe = new Subscribe(null, "좋은생각", 80000L, 100000L,
-                20, 100L, false, LocalDateTime.now(), true);
+        subscribe = SubscribeDummy.dummy();
     }
 
     @Test
@@ -50,6 +49,5 @@ class SubscribeRepositoryTest {
         assertThat(subscribe.get().getSalesPrice()).isEqualTo(persist.getSalesPrice());
         assertThat(subscribe.get().getSalesRate()).isEqualTo(persist.getSalesRate());
         assertThat(subscribe.get().getViewCount()).isEqualTo(persist.getViewCount());
-
     }
 }

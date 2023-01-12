@@ -4,7 +4,6 @@ import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.review.entity.Review;
 import com.nhnacademy.bookpubshop.reviewpolicy.entity.ReviewPolicy;
-import java.time.LocalDateTime;
 
 /**
  * 상품평 더미 클래스
@@ -23,7 +22,6 @@ public class ReviewDummy {
                 reviewPolicy,
                 5L,
                 "좋습니다.",
-                LocalDateTime.now(),
                 "imagePath"
         );
     }

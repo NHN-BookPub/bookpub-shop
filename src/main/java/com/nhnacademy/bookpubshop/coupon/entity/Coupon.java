@@ -12,7 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -42,11 +41,11 @@ public class Coupon {
     @JoinColumn(name = "coupon_template_number")
     private CouponTemplate couponTemplate;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "order_number")
     private BookpubOrder order;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "order_product_number")
     private OrderProduct orderProduct;
 
@@ -60,12 +59,4 @@ public class Coupon {
 
     @Column(name = "coupon_used_at")
     private LocalDateTime usedAt;
-
-    public void modifyCouponUsed(boolean couponUsed) {
-        this.couponUsed = couponUsed;
-    }
-
-    public void modifyCouponUsedAt(LocalDateTime usedAt) {
-        this.usedAt = usedAt;
-    }
 }

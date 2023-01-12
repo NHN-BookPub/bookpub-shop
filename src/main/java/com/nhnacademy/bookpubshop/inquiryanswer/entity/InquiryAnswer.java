@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.inquiryanswer.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,36 +28,31 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-public class InquiryAnswer {
+public class InquiryAnswer extends BaseCreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "personal_inquiry_answer_number", nullable = false, unique = true)
+    @Column(name = "personal_inquiry_answer_number")
     private Long answerNumber;
 
+    @NotNull
     @OneToOne
-    @JoinColumn(name = "personal_inquiry_number", nullable = false)
+    @JoinColumn(name = "personal_inquiry_number")
     private PersonalInquiry personalInquiry;
 
-    @Column(name = "personal_inquiry_content", nullable = false)
+    @NotNull
+    @Column(name = "personal_inquiry_content")
     private String answerContent;
-
-    @Column(name = "personal_inquiry_created_at", nullable = false)
-    private LocalDateTime createdAt;
 
     /**
      * Id 값을 제외한 생성자입니다.
      *
      * @param personalInquiry the personal inquiry
      * @param answerContent   the answer content
-     * @param createdAt       the created at
      */
     @Builder
     public InquiryAnswer(PersonalInquiry personalInquiry,
-                         String answerContent,
-                         LocalDateTime createdAt) {
+                         String answerContent) {
         this.personalInquiry = personalInquiry;
         this.answerContent = answerContent;
-        this.createdAt = createdAt;
     }
 }

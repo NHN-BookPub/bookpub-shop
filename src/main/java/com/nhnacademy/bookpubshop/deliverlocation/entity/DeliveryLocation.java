@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.deliverlocation.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.delivery.entity.Delivery;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,21 +27,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "delivery_location")
-public class DeliveryLocation {
+public class DeliveryLocation extends BaseCreateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "delivery_location_number", nullable = false)
+    @Column(name = "delivery_location_number")
     private Long locationNo;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "delivery_number", nullable = false, unique = true)
+    @JoinColumn(name = "delivery_number")
     private Delivery delivery;
 
-    @Column(name = "delivery_location_name", nullable = false)
+    @NotNull
+    @Column(name = "delivery_location_name")
     private String locationName;
-
-    @Column(name = "delivery_location_created_at", nullable = false)
-    private LocalDateTime createdAt;
-
 }

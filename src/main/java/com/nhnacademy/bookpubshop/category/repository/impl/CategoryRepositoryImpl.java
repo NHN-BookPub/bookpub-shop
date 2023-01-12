@@ -1,6 +1,8 @@
 package com.nhnacademy.bookpubshop.category.repository.impl;
 
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
+import com.nhnacademy.bookpubshop.category.dto.response.GetChildCategoryResponseDto;
+import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.entity.QCategory;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepositoryCustom;
@@ -22,20 +24,22 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
         super(Category.class);
     }
 
+    QCategory parent = new QCategory("parent");
+
     /**
      * {@inheritDoc}
      */
     @Override
     public Optional<GetCategoryResponseDto> findCategory(Integer categoryNo) {
         QCategory category = QCategory.category;
-        QCategory parent = new QCategory("parent");
 
         return Optional.ofNullable(from(category, parent)
                 .where(category.categoryNo.eq(categoryNo))
                 .select(Projections.constructor(GetCategoryResponseDto.class, category.categoryNo,
                         category.categoryName,
                         Projections.constructor(GetCategoryResponseDto.class, parent.categoryNo,
-                                parent.categoryName)))
+                                parent.categoryName), category.categoryPriority,
+                        category.categoryDisplayed))
                 .leftJoin(category.parentCategory, parent).on(parent.eq(category.parentCategory))
                 .fetchFirst());
     }
@@ -51,8 +55,57 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
         return from(category)
                 .select(Projections.constructor(GetCategoryResponseDto.class,
                         category.categoryNo,
-                        category.categoryName))
-                .orderBy(category.categoryNo.asc())
+                        category.categoryName,
+                        Projections.constructor(GetCategoryResponseDto.class, parent.categoryNo,
+                                parent.categoryName), category.categoryPriority,
+                        category.categoryDisplayed))
+                .leftJoin(category.parentCategory, parent).on(parent.eq(category.parentCategory))
+                .orderBy(category.categoryPriority.desc()).orderBy(category.categoryName.asc())
                 .fetch();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<GetCategoryResponseDto> findParentCategories() {
+        return from(parent)
+                .where(parent.parentCategory.isNull())
+                .select(Projections.constructor(GetCategoryResponseDto.class,
+                        parent.categoryNo,
+                        parent.categoryName,
+                        parent.categoryPriority,
+                        parent.categoryDisplayed))
+                .orderBy(parent.categoryPriority.desc()).orderBy(parent.categoryName.asc())
+                .fetch();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<GetParentCategoryWithChildrenResponseDto> findParentCategoryWithChildren() {
+        QCategory child = QCategory.category;
+
+        List<GetParentCategoryWithChildrenResponseDto> parentList = from(parent)
+                .where(parent.parentCategory.isNull(), parent.categoryDisplayed.isTrue())
+                .select(Projections.constructor(GetParentCategoryWithChildrenResponseDto.class,
+                        parent.categoryNo,
+                        parent.categoryName))
+                .orderBy(parent.categoryPriority.desc(), parent.categoryName.asc())
+                .fetch();
+
+        parentList.forEach(p -> {
+            List<GetChildCategoryResponseDto> childList = from(child)
+                    .select(Projections.constructor(GetChildCategoryResponseDto.class,
+                            child.categoryNo, child.categoryName))
+                    .where(child.parentCategory.categoryNo.eq(p.getCategoryNo()),
+                            child.categoryDisplayed.isTrue())
+                    .orderBy(child.categoryPriority.desc(), child.categoryName.asc())
+                    .fetch();
+            p.setChildList(childList);
+        });
+
+        return parentList;
     }
 }

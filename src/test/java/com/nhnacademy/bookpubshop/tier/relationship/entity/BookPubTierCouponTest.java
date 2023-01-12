@@ -9,6 +9,12 @@ import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontype.dummy.CouponTypeDummy;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import com.nhnacademy.bookpubshop.tier.relationship.repository.TierCouponRepository;
 import java.util.Optional;
@@ -33,17 +39,22 @@ class BookPubTierCouponTest {
     @Autowired
     private TierCouponRepository tierCouponRepository;
 
-
-
     CouponTemplate couponTemplate;
 
     Product product;
 
     BookPubTier bookPubTier;
+    ProductPolicy productPolicy;
+    ProductTypeStateCode productTypeStateCode;
+    ProductSaleStateCode productSaleStateCode;
 
     @BeforeEach
     void setUp() {
-        product = ProductDummy.dummy();
+        productPolicy = ProductPolicyDummy.dummy();
+        productTypeStateCode = ProductTypeStateCodeDummy.dummy();
+        productSaleStateCode = ProductSaleStateCodeDummy.dummy();
+        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
+
         bookPubTier = new BookPubTier(null, "tier2");
         couponTemplate = CouponTemplateDummy.dummy(CouponPolicyDummy.dummy(),
                 CouponTypeDummy.dummy(), product,
@@ -71,14 +82,15 @@ class BookPubTierCouponTest {
                 bookPubTier.getTierNo()),
                 couponTemplate,
                 bookPubTier);
-        TierCoupon persist = entityManager.persist(tierCoupon);
+        TierCoupon persist = tierCouponRepository.save(tierCoupon);
 
-        Optional<TierCoupon> result = tierCouponRepository.findById(persist.getId());
+        Optional<TierCoupon> result = tierCouponRepository.findById(persist.getPk());
 
         assertThat(result).isPresent();
         assertThat(result.get().getBookPubTier()).isEqualTo(persist.getBookPubTier());
         assertThat(result.get().getCouponTemplate()).isEqualTo(persist.getCouponTemplate());
-        assertThat(result.get().getId()).isEqualTo(persist.getId());
+        assertThat(result.get().getPk()).isEqualTo(persist.getPk());
+        assertThat(result.get().getPk()).isEqualTo(persist.getPk());
     }
 
 }

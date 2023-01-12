@@ -6,11 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * 상품유형(product_type_state_code) 테이블.
@@ -21,19 +21,20 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "product_type_state_code")
 public class ProductTypeStateCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_type_state_code_number", nullable = false, unique = true)
+    @Column(name = "product_type_state_code_number")
     private Integer codeNo;
 
-    @Column(name = "product_type_state_code_name", nullable = false, unique = true)
+    @NotNull
+    @Column(name = "product_type_state_code_name", unique = true)
     private String codeName;
 
-    @Column(name = "product_type_state_code_used", nullable = false)
+    @NotNull
+    @Column(name = "product_type_state_code_used")
     private boolean codeUsed;
 
     @Column(name = "product_type_state_code_info")

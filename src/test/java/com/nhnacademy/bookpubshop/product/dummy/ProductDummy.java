@@ -1,13 +1,12 @@
 package com.nhnacademy.bookpubshop.product.dummy;
 
-import static com.nhnacademy.bookpubshop.state.ProductTypeState.BEST_SELLER;
-import static com.nhnacademy.bookpubshop.state.ProductTypeState.NEW;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
-import com.nhnacademy.bookpubshop.state.ProductTypeState;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 상품에 대한 더미 클래스입니다.
@@ -17,25 +16,51 @@ import java.time.LocalDateTime;
  **/
 public class ProductDummy {
 
-    public static Product dummy() {
+    public static Product dummy(
+            ProductPolicy productPolicy,
+            ProductTypeStateCode productTypeStateCode,
+            ProductSaleStateCode productSaleStateCode) {
         return new Product(
                 null,
-                new ProductPolicy(null,"method",true,1),
-                new ProductTypeStateCode(null,BEST_SELLER.getName(),BEST_SELLER.isUsed(),"info"),
-                new ProductSaleStateCode(null, NEW.getName(),NEW.isUsed(),"info"),
-                "isbn",
+                productPolicy,
+                productTypeStateCode,
+                productSaleStateCode,
+                List.of(new Product(
+                        null,
+                        productPolicy,
+                        productTypeStateCode,
+                        productSaleStateCode,
+                        Collections.EMPTY_LIST,
+                        "1111111111",
+                        "title",
+                        "publisher",
+                        100,
+                        "description",
+                        "thumbnail",
+                        "path",
+                        8000L,
+                        10000L,
+                        20,
+                        0L,
+                        3,
+                        false,
+                        1,
+                        LocalDateTime.now(),
+                        true)),
+                "1111111111",
                 "title",
+                "publisher",
                 100,
                 "description",
                 "thumbnail",
                 "path",
-                100L,
-                1,
-                1L,
-                1,
+                9000L,
+                10000L,
+                10,
+                0L,
+                5,
                 false,
                 1,
-                LocalDateTime.now(),
                 LocalDateTime.now(),
                 true);
     }

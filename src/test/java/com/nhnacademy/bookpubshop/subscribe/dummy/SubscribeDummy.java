@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.subscribe.dummy;
 
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
-import java.time.LocalDateTime;
 
 /**
  * 구독의 더미 클래스입니다.
@@ -18,7 +17,6 @@ public class SubscribeDummy {
                 10,
                 5L,
                 false,
-                LocalDateTime.now(),
                 true);
     }
 }

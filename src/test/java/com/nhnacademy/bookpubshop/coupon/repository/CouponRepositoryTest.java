@@ -21,7 +21,11 @@ import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProductStateCode;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
@@ -30,6 +34,7 @@ import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -91,7 +96,6 @@ class CouponRepositoryTest {
                 new PricePolicy(null, "포장비", 1500L),
                 address,
                 new OrderStateCode(null, OrderState.COMPLETE_DELIVERY.getName(), OrderState.COMPLETE_DELIVERY.isUsed(), "배송완료"),
-                LocalDateTime.now(),
                 "test_recipient",
                 "test_recipient_phone",
                 "test_buyer",
@@ -105,40 +109,10 @@ class CouponRepositoryTest {
                 1000L
         );
 
-        productPolicy = new ProductPolicy(null,
-                "실구매가",
-                true,
-                5);
-
-        productTypeStateCode = new ProductTypeStateCode(null,
-                "기본",
-                true,
-                "기본입니다.");
-
-        productSaleStateCode = new ProductSaleStateCode(null,
-                "판타지",
-                true,
-                "판타지 소설");
-
-        product = new Product(null,
-                productPolicy,
-                productTypeStateCode,
-                productSaleStateCode,
-                "1231231231",
-                "인어공주",
-                100,
-                "인어공주 이야기",
-                "mermaid.png",
-                "mermaid_ebook.pdf",
-                10000L,
-                10,
-                300L,
-                3,
-                false,
-                30,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                false);
+        productPolicy = ProductPolicyDummy.dummy();
+        productTypeStateCode = ProductTypeStateCodeDummy.dummy();
+        productSaleStateCode = ProductSaleStateCodeDummy.dummy();
+        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
         orderProductStateCode = new OrderProductStateCode(null,
                 OrderProductState.CONFIRMED.getName(),
@@ -147,7 +121,7 @@ class CouponRepositoryTest {
 
         bookPubTier = new BookPubTier(null, "브론즈");
 
-        member = new Member(null, bookPubTier, "member", "멤버", "사람", "남", 2000, 12, "pwdpwdpwd", "01000000000", "asd@asd.com", LocalDateTime.now(), false, false, null, 0L, false);
+        member = MemberDummy.dummy(bookPubTier);
 
         orderStateCode = new OrderStateCode(
                 null,
@@ -165,7 +139,6 @@ class CouponRepositoryTest {
                 packagePricePolicy,
                 address,
                 orderStateCode,
-                LocalDateTime.now(),
                 "test_recipient",
                 "test_recipient_phone",
                 "test_buyer",
@@ -219,26 +192,31 @@ class CouponRepositoryTest {
         entityManager.persist(packagePricePolicy);
         entityManager.persist(product);
         entityManager.persist(orderProductStateCode);
-        entityManager.persist(orderProduct);
         entityManager.persist(orderStateCode);
         entityManager.persist(couponPolicy);
         entityManager.persist(couponStateCode);
         entityManager.persist(couponType);
         entityManager.persist(category);
         entityManager.persist(order);
+        entityManager.persist(orderProduct);
         entityManager.persist(couponTemplate);
     }
 
     @Test
     @DisplayName("쿠폰 레포지토리 테스트")
     void CouponSaveTest() {
-        entityManager.persist(coupon);
-        entityManager.clear();
+        Coupon persist = entityManager.persist(coupon);
 
-        Optional<Coupon> findCoupon = couponRepository.findById(1L);
+        Optional<Coupon> findCoupon = couponRepository.findById(persist.getCouponNo());
 
         assertThat(findCoupon).isPresent();
-        assertThat(findCoupon.get().getCouponTemplate().getTemplateName()).isEqualTo("test_templateName");
+        assertThat(findCoupon.get().getCouponTemplate().getTemplateName()).isEqualTo(persist.getCouponTemplate().getTemplateName());
+        assertThat(findCoupon.get().getCouponNo()).isEqualTo(persist.getCouponNo());
+        assertThat(findCoupon.get().getOrder().getOrderNo()).isEqualTo(persist.getOrder().getOrderNo());
+        assertThat(findCoupon.get().getOrderProduct().getOrder().getOrderNo()).isEqualTo(persist.getOrderProduct().getOrder().getOrderNo());
+        assertThat(findCoupon.get().getMember().getMemberNo()).isEqualTo(persist.getMember().getMemberNo());
+        assertThat(findCoupon.get().isCouponUsed()).isFalse();
+        assertThat(findCoupon.get().getUsedAt()).isEqualTo(persist.getUsedAt());
     }
 
     private Category category() {

@@ -3,9 +3,9 @@ package com.nhnacademy.bookpubshop.product.dto;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import java.time.LocalDateTime;
 
 /**
  * 상품 상세페이지를 위한 Dto 입니다.
@@ -18,15 +18,20 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 public class GetProductDetailResponseDto {
-    private String title;
-    private ProductPolicy productPolicy;
-    private ProductTypeStateCode productTypeStateCode;
-    private ProductSaleStateCode productSaleStateCode;
-    private String productThumbnail;
+    private Long productNo;
     private String productIsbn;
+    private String title;
+    private Integer pageCount;
     private String productDescription;
+    private String productThumbnail;
     private Long salesPrice;
-    private Long viewCount;
+    private Integer salesRate;
+    private Integer productPriority;
     private Integer productStock;
-    private LocalDateTime createdAt;
+    private LocalDateTime publishDate;
+    private boolean deleted;
+    private boolean productSubscribed;
+    private ProductSaleStateCode saleCode;
+    private ProductTypeStateCode typeCode;
+    private ProductPolicy productPolicy;
 }

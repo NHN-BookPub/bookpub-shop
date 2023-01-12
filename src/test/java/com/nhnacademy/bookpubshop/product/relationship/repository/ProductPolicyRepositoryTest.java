@@ -28,14 +28,14 @@ class ProductPolicyRepositoryTest {
     @DisplayName(value = "상품카테고리관계(product_and_category) 레포지토리 save 테스트")
     void productPolicySaveTest() {
         ProductPolicy testProductPolicy = new ProductPolicy(null, "실구매가가기준", true, 5);
-        productPolicyRepository.save(testProductPolicy);
+        ProductPolicy persist = productPolicyRepository.save(testProductPolicy);
 
-        Optional<ProductPolicy> optional = productPolicyRepository.findById(testProductPolicy.getPolicyNo());
+        Optional<ProductPolicy> optional = productPolicyRepository.findById(persist.getPolicyNo());
         assertThat(optional).isPresent();
-        assertThat(optional.get().getPolicyNo()).isEqualTo(testProductPolicy.getPolicyNo());
-        assertThat(optional.get().getPolicyMethod()).isEqualTo(testProductPolicy.getPolicyMethod());
-        assertThat(optional.get().isPolicySaved()).isEqualTo(testProductPolicy.isPolicySaved());
-        assertThat(optional.get().getSaveRate()).isEqualTo(testProductPolicy.getSaveRate());
+        assertThat(optional.get().getPolicyNo()).isEqualTo(persist.getPolicyNo());
+        assertThat(optional.get().getPolicyMethod()).isEqualTo(persist.getPolicyMethod());
+        assertThat(optional.get().isPolicySaved()).isEqualTo(persist.isPolicySaved());
+        assertThat(optional.get().getSaveRate()).isEqualTo(persist.getSaveRate());
 
         entityManager.clear();
     }
