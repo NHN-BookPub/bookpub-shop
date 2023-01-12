@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.member.repository.impl;
 
-import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.authority.entity.QAuthority;
+import com.nhnacademy.bookpubshop.member.dto.response.IdPwdMemberDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
@@ -95,25 +95,26 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
     }
 
     @Override
-    public LoginMemberResponseDto findByMemberLoginInfo(String id, String pwd) {
+    public LoginMemberResponseDto findByMemberLoginInfo(String id) {
         QMember member = QMember.member;
         QMemberAuthority memberAuthority = QMemberAuthority.memberAuthority;
 
-        Optional<String> findMemberId = Optional.ofNullable(from(member)
-                .select(member.memberId)
+        Optional<IdPwdMemberDto> findMember = Optional.ofNullable(from(member)
+                .select(Projections.constructor(IdPwdMemberDto.class,
+                        member.memberId,
+                        member.memberPwd))
                 .where(member.memberId.eq(id))
-                .where(member.memberPwd.eq(pwd))
                 .fetchOne());
 
-        Optional<List<Authority>> memberAuthorities = Optional.of(from(memberAuthority)
+        Optional<List<String>> memberAuthorities = Optional.of(from(memberAuthority)
                 .innerJoin(memberAuthority.member, member)
-                .select(memberAuthority.authority)
+                .select(memberAuthority.authority.authorityName)
                 .fetch());
 
-        String memberId = findMemberId.orElseThrow(() -> new MemberNotFoundException(id));
+        IdPwdMemberDto responseMember = findMember.orElseThrow(() -> new MemberNotFoundException(id));
+        List<String> authorities = memberAuthorities.orElseThrow(MemberAuthoritiesNotFoundException::new);
 
-        List<Authority> authorities = memberAuthorities.orElseThrow(MemberAuthoritiesNotFoundException::new);
-
-        return new LoginMemberResponseDto(memberId, authorities);
+        return new LoginMemberResponseDto(
+                responseMember.getMemberId(), responseMember.getMemberPwd(), authorities);
     }
 }

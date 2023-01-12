@@ -3,7 +3,6 @@ package com.nhnacademy.bookpubshop.member.service.impl;
 import com.nhnacademy.bookpubshop.author.exception.AuthorityNotFoundException;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
-import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
@@ -165,8 +164,8 @@ public class MemberServiceImpl implements MemberService {
      * {@inheritDoc}
      */
     @Override
-    public LoginMemberResponseDto loginMember(LoginMemberRequestDto requestDto) {
-        return memberRepository.findByMemberLoginInfo(requestDto.getMemberId(), requestDto.getPassword());
+    public LoginMemberResponseDto loginMember(String loginId) {
+        return memberRepository.findByMemberLoginInfo(loginId);
     }
 
     private void duplicateCheck(SignUpMemberRequestDto member) {

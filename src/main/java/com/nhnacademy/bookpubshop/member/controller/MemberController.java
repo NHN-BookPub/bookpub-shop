@@ -129,10 +129,12 @@ public class MemberController {
                 .build();
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<LoginMemberResponseDto> memberLogin(
-            LoginMemberRequestDto loginMemberRequestDto) {
-        LoginMemberResponseDto loginInfo = memberService.loginMember(loginMemberRequestDto);
+            @RequestBody LoginMemberRequestDto loginMemberRequestDto) {
+        String memberId = loginMemberRequestDto.getMemberId();
+
+        LoginMemberResponseDto loginInfo = memberService.loginMember(memberId);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

@@ -17,9 +17,9 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
 public interface MemberCustomRepository {
-    Optional<MemberDetailResponseDto> findByMemberDetails(Long meberNo);
+    Optional<MemberDetailResponseDto> findByMemberDetails(Long memberNo);
 
     Page<MemberResponseDto> findMembers(Pageable pageable);
 
-    LoginMemberResponseDto findByMemberLoginInfo(String id, String pwd);
+    LoginMemberResponseDto findByMemberLoginInfo(String id);
 }

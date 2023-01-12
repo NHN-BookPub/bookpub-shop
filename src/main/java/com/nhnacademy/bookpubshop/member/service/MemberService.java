@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.member.service;
 
-import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
@@ -76,8 +75,8 @@ public interface MemberService {
     /**
      * 멤버가 로그인할 때 사용되는 메서드입니다.
      *
-     * @param requestDto 멤버 로그인 정보.
+     * @param loginId 멤버 로그인 아이디.
      * @return 로그인 성공정보 리턴.
      */
-    LoginMemberResponseDto loginMember(LoginMemberRequestDto requestDto);
+    LoginMemberResponseDto loginMember(String loginId);
 }
