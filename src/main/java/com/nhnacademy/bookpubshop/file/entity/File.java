@@ -2,7 +2,7 @@ package com.nhnacademy.bookpubshop.file.entity;
 
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
-import com.nhnacademy.bookpubshop.customer_service.entity.CustomerService;
+import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.review.entity.Review;
