@@ -12,7 +12,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,28 +34,38 @@ import lombok.NoArgsConstructor;
 public class Coupon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "coupon_number", nullable = false, unique = true)
+    @Column(name = "coupon_number")
     private Long couponNo;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "coupon_template_number", nullable = false)
+    @JoinColumn(name = "coupon_template_number")
     private CouponTemplate couponTemplate;
 
-    @ManyToOne
-    @JoinColumn(name = "order_number", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "order_number")
     private BookpubOrder order;
 
-    @ManyToOne
-    @JoinColumn(name = "order_product_number", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "order_product_number")
     private OrderProduct orderProduct;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "member_number", nullable = false, unique = true)
+    @JoinColumn(name = "member_number")
     private Member member;
 
-    @Column(name = "coupon_used", nullable = false)
+    @Column(name = "coupon_used")
     private boolean couponUsed;
 
     @Column(name = "coupon_used_at")
     private LocalDateTime usedAt;
+
+    public void modifyCouponUsed(boolean couponUsed) {
+        this.couponUsed = couponUsed;
+    }
+
+    public void modifyCouponUsedAt(LocalDateTime usedAt) {
+        this.usedAt = usedAt;
+    }
 }

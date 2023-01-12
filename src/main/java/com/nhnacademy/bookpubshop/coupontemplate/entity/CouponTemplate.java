@@ -14,6 +14,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,15 +37,17 @@ public class CouponTemplate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "coupon_template_number", nullable = false)
+    @Column(name = "coupon_template_number")
     private Long templateNo;
 
     @ManyToOne
-    @JoinColumn(name = "coupon_policy_number", nullable = false)
+    @JoinColumn(name = "coupon_policy_number")
+    @NotNull
     private CouponPolicy couponPolicy;
 
     @ManyToOne
-    @JoinColumn(name = "coupon_type_number", nullable = false)
+    @JoinColumn(name = "coupon_type_number")
+    @NotNull
     private CouponType couponType;
 
     @ManyToOne
@@ -54,10 +59,13 @@ public class CouponTemplate {
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "coupon_state_code_number", nullable = false)
+    @JoinColumn(name = "coupon_state_code_number")
+    @NotNull
     private CouponStateCode couponStateCode;
 
-    @Column(name = "coupon_template_name", nullable = false)
+    @Column(name = "coupon_template_name")
+    @NotBlank
+    @Size(max = 50)
     private String templateName;
 
     @Column(name = "coupon_template_image")
@@ -66,12 +74,14 @@ public class CouponTemplate {
     @Column(name = "coupon_template_finished_at")
     private LocalDateTime finishedAt;
 
-    @Column(name = "coupon_template_issued_at", nullable = false)
+    @Column(name = "coupon_template_issued_at")
+    @NotNull
     private LocalDateTime issuedAt;
 
-    @Column(name = "coupon_template_overlapped", nullable = false)
+    @Column(name = "coupon_template_overlapped")
+    @NotNull
     private boolean templateOverlapped;
 
-    @Column(name = "coupon_template_bundled", nullable = false)
+    @Column(name = "coupon_template_bundled")
     private boolean templateBundled;
 }
