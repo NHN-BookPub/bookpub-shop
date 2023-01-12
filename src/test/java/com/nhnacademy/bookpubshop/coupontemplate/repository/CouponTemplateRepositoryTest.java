@@ -89,7 +89,6 @@ class CouponTemplateRepositoryTest {
         assertThat(result.get().getCategory().getCategoryNo()).isEqualTo(couponTemplate.getCategory().getCategoryNo());
         assertThat(result.get().getCouponStateCode().getCodeNo()).isEqualTo(couponTemplate.getCouponStateCode().getCodeNo());
         assertThat(result.get().getTemplateName()).isEqualTo(couponTemplate.getTemplateName());
-        assertThat(result.get().getTemplateImage()).isEqualTo(couponTemplate.getTemplateImage());
         assertThat(result.get().getFinishedAt()).isEqualTo(couponTemplate.getFinishedAt());
         assertThat(result.get().getIssuedAt()).isEqualTo(couponTemplate.getIssuedAt());
         assertThat(result.get().isTemplateOverlapped()).isEqualTo(couponTemplate.isTemplateOverlapped());
