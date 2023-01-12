@@ -81,7 +81,9 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                                 member.memberBirthMonth.as("birthMonth"),
                                 member.memberEmail.as("email"),
                                 member.memberPoint.as("point"),
-                                member.socialJoined.as("isSocial")
+                                member.socialJoined.as("isSocial"),
+                                member.memberDeleted.as("idDeleted"),
+                                member.memberBlocked.as("isBlocked")
                         )
                 ).offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

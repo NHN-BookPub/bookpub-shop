@@ -154,5 +154,6 @@ public class Member extends BaseCreateTimeEntity {
      */
     public void memberBlock() {
         this.memberBlocked = !this.memberBlocked;
+        this.blockedAt = LocalDateTime.now();
     }
 }

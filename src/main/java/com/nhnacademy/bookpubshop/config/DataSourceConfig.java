@@ -91,7 +91,6 @@ public class DataSourceConfig {
     private JpaVendorAdapter jpaVendorAdapters() {
         HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
         hibernateJpaVendorAdapter.setDatabase(Database.MYSQL);
-
         return hibernateJpaVendorAdapter;
     }
 
