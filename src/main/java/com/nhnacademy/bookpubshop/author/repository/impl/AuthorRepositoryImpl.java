@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.author.repository.impl;
 
+import static com.querydsl.jpa.JPAExpressions.select;
 import com.nhnacademy.bookpubshop.author.dto.GetAuthorResponseDto;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.author.entity.QAuthor;
@@ -7,9 +8,7 @@ import com.nhnacademy.bookpubshop.author.repository.AuthorRepositoryCustom;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductAuthor;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import javax.persistence.EntityManager;
+import com.querydsl.jpa.JPQLQuery;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,13 +23,11 @@ import org.springframework.data.support.PageableExecutionUtils;
  */
 public class AuthorRepositoryImpl extends QuerydslRepositorySupport
         implements AuthorRepositoryCustom {
-    private final EntityManager entityManager;
     /**
      * 생성자입니다.
      */
-    public AuthorRepositoryImpl(EntityManager entityManager) {
+    public AuthorRepositoryImpl() {
         super(Author.class);
-        this.entityManager = entityManager;
     }
 
     /**
@@ -40,17 +37,14 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport
     public Page<GetAuthorResponseDto> getAuthorsByPage(Pageable pageable) {
         QAuthor author = QAuthor.author;
 
-        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-
-        JPAQuery<GetAuthorResponseDto> query = queryFactory
-                .from(author)
+        JPQLQuery<GetAuthorResponseDto> query = from(author)
                 .select(Projections.constructor(GetAuthorResponseDto.class,
                         author.authorNo,
                         author.authorName))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
-        JPAQuery<Long> count = queryFactory.select(author.count()).from(author);
+        JPQLQuery<Long> count = select(author.count()).from(author);
 
         return PageableExecutionUtils.getPage(query.fetch(), pageable, count::fetchOne);
     }
