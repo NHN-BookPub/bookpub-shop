@@ -65,7 +65,6 @@ public class PurchaseController {
             @RequestBody CreatePurchaseRequestDto request) {
         purchaseService.modifyPurchase(purchaseNo, request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON)
                 .build();
     }
 
@@ -80,7 +79,6 @@ public class PurchaseController {
             @RequestBody CreatePurchaseRequestDto request) {
         purchaseService.createPurchase(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON)
                 .build();
     }
 
@@ -95,7 +93,6 @@ public class PurchaseController {
             @RequestBody CreatePurchaseRequestDto request) {
         purchaseService.createPurchaseMerged(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON)
                 .build();
     }
 }
