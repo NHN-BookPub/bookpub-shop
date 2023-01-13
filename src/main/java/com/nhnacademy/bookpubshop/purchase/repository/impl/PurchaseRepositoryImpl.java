@@ -1,14 +1,13 @@
 package com.nhnacademy.bookpubshop.purchase.repository.impl;
 
+import static com.querydsl.jpa.JPAExpressions.select;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseListResponseDto;
 import com.nhnacademy.bookpubshop.purchase.entity.Purchase;
 import com.nhnacademy.bookpubshop.purchase.entity.QPurchase;
 import com.nhnacademy.bookpubshop.purchase.repository.PurchaseRepositoryCustom;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import javax.persistence.EntityManager;
+import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,11 +22,9 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  **/
 public class PurchaseRepositoryImpl extends QuerydslRepositorySupport
         implements PurchaseRepositoryCustom {
-    private final EntityManager entityManager;
 
-    public PurchaseRepositoryImpl(EntityManager entityManager) {
+    public PurchaseRepositoryImpl() {
         super(Purchase.class);
-        this.entityManager = entityManager;
     }
 
     /**
@@ -39,10 +36,7 @@ public class PurchaseRepositoryImpl extends QuerydslRepositorySupport
         QPurchase purchase = QPurchase.purchase;
         QProduct product = QProduct.product;
 
-        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-
-        JPAQuery<GetPurchaseListResponseDto> query = queryFactory
-                .from(purchase)
+        JPQLQuery<GetPurchaseListResponseDto> query = from(purchase)
                 .join(purchase).on(product.productNo.eq(purchase.product.productNo))
                 .where(product.productNo.eq(productNo))
                 .select(Projections.constructor(
@@ -55,13 +49,11 @@ public class PurchaseRepositoryImpl extends QuerydslRepositorySupport
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset());
 
-        Long count = queryFactory
-                .from(purchase)
+        JPQLQuery<Long> count = from(purchase)
                 .join(product).on(product.productNo.eq(purchase.product.productNo))
-                .select(purchase.count())
-                .fetchOne();
+                .select(purchase.count());
 
-        return new PageImpl<>(query.fetch(), pageable, count);
+        return new PageImpl<>(query.fetch(), pageable, count.fetchOne());
     }
 
     /**
@@ -72,10 +64,7 @@ public class PurchaseRepositoryImpl extends QuerydslRepositorySupport
         QPurchase purchase = QPurchase.purchase;
         QProduct product = QProduct.product;
 
-        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-
-        JPAQuery<GetPurchaseListResponseDto> query = queryFactory
-                .from(purchase)
+        JPQLQuery<GetPurchaseListResponseDto> query = from(purchase)
                 .join(product).on(product.productNo.eq(purchase.product.productNo))
                 .select(Projections.constructor(
                         GetPurchaseListResponseDto.class,
@@ -87,11 +76,9 @@ public class PurchaseRepositoryImpl extends QuerydslRepositorySupport
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset());
 
-        Long count = queryFactory
-                .select(purchase.count())
-                .from(purchase)
-                .fetchOne();
+        JPQLQuery<Long> count = select(purchase.count())
+                .from(purchase);
 
-        return new PageImpl<>(query.fetch(), pageable, count);
+        return new PageImpl<>(query.fetch(), pageable, count.fetchOne());
     }
 }
