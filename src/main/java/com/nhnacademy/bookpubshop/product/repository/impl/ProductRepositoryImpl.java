@@ -94,6 +94,9 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
         return new PageImpl<>(query.fetch(), pageable, count);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<GetProductDetailResponseDto> getProductDetailById(Long id) {
         QProduct product = QProduct.product;

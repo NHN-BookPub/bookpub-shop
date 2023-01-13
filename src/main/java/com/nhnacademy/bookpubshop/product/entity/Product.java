@@ -115,4 +115,8 @@ public class Product extends BaseCreateTimeEntity {
 
     @Column(name = "product_subscribed")
     private boolean productSubscribed;
+
+    public void plusStock(Integer amount) {
+        this.productStock += amount;
+    }
 }

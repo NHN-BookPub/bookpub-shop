@@ -19,4 +19,13 @@ public class ProductSaleStateCodeDummy {
                 "info"
         );
     }
+
+    public static ProductSaleStateCode dummy(Integer id) {
+        return new ProductSaleStateCode(
+                id,
+                NEW.getName(),
+                NEW.isUsed(),
+                "info"
+        );
+    }
 }
