@@ -50,9 +50,9 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
-        Long count = queryFactory.select(author.count()).from(author).fetchOne();
+        JPAQuery<Long> count = queryFactory.select(author.count()).from(author);
 
-        return PageableExecutionUtils.getPage(query.fetch(), pageable, () -> count);
+        return PageableExecutionUtils.getPage(query.fetch(), pageable, count::fetchOne);
     }
 
     /**
