@@ -25,7 +25,7 @@ public class Purchase extends BaseCreateTimeEntity {
     private Long purchaseNo;
 
     @NotNull
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "product_number")
     private Product product;
 
