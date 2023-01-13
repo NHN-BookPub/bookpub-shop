@@ -19,4 +19,13 @@ public class ProductTypeStateCodeDummy {
                 "info"
         );
     }
+
+    public static ProductTypeStateCode dummy(Integer id) {
+        return new ProductTypeStateCode(
+                id,
+                BEST_SELLER.getName(),
+                BEST_SELLER.isUsed(),
+                "info"
+        );
+    }
 }
