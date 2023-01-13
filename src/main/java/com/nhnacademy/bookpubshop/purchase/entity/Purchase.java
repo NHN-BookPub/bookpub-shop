@@ -2,19 +2,9 @@ package com.nhnacademy.bookpubshop.purchase.entity;
 
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.product.entity.Product;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * 매입이력(purchase) 테이블.
@@ -26,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "purchase")
 public class Purchase extends BaseCreateTimeEntity {
     @Id
@@ -34,7 +25,7 @@ public class Purchase extends BaseCreateTimeEntity {
     private Long purchaseNo;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "product_number")
     private Product product;
 
@@ -44,5 +35,5 @@ public class Purchase extends BaseCreateTimeEntity {
 
     @NotNull
     @Column(name = "purchase_amount")
-    private Long purchaseAmount;
+    private Integer purchaseAmount;
 }
