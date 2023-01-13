@@ -5,6 +5,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,38 +16,99 @@ import java.util.List;
  * @since : 1.0
  **/
 public class ProductDummy {
+    List<Product> relations = new ArrayList<>();
 
     public static Product dummy(
             ProductPolicy productPolicy,
             ProductTypeStateCode productTypeStateCode,
             ProductSaleStateCode productSaleStateCode) {
+
+        List<Product> relation = new ArrayList<>();
+        relation.add(new Product(
+                null,
+                productPolicy,
+                productTypeStateCode,
+                productSaleStateCode,
+                Collections.EMPTY_LIST,
+                "1111111111",
+                "title",
+                "publisher",
+                100,
+                "description",
+                "thumbnail",
+                "path",
+                8000L,
+                10000L,
+                20,
+                0L,
+                3,
+                false,
+                1,
+                LocalDateTime.now(),
+                true));
+
+
         return new Product(
                 null,
                 productPolicy,
                 productTypeStateCode,
                 productSaleStateCode,
-                List.of(new Product(
-                        null,
-                        productPolicy,
-                        productTypeStateCode,
-                        productSaleStateCode,
-                        Collections.EMPTY_LIST,
-                        "1111111111",
-                        "title",
-                        "publisher",
-                        100,
-                        "description",
-                        "thumbnail",
-                        "path",
-                        8000L,
-                        10000L,
-                        20,
-                        0L,
-                        3,
-                        false,
-                        1,
-                        LocalDateTime.now(),
-                        true)),
+                relation,
+                "1111111111",
+                "title",
+                "publisher",
+                100,
+                "description",
+                "thumbnail",
+                "path",
+                9000L,
+                10000L,
+                10,
+                0L,
+                5,
+                false,
+                1,
+                LocalDateTime.now(),
+                true);
+    }
+
+    public static Product dummy(
+            ProductPolicy productPolicy,
+            ProductTypeStateCode productTypeStateCode,
+            ProductSaleStateCode productSaleStateCode,
+            Long id) {
+
+        List<Product> relation = new ArrayList<>();
+        relation.add(new Product(
+                id + 1,
+                productPolicy,
+                productTypeStateCode,
+                productSaleStateCode,
+                Collections.EMPTY_LIST,
+                "1111111111",
+                "title",
+                "publisher",
+                100,
+                "description",
+                "thumbnail",
+                "path",
+                8000L,
+                10000L,
+                20,
+                0L,
+                3,
+                false,
+                1,
+                LocalDateTime.now(),
+                true));
+
+
+        return new Product(
+                id,
+                productPolicy,
+                productTypeStateCode,
+                productSaleStateCode,
+                relation,
                 "1111111111",
                 "title",
                 "publisher",
