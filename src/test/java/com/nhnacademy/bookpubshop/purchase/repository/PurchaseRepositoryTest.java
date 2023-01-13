@@ -109,8 +109,6 @@ class PurchaseRepositoryTest {
         assertThat(optional.get().getPurchasePrice()).isEqualTo(persist.getPurchasePrice());
         assertThat(optional.get().getPurchaseAmount()).isEqualTo(persist.getPurchaseAmount());
         assertThat(optional.get().getCreatedAt()).isAfter(now);
-
-        entityManager.clear();
     }
 
     @Test
@@ -121,14 +119,12 @@ class PurchaseRepositoryTest {
         Pageable pageable = Pageable.ofSize(10);
 
         Page<GetPurchaseListResponseDto> returns =
-                purchaseRepository.findByProductNumberWithPage(product.getProductNo(), pageable);
+                purchaseRepository.findByProductNumberWithPage(persist.getProduct().getProductNo(), pageable);
 
         assertThat(returns.getContent().get(0).getProductNo()).isEqualTo(persist.getProduct().getProductNo());
         assertThat(returns.getContent().get(0).getPurchaseAmount()).isEqualTo(persist.getPurchaseAmount());
         assertThat(returns.getContent().get(0).getPurchasePrice()).isEqualTo(persist.getPurchasePrice());
         assertThat(returns.getContent().get(0).getProductNo()).isEqualTo(persist.getProduct().getProductNo());
-
-        entityManager.clear();
     }
 
     @Test
