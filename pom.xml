@@ -14,13 +14,18 @@
     <name>bookpub-shop</name>
     <description>bookpub-shop</description>
     <properties>
-        <sonar.issue.ignore.multicriteria>e1</sonar.issue.ignore.multicriteria>
-        <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S106</sonar.issue.ignore.multicriteria.e1.ruleKey>
+        <sonar.issue.ignore.multicriteria>e1,e2</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S6212</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>
-            **/SonarExclude.java
+            **/*.java
         </sonar.issue.ignore.multicriteria.e1.resourceKey>
+        <sonar.issue.ignore.multicriteria.e2.ruleKey>java:S1068</sonar.issue.ignore.multicriteria.e2.ruleKey>
+        <sonar.issue.ignore.multicriteria.e2.resourceKey>
+            **/*ResponseDto.java
+        </sonar.issue.ignore.multicriteria.e2.resourceKey>
         <sonar.java.libraries>target</sonar.java.libraries>
-        <sonar.exclusions>**/target/generated-sources/annotations/**</sonar.exclusions>
+        <sonar.exclusions>target/generated-sources/**</sonar.exclusions>
+        <sonar.exclusions>**/*Config.java</sonar.exclusions>
         <java.version>11</java.version>
         <jacoco.version>0.8.6</jacoco.version>
     </properties>
