@@ -1,8 +1,9 @@
 package com.nhnacademy.bookpubshop.purchase.service;
 
-import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseResponseDto;
-import com.nhnacademy.bookpubshop.purchase.dto.SavePurchaseRequestDto;
-import java.util.List;
+import com.nhnacademy.bookpubshop.purchase.dto.CreatePurchaseRequestDto;
+import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseListResponseDto;
+import com.nhnacademy.bookpubshop.utils.PageResponse;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 매입이력 서비스입니다.
@@ -17,22 +18,36 @@ public interface PurchaseService {
      * @param productNo 상품번호입니다.
      * @return 모든 매입 이력을 반환합니다.
      */
-    List<GetPurchaseResponseDto> getPurchaseByProductNo(Long productNo);
+    PageResponse<GetPurchaseListResponseDto> getPurchaseByProductNo(
+            Long productNo, Pageable pageable);
 
     /**
      * 매입이력을 생성합니다.
      *
      * @param request 매입이력 등록시 사용하는 dto.
-     * @return 생성된 매입이력을 반환합니다.
      */
-    GetPurchaseResponseDto createPurchase(SavePurchaseRequestDto request);
+    void createPurchase(CreatePurchaseRequestDto request);
 
     /**
      * 매입이력을 수정합니다.
      *
      * @param purchaseId 매입이력번호입니다.
      * @param request 수정시 사용하는 dto.
-     * @return 수정된 매입이력을 반환합니다.
      */
-    GetPurchaseResponseDto modifyPurchase(Long purchaseId, SavePurchaseRequestDto request);
+    void modifyPurchase(Long purchaseId, CreatePurchaseRequestDto request);
+
+    /**
+     * 최신순으로 매입이력을 조회합니다.
+     *
+     * @param pageable 페이징.
+     * @return 페이징된 매입이력들을 반환합니디.
+     */
+    PageResponse<GetPurchaseListResponseDto> getPurchaseListDesc(Pageable pageable);
+
+    /**
+     * 매입이력 등록시 상품의 재고가 함께 증가됩니다.
+     *
+     * @param request 생성시 dto 입니다.
+     */
+    void createPurchaseMerged(CreatePurchaseRequestDto request);
 }
