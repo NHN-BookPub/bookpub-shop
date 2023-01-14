@@ -43,6 +43,7 @@ class BookPubTierRepositoryTest {
 
         assertThat(findTier).isPresent();
         assertThat(findTier.get().getTierName()).isEqualTo("tier");
+        assertThat(findTier.get().getTierValue()).isEqualTo(bookPubTier.getTierValue());
     }
 
     @Test
