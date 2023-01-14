@@ -29,7 +29,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
         implements CouponTemplateRepositoryCustom {
 
-    private final String TEMPLATE_IMAGE = "templateImage"
+    private static final String TEMPLATE_IMAGE = "templateImage";
 
     public CouponTemplateRepositoryImpl() {
         super(CouponTemplate.class);
