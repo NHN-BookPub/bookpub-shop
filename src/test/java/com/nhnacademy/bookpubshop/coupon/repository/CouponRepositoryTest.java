@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
 import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.category.entity.Category;
+import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.dummy.CouponDummy;
 import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
 import com.nhnacademy.bookpubshop.couponpolicy.dummy.CouponPolicyDummy;
@@ -14,12 +15,18 @@ import com.nhnacademy.bookpubshop.coupontemplate.dummy.CouponTemplateDummy;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontype.dummy.CouponTypeDummy;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
+import com.nhnacademy.bookpubshop.customersupport.dummy.CustomerServiceDummy;
+import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
+import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
+import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProductStateCode;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
+import com.nhnacademy.bookpubshop.personalinquiry.dummy.PersonalInquiryDummy;
+import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
@@ -29,12 +36,17 @@ import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCod
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.review.dummy.ReviewDummy;
+import com.nhnacademy.bookpubshop.review.entity.Review;
+import com.nhnacademy.bookpubshop.reviewpolicy.dummy.ReviewPolicyDummy;
+import com.nhnacademy.bookpubshop.reviewpolicy.entity.ReviewPolicy;
+import com.nhnacademy.bookpubshop.servicecode.dummy.CustomerServiceStateCodeDummy;
+import com.nhnacademy.bookpubshop.servicecode.entity.CustomerServiceStateCode;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +54,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 쿠폰 레포지토리 테스트
@@ -75,7 +89,12 @@ class CouponRepositoryTest {
     CouponStateCode couponStateCode;
     CouponTemplate couponTemplate;
     Coupon coupon;
-
+    PersonalInquiry inquiry;
+    Review review;
+    ReviewPolicy reviewPolicy;
+    CustomerService customerService;
+    CustomerServiceStateCode customerServiceStateCode;
+    File file;
     OrderProduct orderProduct;
 
     @BeforeEach
@@ -182,6 +201,16 @@ class CouponRepositoryTest {
                 member
         );
 
+        inquiry = PersonalInquiryDummy.dummy(member);
+        reviewPolicy = ReviewPolicyDummy.dummy();
+        review = ReviewDummy.dummy(member, product, reviewPolicy);
+        customerServiceStateCode = CustomerServiceStateCodeDummy.dummy();
+        customerService = CustomerServiceDummy.dummy(customerServiceStateCode, member);
+
+
+        file = FileDummy.dummy(inquiry, review, couponTemplate, product, customerService);
+
+
         entityManager.persist(bookPubTier);
         entityManager.persist(member);
         entityManager.persist(address);
@@ -200,6 +229,12 @@ class CouponRepositoryTest {
         entityManager.persist(order);
         entityManager.persist(orderProduct);
         entityManager.persist(couponTemplate);
+        entityManager.persist(inquiry);
+        entityManager.persist(reviewPolicy);
+        entityManager.persist(review);
+        entityManager.persist(customerServiceStateCode);
+        entityManager.persist(customerService);
+        entityManager.persist(file);
     }
 
     @Test
@@ -217,6 +252,54 @@ class CouponRepositoryTest {
         assertThat(findCoupon.get().getMember().getMemberNo()).isEqualTo(persist.getMember().getMemberNo());
         assertThat(findCoupon.get().isCouponUsed()).isFalse();
         assertThat(findCoupon.get().getUsedAt()).isEqualTo(persist.getUsedAt());
+    }
+
+    @Test
+    @DisplayName("쿠폰 번호를 통해 쿠폰을 조회하는 테스트")
+    void getCoupon_Test() {
+        // given
+        Coupon persist = entityManager.persist(coupon);
+
+        // when
+        Optional<GetCouponResponseDto> result = couponRepository.getCoupon(persist.getCouponNo());
+
+        // then
+        assertThat(result).isPresent();
+        assertThat(result.get().getCouponNo()).isEqualTo(persist.getCouponNo());
+        assertThat(result.get().getMemberId()).isEqualTo(member.getMemberId());
+        assertThat(result.get().getTemplateName()).isEqualTo(couponTemplate.getTemplateName());
+        assertThat(result.get().getTemplateImage()).isEqualTo(file.getNameSaved().concat(file.getFileExtension()));
+        assertThat(result.get().isPolicyFixed()).isEqualTo(couponPolicy.isPolicyFixed());
+        assertThat(result.get().getPolicyPrice()).isEqualTo(couponPolicy.getPolicyPrice());
+        assertThat(result.get().getPolicyMinimum()).isEqualTo(couponPolicy.getPolicyMinimum());
+        assertThat(result.get().getMaxDiscount()).isEqualTo(couponPolicy.getMaxDiscount());
+        assertThat(result.get().getFinishedAt()).isEqualTo(couponTemplate.getFinishedAt());
+        assertThat(result.get().isCouponUsed()).isEqualTo(coupon.isCouponUsed());
+    }
+
+    @Test
+    @DisplayName("쿠폰 리스트 페이지를 조하는 테스트")
+    void getCoupons_Test() {
+        // given
+        entityManager.persist(coupon);
+        GetCouponResponseDto dto = new GetCouponResponseDto(1L, "memberId", "templateName", "Image", true, 1L, 10L, 100L, LocalDateTime.now(), false);
+        Pageable pageable = Pageable.ofSize(10);
+
+        // when
+        Page<GetCouponResponseDto> page = couponRepository.getCoupons(pageable);
+
+        // then
+        assertThat(page).isNotEmpty();
+        assertThat(page.getContent().get(0).getCouponNo()).isEqualTo(coupon.getCouponNo());
+        assertThat(page.getContent().get(0).getMemberId()).isEqualTo(member.getMemberId());
+        assertThat(page.getContent().get(0).getTemplateName()).isEqualTo(couponTemplate.getTemplateName());
+        assertThat(page.getContent().get(0).getTemplateImage()).isEqualTo(file.getNameSaved().concat(file.getFileExtension()));
+        assertThat(page.getContent().get(0).isPolicyFixed()).isEqualTo(couponPolicy.isPolicyFixed());
+        assertThat(page.getContent().get(0).getPolicyPrice()).isEqualTo(couponPolicy.getPolicyPrice());
+        assertThat(page.getContent().get(0).getPolicyMinimum()).isEqualTo(couponPolicy.getPolicyMinimum());
+        assertThat(page.getContent().get(0).getMaxDiscount()).isEqualTo(couponPolicy.getMaxDiscount());
+        assertThat(page.getContent().get(0).getFinishedAt()).isEqualTo(couponTemplate.getFinishedAt());
+        assertThat(page.getContent().get(0).isCouponUsed()).isEqualTo(coupon.isCouponUsed());
     }
 
     private Category category() {
