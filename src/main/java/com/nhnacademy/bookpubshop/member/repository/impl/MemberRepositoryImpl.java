@@ -87,7 +87,6 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                                                 .where(member.memberBlocked.eq(true))
                                                 .from(member)
                                         , "blockMemberCnt")))
-                .orderBy(member.memberNo.asc())
                 .fetchOne();
     }
 
