@@ -74,7 +74,7 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                                 ExpressionUtils.as(
                                         JPAExpressions.select(member.memberNo.count())
                                                 .where(member.memberBlocked.ne(true)
-                                                        .or(member.memberDeleted.ne(true)))
+                                                        .and(member.memberDeleted.ne(true)))
                                                 .from(member)
                                         , "currentMemberCnt"),
                                 ExpressionUtils.as(
