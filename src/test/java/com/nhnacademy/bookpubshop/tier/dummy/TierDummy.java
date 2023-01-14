@@ -12,6 +12,6 @@ import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
  **/
 public class TierDummy {
     public static BookPubTier dummy() {
-        return new BookPubTier(null, "tier");
+        return new BookPubTier(null, "tier",1);
     }
 }

@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.member.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
@@ -10,6 +9,8 @@ import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequest
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.EmailAlreadyExistsException;
@@ -54,7 +55,6 @@ class MemberServiceTest {
     @MockBean
     TierRepository tierRepository;
     SignUpMemberRequestDto signUpMemberRequestDto;
-    final String duplicate = "중복되는 항목";
     Member member;
     ModifyMemberNicknameRequestDto nicknameRequestDto;
 
@@ -371,5 +371,36 @@ class MemberServiceTest {
         memberService.deleteMember(1L);
 
         then(memberRepository).should().findById(1L);
+    }
+
+    @DisplayName("멤버별 통계 조회")
+    @Test
+    void getMemberStatisticsTest() {
+        //given
+        MemberStatisticsResponseDto dto = MemberDummy.memberStatisticsDummy();
+        when(memberRepository.memberStatistics())
+                .thenReturn(dto);
+
+        MemberStatisticsResponseDto result = memberService.getMemberStatistics();
+
+        assertThat(result.getBlockMemberCnt()).isEqualTo(dto.getBlockMemberCnt());
+        assertThat(result.getMemberCnt()).isEqualTo(dto.getMemberCnt());
+        assertThat(result.getCurrentMemberCnt()).isEqualTo(dto.getCurrentMemberCnt());
+        assertThat(result.getDeleteMemberCnt()).isEqualTo(dto.getDeleteMemberCnt());
+    }
+
+    @DisplayName("멤버별 등급별 통계 조회")
+    @Test
+    void getMemberTierStatisticsTest() {
+        MemberTierStatisticsResponseDto dto = MemberDummy.memberTierStatisticsDummy();
+        when(memberRepository.memberTierStatistics())
+                .thenReturn(List.of(dto));
+
+        List<MemberTierStatisticsResponseDto> result = memberService.getTierStatistics();
+
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getTierCnt()).isEqualTo(dto.getTierCnt());
+        assertThat(result.get(0).getTierValue()).isEqualTo(dto.getTierValue());
+        assertThat(result.get(0).getTierName()).isEqualTo(dto.getTierName());
     }
 }

@@ -34,7 +34,6 @@ import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -119,7 +118,7 @@ class CouponRepositoryTest {
                 OrderProductState.CONFIRMED.isUsed(),
                 "주문완료되었습니다.");
 
-        bookPubTier = new BookPubTier(null, "브론즈");
+        bookPubTier = new BookPubTier(null, "브론즈",1);
 
         member = MemberDummy.dummy(bookPubTier);
 
