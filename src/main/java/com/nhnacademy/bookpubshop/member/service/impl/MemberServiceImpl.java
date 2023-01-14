@@ -5,6 +5,8 @@ import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequest
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.EmailAlreadyExistsException;
@@ -16,6 +18,7 @@ import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import com.nhnacademy.bookpubshop.tier.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.tier.exception.NotFoundTierException;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -147,6 +150,27 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(MemberNotFoundException::new);
         member.memberDelete();
     }
+
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    @Override
+    public List<MemberTierStatisticsResponseDto> getTierStatistics() {
+        return memberRepository.memberTierStatistics();
+    }
+
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    @Override
+    public MemberStatisticsResponseDto getMemberStatistics() {
+        return memberRepository.memberStatistics();
+    }
+
 
 
     private void duplicateCheck(SignUpMemberRequestDto member) {
