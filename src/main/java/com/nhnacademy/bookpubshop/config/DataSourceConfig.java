@@ -49,11 +49,8 @@ public class DataSourceConfig {
 
         dataSource.setDriverClassName(com.mysql.cj.jdbc.Driver.class.getName());
         dataSource.setUrl(keyConfig.keyStore(url));
-        log.error(keyConfig.keyStore(url));
         dataSource.setUsername(keyConfig.keyStore(userName));
-        log.error(keyConfig.keyStore(userName));
         dataSource.setPassword(keyConfig.keyStore(password));
-        log.error(keyConfig.keyStore(password));
 
         dataSource.setInitialSize(initialSize);
         dataSource.setMaxTotal(maxTotal);
