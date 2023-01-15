@@ -7,7 +7,7 @@ package com.nhnacademy.bookpubshop.author.exception;
  * @since : 1.0
  **/
 public class AuthorityNotFoundException extends RuntimeException {
-    private static final String MESSAGE = "란 이름의 권한은 존재하지 않습니다.";
+    public static final String MESSAGE = "란 이름의 권한은 존재하지 않습니다.";
 
     public AuthorityNotFoundException(String message) {
         super(message + MESSAGE);
