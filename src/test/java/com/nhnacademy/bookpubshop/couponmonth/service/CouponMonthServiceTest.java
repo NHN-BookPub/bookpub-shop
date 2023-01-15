@@ -48,7 +48,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
- * Some description here.
+ * 이달의 쿠폰 서비스 테스트.
  *
  * @author : 정유진
  * @since : 1.0

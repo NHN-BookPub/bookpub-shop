@@ -33,7 +33,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * Some description here.
+ * CouponController 테스트.
  *
  * @author : 정유진
  * @since : 1.0

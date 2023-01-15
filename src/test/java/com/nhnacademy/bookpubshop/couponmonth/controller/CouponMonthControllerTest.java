@@ -31,7 +31,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * Some description here.
+ * 이달의 쿠폰 컨트롤러 테스트.
  *
  * @author : 정유진
  * @since : 1.0
