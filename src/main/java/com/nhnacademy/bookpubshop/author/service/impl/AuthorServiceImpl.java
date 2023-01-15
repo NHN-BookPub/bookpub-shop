@@ -30,8 +30,8 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     @Transactional
     public GetAuthorResponseDto createAuthor(CreateAuthorRequestDto author) {
-        Author created =
-                authorRepository.save(new Author(null, author.getAuthorName()));
+        Author created = authorRepository.save(
+                new Author(null, author.getAuthorName()));
 
         return new GetAuthorResponseDto(created.getAuthorNo(), created.getAuthorName());
     }
@@ -51,6 +51,12 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     @Transactional(readOnly = true)
     public List<GetAuthorResponseDto> getAuthorsByName(String name) {
+        List<GetAuthorResponseDto> responses = authorRepository.getAuthorByName(name);
+
+        if(responses.isEmpty()) {
+            throw new NotFoundAuthorException();
+        }
+
         return authorRepository.getAuthorByName(name);
     }
 

@@ -2,8 +2,9 @@ package com.nhnacademy.bookpubshop.config;
 
 
 import com.nhnacademy.bookpubshop.dto.KeyResponseDto;
-import java.io.FileInputStream;
+import com.nhnacademy.bookpubshop.error.exception.KeyMangerException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -54,57 +55,55 @@ public class KeyConfig {
      *
      * @param keyId key 접속 아이디.
      * @return api 통신을 통해 교환받은 디코딩 값.
-     * @throws KeyStoreException         keyStore 에러
-     * @throws IOException               파일입출력 에러
-     * @throws CertificateException      인증 에러
-     * @throws NoSuchAlgorithmException  암호화 알고리즘 찾을수없을 때 나는 에러.
-     * @throws UnrecoverableKeyException 키를 복호화 할 수 없을 때 나는 에러.
-     * @throws KeyManagementException    모든 조작에 대한 일반적인 키 에러.
+     * @throws KeyMangerException 키매니저가 뱉는 오류입니다.
      */
-    public String keyStore(String keyId) throws KeyStoreException, IOException,
-            CertificateException, NoSuchAlgorithmException,
-            UnrecoverableKeyException, KeyManagementException {
-        KeyStore clientStore = KeyStore.getInstance("PKCS12");
+    public String keyStore(String keyId) {
+        try {
+            KeyStore clientStore = KeyStore.getInstance("PKCS12");
+            InputStream result = new ClassPathResource("book-pub.p12").getInputStream();
+            clientStore.load(result, password.toCharArray());
 
-        ClassPathResource resource = new ClassPathResource("book-pub.p12");
-        clientStore.load(new FileInputStream(resource.getFile()), password.toCharArray());
+            SSLContext sslContext = SSLContextBuilder.create()
+                    .setProtocol("TLS")
+                    .loadKeyMaterial(clientStore, password.toCharArray())
+                    .loadTrustMaterial(new TrustSelfSignedStrategy())
+                    .build();
 
-        SSLContext sslContext = SSLContextBuilder.create()
-                .setProtocol("TLS")
-                .loadKeyMaterial(clientStore, password.toCharArray())
-                .loadTrustMaterial(new TrustSelfSignedStrategy())
-                .build();
+            SSLConnectionSocketFactory sslConnectionSocketFactory =
+                    new SSLConnectionSocketFactory(sslContext);
+            CloseableHttpClient httpClient = HttpClients.custom()
+                    .setSSLSocketFactory(sslConnectionSocketFactory)
+                    .build();
 
-        SSLConnectionSocketFactory sslConnectionSocketFactory =
-                new SSLConnectionSocketFactory(sslContext);
-        CloseableHttpClient httpClient = HttpClients.custom()
-                .setSSLSocketFactory(sslConnectionSocketFactory)
-                .build();
+            HttpComponentsClientHttpRequestFactory requestFactory =
+                    new HttpComponentsClientHttpRequestFactory(httpClient);
 
-        HttpComponentsClientHttpRequestFactory requestFactory =
-                new HttpComponentsClientHttpRequestFactory(httpClient);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+            RestTemplate restTemplate = new RestTemplate(requestFactory);
 
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
-
-        URI uri = UriComponentsBuilder
-                .fromUriString(url)
-                .path(path)
-                .encode()
-                .build()
-                .expand(appKey, keyId)
-                .toUri();
-        return Objects.requireNonNull(restTemplate.exchange(uri,
-                                HttpMethod.GET,
-                                new HttpEntity<>(headers),
-                                KeyResponseDto.class)
-                        .getBody())
-                .getBody()
-                .getSecret();
-
+            URI uri = UriComponentsBuilder
+                    .fromUriString(url)
+                    .path(path)
+                    .encode()
+                    .build()
+                    .expand(appKey, keyId)
+                    .toUri();
+            return Objects.requireNonNull(restTemplate.exchange(uri,
+                                    HttpMethod.GET,
+                                    new HttpEntity<>(headers),
+                                    KeyResponseDto.class)
+                            .getBody())
+                    .getBody()
+                    .getSecret();
+        } catch (KeyStoreException | IOException | CertificateException
+                 | NoSuchAlgorithmException
+                 | UnrecoverableKeyException
+                 | KeyManagementException e) {
+            throw new KeyMangerException(e.getMessage());
+        }
     }
 
     public String getPassword() {

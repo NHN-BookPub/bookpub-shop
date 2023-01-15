@@ -33,7 +33,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
         couponPolicyRepository.save(new CouponPolicy(
                 null,
                 createCouponPolicyRequestDto.isPolicyFixed(),
-                createCouponPolicyRequestDto.getDiscountRate(),
+                createCouponPolicyRequestDto.getPolicyPrice(),
                 createCouponPolicyRequestDto.getPolicyMinimum(),
                 createCouponPolicyRequestDto.getMaxDiscount()
         ));
@@ -48,7 +48,7 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
         CouponPolicy couponPolicy = couponPolicyRepository.findById(request.getPolicyNo())
                 .orElseThrow(() -> new CouponPolicyNotFoundException(request.getPolicyNo()));
 
-        couponPolicy.modifyCouponPolicy(request.isPolicyFixed(), request.getDiscountRate(),
+        couponPolicy.modifyCouponPolicy(request.isPolicyFixed(), request.getPolicyPrice(),
                 request.getPolicyMinimum(), request.getMaxDiscount());
     }
 

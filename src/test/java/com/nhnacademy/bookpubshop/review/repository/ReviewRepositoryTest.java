@@ -56,17 +56,17 @@ class ReviewRepositoryTest {
         productPolicy = ProductPolicyDummy.dummy();
         productTypeStateCode = ProductTypeStateCodeDummy.dummy();
         productSaleStateCode = ProductSaleStateCodeDummy.dummy();
-        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
         reviewPolicy = ReviewPolicyDummy.dummy();
+        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
         review = ReviewDummy.dummy(member, product, reviewPolicy);
 
+        entityManager.persist(bookPubTier);
+        entityManager.persist(member);
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);
         entityManager.persist(productSaleStateCode);
-        entityManager.persist(bookPubTier);
-        entityManager.persist(member);
-        entityManager.persist(product);
         entityManager.persist(reviewPolicy);
+        entityManager.persist(product);
     }
 
     @Test

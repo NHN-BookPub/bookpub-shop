@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.category.service;
 import com.nhnacademy.bookpubshop.category.dto.request.CreateCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.request.ModifyCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
+import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public interface CategoryService {
      * 카테고리에대한 단건조회를 위한 메소드입니다.
      *
      * @param categoryNo 조회할 카테고리 번호입니다.
-     * @return GetCategoryResponseDto 카테고리 이름과 부모 카테고리 이름이 반환됩니다.
+     * @return GetCategoryResponseDto 카테고리 정보 반환됩니다.
      */
     GetCategoryResponseDto getCategory(Integer categoryNo);
 
@@ -44,4 +45,18 @@ public interface CategoryService {
      */
     List<GetCategoryResponseDto> getCategories();
 
+
+    /**
+     * 최상위 카테고리 조회를 위한 메소드입니다.
+     *
+     * @return 최상위 카테고리 정보 반환됩니다.
+     */
+    List<GetCategoryResponseDto> getParentCategories();
+
+    /**
+     * 최상위 카테고리와 그 아래 하위 카테고리 조회 메소드입니다.
+     *
+     * @return 최상위와 그 하위 카테고리 반환됩니다.
+     */
+    List<GetParentCategoryWithChildrenResponseDto> getParentCategoryWithChildren();
 }

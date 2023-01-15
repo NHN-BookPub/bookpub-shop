@@ -1,0 +1,288 @@
+package com.nhnacademy.bookpubshop.purchase.service;
+
+import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
+import com.nhnacademy.bookpubshop.purchase.dto.CreatePurchaseRequestDto;
+import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseListResponseDto;
+import com.nhnacademy.bookpubshop.purchase.entity.Purchase;
+import com.nhnacademy.bookpubshop.purchase.exception.NotFoundPurchasesException;
+import com.nhnacademy.bookpubshop.purchase.repository.PurchaseRepository;
+import com.nhnacademy.bookpubshop.purchase.service.impl.PurchaseServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.test.util.ReflectionTestUtils;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import static com.nhnacademy.bookpubshop.state.ProductTypeState.BEST_SELLER;
+import static com.nhnacademy.bookpubshop.state.ProductTypeState.NEW;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+/**
+ * PurchaseServiceTest.
+ *
+ * @author : 여운석
+ * @since : 1.0
+ **/
+class PurchaseServiceTest {
+    ProductRepository productRepository;
+    PurchaseRepository purchaseRepository;
+    PurchaseService purchaseService;
+    Product product;
+    ProductPolicy productPolicy;
+    ProductTypeStateCode typeStateCode;
+    ProductSaleStateCode saleStateCode;
+    Purchase purchase;
+    ArgumentCaptor<Purchase> captor;
+    Pageable pageable;
+    GetPurchaseListResponseDto listResponse;
+    CreatePurchaseRequestDto request;
+
+    @BeforeEach
+    void setUp() {
+        productRepository = Mockito.mock(ProductRepository.class);
+        purchaseRepository = Mockito.mock(PurchaseRepository.class);
+
+        purchaseService = new PurchaseServiceImpl(purchaseRepository, productRepository);
+
+        productPolicy = new ProductPolicy(1,"method",true,1);
+        typeStateCode = new ProductTypeStateCode(1,BEST_SELLER.getName(),BEST_SELLER.isUsed(),"info");
+        saleStateCode = new ProductSaleStateCode(1, NEW.getName(),NEW.isUsed(),"info");
+
+        product = new Product(1L,
+                productPolicy,
+                typeStateCode,
+                saleStateCode,
+                Collections.EMPTY_LIST,
+                "1231231233",
+                "test",
+                "test_publisher",
+                130,
+                "test_description",
+                "thumbnail.png",
+                "test.txt",
+                8000L,
+                10000L,
+                20,
+                0L,
+                10,
+                false,
+                100,
+                LocalDateTime.now(),
+                false);
+
+        purchase = new Purchase(
+                1L,
+                product,
+                10000L,
+                20);
+
+        captor = ArgumentCaptor.forClass(Purchase.class);
+
+        pageable = Pageable.ofSize(5);
+
+        listResponse = new GetPurchaseListResponseDto(product.getProductNo(),
+                purchase.getPurchaseNo(),
+                purchase.getPurchaseAmount(),
+                purchase.getPurchasePrice());
+
+        request = new CreatePurchaseRequestDto();
+
+        ReflectionTestUtils.setField(request, "productNo", product.getProductNo());
+        ReflectionTestUtils.setField(request, "purchasePrice", purchase.getPurchasePrice());
+        ReflectionTestUtils.setField(request, "purchaseAmount", purchase.getPurchaseAmount());
+    }
+
+    @Test
+    @DisplayName("상품번호로 구매이력 조회 성공")
+    void getPurchaseByProductNo() {
+        List<GetPurchaseListResponseDto> response = new ArrayList<>();
+        response.add(listResponse);
+
+        Page<GetPurchaseListResponseDto> page =
+                PageableExecutionUtils.getPage(response, pageable, () -> 1L);
+
+        when(purchaseRepository.findByProductNumberWithPage(product.getProductNo(), pageable))
+                .thenReturn(page);
+
+        assertThat(purchaseService.getPurchaseByProductNo(
+                product.getProductNo(), pageable)
+                .getContent().get(0).getProductNo())
+                .isEqualTo(product.getProductNo());
+        assertThat(purchaseService.getPurchaseByProductNo(
+                        product.getProductNo(), pageable)
+                .getContent().get(0).getPurchasePrice())
+                .isEqualTo(purchase.getPurchasePrice());
+        assertThat(purchaseService.getPurchaseByProductNo(
+                        product.getProductNo(), pageable)
+                .getContent().get(0).getPurchaseNo())
+                .isEqualTo(purchase.getPurchaseNo());
+        assertThat(purchaseService.getPurchaseByProductNo(
+                        product.getProductNo(), pageable)
+                .getContent().get(0).getPurchaseAmount())
+                .isEqualTo(purchase.getPurchaseAmount());
+    }
+
+    @Test
+    @DisplayName("상품번호로 구매이력 조회 실패(이력 없음)")
+    void getPurchaseByProductNoFailed() {
+        Page<GetPurchaseListResponseDto> page =
+                PageableExecutionUtils.getPage(Collections.EMPTY_LIST, pageable, () -> 1L);
+
+        when(purchaseRepository.findByProductNumberWithPage(product.getProductNo(), pageable))
+                .thenReturn(page);
+
+        assertThatThrownBy(() ->
+                purchaseService.getPurchaseByProductNo(product.getProductNo(), pageable))
+                .isInstanceOf(NotFoundPurchasesException.class);
+    }
+
+    @Test
+    @DisplayName("구매이력 등록 성공")
+    void createPurchase() {
+        when(productRepository.findById(product.getProductNo()))
+                .thenReturn(Optional.ofNullable(product));
+        when(purchaseRepository.save(any()))
+                .thenReturn(purchase);
+
+        purchaseService.createPurchase(request);
+
+        verify(purchaseRepository, times(1))
+                .save(any());
+    }
+    @Test
+    @DisplayName("구매이력 등록 실패(없는 상품)")
+    void createPurchaseFailed() {
+        when(productRepository.findById(product.getProductNo()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() ->
+                purchaseService.createPurchase(request))
+                .isInstanceOf(ProductNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("구매이력 수정 성공")
+    void modifyPurchase() {
+        when(productRepository.findById(product.getProductNo()))
+                .thenReturn(Optional.ofNullable(product));
+        when(purchaseRepository.findById(anyLong()))
+                .thenReturn(Optional.ofNullable(purchase));
+        when(purchaseRepository.save(any()))
+                .thenReturn(purchase);
+
+        purchaseService.modifyPurchase(purchase.getPurchaseNo(), request);
+
+        verify(purchaseRepository, times(1)).save(any());
+    }
+
+    @Test
+    @DisplayName("구매이력 수정 실패(없는 상품으로 변경)")
+    void modifyPurchaseFailedNoProduct() {
+        when(productRepository.findById(product.getProductNo()))
+                .thenReturn(Optional.empty());
+        when(purchaseRepository.findById(anyLong()))
+                .thenReturn(Optional.ofNullable(purchase));
+
+        assertThatThrownBy(() ->
+                purchaseService.modifyPurchase(purchase.getPurchaseNo(), request))
+                .isInstanceOf(ProductNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("구매이력 수정 실패(존재하지 않는 구매이력 번호)")
+    void modifyPurchaseFailedNoPurchase() {
+        when(productRepository.findById(product.getProductNo()))
+                .thenReturn(Optional.ofNullable(product));
+        when(purchaseRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() ->
+                purchaseService.modifyPurchase(purchase.getPurchaseNo(), request))
+                .isInstanceOf(NotFoundPurchasesException.class);
+    }
+
+    @Test
+    @DisplayName("최신순으로 구매이력 조회")
+    void getPurchaseListDesc() {
+        List<GetPurchaseListResponseDto> response = new ArrayList<>();
+        response.add(listResponse);
+
+        Page<GetPurchaseListResponseDto> page =
+                PageableExecutionUtils.getPage(response, pageable, () -> 1L);
+
+        when(purchaseRepository.getPurchaseListDesc(pageable))
+                .thenReturn(page);
+
+        assertThat(purchaseService.getPurchaseListDesc(pageable)
+                .getContent().get(0).getProductNo())
+                .isEqualTo(product.getProductNo());
+        assertThat(purchaseService.getPurchaseListDesc(pageable)
+                .getContent().get(0).getPurchasePrice())
+                .isEqualTo(purchase.getPurchasePrice());
+        assertThat(purchaseService.getPurchaseListDesc(pageable)
+                .getContent().get(0).getPurchaseNo())
+                .isEqualTo(purchase.getPurchaseNo());
+        assertThat(purchaseService.getPurchaseListDesc(pageable)
+                .getContent().get(0).getPurchaseAmount())
+                .isEqualTo(purchase.getPurchaseAmount());
+    }
+
+    @Test
+    @DisplayName("최신순으로 구매이력 조회 실패(이력 없음)")
+    void getPurchaseListDescFailed() {
+        Page<GetPurchaseListResponseDto> page =
+                PageableExecutionUtils.getPage(Collections.EMPTY_LIST
+                        , pageable, () -> 1L);
+
+        when(purchaseRepository.getPurchaseListDesc(pageable))
+                .thenReturn(page);
+
+        assertThatThrownBy(() ->
+                purchaseService.getPurchaseListDesc(pageable))
+                .isInstanceOf(NotFoundPurchasesException.class);
+    }
+
+
+    @Test
+    @DisplayName("매입이력 등록시 상품 재고 증가")
+    void createPurchaseMerged() {
+        when(productRepository.findById(product.getProductNo()))
+                .thenReturn(Optional.ofNullable(product));
+        when(purchaseRepository.save(any()))
+                .thenReturn(purchase);
+
+        purchaseService.createPurchaseMerged(request);
+
+        verify(purchaseRepository, times(1))
+                .save(any());
+    }
+
+    @Test
+    @DisplayName("매입이력 등록시 상품 재고 증가 실패(없는 상품)")
+    void createPurchaseMergedFailed() {
+        when(productRepository.findById(product.getProductNo()))
+                .thenReturn(Optional.empty());
+        when(purchaseRepository.save(any()))
+                .thenReturn(purchase);
+
+        assertThatThrownBy(() ->
+                purchaseService.createPurchaseMerged(request))
+                .isInstanceOf(ProductNotFoundException.class);
+    }
+}

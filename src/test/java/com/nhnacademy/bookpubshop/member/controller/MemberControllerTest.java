@@ -1,9 +1,9 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -16,6 +16,8 @@ import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
@@ -383,7 +385,7 @@ class MemberControllerTest {
     void memberListTest() throws Exception {
         MemberResponseDto dto = new MemberResponseDto(1L, "tier", "id", "nick",
                 "name", "gender", 1, 1, "email",
-                1L, false);
+                1L, false, false, false);
         List<MemberResponseDto> content = List.of(dto);
         PageRequest request = PageRequest.of(0, 10);
 
@@ -408,6 +410,8 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.content[0].email").value(content.get(0).getEmail()))
                 .andExpect(jsonPath("$.content[0].point").value(objectMapper.writeValueAsString(content.get(0).getPoint())))
                 .andExpect(jsonPath("$.content[0].social").value(content.get(0).isSocial()))
+                .andExpect(jsonPath("$.content[0].deleted").value(content.get(0).isDeleted()))
+                .andExpect(jsonPath("$.content[0].blocked").value(content.get(0).isBlocked()))
                 .andDo(print());
 
         then(memberService)
@@ -425,6 +429,45 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
+    }
+
+    @Test
+    @DisplayName("멤버별 통계 ")
+    void memberStatisticsTest() throws Exception {
+        MemberStatisticsResponseDto dto = MemberDummy.memberStatisticsDummy();
+        when(memberService.getMemberStatistics())
+                .thenReturn(dto);
+
+        mvc.perform(get("/api/admin/members/statistics")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.memberCnt").value(dto.getMemberCnt()))
+                .andExpect(jsonPath("$.currentMemberCnt").value(dto.getCurrentMemberCnt()))
+                .andExpect(jsonPath("$.deleteMemberCnt").value(dto.getDeleteMemberCnt()))
+                .andExpect(jsonPath("$.blockMemberCnt").value(dto.getBlockMemberCnt()))
+                .andDo(print());
+
+        then(memberService)
+                .should().getMemberStatistics();
+    }
+
+    @Test
+    @DisplayName("멤버 등급별 통계")
+    void memberTierStatisticsTest() throws Exception {
+
+        MemberTierStatisticsResponseDto dto = MemberDummy.memberTierStatisticsDummy();
+        when(memberService.getTierStatistics())
+                .thenReturn(List.of(dto));
+
+        mvc.perform(get("/api/admin/tier/statistics")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].tierName").value(dto.getTierName()))
+                .andExpect(jsonPath("$[0].tierValue").value(objectMapper.writeValueAsString(dto.getTierValue())))
+                .andExpect(jsonPath("$[0].tierCnt").value(objectMapper.writeValueAsString(dto.getTierCnt())))
+                .andDo(print());
+
+        then(memberService)
+                .should().getTierStatistics();
     }
 
     @Test

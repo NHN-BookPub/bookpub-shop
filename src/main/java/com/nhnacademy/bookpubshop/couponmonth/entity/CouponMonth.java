@@ -32,10 +32,10 @@ public class CouponMonth {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "coupon_month_number")
-    private Long monthNumber;
+    private Long monthNo;
 
-    @NotNull
     @OneToOne
+    @NotNull
     @JoinColumn(name = "coupon_template_number")
     private CouponTemplate couponTemplate;
 
@@ -46,5 +46,10 @@ public class CouponMonth {
     @NotNull
     @Column(name = "coupon_month_quantity")
     private Integer monthQuantity;
+
+    public void modifyCouponMonth(LocalDateTime openedAt, Integer monthQuantity) {
+        this.openedAt = openedAt;
+        this.monthQuantity = monthQuantity;
+    }
 
 }

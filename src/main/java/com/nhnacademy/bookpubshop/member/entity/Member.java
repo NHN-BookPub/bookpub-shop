@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.member.entity;
 
-import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
@@ -162,6 +161,7 @@ public class Member extends BaseCreateTimeEntity {
      */
     public void memberBlock() {
         this.memberBlocked = !this.memberBlocked;
+        this.blockedAt = LocalDateTime.now();
     }
 
     public void addMemberAuthority(MemberAuthority memberAuthority) {

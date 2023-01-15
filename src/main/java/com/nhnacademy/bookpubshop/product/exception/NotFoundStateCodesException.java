@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.product.exception;
 
 /**
- * 아무 상태 코드도 없을 시 발생하는 예외
+ * 아무 상태 코드도 없을 시 발생하는 예외.
  *
  * @author : 여운석
  * @since : 1.0

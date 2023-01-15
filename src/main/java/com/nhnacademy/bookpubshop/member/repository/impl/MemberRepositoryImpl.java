@@ -5,6 +5,8 @@ import com.nhnacademy.bookpubshop.member.dto.response.IdPwdMemberDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
@@ -12,7 +14,9 @@ import com.nhnacademy.bookpubshop.member.relationship.entity.QMemberAuthority;
 import com.nhnacademy.bookpubshop.member.relationship.exception.MemberAuthoritiesNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberCustomRepository;
 import com.nhnacademy.bookpubshop.tier.entity.QBookPubTier;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import java.util.List;
 import java.util.Optional;
@@ -61,7 +65,61 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                 )).fetchOne());
     }
 
+    @Override
+    public MemberStatisticsResponseDto memberStatistics() {
+        QMember member = QMember.member;
+        QBookPubTier tier = QBookPubTier.bookPubTier;
 
+        return from(member)
+                .leftJoin(member.tier, tier)
+                .select(
+                        Projections.constructor(MemberStatisticsResponseDto.class,
+                                member.memberNo.count().as("memberCnt"),
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(member.memberNo.count())
+                                                .where(member.memberBlocked.ne(true)
+                                                        .and(member.memberDeleted.ne(true)))
+                                                .from(member)
+                                        , "currentMemberCnt"),
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(member.memberNo.count())
+                                                .where(member.memberDeleted.eq(true))
+                                                .from(member)
+                                        , "deleteMemberCnt"),
+                                ExpressionUtils.as(
+                                        JPAExpressions.select(member.memberNo.count())
+                                                .where(member.memberBlocked.eq(true))
+                                                .from(member)
+                                        , "blockMemberCnt")))
+                .fetchOne();
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<MemberTierStatisticsResponseDto> memberTierStatistics(){
+        QMember member = QMember.member;
+        QBookPubTier tier = QBookPubTier.bookPubTier;
+
+        return from(member)
+                .leftJoin(member.tier, tier)
+                .select(Projections.constructor(
+                        MemberTierStatisticsResponseDto.class,
+                        member.tier.tierName.as("tierName"),
+                        member.tier.tierValue.as("tierValue"),
+                        member.tier.tierNo.count().as("tierCnt")
+                ))
+                .groupBy(tier.tierName)
+                .distinct()
+                .fetch();
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<MemberResponseDto> findMembers(Pageable pageable) {
         QMember member = QMember.member;
@@ -85,7 +143,9 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                                 member.memberBirthMonth.as("birthMonth"),
                                 member.memberEmail.as("email"),
                                 member.memberPoint.as("point"),
-                                member.socialJoined.as("isSocial")
+                                member.socialJoined.as("isSocial"),
+                                member.memberDeleted.as("idDeleted"),
+                                member.memberBlocked.as("isBlocked")
                         )
                 ).offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

@@ -7,9 +7,9 @@ package com.nhnacademy.bookpubshop.couponstatecode.exception;
  * @since : 1.0
  **/
 public class CouponStateCodeNotFoundException extends RuntimeException {
-    private static final String MES = "Not Found CouponStateCode: ";
+    private static final String MESSAGE = "Not Found CouponStateCode: ";
 
     public CouponStateCodeNotFoundException(Integer codeNo) {
-        super(MES + codeNo);
+        super(MESSAGE + codeNo);
     }
 }

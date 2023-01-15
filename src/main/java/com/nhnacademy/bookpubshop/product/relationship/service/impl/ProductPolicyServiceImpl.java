@@ -6,6 +6,8 @@ import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyRespo
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductPolicyRepository;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductPolicyService;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +28,8 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
      */
     @Override
     @Transactional
-    public GetProductPolicyResponseDto createProductPolicy(CreateModifyProductPolicyRequestDto request) {
+    public GetProductPolicyResponseDto createProductPolicy(
+            CreateModifyProductPolicyRequestDto request) {
         ProductPolicy productPolicy = productPolicyRepository.save(
                 new ProductPolicy(
                         null,
@@ -61,6 +64,27 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
         );
     }
 
+    @Override
+    public List<GetProductPolicyResponseDto> getProductPolicies() {
+        List<ProductPolicy> productPolicies = productPolicyRepository.findAll();
+        List<GetProductPolicyResponseDto> returns = new ArrayList<>();
+
+        if (productPolicies.isEmpty()) {
+            throw new NotFoundProductPolicyException();
+        }
+
+        for (ProductPolicy policy : productPolicies) {
+            returns.add(new GetProductPolicyResponseDto(
+                    policy.getPolicyNo(),
+                    policy.getPolicyMethod(),
+                    policy.isPolicySaved(),
+                    policy.getSaveRate()
+            ));
+        }
+
+        return returns;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -86,14 +110,5 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
                 savePolicy.isPolicySaved(),
                 savePolicy.getSaveRate()
         );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public void deleteProductPolicyById(Integer policyNo) {
-        productPolicyRepository.deleteById(policyNo);
     }
 }

@@ -11,8 +11,12 @@ import java.util.List;
  * @since : 1.0
  */
 public interface ProductSaleStateCodeService {
+
     /**
+     * 상품판매상태코드를 생성합니다.
+     *
      * @param request 생성을 위한 Dto class.
+     *
      * @return 생성된 객체를 반환합니다.
      */
     GetProductSaleStateCodeResponseDto createSaleCode(CreateProductSaleStateCodeRequestDto request);

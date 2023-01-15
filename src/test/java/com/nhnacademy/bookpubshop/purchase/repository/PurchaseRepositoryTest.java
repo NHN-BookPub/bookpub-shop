@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.purchase.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
@@ -13,9 +12,11 @@ import com.nhnacademy.bookpubshop.product.relationship.repository.ProductPolicyR
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
+import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseListResponseDto;
 import com.nhnacademy.bookpubshop.purchase.dummy.PurchaseDummy;
 import com.nhnacademy.bookpubshop.purchase.entity.Purchase;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +24,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 매입이력(purchase) 레포지토리 테스트.
@@ -62,13 +65,36 @@ class PurchaseRepositoryTest {
         productPolicy = ProductPolicyDummy.dummy();
         productTypeStateCode = ProductTypeStateCodeDummy.dummy();
         productSaleStateCode = ProductSaleStateCodeDummy.dummy();
-        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
-        purchase = PurchaseDummy.dummy(product);
 
-        entityManager.persist(productPolicy);
-        entityManager.persist(productTypeStateCode);
-        entityManager.persist(productSaleStateCode);
-        entityManager.persist(product);
+        productPolicy = entityManager.persist(productPolicy);
+        productTypeStateCode = entityManager.persist(productTypeStateCode);
+        productSaleStateCode = entityManager.persist(productSaleStateCode);
+
+        product = new Product(null,
+                productPolicy,
+                productTypeStateCode,
+                productSaleStateCode,
+                Collections.EMPTY_LIST,
+                "1231231233",
+                "test",
+                "publisher",
+                130,
+                "test_description",
+                "thumbnail.png",
+                "test.txt",
+                10000L,
+                10000L,
+                0,
+                0L,
+                10,
+                false,
+                100,
+                LocalDateTime.now(),
+                false);
+
+        product = entityManager.persist(product);
+
+        purchase = PurchaseDummy.dummy(product);
     }
 
     @Test
@@ -83,7 +109,43 @@ class PurchaseRepositoryTest {
         assertThat(optional.get().getPurchasePrice()).isEqualTo(persist.getPurchasePrice());
         assertThat(optional.get().getPurchaseAmount()).isEqualTo(persist.getPurchaseAmount());
         assertThat(optional.get().getCreatedAt()).isAfter(now);
-
-        entityManager.clear();
     }
+
+    @Test
+    @DisplayName("상품 번호로 조회 성공")
+    void findByProductNumberWithPageTest() {
+        Purchase persist = entityManager.persist(purchase);
+
+        Pageable pageable = Pageable.ofSize(10);
+
+        Page<GetPurchaseListResponseDto> returns =
+                purchaseRepository.findByProductNumberWithPage(persist.getProduct().getProductNo(), pageable);
+
+        assertThat(returns.getContent().get(0).getProductNo()).isEqualTo(persist.getProduct().getProductNo());
+        assertThat(returns.getContent().get(0).getPurchaseAmount()).isEqualTo(persist.getPurchaseAmount());
+        assertThat(returns.getContent().get(0).getPurchasePrice()).isEqualTo(persist.getPurchasePrice());
+        assertThat(returns.getContent().get(0).getProductNo()).isEqualTo(persist.getProduct().getProductNo());
+    }
+
+    @Test
+    @DisplayName("최근순 매입 이력 조회 성공")
+    void getPurchaseListDescTest() {
+        Purchase persist = entityManager.persist(purchase);
+
+        Pageable pageable = Pageable.ofSize(10);
+
+        Page<GetPurchaseListResponseDto> returns =
+                purchaseRepository.getPurchaseListDesc(pageable);
+
+        assertThat(returns.getContent().get(0).getProductNo())
+                .isEqualTo(persist.getProduct().getProductNo());
+        assertThat(returns.getContent().get(0).getPurchaseNo())
+                .isEqualTo(persist.getPurchaseNo());
+        assertThat(returns.getContent().get(0).getPurchaseAmount())
+                .isEqualTo(persist.getPurchaseAmount());
+        assertThat(returns.getContent().get(0).getPurchasePrice())
+                .isEqualTo(persist.getPurchasePrice());
+    }
+
+
 }

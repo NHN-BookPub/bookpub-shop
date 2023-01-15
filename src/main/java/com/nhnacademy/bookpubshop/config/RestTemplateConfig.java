@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestTemplateConfig {
     /**
-     * RestTemplate를 빈으로 등록하여 사용.
+     * RestTemplate 를 빈으로 등록하여 사용.
      *
      * @param clientHttpRequestFactory 통신 시간을 설정한 객체.
      * @return restTemplate 반환. 이 객체로 서버간 통신.

@@ -3,13 +3,16 @@ package com.nhnacademy.bookpubshop.purchase.service.impl;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
-import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseResponseDto;
-import com.nhnacademy.bookpubshop.purchase.dto.SavePurchaseRequestDto;
+import com.nhnacademy.bookpubshop.purchase.dto.CreatePurchaseRequestDto;
+import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseListResponseDto;
 import com.nhnacademy.bookpubshop.purchase.entity.Purchase;
 import com.nhnacademy.bookpubshop.purchase.exception.NotFoundPurchasesException;
 import com.nhnacademy.bookpubshop.purchase.repository.PurchaseRepository;
 import com.nhnacademy.bookpubshop.purchase.service.PurchaseService;
-import java.util.List;
+import com.nhnacademy.bookpubshop.utils.PageResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,29 +23,26 @@ import org.springframework.transaction.annotation.Transactional;
  * @since : 1.0
  **/
 @Service
+@RequiredArgsConstructor
 public class PurchaseServiceImpl implements PurchaseService {
     private final PurchaseRepository purchaseRepository;
     private final ProductRepository productRepository;
 
-    public PurchaseServiceImpl(PurchaseRepository purchaseRepository,
-                               ProductRepository productRepository) {
-        this.purchaseRepository = purchaseRepository;
-        this.productRepository = productRepository;
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<GetPurchaseResponseDto> getPurchaseByProductNo(Long productNo) {
-        List<GetPurchaseResponseDto> response =
-                purchaseRepository.findByProductNumber(productNo);
+    @Transactional(readOnly = true)
+    public PageResponse<GetPurchaseListResponseDto> getPurchaseByProductNo(
+            Long productNo, Pageable pageable) {
+        Page<GetPurchaseListResponseDto> response =
+                purchaseRepository.findByProductNumberWithPage(productNo, pageable);
 
-        if (response.isEmpty()) {
+        if (response.getContent().isEmpty()) {
             throw new NotFoundPurchasesException();
         }
 
-        return response;
+        return new PageResponse<>(response);
     }
 
     /**
@@ -50,23 +50,12 @@ public class PurchaseServiceImpl implements PurchaseService {
      */
     @Override
     @Transactional
-    public GetPurchaseResponseDto createPurchase(SavePurchaseRequestDto request) {
+    public void createPurchase(CreatePurchaseRequestDto request) {
         Product product = productRepository
                 .findById(request.getProductNo())
                 .orElseThrow(ProductNotFoundException::new);
 
-        Purchase purchase = purchaseRepository.save(
-                new Purchase(null,
-                        product,
-                        request.getPurchasePrice(),
-                        request.getPurchaseAmount()));
-
-        return new GetPurchaseResponseDto(
-                purchase.getPurchaseNo(),
-                purchase.getProduct().getProductNo(),
-                purchase.getPurchasePrice(),
-                purchase.getCreatedAt(),
-                purchase.getPurchaseAmount());
+        purchaseRepository.save(request.toEntity(product));
     }
 
     /**
@@ -74,7 +63,7 @@ public class PurchaseServiceImpl implements PurchaseService {
      */
     @Override
     @Transactional
-    public GetPurchaseResponseDto modifyPurchase(Long purchaseId, SavePurchaseRequestDto request) {
+    public void modifyPurchase(Long purchaseId, CreatePurchaseRequestDto request) {
         Purchase purchase = purchaseRepository
                 .findById(purchaseId)
                 .orElseThrow(NotFoundPurchasesException::new);
@@ -83,17 +72,42 @@ public class PurchaseServiceImpl implements PurchaseService {
                 .findById(request.getProductNo())
                 .orElseThrow(ProductNotFoundException::new);
 
-        Purchase saved = purchaseRepository.save(
+        purchaseRepository.save(
                 new Purchase(purchase.getPurchaseNo(),
                         product,
                         request.getPurchasePrice(),
                         request.getPurchaseAmount()));
+    }
 
-        return new GetPurchaseResponseDto(
-                saved.getPurchaseNo(),
-                saved.getProduct().getProductNo(),
-                saved.getPurchasePrice(),
-                saved.getCreatedAt(),
-                saved.getPurchaseAmount());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<GetPurchaseListResponseDto> getPurchaseListDesc(Pageable pageable) {
+        PageResponse<GetPurchaseListResponseDto> result =
+                new PageResponse<>(purchaseRepository.getPurchaseListDesc(pageable));
+
+        if (result.getContent().isEmpty()) {
+            throw new NotFoundPurchasesException();
+        }
+
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void createPurchaseMerged(CreatePurchaseRequestDto request) {
+        Product product = productRepository.findById(request.getProductNo())
+                .orElseThrow(ProductNotFoundException::new);
+
+        purchaseRepository.save(request.toEntity(product));
+
+        product.plusStock(request.getPurchaseAmount());
+
+        productRepository.save(product);
     }
 }

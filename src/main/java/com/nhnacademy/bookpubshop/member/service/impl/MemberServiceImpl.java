@@ -9,6 +9,8 @@ import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.EmailAlreadyExistsException;
@@ -21,8 +23,10 @@ import com.nhnacademy.bookpubshop.member.service.MemberService;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import com.nhnacademy.bookpubshop.tier.exception.TierNotFoundException;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author : 임태원, 유호철
  * @since : 1.0
  **/
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -141,6 +146,7 @@ public class MemberServiceImpl implements MemberService {
      *
      * @throws MemberNotFoundException 멤버가 없을때 나오는 에러.
      */
+    @Transactional
     @Override
     public void blockMember(Long memberNo) {
         Member member = memberRepository.findById(memberNo)
@@ -153,6 +159,7 @@ public class MemberServiceImpl implements MemberService {
      *
      * @throws MemberNotFoundException 멤버가 없을때 나오는 에러.
      */
+    @Transactional
     @Override
     public void deleteMember(Long memberNo) {
         Member member = memberRepository.findById(memberNo)
@@ -167,6 +174,27 @@ public class MemberServiceImpl implements MemberService {
     public LoginMemberResponseDto loginMember(String loginId) {
         return memberRepository.findByMemberLoginInfo(loginId);
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    @Override
+    public List<MemberTierStatisticsResponseDto> getTierStatistics() {
+        return memberRepository.memberTierStatistics();
+    }
+
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    @Override
+    public MemberStatisticsResponseDto getMemberStatistics() {
+        return memberRepository.memberStatistics();
+    }
+
+
 
     private void duplicateCheck(SignUpMemberRequestDto member) {
         if (memberRepository.existsByMemberNickname(member.getNickname())) {

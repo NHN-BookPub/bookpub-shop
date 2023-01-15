@@ -55,7 +55,7 @@ class BookPubTierCouponTest {
         productSaleStateCode = ProductSaleStateCodeDummy.dummy();
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
-        bookPubTier = new BookPubTier(null, "tier2");
+        bookPubTier = new BookPubTier(null, "tier2",1);
         couponTemplate = CouponTemplateDummy.dummy(CouponPolicyDummy.dummy(),
                 CouponTypeDummy.dummy(), product,
                 new Category(null, null,

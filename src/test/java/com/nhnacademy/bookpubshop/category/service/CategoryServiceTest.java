@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import com.nhnacademy.bookpubshop.category.dto.request.CreateCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.request.ModifyCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
+import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.exception.CategoryAlreadyExistsException;
 import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
@@ -134,10 +135,11 @@ class CategoryServiceTest {
     void modifyCategoryNameFailTest() {
 
         ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryNo", 1);
-        ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryName", "외국도서");
+        ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryName", "국내도서");
 
         when(categoryRepository.findById(anyInt()))
                 .thenReturn(Optional.of(category));
+
         when(categoryRepository.existsByCategoryName(anyString())).thenReturn(true);
 
         assertThatThrownBy(() -> categoryService.modifyCategory(modifyCategoryRequestDto))
@@ -165,7 +167,7 @@ class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("카테고리 수정 성공 테스트.")
+    @DisplayName("카테고리 기존 이름으로 수정 성공 테스트.")
     void modifyCategorySuccessTest() {
 
         ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryNo", 1);
@@ -173,12 +175,10 @@ class CategoryServiceTest {
 
         when(categoryRepository.findById(anyInt()))
                 .thenReturn(Optional.of(category));
-        when(categoryRepository.existsByCategoryName(anyString())).thenReturn(false);
 
         categoryService.modifyCategory(modifyCategoryRequestDto);
 
         verify(categoryRepository, times(1)).findById(anyInt());
-        verify(categoryRepository, times(1)).existsByCategoryName(anyString());
 
     }
 
@@ -226,6 +226,34 @@ class CategoryServiceTest {
                 getCategoryResponseDto.getCategoryName());
 
         verify(categoryRepository, times(1)).findCategories();
+    }
+
+
+    @Test
+    @DisplayName("최상위 카테고리만 조회 성공 테스트")
+    void getParentCategoriesSuccessTest() {
+
+        when(categoryRepository.findParentCategories()).thenReturn(List.of(getCategoryResponseDto));
+        List<GetCategoryResponseDto> categories = categoryService.getParentCategories();
+        assertThat(categories.get(0).getCategoryName()).isEqualTo(
+                getCategoryResponseDto.getCategoryName());
+
+        verify(categoryRepository, times(1)).findParentCategories();
+
+    }
+
+    @Test
+    @DisplayName("최상위 카레고리와 그 하위 카테고리 조회 성공 테스트")
+    void getParentCategoryWithChildrenSuccessTest() {
+        GetParentCategoryWithChildrenResponseDto dto = mock(
+                GetParentCategoryWithChildrenResponseDto.class);
+
+        when(categoryRepository.findParentCategoryWithChildren()).thenReturn(List.of(dto));
+        List<GetParentCategoryWithChildrenResponseDto> parentCategoryWithChildren = categoryService.getParentCategoryWithChildren();
+        assertThat(parentCategoryWithChildren.get(0)).isEqualTo(dto);
+
+        verify(categoryRepository, times(1)).findParentCategoryWithChildren();
+
     }
 
 }

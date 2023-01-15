@@ -9,11 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * 카테고리(category) 테이블.
@@ -38,7 +38,7 @@ public class Category {
     private Category parentCategory;
 
     @Column(name = "category_name", unique = true)
-    @NotNull
+    @Length(min = 1, max = 10)
     private String categoryName;
 
     @Column(name = "category_priority")
