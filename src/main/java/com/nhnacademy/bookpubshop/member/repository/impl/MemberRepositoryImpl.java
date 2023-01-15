@@ -99,7 +99,7 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public List<MemberTierStatisticsResponseDto> memberTierStatistics(){
+    public List<MemberTierStatisticsResponseDto> memberTierStatistics() {
         QMember member = QMember.member;
         QBookPubTier tier = QBookPubTier.bookPubTier;
 
@@ -173,6 +173,7 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
         Optional<List<String>> memberAuthorities = Optional.of(from(memberAuthority)
                 .innerJoin(memberAuthority.member, member)
                 .select(memberAuthority.authority.authorityName)
+                .where(member.memberId.eq(id))
                 .fetch());
 
         IdPwdMemberDto responseMember = findMember.orElseThrow(() -> new MemberNotFoundException(id));
