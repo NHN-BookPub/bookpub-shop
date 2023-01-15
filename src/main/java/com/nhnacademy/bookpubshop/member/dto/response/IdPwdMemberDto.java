@@ -12,6 +12,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class IdPwdMemberDto {
+    private Long memberNo;
     private String memberId;
     private String memberPwd;
 }

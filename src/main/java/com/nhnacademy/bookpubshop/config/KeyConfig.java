@@ -65,6 +65,7 @@ public class KeyConfig {
             CertificateException, NoSuchAlgorithmException,
             UnrecoverableKeyException, KeyManagementException {
         KeyStore clientStore = KeyStore.getInstance("PKCS12");
+
         ClassPathResource resource = new ClassPathResource("book-pub.p12");
         clientStore.load(new FileInputStream(resource.getFile()), password.toCharArray());
 

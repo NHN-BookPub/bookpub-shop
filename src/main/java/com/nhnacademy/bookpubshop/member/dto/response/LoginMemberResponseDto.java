@@ -13,6 +13,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class LoginMemberResponseDto {
+    private Long memberNo;
     private String memberId;
     private String memberPwd;
     private List<String> authorities;

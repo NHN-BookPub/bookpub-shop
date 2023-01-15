@@ -94,6 +94,9 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public LoginMemberResponseDto findByMemberLoginInfo(String id) {
         QMember member = QMember.member;
@@ -101,6 +104,7 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
 
         Optional<IdPwdMemberDto> findMember = Optional.ofNullable(from(member)
                 .select(Projections.constructor(IdPwdMemberDto.class,
+                        member.memberNo,
                         member.memberId,
                         member.memberPwd))
                 .where(member.memberId.eq(id))
@@ -115,6 +119,6 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
         List<String> authorities = memberAuthorities.orElseThrow(MemberAuthoritiesNotFoundException::new);
 
         return new LoginMemberResponseDto(
-                responseMember.getMemberId(), responseMember.getMemberPwd(), authorities);
+                responseMember.getMemberNo(), responseMember.getMemberId(), responseMember.getMemberPwd(), authorities);
     }
 }

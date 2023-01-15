@@ -21,5 +21,11 @@ public interface MemberCustomRepository {
 
     Page<MemberResponseDto> findMembers(Pageable pageable);
 
+    /**
+     * 로그인 한 멤버의 정보를 불러오는 메소드
+     *
+     * @param id 입력받은 id
+     * @return 로그인 멤버 정보 dto.
+     */
     LoginMemberResponseDto findByMemberLoginInfo(String id);
 }
