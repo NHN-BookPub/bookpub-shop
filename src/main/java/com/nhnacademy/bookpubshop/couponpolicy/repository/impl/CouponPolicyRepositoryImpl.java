@@ -34,7 +34,7 @@ public class CouponPolicyRepositoryImpl extends QuerydslRepositorySupport
                 .select(Projections.constructor(GetCouponPolicyResponseDto.class,
                         couponPolicy.policyNo,
                         couponPolicy.policyFixed,
-                        couponPolicy.discountRate,
+                        couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
                         couponPolicy.maxDiscount))
                 .fetchOne());
@@ -51,7 +51,7 @@ public class CouponPolicyRepositoryImpl extends QuerydslRepositorySupport
                 .select(Projections.constructor(GetCouponPolicyResponseDto.class,
                         couponPolicy.policyNo,
                         couponPolicy.policyFixed,
-                        couponPolicy.discountRate,
+                        couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
                         couponPolicy.maxDiscount))
                 .fetch();

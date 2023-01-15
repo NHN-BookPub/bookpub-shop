@@ -7,10 +7,14 @@ import com.nhnacademy.bookpubshop.couponpolicy.dummy.CouponPolicyDummy;
 import com.nhnacademy.bookpubshop.couponpolicy.entity.CouponPolicy;
 import com.nhnacademy.bookpubshop.couponstatecode.dummy.CouponStateCodeDummy;
 import com.nhnacademy.bookpubshop.couponstatecode.entity.CouponStateCode;
+import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetCouponTemplateResponseDto;
+import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetDetailCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dummy.CouponTemplateDummy;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontype.dummy.CouponTypeDummy;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
+import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
+import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
@@ -19,6 +23,7 @@ import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCod
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +31,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 쿠폰 템플릿 Repo Test.
@@ -51,6 +59,7 @@ class CouponTemplateRepositoryTest {
     ProductSaleStateCode productSaleStateCode;
     Category category;
     Product product;
+    File file;
 
     @BeforeEach
     void setUp() {
@@ -63,7 +72,8 @@ class CouponTemplateRepositoryTest {
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
         category = CategoryDummy.dummy();
         couponTemplate = CouponTemplateDummy.dummy(couponPolicy, couponType,
-                ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode), category, couponStateCode);
+                product, category, couponStateCode);
+        file = FileDummy.dummy(null, null, couponTemplate, null, null);
     }
 
     @Test
@@ -93,6 +103,108 @@ class CouponTemplateRepositoryTest {
         assertThat(result.get().getIssuedAt()).isEqualTo(couponTemplate.getIssuedAt());
         assertThat(result.get().isTemplateOverlapped()).isEqualTo(couponTemplate.isTemplateOverlapped());
         assertThat(result.get().isTemplateBundled()).isEqualTo(couponTemplate.isTemplateBundled());
+    }
+
+    @Test
+    @DisplayName("쿠폰템플릿 상세 단건 조회 성공 테스트")
+    void findDetailByTemplateNoTest_Success() {
+        entityManager.persist(couponPolicy);
+        entityManager.persist(couponType);
+        entityManager.persist(couponStateCode);
+        entityManager.persist(productPolicy);
+        entityManager.persist(productTypeStateCode);
+        entityManager.persist(productSaleStateCode);
+        entityManager.persist(product.getRelationProduct().get(0));
+        entityManager.persist(product);
+        entityManager.persist(category);
+        CouponTemplate save = entityManager.persist(couponTemplate);
+        File saveFile = entityManager.persist(file);
+
+        Optional<GetDetailCouponTemplateResponseDto> result = couponTemplateRepository.findDetailByTemplateNo(save.getTemplateNo());
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getTemplateNo()).isEqualTo(save.getTemplateNo());
+        assertThat(result.get().isPolicyFixed()).isEqualTo(save.getCouponPolicy().isPolicyFixed());
+        assertThat(result.get().getPricePrice()).isEqualTo(save.getCouponPolicy().getPolicyMinimum());
+        assertThat(result.get().getPolicyMinimum()).isEqualTo(save.getCouponPolicy().getPolicyMinimum());
+        assertThat(result.get().getMaxDiscount()).isEqualTo(save.getCouponPolicy().getMaxDiscount());
+        assertThat(result.get().getTypeName()).isEqualTo(save.getCouponType().getTypeName());
+        assertThat(result.get().getProductTitle()).isEqualTo(save.getProduct().getTitle());
+        assertThat(result.get().getCategoryName()).isEqualTo(save.getCategory().getCategoryName());
+        assertThat(result.get().getCodeTarget()).isEqualTo(save.getCouponStateCode().getCodeTarget());
+        assertThat(result.get().getTemplateName()).isEqualTo(save.getTemplateName());
+        assertThat(result.get().getTemplateImage()).isEqualTo(saveFile.getNameSaved().concat(saveFile.getFileExtension()));
+        assertThat(result.get().getFinishedAt()).isEqualTo(save.getFinishedAt());
+        assertThat(result.get().getIssuedAt()).isEqualTo(save.getIssuedAt());
+        assertThat(result.get().isTemplateOverlapped()).isEqualTo(save.isTemplateOverlapped());
+        assertThat(result.get().isTemplateBundled()).isEqualTo(save.isTemplateBundled());
+    }
+
+    @Test
+    @DisplayName("쿠폰템플릿 상세 리스트(페이지) 조회 성공 테스트")
+    void findDetailAllByTest_Success() {
+        entityManager.persist(couponPolicy);
+        entityManager.persist(couponType);
+        entityManager.persist(couponStateCode);
+        entityManager.persist(productPolicy);
+        entityManager.persist(productTypeStateCode);
+        entityManager.persist(productSaleStateCode);
+        entityManager.persist(product.getRelationProduct().get(0));
+        entityManager.persist(product);
+        entityManager.persist(category);
+        CouponTemplate save = entityManager.persist(couponTemplate);
+        File saveFile = entityManager.persist(file);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<GetDetailCouponTemplateResponseDto> result = couponTemplateRepository.findDetailAllBy(pageable);
+
+        List<GetDetailCouponTemplateResponseDto> content = result.getContent();
+
+        assertThat(content).isNotEmpty();
+        assertThat(content.get(0).getTemplateNo()).isEqualTo(save.getTemplateNo());
+        assertThat(content.get(0).isPolicyFixed()).isEqualTo(save.getCouponPolicy().isPolicyFixed());
+        assertThat(content.get(0).getPricePrice()).isEqualTo(save.getCouponPolicy().getPolicyMinimum());
+        assertThat(content.get(0).getPolicyMinimum()).isEqualTo(save.getCouponPolicy().getPolicyMinimum());
+        assertThat(content.get(0).getMaxDiscount()).isEqualTo(save.getCouponPolicy().getMaxDiscount());
+        assertThat(content.get(0).getTypeName()).isEqualTo(save.getCouponType().getTypeName());
+        assertThat(content.get(0).getProductTitle()).isEqualTo(save.getProduct().getTitle());
+        assertThat(content.get(0).getCategoryName()).isEqualTo(save.getCategory().getCategoryName());
+        assertThat(content.get(0).getCodeTarget()).isEqualTo(save.getCouponStateCode().getCodeTarget());
+        assertThat(content.get(0).getTemplateName()).isEqualTo(save.getTemplateName());
+        assertThat(content.get(0).getTemplateImage()).isEqualTo(saveFile.getNameSaved().concat(saveFile.getFileExtension()));
+        assertThat(content.get(0).getFinishedAt()).isEqualTo(save.getFinishedAt());
+        assertThat(content.get(0).getIssuedAt()).isEqualTo(save.getIssuedAt());
+        assertThat(content.get(0).isTemplateOverlapped()).isEqualTo(save.isTemplateOverlapped());
+        assertThat(content.get(0).isTemplateBundled()).isEqualTo(save.isTemplateBundled());
+    }
+
+    @Test
+    @DisplayName("쿠폰템플릿 리스트(페이지) 조회 성공 테스트")
+    void findAllBy_Success() {
+        entityManager.persist(couponPolicy);
+        entityManager.persist(couponType);
+        entityManager.persist(couponStateCode);
+        entityManager.persist(productPolicy);
+        entityManager.persist(productTypeStateCode);
+        entityManager.persist(productSaleStateCode);
+        entityManager.persist(product.getRelationProduct().get(0));
+        entityManager.persist(product);
+        entityManager.persist(category);
+        CouponTemplate save = entityManager.persist(couponTemplate);
+        File saveFile = entityManager.persist(file);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<GetCouponTemplateResponseDto> result = couponTemplateRepository.findAllBy(pageable);
+
+        List<GetCouponTemplateResponseDto> content = result.getContent();
+
+        assertThat(content).isNotEmpty();
+        assertThat(content.get(0).getTemplateName()).isEqualTo(save.getTemplateName());
+        assertThat(content.get(0).getTemplateImage()).isEqualTo(saveFile.getNameSaved().concat(saveFile.getFileExtension()));
+        assertThat(content.get(0).getIssuedAt()).isEqualTo(save.getIssuedAt());
+        assertThat(content.get(0).getFinishedAt()).isEqualTo(save.getFinishedAt());
     }
 
 }
