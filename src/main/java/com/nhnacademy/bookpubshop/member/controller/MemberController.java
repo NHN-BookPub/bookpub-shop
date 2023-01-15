@@ -1,8 +1,10 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
+import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
@@ -130,6 +132,18 @@ public class MemberController {
         memberService.blockMember(memberNo);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginMemberResponseDto> memberLogin(
+            @RequestBody LoginMemberRequestDto loginMemberRequestDto) {
+        String memberId = loginMemberRequestDto.getMemberId();
+
+        LoginMemberResponseDto loginInfo = memberService.loginMember(memberId);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(loginInfo);
     }
 
     /**

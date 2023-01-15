@@ -1,20 +1,20 @@
 package com.nhnacademy.bookpubshop.member.dto.response;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * front에서 온 요청에 대한 응답 DTO.
+ * 로그인 멤버의 반환 dto 클래스.
  *
  * @author : 임태원
  * @since : 1.0
  **/
-
 @Getter
 @AllArgsConstructor
-public class SignUpMemberResponseDto {
+public class LoginMemberResponseDto {
+    private Long memberNo;
     private String memberId;
-    private String memberNickname;
-    private String memberEmail;
-    private String tierName;
+    private String memberPwd;
+    private List<String> authorities;
 }

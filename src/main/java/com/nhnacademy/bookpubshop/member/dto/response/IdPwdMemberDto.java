@@ -4,17 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * front에서 온 요청에 대한 응답 DTO.
+ * 멤버 테이블에서 아이디와 비밀번호만 빼오는 DTO.
  *
  * @author : 임태원
  * @since : 1.0
  **/
-
-@Getter
 @AllArgsConstructor
-public class SignUpMemberResponseDto {
+@Getter
+public class IdPwdMemberDto {
+    private Long memberNo;
     private String memberId;
-    private String memberNickname;
-    private String memberEmail;
-    private String tierName;
+    private String memberPwd;
 }

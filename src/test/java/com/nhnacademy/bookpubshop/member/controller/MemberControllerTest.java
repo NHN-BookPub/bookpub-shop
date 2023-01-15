@@ -9,9 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
+import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
@@ -467,4 +469,26 @@ class MemberControllerTest {
         then(memberService)
                 .should().getTierStatistics();
     }
+
+    @Test
+    @DisplayName("로그인 요청을 한 멤버의 정보를 조회")
+    void memberLoginSuccessTest() throws Exception {
+        LoginMemberRequestDto login = new LoginMemberRequestDto();
+        LoginMemberResponseDto loginDummy = MemberDummy.dummy2();
+
+        ReflectionTestUtils.setField(login,"memberId","tagkdj1");
+
+        when(memberService.loginMember(anyString()))
+                .thenReturn(loginDummy);
+
+        mvc.perform(post("/api/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(login)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.memberId").value(loginDummy.getMemberId()))
+                .andExpect(jsonPath("$.memberPwd").value(loginDummy.getMemberPwd()))
+                .andExpect(jsonPath("$.memberNo").value(loginDummy.getMemberNo()));
+    }
+
 }

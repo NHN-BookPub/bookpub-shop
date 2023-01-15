@@ -2,8 +2,10 @@ package com.nhnacademy.bookpubshop.member.dummy;
 
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
+import java.util.ArrayList;
 
 /**
  * 회원 더미 클래스
@@ -27,6 +29,15 @@ public class MemberDummy {
                 .memberPhone("010-1111-2222")
                 .memberEmail("test@gmail.com")
                 .build();
+    }
+
+    public static LoginMemberResponseDto dummy2() {
+        return new LoginMemberResponseDto(
+                3L,
+                "tagkdj1",
+                "Abc123!@#",
+                new ArrayList<>()
+        );
     }
 
     public static Member dummy2(BookPubTier bookPubTier) {
