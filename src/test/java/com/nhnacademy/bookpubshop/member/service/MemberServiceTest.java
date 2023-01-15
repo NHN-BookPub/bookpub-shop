@@ -64,7 +64,6 @@ class MemberServiceTest {
     AuthorityRepository authorityRepository;
 
     SignUpMemberRequestDto signUpMemberRequestDto;
-    final String duplicate = "중복되는 항목";
     Member member;
     ModifyMemberNicknameRequestDto nicknameRequestDto;
 
@@ -282,16 +281,7 @@ class MemberServiceTest {
     @Test
     void memberDetailsSuccess() {
 
-        MemberDetailResponseDto dto = new MemberDetailResponseDto(1L,
-                "tier",
-                "nick",
-                "gender",
-                1,
-                1,
-                "010",
-                "email",
-                1L,
-                "authority");
+        MemberDetailResponseDto dto = MemberDummy.memberDetailResponseDummy();
         when(memberRepository.findByMemberDetails(anyLong()))
                 .thenReturn(Optional.of(dto));
 
@@ -302,7 +292,7 @@ class MemberServiceTest {
         assertThat(result.getPoint()).isEqualTo(dto.getPoint());
         assertThat(result.getGender()).isEqualTo(dto.getGender());
         assertThat(result.getTierName()).isEqualTo(dto.getTierName());
-        assertThat(result.getAuthority()).isEqualTo(dto.getAuthority());
+        assertThat(result.getAuthorities()).isEqualTo(dto.getAuthorities());
         assertThat(result.getEmail()).isEqualTo(dto.getEmail());
         assertThat(result.getBirthYear()).isEqualTo(dto.getBirthYear());
         assertThat(result.getBirthMonth()).isEqualTo(dto.getBirthMonth());

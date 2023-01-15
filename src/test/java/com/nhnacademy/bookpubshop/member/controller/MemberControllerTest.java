@@ -353,10 +353,7 @@ class MemberControllerTest {
     @Test
     @DisplayName("멤버 상세 조회 성공 테스트")
     void memberDetailsTest() throws Exception {
-        MemberDetailResponseDto dto = new MemberDetailResponseDto(1L,
-                "tt", "nick", "g", 1, 1,
-                "000", "Email", 1L, "authority");
-
+        MemberDetailResponseDto dto = MemberDummy.memberDetailResponseDummy();
         when(memberService.getMemberDetails(1L))
                 .thenReturn(dto);
 
@@ -372,7 +369,7 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.phone").value(dto.getPhone()))
                 .andExpect(jsonPath("$.email").value(dto.getEmail()))
                 .andExpect(jsonPath("$.point").value(objectMapper.writeValueAsString(dto.getPoint())))
-                .andExpect(jsonPath("$.authority").value(dto.getAuthority()))
+                .andExpect(jsonPath("$.authorities").value(dto.getAuthorities()))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
 
@@ -476,7 +473,7 @@ class MemberControllerTest {
         LoginMemberRequestDto login = new LoginMemberRequestDto();
         LoginMemberResponseDto loginDummy = MemberDummy.dummy2();
 
-        ReflectionTestUtils.setField(login,"memberId","tagkdj1");
+        ReflectionTestUtils.setField(login, "memberId", "tagkdj1");
 
         when(memberService.loginMember(anyString()))
                 .thenReturn(loginDummy);
