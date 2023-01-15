@@ -6,7 +6,6 @@ import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.review.entity.Review;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,7 +45,7 @@ public class File extends BaseCreateTimeEntity {
     @JoinColumn(name = "personal_inquiry_number")
     private PersonalInquiry personalInquiry;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "coupon_template_number")
     private CouponTemplate couponTemplate;
 
