@@ -35,15 +35,15 @@ jobs:
       uses: advanced-security/maven-dependency-submission-action@571e99aab1055c2e71a1e2309b9691de18d6b7d6
 
 # 첫번째 shop 서버 배포
-    - name: deploy server-1 helath check stop
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SSH_IP_2 }}
-        username: ${{ secrets.SSH_ID_2 }}
-        key: ${{ secrets.SSH_KEY_2 }}
-        port: ${{ secrets.SSH_PORT }}
-        script_stop: true
-        script: "./deploy.sh"
+#     - name: deploy server-1 helath check stop
+#       uses: appleboy/ssh-action@master
+#       with:
+#         host: ${{ secrets.SSH_IP_2 }}
+#         username: ${{ secrets.SSH_ID_2 }}
+#         key: ${{ secrets.SSH_KEY_2 }}
+#         port: ${{ secrets.SSH_PORT }}
+#         script_stop: true
+#         script: "./deploy.sh"
          
     - name: Sleep for 60 seconds(L4 죽이기용)
       uses: jakejarvis/wait-action@master
