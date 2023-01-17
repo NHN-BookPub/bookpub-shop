@@ -15,8 +15,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetCouponTemplateResponseDto {
+    private Long templateNo;
     private String templateName;
     private String templateImage;
     private LocalDateTime issuedAt;
     private LocalDateTime finishedAt;
+
+    public RestGetCouponTemplateResponseDto transform(String templateImage) {
+        return new RestGetCouponTemplateResponseDto(
+                this.templateNo,
+                this.templateName,
+                templateImage,
+                this.issuedAt,
+                this.finishedAt
+        );
+    }
 }

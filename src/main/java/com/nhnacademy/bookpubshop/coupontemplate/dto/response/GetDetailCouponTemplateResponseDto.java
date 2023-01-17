@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class GetDetailCouponTemplateResponseDto {
     private Long templateNo;
     private boolean policyFixed;
-    private Long pricePrice;
+    private Long policyPrice;
     private Long policyMinimum;
     private Long maxDiscount;
     private String typeName;
@@ -26,8 +26,28 @@ public class GetDetailCouponTemplateResponseDto {
     private String codeTarget;
     private String templateName;
     private String templateImage;
-    private LocalDateTime finishedAt;
     private LocalDateTime issuedAt;
+    private LocalDateTime finishedAt;
     private boolean templateOverlapped;
     private boolean templateBundled;
+
+    public RestGetDetailCouponTemplateResponseDto transform(String templateImage) {
+        return new RestGetDetailCouponTemplateResponseDto(
+                this.templateNo,
+                this.policyFixed,
+                this.policyPrice,
+                this.policyMinimum,
+                this.maxDiscount,
+                this.typeName,
+                this.productTitle,
+                this.categoryName,
+                this.codeTarget,
+                this.templateName,
+                templateImage,
+                this.finishedAt,
+                this.issuedAt,
+                this.templateOverlapped,
+                this.templateBundled
+        );
+    }
 }

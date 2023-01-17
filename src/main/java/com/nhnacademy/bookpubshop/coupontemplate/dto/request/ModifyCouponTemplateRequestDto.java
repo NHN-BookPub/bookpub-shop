@@ -18,9 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @NoArgsConstructor
 public class ModifyCouponTemplateRequestDto {
-    @NotNull(message = "수정할 쿠폰템플릿 번호를 기입해주세요.")
-    private Long templateNo;
-
     @NotNull(message = "정책번호를 기입해주세요.")
     private Integer policyNo;
 
