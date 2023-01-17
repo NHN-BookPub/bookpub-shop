@@ -21,6 +21,7 @@ public interface AuthorRepositoryCustom {
      * @return 저자 리스트를 반한합니다.
      */
     Page<GetAuthorResponseDto> getAuthorsByPage(Pageable pageable);
+
     /**
      * 상품 번호로 모든 저자를 반환하는 메서드입니다.
      *
