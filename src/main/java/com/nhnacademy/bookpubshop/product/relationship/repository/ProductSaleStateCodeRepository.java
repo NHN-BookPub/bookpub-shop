@@ -10,5 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since : 1.0
  **/
 public interface ProductSaleStateCodeRepository
-        extends JpaRepository<ProductSaleStateCode, Integer> {
+        extends JpaRepository<ProductSaleStateCode, Integer>, ProductSaleStateCodeRepositoryCustom {
+
 }

@@ -27,7 +27,7 @@ public class ProductSaleStateCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_sale_state_code_number")
-    private Integer codeNumber;
+    private Integer codeNo;
 
     @NotNull
     @Column(name = "product_sale_state_code_category")
