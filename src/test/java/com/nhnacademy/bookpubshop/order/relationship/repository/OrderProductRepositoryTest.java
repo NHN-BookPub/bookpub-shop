@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProductStateCode;

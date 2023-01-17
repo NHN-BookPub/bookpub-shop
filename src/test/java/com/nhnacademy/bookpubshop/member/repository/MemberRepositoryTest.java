@@ -7,9 +7,8 @@ import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dummy.MemberAuthorityDummy;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
-import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
-import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
@@ -109,7 +108,7 @@ class MemberRepositoryTest {
 
     @DisplayName("멤버 전체조회 테스트")
     @Test
-    void findMembersTest(){
+    void findMembersTest() {
         Member persist = entityManager.persist(member);
         Pageable pageable = PageRequest.of(0, 10);
 

@@ -92,7 +92,7 @@ class CategoryRepositoryTest {
 
     @Test
     @DisplayName("최상위 카테고리만 조회하는 테스트입니다.")
-    void parentCategoryGetTest(){
+    void parentCategoryGetTest() {
         String romance = "로맨스소설";
         String fantasy = "판타지소설";
         Category romanceCategory = new Category(null, category, romance, 0, true);

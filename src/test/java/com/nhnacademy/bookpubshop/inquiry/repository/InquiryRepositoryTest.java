@@ -1,10 +1,7 @@
 package com.nhnacademy.bookpubshop.inquiry.repository;
 
 import static com.nhnacademy.bookpubshop.state.InquiryState.EXCHANGE;
-import static com.nhnacademy.bookpubshop.state.ProductSaleState.SALE;
-import static com.nhnacademy.bookpubshop.state.ProductTypeState.BEST_SELLER;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import com.nhnacademy.bookpubshop.inquiry.entity.Inquiry;
 import com.nhnacademy.bookpubshop.inquirycode.entity.InquiryCode;
 import com.nhnacademy.bookpubshop.inquirycode.repository.InquiryCodeRepository;

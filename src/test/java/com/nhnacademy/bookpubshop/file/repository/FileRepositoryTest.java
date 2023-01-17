@@ -13,6 +13,7 @@ import com.nhnacademy.bookpubshop.coupontemplate.dummy.CouponTemplateDummy;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontype.dummy.CouponTypeDummy;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
+import com.nhnacademy.bookpubshop.customersupport.dummy.CustomerServiceDummy;
 import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
@@ -34,7 +35,6 @@ import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCod
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
-import com.nhnacademy.bookpubshop.customersupport.dummy.CustomerServiceDummy;
 import com.nhnacademy.bookpubshop.review.dummy.ReviewDummy;
 import com.nhnacademy.bookpubshop.review.entity.Review;
 import com.nhnacademy.bookpubshop.reviewpolicy.dummy.ReviewPolicyDummy;
@@ -96,7 +96,7 @@ class FileRepositoryTest {
     CustomerServiceStateCode customerServiceStateCode;
     CustomerService customerService;
     PersonalInquiry personalInquiry;
-    CouponType  couponType;
+    CouponType couponType;
 
     @BeforeEach
     void setUp() {
