@@ -64,14 +64,13 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<GetProductPolicyResponseDto> getProductPolicies() {
         List<ProductPolicy> productPolicies = productPolicyRepository.findAll();
         List<GetProductPolicyResponseDto> returns = new ArrayList<>();
-
-        if (productPolicies.isEmpty()) {
-            throw new NotFoundProductPolicyException();
-        }
 
         for (ProductPolicy policy : productPolicies) {
             returns.add(new GetProductPolicyResponseDto(
@@ -91,7 +90,7 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
     @Override
     @Transactional
     public GetProductPolicyResponseDto modifyProductPolicyById(Integer policyNo,
-                                                 CreateModifyProductPolicyRequestDto policy) {
+                                                               CreateModifyProductPolicyRequestDto policy) {
         ProductPolicy productPolicy =
                 productPolicyRepository
                         .findById(policyNo)
