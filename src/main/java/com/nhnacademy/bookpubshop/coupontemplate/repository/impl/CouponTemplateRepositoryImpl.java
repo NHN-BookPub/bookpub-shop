@@ -48,7 +48,7 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
         QFile file = QFile.file;
 
         return Optional.of(from(couponTemplate)
-                        .where(couponTemplate.templateNo.eq(templateNo))
+                .where(couponTemplate.templateNo.eq(templateNo))
                 .leftJoin(couponTemplate.couponPolicy, couponPolicy)
                 .leftJoin(couponTemplate.couponType, couponType)
                 .leftJoin(couponTemplate.product, product)

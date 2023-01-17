@@ -11,12 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 /**
  * 위시리스트(wishlist) 테이블.
  *
@@ -46,6 +46,7 @@ public class Wishlist {
 
     @Column(name = "wishlist_applied")
     private boolean wishlistApplied;
+
     /**
      * 위시리스트(wishlist) 테이블 Pk
      * (회원번호, 상품번호).

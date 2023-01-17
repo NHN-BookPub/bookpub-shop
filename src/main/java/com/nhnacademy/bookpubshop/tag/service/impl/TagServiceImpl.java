@@ -38,7 +38,6 @@ public class TagServiceImpl implements TagService {
 
     /**
      * {@inheritDoc}
-     *
      */
     @Override
     public List<GetTagResponseDto> getTags() {
@@ -47,7 +46,6 @@ public class TagServiceImpl implements TagService {
 
     /**
      * {@inheritDoc}
-     *
      */
     @Override
     @Transactional
@@ -63,7 +61,7 @@ public class TagServiceImpl implements TagService {
     /**
      * {@inheritDoc}
      *
-     * @throws TagNotFoundException 태그 번호를 찾지 못한 경우 발생하는 에러
+     * @throws TagNotFoundException       태그 번호를 찾지 못한 경우 발생하는 에러
      * @throws TagNameDuplicatedException 태그이름이 중복된 경우 발생하는 에러
      */
     @Override

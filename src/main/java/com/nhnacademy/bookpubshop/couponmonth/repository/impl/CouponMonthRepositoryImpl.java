@@ -33,7 +33,7 @@ public class CouponMonthRepositoryImpl extends QuerydslRepositorySupport
         QFile file = QFile.file;
 
         return Optional.of(from(couponMonth)
-                        .leftJoin(couponMonth.couponTemplate, file.couponTemplate)
+                .leftJoin(couponMonth.couponTemplate, file.couponTemplate)
                 .innerJoin(couponMonth.couponTemplate, couponTemplate)
                 .where(couponMonth.monthNo.eq(monthNo))
                 .select(Projections.constructor(GetCouponMonthResponseDto.class,

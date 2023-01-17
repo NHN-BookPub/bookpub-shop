@@ -50,7 +50,7 @@ public class CouponPolicy {
      * @param maxDiscount   최대할인가격
      */
     public void modifyCouponPolicy(boolean policyFixed, Long discountRate,
-                              Long policyMinimum, Long maxDiscount) {
+                                   Long policyMinimum, Long maxDiscount) {
         this.policyFixed = policyFixed;
         this.discountRate = discountRate;
         this.policyMinimum = policyMinimum;

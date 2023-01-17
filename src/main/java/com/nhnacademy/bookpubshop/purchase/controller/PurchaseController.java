@@ -9,7 +9,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 구매이력에 관련된 controller 입니다.
@@ -55,8 +61,8 @@ public class PurchaseController {
     /**
      * 구매이력을 수정하는 api.
      *
-     * @param purchaseNo  구매이력번호입니다.
-     * @param request 수정시 사용되는 dto 입니다.
+     * @param purchaseNo 구매이력번호입니다.
+     * @param request    수정시 사용되는 dto 입니다.
      * @return 201 반환.
      */
     @PutMapping("/{purchaseNo}")
