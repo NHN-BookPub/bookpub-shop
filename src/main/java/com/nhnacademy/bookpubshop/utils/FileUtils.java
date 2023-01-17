@@ -1,10 +1,23 @@
 package com.nhnacademy.bookpubshop.utils;
 
-import com.nhnacademy.bookpubshop.utils.exception.FileException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
+import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
+import com.nhnacademy.bookpubshop.file.entity.File;
+import com.nhnacademy.bookpubshop.file.repository.FileRepository;
+import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
+import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.review.entity.Review;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -13,38 +26,61 @@ import org.springframework.web.multipart.MultipartFile;
  * @author : 정유진
  * @since : 1.0
  **/
-public final class FileUtils {
+
+@Component
+@Slf4j
+@RequiredArgsConstructor
+public class FileUtils {
 
     @Value("${file.save.path}")
-    private static String basePath;
+    private String basePath;
 
-    private FileUtils() {
-        throw new UnsupportedOperationException();
-    }
-
+    private final FileRepository fileRepository;
 
     /**
      * 파일을 저장하는 메소드입니다.
      *
      * @param file 파일
-     * @return 저장 위치 반환
      */
-    public static String saveFile(MultipartFile file) {
-        String uuid = UUID.randomUUID().toString();
+    public void saveFile(PersonalInquiry personalInquiry,
+                         CouponTemplate couponTemplate,
+                         Product product,
+                         Review review,
+                         CustomerService customerService,
+                         MultipartFile file,
+                         String fileCategory) throws IOException {
 
-        try (
-                FileOutputStream fos = new FileOutputStream(basePath + uuid);
-                InputStream is = file.getInputStream()
-        ) {
-            int readCount;
-            byte[] buffer = new byte[1024];
-            while ((readCount = is.read(buffer)) != -1) {
-                fos.write(buffer, 0, readCount);
-            }
-        } catch (Exception ex) {
-            throw new FileException();
+        String originalFileName = file.getOriginalFilename();
+        
+        if (Objects.isNull(originalFileName)) {
+            throw new NullPointerException();
         }
+        int posImage = originalFileName.lastIndexOf(".");
+        String nameOrigin = originalFileName.substring(0, posImage);
+        String fileExtension = originalFileName.substring(posImage);
+        String nameSaved = UUID.randomUUID().toString();
 
-        return basePath + uuid;
+        file.transferTo((Paths.get(basePath + nameSaved + fileExtension)));
+
+        fileRepository.save(new File(
+                null,
+                review,
+                personalInquiry,
+                couponTemplate,
+                product,
+                customerService,
+                fileCategory,
+                nameSaved,
+                fileExtension,
+                nameOrigin,
+                nameSaved
+        ));
+    }
+
+    public String loadFile(String path) throws IOException {
+        ClassPathResource resource = new ClassPathResource("static/image/" + path);
+
+        byte[] bytes = Files.readAllBytes(resource.getFile().toPath());
+        return Base64.encodeBase64String(bytes);
     }
 }
