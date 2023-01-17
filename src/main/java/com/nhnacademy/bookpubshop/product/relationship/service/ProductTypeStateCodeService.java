@@ -43,4 +43,11 @@ public interface ProductTypeStateCodeService {
      * @return 수정된 유형 코드를 반환합니다.
      */
     GetProductTypeStateCodeResponseDto setUsedTypeCodeById(Integer id, boolean used);
+
+    /**
+     * 사용중인 유형상태코드 전체를 조회합니다.
+     *
+     * @return 사용중인 유형코드
+     */
+    List<GetProductTypeStateCodeResponseDto> getAllTypeStateCodesUsed();
 }
