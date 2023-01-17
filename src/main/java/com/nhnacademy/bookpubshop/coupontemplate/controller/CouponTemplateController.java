@@ -1,10 +1,13 @@
 package com.nhnacademy.bookpubshop.coupontemplate.controller;
 
+import com.nhnacademy.bookpubshop.coupontemplate.dto.request.CreateCouponTemplateRequestDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.request.ModifyCouponTemplateRequestDto;
-import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetDetailCouponTemplateResponseDto;
+import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetCouponTemplateResponseDto;
+import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetDetailCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.service.CouponTemplateService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import java.io.IOException;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,28 +40,28 @@ public class CouponTemplateController {
     private final CouponTemplateService couponTemplateService;
 
     /**
-     * 쿠폰템플릿의 자세한 정보를 조회하는 메서드입니다.
+     * 쿠폰템플릿의 자세한 정보를 조회하는 메서드입니다. (관리자용)
      *
      * @param templateNo 조회할 쿠폰템플릿 번호
      * @return 성공 경우 200, 쿠폰템플릿의 자세한 정보 응답
      */
     @GetMapping("/coupon-templates/details/{templateNo}")
-    public ResponseEntity<GetDetailCouponTemplateResponseDto> couponTemplateDetail(
-            @PathVariable("templateNo") Long templateNo) {
+    public ResponseEntity<RestGetDetailCouponTemplateResponseDto> couponTemplateDetail(
+            @PathVariable("templateNo") Long templateNo) throws IOException {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(couponTemplateService.getDetailCouponTemplate(templateNo));
     }
 
     /**
-     * 전체 쿠폰템플릿의 자세한 정보를 조회하는 메서드입니다.
+     * 전체 쿠폰템플릿의 자세한 정보를 조회하는 메서드입니다. (관리자용)
      *
      * @param pageable 페이지보
      * @return 성공 경우 200, 쿠폰템플릿의 자세한 정보 페이지 응답
      */
     @GetMapping("/coupon-templates/details")
     public ResponseEntity<PageResponse<GetDetailCouponTemplateResponseDto>>
-        couponTemplateDetailList(Pageable pageable) {
+    couponTemplateDetailList(Pageable pageable) {
         Page<GetDetailCouponTemplateResponseDto> content =
                 couponTemplateService.getDetailCouponTemplates(pageable);
 
@@ -68,15 +71,17 @@ public class CouponTemplateController {
     }
 
     /**
-     * 전체 쿠폰템플릿을 조회하는 메서드입니다.
+     * 전체 쿠폰템플릿을 조회하는 메서드입니다. (관리자용)
      *
      * @param pageable 페이지
      * @return 성공 경우 200, 쿠폰템플릿의 정보 페이지 응답
      */
     @GetMapping("/coupon-templates")
-    public ResponseEntity<PageResponse<GetCouponTemplateResponseDto>>
-        couponTemplateList(Pageable pageable) {
-        Page<GetCouponTemplateResponseDto> content =
+    public ResponseEntity<PageResponse<RestGetCouponTemplateResponseDto>>
+    couponTemplateList(Pageable pageable) throws IOException {
+
+        log.info(" controller = {} ", pageable);
+        Page<RestGetCouponTemplateResponseDto> content =
                 couponTemplateService.getCouponTemplates(pageable);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -90,19 +95,12 @@ public class CouponTemplateController {
      *
      * @return 성공 경우 201
      */
-    //    @PostMapping("/coupon-templates")
-    //    public ResponseEntity<Void> couponTemplateAdd(
-    //    @Valid @RequestPart("createRequestDto") CreateCouponTemplateRequestDto request,
-    //                                                  @RequestPart("image") MultipartFile image) {
-    //        log.info("request = {}", request);
-    //        couponTemplateService.createCouponTemplate(request, image);
-    //
-    //        return ResponseEntity.status(HttpStatus.CREATED).build();
-    //    }
-    @PostMapping(value = "/coupon-templates", consumes = {"multipart/form-data"})
-    public ResponseEntity<Void> couponTemplateAdd(@RequestParam("image") MultipartFile image) {
-        log.info("request = {}", image.getSize());
-        //couponTemplateService.createCouponTemplate(request, image);
+    @PostMapping(value = "/coupon-templates")
+    public ResponseEntity<Void> couponTemplateAdd(
+            @Valid @RequestPart("createRequestDto") CreateCouponTemplateRequestDto request,
+            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+
+        couponTemplateService.createCouponTemplate(request, image);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -113,10 +111,11 @@ public class CouponTemplateController {
      * @param request 수정할 정보를 담은 Dto
      * @return 성공 경우 201
      */
-    @PutMapping("/coupon-templates")
+    @PutMapping("/coupon-templates/{templateNo}")
     public ResponseEntity<Void> couponTemplateModify(
+            @PathVariable("templateNo") Long templateNo,
             @Valid @RequestBody ModifyCouponTemplateRequestDto request) {
-        couponTemplateService.modifyCouponTemplate(request);
+        couponTemplateService.modifyCouponTemplate(templateNo, request);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

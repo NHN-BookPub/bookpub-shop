@@ -137,6 +137,7 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
         List<GetCouponTemplateResponseDto> content = from(couponTemplate)
                 .leftJoin(file).on(couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
                 .select(Projections.constructor(GetCouponTemplateResponseDto.class,
+                        couponTemplate.templateNo,
                         couponTemplate.templateName,
                         file.nameSaved.concat(file.fileExtension).as(TEMPLATE_IMAGE),
                         couponTemplate.issuedAt,
