@@ -1,18 +1,17 @@
 package com.nhnacademy.bookpubshop.product.controller;
 
-import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
-import com.nhnacademy.bookpubshop.product.dto.GetProductDetailResponseDto;
-import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
-import lombok.RequiredArgsConstructor;
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,7 +58,7 @@ public class ProductController {
      */
     @PostMapping
     public ResponseEntity<Void> createProduct(
-            CreateProductRequestDto request) {
+            @Valid @RequestBody CreateProductRequestDto request) {
         productService.createProduct(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -74,7 +73,8 @@ public class ProductController {
      * @return 상품 정보를 반환합니다.
      */
     @GetMapping("/{productNo}")
-    public ResponseEntity<GetProductDetailResponseDto> getProductDetailById(@PathVariable Long productNo) {
+    public ResponseEntity<GetProductDetailResponseDto> getProductDetailById(
+            @PathVariable Long productNo) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productService.getProductDetailById(productNo));
@@ -102,7 +102,7 @@ public class ProductController {
      * 상품을 수정합니다.
      *
      * @param productNo 상품번호입니다.
-     * @param request 수정할 내용의 상품 Dto입니다.
+     * @param request   수정할 내용의 상품 Dto입니다.
      * @return 성공시 201을 반환합니다.
      */
     @PutMapping("/{productNo}")
@@ -119,14 +119,12 @@ public class ProductController {
      * 상품 삭제 여부만을 수정합니다.
      *
      * @param id 상품 번호입니다.
-     * @param deleted 삭제 여부입니다.
      * @return 성공시 201을 반환합니다.
      */
-    @DeleteMapping("/{id}")
+    @PutMapping("/deleted/{id}")
     public ResponseEntity<Void> setDeletedProduct(
-            @PathVariable Long id,
-            @RequestParam boolean deleted) {
-        productService.setDeleteProduct(id, deleted);
+            @PathVariable Long id) {
+        productService.setDeleteProduct(id);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
                 .build();

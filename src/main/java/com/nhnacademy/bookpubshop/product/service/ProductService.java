@@ -1,8 +1,8 @@
 package com.nhnacademy.bookpubshop.product.service;
 
-import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
-import com.nhnacademy.bookpubshop.product.dto.GetProductDetailResponseDto;
-import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public interface ProductService {
      * @param request 상품 생성시 필요한 dto.
      * @return 생성된 상품의 상세 정보를 반환합니다.
      */
-    GetProductDetailResponseDto createProduct(CreateProductRequestDto request);
+    void createProduct(CreateProductRequestDto request);
 
     /**
      * 모든 상품을 페이징 처리하여 조회합니다. 등록기준 asc 입니다.
@@ -52,17 +52,16 @@ public interface ProductService {
      * 상품을 수정합니다.
      *
      * @param request 수정시 사용하는 dto.
-     * @param id 상품 번호입니다.
+     * @param id      상품 번호입니다.
      * @return 수정된 상품의 상세정보를 반환합니다.
-     * @author : 여운석
+     * @author : 여운석, 박경서
      */
     void modifyProduct(CreateProductRequestDto request, Long id);
 
     /**
      * 상품 삭제 여부를 설정합니다.
      *
-     * @param id      상품번호입니다.
-     * @param deleted 삭제여부입니다.
+     * @param id 상품번호입니다.
      */
-    void setDeleteProduct(Long id, boolean deleted);
+    void setDeleteProduct(Long id);
 }
