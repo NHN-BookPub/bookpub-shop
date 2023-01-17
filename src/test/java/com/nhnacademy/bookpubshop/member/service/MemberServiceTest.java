@@ -5,21 +5,27 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
+
+import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
+import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.EmailAlreadyExistsException;
 import com.nhnacademy.bookpubshop.member.exception.IdAlreadyExistsException;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.exception.NicknameAlreadyExistsException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.member.service.impl.MemberServiceImpl;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
-import com.nhnacademy.bookpubshop.tier.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +59,10 @@ class MemberServiceTest {
     MemberRepository memberRepository;
     @MockBean
     TierRepository tierRepository;
+
+    @MockBean
+    AuthorityRepository authorityRepository;
+
     SignUpMemberRequestDto signUpMemberRequestDto;
     final String duplicate = "중복되는 항목";
     Member member;
@@ -94,6 +104,8 @@ class MemberServiceTest {
                 .thenReturn(false);
         when(memberRepository.existsByMemberNickname(anyString()))
                 .thenReturn(false);
+        when(authorityRepository.findByAuthorityName(anyString()))
+                .thenReturn(Optional.of(AuthorityDummy.dummy()));
 
         memberService.signup(signUpMemberRequestDto);
 
@@ -116,7 +128,8 @@ class MemberServiceTest {
                 .thenReturn(true);
         when(memberRepository.existsByMemberNickname(anyString()))
                 .thenReturn(false);
-
+        when(authorityRepository.findByAuthorityName(anyString()))
+                .thenReturn(Optional.of(AuthorityDummy.dummy()));
         assertThatThrownBy(() -> memberService.signup(signUpMemberRequestDto))
                 .isInstanceOf(IdAlreadyExistsException.class)
                 .hasMessageContaining(IdAlreadyExistsException.MESSAGE);
@@ -133,6 +146,8 @@ class MemberServiceTest {
                 .thenReturn(false);
         when(memberRepository.existsByMemberNickname(anyString()))
                 .thenReturn(true);
+        when(authorityRepository.findByAuthorityName(anyString()))
+                .thenReturn(Optional.of(AuthorityDummy.dummy()));
 
         assertThatThrownBy(() -> memberService.signup(signUpMemberRequestDto))
                 .isInstanceOf(NicknameAlreadyExistsException.class)
@@ -150,6 +165,8 @@ class MemberServiceTest {
                 .thenReturn(false);
         when(memberRepository.existsByMemberNickname(anyString()))
                 .thenReturn(false);
+        when(authorityRepository.findByAuthorityName(anyString()))
+                .thenReturn(Optional.of(AuthorityDummy.dummy()));
 
         assertThatThrownBy(() -> memberService.signup(signUpMemberRequestDto))
                 .isInstanceOf(EmailAlreadyExistsException.class)
@@ -371,5 +388,56 @@ class MemberServiceTest {
         memberService.deleteMember(1L);
 
         then(memberRepository).should().findById(1L);
+    }
+
+    @DisplayName("로그인 멤버 정보전달")
+    @Test
+    void loginMemberTest() {
+        LoginMemberResponseDto loginMemberInfo = MemberDummy.dummy2();
+
+        when(memberRepository.findByMemberLoginInfo(anyString()))
+                .thenReturn(loginMemberInfo);
+
+        LoginMemberResponseDto result = memberService.loginMember("test");
+
+        assertThat(result.getMemberId()).isEqualTo(loginMemberInfo.getMemberId());
+        assertThat(result.getMemberPwd()).isEqualTo(loginMemberInfo.getMemberPwd());
+        assertThat(result.getAuthorities()).isEqualTo(loginMemberInfo.getAuthorities());
+        assertThat(result.getMemberNo()).isEqualTo(loginMemberInfo.getMemberNo());
+
+        verify(memberRepository, times(1))
+                .findByMemberLoginInfo("test");
+    }
+
+
+    @DisplayName("멤버별 통계 조회")
+    @Test
+    void getMemberStatisticsTest() {
+        //given
+        MemberStatisticsResponseDto dto = MemberDummy.memberStatisticsDummy();
+        when(memberRepository.memberStatistics())
+                .thenReturn(dto);
+
+        MemberStatisticsResponseDto result = memberService.getMemberStatistics();
+
+        assertThat(result.getBlockMemberCnt()).isEqualTo(dto.getBlockMemberCnt());
+        assertThat(result.getMemberCnt()).isEqualTo(dto.getMemberCnt());
+        assertThat(result.getCurrentMemberCnt()).isEqualTo(dto.getCurrentMemberCnt());
+        assertThat(result.getDeleteMemberCnt()).isEqualTo(dto.getDeleteMemberCnt());
+    }
+
+    @DisplayName("멤버별 등급별 통계 조회")
+    @Test
+    void getMemberTierStatisticsTest() {
+        MemberTierStatisticsResponseDto dto = MemberDummy.memberTierStatisticsDummy();
+        when(memberRepository.memberTierStatistics())
+                .thenReturn(List.of(dto));
+
+        List<MemberTierStatisticsResponseDto> result = memberService.getTierStatistics();
+
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getTierCnt()).isEqualTo(dto.getTierCnt());
+        assertThat(result.get(0).getTierValue()).isEqualTo(dto.getTierValue());
+        assertThat(result.get(0).getTierName()).isEqualTo(dto.getTierName());
     }
 }

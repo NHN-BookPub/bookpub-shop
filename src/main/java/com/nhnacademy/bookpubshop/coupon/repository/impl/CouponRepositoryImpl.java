@@ -42,18 +42,21 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
         QFile file = QFile.file;
 
         return Optional.of(from(coupon)
-                .where(coupon.couponNo.eq(couponNo))
-                .leftJoin(coupon.couponTemplate, file.couponTemplate)
+                        .where(coupon.couponNo.eq(couponNo))
+                .leftJoin(file)
+                        .on(coupon.couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
                 .innerJoin(coupon.couponTemplate, couponTemplate)
-                .innerJoin(couponTemplate.couponPolicy, couponPolicy)
+                .innerJoin(couponPolicy)
+                        .on(coupon.couponTemplate.couponPolicy.policyNo
+                                .eq(couponTemplate.couponPolicy.policyNo))
                 .innerJoin(coupon.member, member)
                 .select(Projections.constructor(GetCouponResponseDto.class,
                         coupon.couponNo,
                         member.memberId,
                         couponTemplate.templateName,
-                        file.nameSaved.concat(file.fileExtension),
+                        file.nameSaved.concat(file.fileExtension).as("templateImage"),
                         couponPolicy.policyFixed,
-                        couponPolicy.discountRate,
+                        couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
                         couponPolicy.maxDiscount,
                         couponTemplate.finishedAt,
@@ -72,13 +75,15 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
         QMember member = QMember.member;
         QFile file = QFile.file;
 
-        JPQLQuery<Long> count = from(coupon)
-                .select(coupon.count());
+        JPQLQuery<Long> count = from(coupon).select(coupon.count());
 
         List<GetCouponResponseDto> content = from(coupon)
-                .leftJoin(coupon.couponTemplate, file.couponTemplate)
+                .leftJoin(file)
+                    .on(coupon.couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
                 .innerJoin(coupon.couponTemplate, couponTemplate)
-                .innerJoin(couponTemplate.couponPolicy, couponPolicy)
+                .innerJoin(couponPolicy)
+                    .on(coupon.couponTemplate.couponPolicy.policyNo
+                            .eq(couponTemplate.couponPolicy.policyNo))
                 .innerJoin(coupon.member, member)
                 .select(Projections.constructor(GetCouponResponseDto.class,
                         coupon.couponNo,
@@ -86,7 +91,7 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                         couponTemplate.templateName,
                         file.nameSaved.concat(file.fileExtension),
                         couponPolicy.policyFixed,
-                        couponPolicy.discountRate,
+                        couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
                         couponPolicy.maxDiscount,
                         couponTemplate.finishedAt,

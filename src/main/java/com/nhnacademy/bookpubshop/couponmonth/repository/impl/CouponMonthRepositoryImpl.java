@@ -32,15 +32,15 @@ public class CouponMonthRepositoryImpl extends QuerydslRepositorySupport
         QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
         QFile file = QFile.file;
 
-        return Optional.of(from(couponMonth)
-                .leftJoin(couponMonth.couponTemplate, file.couponTemplate)
-                .innerJoin(couponMonth.couponTemplate, couponTemplate)
-                .where(couponMonth.monthNo.eq(monthNo))
+        return Optional.ofNullable(from(couponMonth)
+                .join(couponMonth.couponTemplate, couponTemplate)
+                .leftJoin(file)
+                    .on(couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
                 .select(Projections.constructor(GetCouponMonthResponseDto.class,
                         couponMonth.monthNo,
                         couponTemplate.templateNo,
                         couponTemplate.templateName,
-                        file.nameSaved.concat(file.fileExtension),
+                        file.nameSaved.concat(file.fileExtension).as("templateImage"),
                         couponMonth.openedAt,
                         couponMonth.monthQuantity))
                 .fetchOne());
@@ -56,7 +56,9 @@ public class CouponMonthRepositoryImpl extends QuerydslRepositorySupport
         QFile file = QFile.file;
 
         return from(couponMonth)
-                .innerJoin(couponMonth.couponTemplate, couponTemplate)
+                .join(couponMonth.couponTemplate, couponTemplate)
+                .leftJoin(file)
+                    .on(couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
                 .select(Projections.constructor(GetCouponMonthResponseDto.class,
                         couponMonth.monthNo,
                         couponTemplate.templateNo,

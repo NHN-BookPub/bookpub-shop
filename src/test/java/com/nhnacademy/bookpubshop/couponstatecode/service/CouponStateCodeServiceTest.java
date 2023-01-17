@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 쿠폰상태코드 service 테스트
@@ -40,7 +41,10 @@ class CouponStateCodeServiceTest {
     @DisplayName("쿠폰상태코드 get 테스트")
     void getCouponStateCode() {
         GetCouponStateCodeResponseDto dto =
-                new GetCouponStateCodeResponseDto(1, "test_target");
+                new GetCouponStateCodeResponseDto();
+        ReflectionTestUtils.setField(dto, "codeNo", 1);
+        ReflectionTestUtils.setField(dto, "codeTarget", "test_target");
+
 
         given(couponStateCodeRepository.findByCodeNoAndCodeUsedTrue(anyInt())).willReturn(Optional.of(dto));
 

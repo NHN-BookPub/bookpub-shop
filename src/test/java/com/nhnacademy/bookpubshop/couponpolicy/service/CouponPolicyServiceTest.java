@@ -60,7 +60,7 @@ class CouponPolicyServiceTest {
     @DisplayName("쿠폰정책 등록 성공 테스트")
     void addCouponPolicySuccess_Test() {
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "discountRate", 1000L);
+        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyPrice", 1000L);
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyMinimum", 1000L);
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "maxDiscount", 1000L);
 
@@ -70,7 +70,7 @@ class CouponPolicyServiceTest {
 
         CouponPolicy result = captor.getValue();
         assertThat(result.isPolicyFixed()).isEqualTo(createCouponPolicyRequestDto.isPolicyFixed());
-        assertThat(result.getDiscountRate()).isEqualTo(createCouponPolicyRequestDto.getDiscountRate());
+        assertThat(result.getPolicyPrice()).isEqualTo(createCouponPolicyRequestDto.getPolicyPrice());
         assertThat(result.getPolicyMinimum()).isEqualTo(createCouponPolicyRequestDto.getPolicyMinimum());
         assertThat(result.getMaxDiscount()).isEqualTo(createCouponPolicyRequestDto.getMaxDiscount());
     }
@@ -80,7 +80,7 @@ class CouponPolicyServiceTest {
     void modifyCouponPolicySuccess_Test() {
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyNo", 1);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "discountRate", 1000L);
+        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyPrice", 1000L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyMinimum", 1000L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "maxDiscount", 1000L);
 
@@ -96,7 +96,7 @@ class CouponPolicyServiceTest {
     void modifyCouponPolicyFail_Test() {
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyNo", 1);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "discountRate", 1000L);
+        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyPrice", 1000L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyMinimum", 1000L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "maxDiscount", 1000L);
 
@@ -112,7 +112,7 @@ class CouponPolicyServiceTest {
     void getCouponPolicySuccess_Test() {
         ReflectionTestUtils.setField(getCouponPolicyResponseDto, "policyNo", 1);
         ReflectionTestUtils.setField(getCouponPolicyResponseDto, "policyFixed", true);
-        ReflectionTestUtils.setField(getCouponPolicyResponseDto, "discountRate", 1000L);
+        ReflectionTestUtils.setField(getCouponPolicyResponseDto, "policyPrice", 1000L);
         ReflectionTestUtils.setField(getCouponPolicyResponseDto, "policyMinimum", 1000L);
         ReflectionTestUtils.setField(getCouponPolicyResponseDto, "maxDiscount", 1000L);
 
@@ -122,7 +122,7 @@ class CouponPolicyServiceTest {
 
         assertThat(result.getPolicyNo()).isEqualTo(getCouponPolicyResponseDto.getPolicyNo());
         assertThat(result.isPolicyFixed()).isEqualTo(getCouponPolicyResponseDto.isPolicyFixed());
-        assertThat(result.getDiscountRate()).isEqualTo(getCouponPolicyResponseDto.getDiscountRate());
+        assertThat(result.getPolicyPrice()).isEqualTo(getCouponPolicyResponseDto.getPolicyPrice());
         assertThat(result.getPolicyMinimum()).isEqualTo(getCouponPolicyResponseDto.getPolicyMinimum());
         assertThat(result.getMaxDiscount()).isEqualTo(getCouponPolicyResponseDto.getMaxDiscount());
 
@@ -144,7 +144,7 @@ class CouponPolicyServiceTest {
     void getCouponPolicies() {
         ReflectionTestUtils.setField(getCouponPolicyResponseDto, "policyNo", 1);
         ReflectionTestUtils.setField(getCouponPolicyResponseDto, "policyFixed", true);
-        ReflectionTestUtils.setField(getCouponPolicyResponseDto, "discountRate", 1000L);
+        ReflectionTestUtils.setField(getCouponPolicyResponseDto, "policyPrice", 1000L);
         ReflectionTestUtils.setField(getCouponPolicyResponseDto, "policyMinimum", 1000L);
         ReflectionTestUtils.setField(getCouponPolicyResponseDto, "maxDiscount", 1000L);
 
@@ -154,7 +154,7 @@ class CouponPolicyServiceTest {
 
         assertThat(result.get(0).getPolicyNo()).isEqualTo(getCouponPolicyResponseDto.getPolicyNo());
         assertThat(result.get(0).isPolicyFixed()).isEqualTo(getCouponPolicyResponseDto.isPolicyFixed());
-        assertThat(result.get(0).getDiscountRate()).isEqualTo(getCouponPolicyResponseDto.getDiscountRate());
+        assertThat(result.get(0).getPolicyPrice()).isEqualTo(getCouponPolicyResponseDto.getPolicyPrice());
         assertThat(result.get(0).getPolicyMinimum()).isEqualTo(getCouponPolicyResponseDto.getPolicyMinimum());
         assertThat(result.get(0).getMaxDiscount()).isEqualTo(getCouponPolicyResponseDto.getMaxDiscount());
 

@@ -61,7 +61,7 @@ class CouponPolicyControllerTest {
     @DisplayName("쿠폰정책 생성 성공 테스트")
     void couponPolicyAddSuccess_Test() throws Exception {
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "discountRate", 1000L);
+        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyPrice", 1000L);
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyMinimum", 1000L);
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "maxDiscount", 1000L);
 
@@ -79,7 +79,7 @@ class CouponPolicyControllerTest {
     @DisplayName("쿠폰정책 생성 validation 검증 실패 테스트_NotNull 컬럼이 null일 때")
     void couponPolicyAddFail_Test_null() throws Exception {
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "discountRate", null);
+        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyPrice", null);
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyMinimum", null);
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "maxDiscount", 1000L);
 
@@ -96,7 +96,7 @@ class CouponPolicyControllerTest {
     @DisplayName("쿠폰정책 생성 validation 검증 실패 테스트_discountRate 가 음수일 때")
     void couponPolicyAddFail_Test_DiscountRate() throws Exception {
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "discountRate", -10L);
+        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyPrice", -10L);
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyMinimum", 1000L);
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "maxDiscount", 1000L);
 
@@ -113,7 +113,7 @@ class CouponPolicyControllerTest {
     @DisplayName("쿠폰정책 생성 validation 검증 실패 테스트_policyMinimum 가 음수일 때")
     void couponPolicyAddFail_Test_PolicyMinimum() throws Exception {
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "discountRate", 1000L);
+        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyPrice", 1000L);
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyMinimum", -10L);
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "maxDiscount", 1000L);
 
@@ -130,7 +130,7 @@ class CouponPolicyControllerTest {
     @DisplayName("쿠폰정책 생성 validation 검증 실패 테스트_maxDiscount 가 음수일 때")
     void couponPolicyAddFail_Test_MaxDiscount() throws Exception {
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "discountRate", 1000L);
+        ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyPrice", 1000L);
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "policyMinimum", 1000L);
         ReflectionTestUtils.setField(createCouponPolicyRequestDto, "maxDiscount", -10L);
 
@@ -148,7 +148,7 @@ class CouponPolicyControllerTest {
     void couponPolicyModifySuccess_Test() throws Exception {
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyNo", 1);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "discountRate", 1000L);
+        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyPrice", 1000L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyMinimum", 1000L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "maxDiscount", 1000L);
 
@@ -167,7 +167,7 @@ class CouponPolicyControllerTest {
     void couponPolicyModifyFail_Test_null() throws Exception {
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyNo", 1);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "discountRate", null);
+        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyPrice", null);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyMinimum", null);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "maxDiscount", 1000L);
 
@@ -185,7 +185,7 @@ class CouponPolicyControllerTest {
     void couponPolicyModifyFail_Test_discountRate() throws Exception {
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyNo", 1);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "discountRate", -10L);
+        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyPrice", -10L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyMinimum", 1000L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "maxDiscount", 1000L);
 
@@ -203,7 +203,7 @@ class CouponPolicyControllerTest {
     void couponPolicyModifyFail_Test_policyMinimum() throws Exception {
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyNo", 1);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "discountRate", 1000L);
+        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyPrice", 1000L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyMinimum", -10L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "maxDiscount", 1000L);
 
@@ -221,7 +221,7 @@ class CouponPolicyControllerTest {
     void couponPolicyModifyFail_Test_maxDiscount() throws Exception {
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyNo", 1);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "discountRate", 1000L);
+        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyPrice", 1000L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyMinimum", 1000L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "maxDiscount", -10L);
 
@@ -239,7 +239,7 @@ class CouponPolicyControllerTest {
     void couponPolicyModifyFail_Test_PolicyNo() throws Exception {
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyNo", null);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyFixed", true);
-        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "discountRate", 1000L);
+        ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyPrice", 1000L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "policyMinimum", 1000L);
         ReflectionTestUtils.setField(modifyCouponPolicyRequestDto, "maxDiscount", 1000L);
 
@@ -266,7 +266,7 @@ class CouponPolicyControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.policyNo", equalTo(dto.getPolicyNo())))
                 .andExpect(jsonPath("$.policyFixed", equalTo(dto.isPolicyFixed())))
-                .andExpect(jsonPath("$.discountRate", is(dto.getDiscountRate()), Long.class))
+                .andExpect(jsonPath("$.policyPrice", is(dto.getPolicyPrice()), Long.class))
                 .andExpect(jsonPath("$.policyMinimum", is(dto.getPolicyMinimum()), Long.class))
                 .andExpect(jsonPath("$.maxDiscount", is(dto.getMaxDiscount()), Long.class));
     }
@@ -285,7 +285,7 @@ class CouponPolicyControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].policyNo", equalTo(dto.getPolicyNo())))
                 .andExpect(jsonPath("$[0].policyFixed", equalTo(dto.isPolicyFixed())))
-                .andExpect(jsonPath("$[0].discountRate", is(dto.getDiscountRate()), Long.class))
+                .andExpect(jsonPath("$[0].policyPrice", is(dto.getPolicyPrice()), Long.class))
                 .andExpect(jsonPath("$[0].policyMinimum", is(dto.getPolicyMinimum()), Long.class))
                 .andExpect(jsonPath("$[0].maxDiscount", is(dto.getMaxDiscount()), Long.class));
     }

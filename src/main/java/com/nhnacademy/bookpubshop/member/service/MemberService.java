@@ -3,16 +3,20 @@ package com.nhnacademy.bookpubshop.member.service;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
  * 회원 레포지토리의 메소드를 이용하여 구현한 서버스입니다.
  *
- * @author : 임태원
+ * @author : 임태원, 유호철
  * @since : 1.0
  */
 public interface MemberService {
@@ -70,4 +74,26 @@ public interface MemberService {
      * @param memberNo 멤버 번호기입.
      */
     void deleteMember(Long memberNo);
+
+    /**
+     * 멤버의 등급별 통계를 얻기위한 메서드입니다.
+     *
+     * @return the tier statistics
+     */
+    List<MemberTierStatisticsResponseDto> getTierStatistics();
+
+    /**
+     * 멤버의 통계를 얻기위한 메서드입니다.
+     *
+     * @return the member statistics
+     */
+    MemberStatisticsResponseDto getMemberStatistics();
+
+    /**
+     * 멤버가 로그인할 때 사용되는 메서드입니다.
+     *
+     * @param loginId 멤버 로그인 아이디.
+     * @return 로그인 성공정보 리턴.
+     */
+    LoginMemberResponseDto loginMember(String loginId);
 }

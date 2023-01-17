@@ -3,7 +3,6 @@ package com.nhnacademy.bookpubshop.couponmonth.dto.request;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,11 +15,10 @@ import org.springframework.format.annotation.DateTimeFormat;
  * @since : 1.0
  **/
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class ModifyCouponMonthRequestDto {
     @NotNull(message = "수정할 이달의 쿠폰 번호를 입력하세요.")
-    @PositiveOrZero
     private Long monthNo;
 
     @NotNull(message = "쿠폰 오픈 시간을 입력하세요.")

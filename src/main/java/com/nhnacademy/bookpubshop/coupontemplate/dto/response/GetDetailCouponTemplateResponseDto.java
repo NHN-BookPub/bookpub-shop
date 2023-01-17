@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.coupontemplate.dto.response;
 
-import com.nhnacademy.bookpubshop.couponpolicy.dto.response.GetCouponPolicyResponseDto;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +16,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GetDetailCouponTemplateResponseDto {
     private Long templateNo;
-    private GetCouponPolicyResponseDto couponPolicy;
+    private boolean policyFixed;
+    private Long pricePrice;
+    private Long policyMinimum;
+    private Long maxDiscount;
     private String typeName;
     private String productTitle;
     private String categoryName;

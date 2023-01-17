@@ -32,8 +32,8 @@ public class CouponPolicy {
     @Column(name = "coupon_policy_fixed")
     private boolean policyFixed;
 
-    @Column(name = "coupon_policy_discount_rate", nullable = false)
-    private Long discountRate;
+    @Column(name = "coupon_policy_price", nullable = false)
+    private Long policyPrice;
 
     @Column(name = "coupon_policy_minimum", nullable = false)
     private Long policyMinimum;
@@ -45,14 +45,14 @@ public class CouponPolicy {
      * 쿠폰정책 수정을 위한 메소드입니다.
      *
      * @param policyFixed   정액여부
-     * @param discountRate  할인가격
+     * @param policyPrice  정책가(정책률)
      * @param policyMinimum 최소주문금액
      * @param maxDiscount   최대할인가격
      */
-    public void modifyCouponPolicy(boolean policyFixed, Long discountRate,
-                                   Long policyMinimum, Long maxDiscount) {
+    public void modifyCouponPolicy(boolean policyFixed, Long policyPrice,
+                              Long policyMinimum, Long maxDiscount) {
         this.policyFixed = policyFixed;
-        this.discountRate = discountRate;
+        this.policyPrice = policyPrice;
         this.policyMinimum = policyMinimum;
         this.maxDiscount = maxDiscount;
     }
