@@ -31,7 +31,7 @@ public class GetCategoryResponseDto {
     }
 
     public GetCategoryResponseDto(Integer categoryNo, String categoryName, Integer categoryPriority,
-            boolean categoryDisplayed) {
+                                  boolean categoryDisplayed) {
         this.categoryNo = categoryNo;
         this.categoryName = categoryName;
         this.categoryPriority = categoryPriority;
