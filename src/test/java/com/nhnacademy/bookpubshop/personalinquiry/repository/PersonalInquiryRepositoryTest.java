@@ -35,7 +35,7 @@ class PersonalInquiryRepositoryTest {
     PersonalInquiry personalInquiry;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         bookPubTier = TierDummy.dummy();
         member = MemberDummy.dummy(bookPubTier);
         personalInquiry = PersonalInquiryDummy.dummy(member);
@@ -46,7 +46,7 @@ class PersonalInquiryRepositoryTest {
 
     @Test
     @DisplayName(value = "1:1상품문의 save 테스트")
-    void personalInquirySaveTest(){
+    void personalInquirySaveTest() {
         LocalDateTime now = LocalDateTime.now();
 
         entityManager.persist(personalInquiry);

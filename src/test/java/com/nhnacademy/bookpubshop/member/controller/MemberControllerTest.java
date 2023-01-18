@@ -1,20 +1,21 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
+import com.nhnacademy.bookpubshop.member.dto.request.IdRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.NickRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
@@ -147,7 +148,8 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "address", "광주");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
-        when(memberService.signup(any(SignUpMemberRequestDto.class))).thenReturn(signUpMemberResponseDto);
+        when(memberService.signup(any())).thenReturn(signUpMemberResponseDto);
+
         //when && then
         mvc.perform(post(path)
                         .content(objectMapper.writeValueAsString(signUpMemberRequestDto))
@@ -488,6 +490,40 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.memberId").value(loginDummy.getMemberId()))
                 .andExpect(jsonPath("$.memberPwd").value(loginDummy.getMemberPwd()))
                 .andExpect(jsonPath("$.memberNo").value(loginDummy.getMemberNo()));
+    }
+
+    @Test
+    @DisplayName("아이디 중복체크 요청의 결과값 반환")
+    void idDuplicateCheckTest() throws Exception {
+        IdRequestDto idRequestDto = new IdRequestDto();
+        ReflectionTestUtils.setField(idRequestDto,"id","tagkdj1");
+
+        when(memberService.idDuplicateCheck(anyString()))
+                .thenReturn(true);
+
+        mvc.perform(post("/api/signup/idCheck")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(idRequestDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    @DisplayName("닉네임 중복체크 요청의 결과값 반환")
+    void nickDuplicateCheckTest() throws Exception {
+        NickRequestDto nickRequestDto = new NickRequestDto();
+        ReflectionTestUtils.setField(nickRequestDto,"nickname","taewon");
+
+        when(memberService.nickNameDuplicateCheck(anyString()))
+                .thenReturn(true);
+
+        mvc.perform(post("/api/signup/nickCheck")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(nickRequestDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
     }
 
     @DisplayName("휴대전화를 입력하지 않았을경우")

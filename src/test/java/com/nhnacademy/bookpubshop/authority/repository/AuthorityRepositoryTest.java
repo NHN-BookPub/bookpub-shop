@@ -26,6 +26,7 @@ class AuthorityRepositoryTest {
     AuthorityRepository authorityRepository;
 
     Authority authority;
+
     @BeforeEach
     void setUp() {
         authority = AuthorityDummy.dummy();

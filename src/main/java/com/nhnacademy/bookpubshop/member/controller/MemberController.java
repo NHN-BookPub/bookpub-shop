@@ -1,11 +1,13 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
+import com.nhnacademy.bookpubshop.member.dto.request.IdRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.NickRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
@@ -58,6 +60,30 @@ public class MemberController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(memberInfo);
     }
+
+    /**
+     * id 중복체크 요청을 받아 검사하는 메소드.
+     *
+     * @param requestDto front에서 요청한 id.
+     * @return 중복이면 true, 아니면 false
+     */
+    @PostMapping("/signup/idCheck")
+    public boolean idDuplicateCheck(@RequestBody IdRequestDto requestDto) {
+        return memberService.idDuplicateCheck(requestDto.getId());
+    }
+
+    /**
+     * 닉네임 중복체크 요청을 받아 검사하는 메소드.
+     *
+     * @param requestDto front에서 요청한 nickname.
+     * @return 중복이면 true, 아니면 false
+     */
+    @PostMapping("/signup/nickCheck")
+    public boolean nickDuplicateCheck(@RequestBody NickRequestDto requestDto) {
+        return memberService.nickNameDuplicateCheck(requestDto.getNickname());
+    }
+
+
 
     /**
      * 닉네임 변경시 사용되는 메서드입니다.
@@ -204,7 +230,7 @@ public class MemberController {
      * @return the response entity
      */
     @GetMapping("/admin/members/statistics")
-    public ResponseEntity<MemberStatisticsResponseDto> memberStatistics(){
+    public ResponseEntity<MemberStatisticsResponseDto> memberStatistics() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(memberService.getMemberStatistics());
@@ -218,7 +244,7 @@ public class MemberController {
      * @return the response entity
      */
     @GetMapping("/admin/tier/statistics")
-    public ResponseEntity<List<MemberTierStatisticsResponseDto>> memberTierStatistics(){
+    public ResponseEntity<List<MemberTierStatisticsResponseDto>> memberTierStatistics() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(memberService.getTierStatistics());

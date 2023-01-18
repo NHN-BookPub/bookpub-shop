@@ -15,7 +15,6 @@ import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDt
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.member.exception.EmailAlreadyExistsException;
 import com.nhnacademy.bookpubshop.member.exception.IdAlreadyExistsException;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.exception.NicknameAlreadyExistsException;
@@ -116,12 +115,10 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(MemberNotFoundException::new);
 
-        if (!Objects.equals(member.getMemberEmail(), requestDto.getEmail())
-                && memberRepository.existsByMemberEmail(requestDto.getEmail())) {
-            throw new EmailAlreadyExistsException(requestDto.getEmail());
+        if (Objects.equals(member.getMemberEmail(), requestDto.getEmail())) {
+            member.modifyEmail(requestDto.getEmail());
         }
 
-        member.modifyEmail(requestDto.getEmail());
     }
 
     /**
@@ -180,6 +177,22 @@ public class MemberServiceImpl implements MemberService {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public boolean idDuplicateCheck(String id) {
+        return memberRepository.existsByMemberId(id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean nickNameDuplicateCheck(String nickName) {
+        return memberRepository.existsByMemberNickname(nickName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     @Override
     public void modifyMemberName(Long memberNo, ModifyMemberNameRequestDto dto) {
@@ -226,10 +239,6 @@ public class MemberServiceImpl implements MemberService {
 
         if (memberRepository.existsByMemberId(member.getMemberId())) {
             throw new IdAlreadyExistsException(member.getMemberId());
-        }
-
-        if (memberRepository.existsByMemberEmail(member.getEmail())) {
-            throw new EmailAlreadyExistsException(member.getEmail());
         }
     }
 

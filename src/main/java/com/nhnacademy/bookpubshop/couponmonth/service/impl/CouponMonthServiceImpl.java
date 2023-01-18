@@ -37,8 +37,8 @@ public class CouponMonthServiceImpl implements CouponMonthService {
     public void createCouponMonth(CreateCouponMonthRequestDto createRequestDto) {
         CouponTemplate couponTemplate =
                 couponTemplateRepository.findById(createRequestDto.getTemplateNo())
-                .orElseThrow(() ->
-                        new CouponTemplateNotFoundException(createRequestDto.getTemplateNo()));
+                        .orElseThrow(() ->
+                                new CouponTemplateNotFoundException(createRequestDto.getTemplateNo()));
 
         couponMonthRepository.save(new CouponMonth(
                 null,

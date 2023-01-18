@@ -75,7 +75,7 @@ public class ProductPolicyController {
      * 상품정책 수정을 위한 api 입니다.
      *
      * @param policyNo 정책번호입니다.
-     * @param policy 수정을 위한 Dto 입니다.
+     * @param policy   수정을 위한 Dto 입니다.
      * @return response entity
      */
     @PutMapping("/{policyNo}")

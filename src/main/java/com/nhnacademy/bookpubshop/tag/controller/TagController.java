@@ -42,7 +42,7 @@ public class TagController {
      */
     @GetMapping("/{tagNo}")
     public ResponseEntity<GetTagResponseDto> tagDetails(
-                                            @PathVariable(name = "tagNo") Integer tagNo) {
+            @PathVariable(name = "tagNo") Integer tagNo) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(tagService.getTag(tagNo));
@@ -83,7 +83,7 @@ public class TagController {
      */
     @PutMapping
     public ResponseEntity<ModifyTagRequestDto> tagModify(
-                                            @Valid @RequestBody ModifyTagRequestDto request) {
+            @Valid @RequestBody ModifyTagRequestDto request) {
         tagService.modifyTagInformation(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)

@@ -43,7 +43,7 @@ public interface CouponTemplateService {
      * 쿠폰템플릿 생성을 위한 메서드.
      *
      * @param createRequestDto 생성할 쿠폰템플릿 정보를 담은 Dto,
-     * @param image             쿠폰템플릿에 들어갈 이미지 파일
+     * @param image            쿠폰템플릿에 들어갈 이미지 파일
      */
     void createCouponTemplate(CreateCouponTemplateRequestDto createRequestDto, MultipartFile image);
 

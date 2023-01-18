@@ -79,8 +79,8 @@ class ProductPolicyControllerTest {
                 .thenReturn(responseDto);
 
         mockMvc.perform(post(url)
-                .content(mapper.writeValueAsString(responseDto))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(mapper.writeValueAsString(responseDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andDo(print());
 
@@ -99,8 +99,8 @@ class ProductPolicyControllerTest {
                 .thenReturn(responses);
 
         mockMvc.perform(get(url)
-                .contentType(mapper.writeValueAsString(responses))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(mapper.writeValueAsString(responses))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].policyNo").value(productPolicy.getPolicyNo()))
                 .andExpect(jsonPath("$[0].policyMethod").value(productPolicy.getPolicyMethod()))

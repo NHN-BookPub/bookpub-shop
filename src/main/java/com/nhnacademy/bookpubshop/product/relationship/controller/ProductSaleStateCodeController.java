@@ -9,12 +9,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 상품판매정책코드에 관련된 컨트롤러입니다.
  *
- * @author : 여운석
+ * @author : 여운석, 박경서
  * @since : 1.0
  */
 @RestController
@@ -33,6 +40,18 @@ public class ProductSaleStateCodeController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productSaleStateCodeService.getAllProductSaleStateCode());
+    }
+
+    /**
+     * 사용중인 모든 정책 코드를 조회하는 api.
+     *
+     * @return 사용중인 코드
+     */
+    @GetMapping("/used")
+    public ResponseEntity<List<GetProductSaleStateCodeResponseDto>> getAllSaleStateCodeUsed() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(productSaleStateCodeService.getAllProductSaleStateCodeUsed());
     }
 
     /**
@@ -64,6 +83,7 @@ public class ProductSaleStateCodeController {
                 .body(productSaleStateCodeService.getSaleCodeById(codeNo));
     }
 
+
     /**
      * 판매정책을 사용 여부를 수정하는 api.
      *
@@ -80,4 +100,5 @@ public class ProductSaleStateCodeController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .build();
     }
+
 }

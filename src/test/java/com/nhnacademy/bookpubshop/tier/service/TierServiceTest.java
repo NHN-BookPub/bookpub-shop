@@ -2,6 +2,8 @@ package com.nhnacademy.bookpubshop.tier.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 import com.nhnacademy.bookpubshop.tier.dto.request.CreateTierRequestDto;
 import com.nhnacademy.bookpubshop.tier.dto.request.ModifyTierRequestDto;
 import com.nhnacademy.bookpubshop.tier.dto.response.TierResponseDto;
@@ -11,6 +13,8 @@ import com.nhnacademy.bookpubshop.tier.exception.TierAlreadyExists;
 import com.nhnacademy.bookpubshop.tier.exception.TierNotFoundException;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
 import com.nhnacademy.bookpubshop.tier.service.impl.TierServiceImpl;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,11 +25,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * 등급서비스 테스트입니다.

@@ -114,4 +114,14 @@ public class ProductTypeStateCodeServiceImpl implements ProductTypeStateCodeServ
                 resultCode.isCodeUsed(),
                 resultCode.getCodeInfo());
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetProductTypeStateCodeResponseDto> getAllTypeStateCodesUsed() {
+        return productTypeStateCodeRepository.findByAllUsed();
+
+    }
 }

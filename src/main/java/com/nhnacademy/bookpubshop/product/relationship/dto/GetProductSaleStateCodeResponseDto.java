@@ -12,7 +12,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GetProductSaleStateCodeResponseDto {
-    private Integer codeNumber;
+    private Integer codeNo;
     private String codeCategory;
     private boolean codeUsed;
     private String codeInfo;

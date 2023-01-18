@@ -80,8 +80,6 @@ class PurchaseRepositoryTest {
                 "publisher",
                 130,
                 "test_description",
-                "thumbnail.png",
-                "test.txt",
                 10000L,
                 10000L,
                 0,
