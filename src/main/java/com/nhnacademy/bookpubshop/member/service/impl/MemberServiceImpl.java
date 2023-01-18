@@ -4,7 +4,9 @@ import com.nhnacademy.bookpubshop.author.exception.AuthorityNotFoundException;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
@@ -177,7 +179,30 @@ public class MemberServiceImpl implements MemberService {
 
     /**
      * {@inheritDoc}
-     *
+     */
+    @Transactional
+    @Override
+    public void modifyMemberName(Long memberNo, ModifyMemberNameRequestDto dto) {
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        member.modifyName(dto.getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void modifyMemberPhone(Long memberNo, ModifyMemberPhoneRequestDto dto) {
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        member.modifyPhone(dto.getPhone());
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public List<MemberTierStatisticsResponseDto> getTierStatistics() {
@@ -187,13 +212,11 @@ public class MemberServiceImpl implements MemberService {
 
     /**
      * {@inheritDoc}
-     *
      */
     @Override
     public MemberStatisticsResponseDto getMemberStatistics() {
         return memberRepository.memberStatistics();
     }
-
 
 
     private void duplicateCheck(SignUpMemberRequestDto member) {

@@ -2,7 +2,9 @@ package com.nhnacademy.bookpubshop.member.controller;
 
 import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
@@ -92,6 +94,40 @@ public class MemberController {
     }
 
     /**
+     * 회원만접근이 가능합니다.
+     * 회원의 휴대전화를 수정할때 쓰이는 메서드입니다.
+     * 성공시 201 을 반환합니다.
+     *
+     * @param memberNo   회원번호가 기입됩니다.
+     * @param requestDto 휴대전화번호가 기입됩니다.
+     * @return the response entity
+     */
+    @PutMapping("/members/{memberNo}/phone")
+    public ResponseEntity<Void> memberModifyPhone(@PathVariable("memberNo") Long memberNo,
+                                                  @Valid @RequestBody ModifyMemberPhoneRequestDto requestDto){
+        memberService.modifyMemberPhone(memberNo, requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 회원만접근이 가능합니다.
+     * 회원의 휴대전화를 수정할때 쓰이는 메서드입니다.
+     * 성공시 201 을 반환합니다.
+     *
+     * @param memberNo   회원번호가 기입됩니다.
+     * @param requestDto 휴대전화번호가 기입됩니다.
+     * @return the response entity
+     */
+    @PutMapping("/members/{memberNo}/name")
+    public ResponseEntity<Void> memberModifyName(@PathVariable("memberNo") Long memberNo,
+                                                  @Valid @RequestBody ModifyMemberNameRequestDto requestDto){
+        memberService.modifyMemberName(memberNo, requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
      * 멤버에대한 상세정보가 반환됩니다.
      * 성공시 200 반환.
      *
@@ -126,12 +162,12 @@ public class MemberController {
      * 회원만 접근가능.
      * 성공시 201반환.
      *
-     * @param memeberNo 회원식별할수있는 번호.
+     * @param memberNo 회원식별할수있는 번호.
      * @return 성공시 201
      */
     @PutMapping("/members/{memberNo}")
-    public ResponseEntity<Void> memberDelete(@PathVariable("memberNo") Long memeberNo){
-        memberService.deleteMember(memeberNo);
+    public ResponseEntity<Void> memberDelete(@PathVariable("memberNo") Long memberNo){
+        memberService.deleteMember(memberNo);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }

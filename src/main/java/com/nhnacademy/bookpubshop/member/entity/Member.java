@@ -151,6 +151,23 @@ public class Member extends BaseCreateTimeEntity {
     }
 
     /**
+     *  회원의 이름을 수정할때 쓰이는 메서드입니다.
+     *
+     * @param name 회원의 이름이 기입됩니다.
+     */
+    public void modifyName(String name){
+        this.memberName = name;
+    }
+
+    /**
+     * 회원의 휴대전화 번호가 수정될경우 쓰이는 메서드입니다.
+     *
+     * @param memberPhone 회원의 휴대폰 정보 기입.
+     */
+    public void modifyPhone(String memberPhone){
+        this.memberPhone = memberPhone;
+    }
+    /**
      * 회원이 탈퇴했을경우 사용되는 메서드입니다.
      */
     public void memberDelete() {

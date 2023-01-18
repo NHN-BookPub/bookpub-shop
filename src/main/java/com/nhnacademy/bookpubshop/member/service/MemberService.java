@@ -1,7 +1,9 @@
 package com.nhnacademy.bookpubshop.member.service;
 
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
@@ -75,6 +77,23 @@ public interface MemberService {
      */
     void deleteMember(Long memberNo);
 
+
+    /**
+     * 멤버의 이름을 수정할때 쓰이는 메서드입니다.
+     *
+     * @param memberNo   the member no
+     * @param memberName the member name
+     */
+    void modifyMemberName(Long memberNo, ModifyMemberNameRequestDto memberName);
+
+    /**
+     * 멤버의 휴대전화 번호를 변경할때 쓰이는 메서드입니다.
+     *
+     * @param memberNo    the member no
+     * @param memberPhone the member phone
+     */
+    void modifyMemberPhone(Long memberNo, ModifyMemberPhoneRequestDto memberPhone);
+
     /**
      * 멤버의 등급별 통계를 얻기위한 메서드입니다.
      *
@@ -96,4 +115,5 @@ public interface MemberService {
      * @return 로그인 성공정보 리턴.
      */
     LoginMemberResponseDto loginMember(String loginId);
+
 }
