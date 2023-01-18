@@ -1,5 +1,11 @@
 package com.nhnacademy.bookpubshop.purchase.service;
 
+import static com.nhnacademy.bookpubshop.state.ProductTypeState.BEST_SELLER;
+import static com.nhnacademy.bookpubshop.state.ProductTypeState.NEW;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
@@ -12,6 +18,11 @@ import com.nhnacademy.bookpubshop.purchase.entity.Purchase;
 import com.nhnacademy.bookpubshop.purchase.exception.NotFoundPurchasesException;
 import com.nhnacademy.bookpubshop.purchase.repository.PurchaseRepository;
 import com.nhnacademy.bookpubshop.purchase.service.impl.PurchaseServiceImpl;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,17 +32,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.test.util.ReflectionTestUtils;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import static com.nhnacademy.bookpubshop.state.ProductTypeState.BEST_SELLER;
-import static com.nhnacademy.bookpubshop.state.ProductTypeState.NEW;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 /**
  * PurchaseServiceTest.
@@ -60,9 +60,9 @@ class PurchaseServiceTest {
 
         purchaseService = new PurchaseServiceImpl(purchaseRepository, productRepository);
 
-        productPolicy = new ProductPolicy(1,"method",true,1);
-        typeStateCode = new ProductTypeStateCode(1,BEST_SELLER.getName(),BEST_SELLER.isUsed(),"info");
-        saleStateCode = new ProductSaleStateCode(1, NEW.getName(),NEW.isUsed(),"info");
+        productPolicy = new ProductPolicy(1, "method", true, 1);
+        typeStateCode = new ProductTypeStateCode(1, BEST_SELLER.getName(), BEST_SELLER.isUsed(), "info");
+        saleStateCode = new ProductSaleStateCode(1, NEW.getName(), NEW.isUsed(), "info");
 
         product = new Product(1L,
                 productPolicy,
@@ -74,8 +74,6 @@ class PurchaseServiceTest {
                 "test_publisher",
                 130,
                 "test_description",
-                "thumbnail.png",
-                "test.txt",
                 8000L,
                 10000L,
                 20,
@@ -121,7 +119,7 @@ class PurchaseServiceTest {
                 .thenReturn(page);
 
         assertThat(purchaseService.getPurchaseByProductNo(
-                product.getProductNo(), pageable)
+                        product.getProductNo(), pageable)
                 .getContent().get(0).getProductNo())
                 .isEqualTo(product.getProductNo());
         assertThat(purchaseService.getPurchaseByProductNo(
@@ -165,6 +163,7 @@ class PurchaseServiceTest {
         verify(purchaseRepository, times(1))
                 .save(any());
     }
+
     @Test
     @DisplayName("구매이력 등록 실패(없는 상품)")
     void createPurchaseFailed() {

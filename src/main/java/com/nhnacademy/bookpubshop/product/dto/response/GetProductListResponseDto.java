@@ -1,8 +1,7 @@
-package com.nhnacademy.bookpubshop.product.dto;
+package com.nhnacademy.bookpubshop.product.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import java.time.LocalDateTime;
 
 /**
  * 상품 간단 리스트를 위한 Dto 입니다.
@@ -14,11 +13,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class GetProductListResponseDto {
     private Long productNo;
-    private String thumbnailPath;
     private String title;
     private Integer productStock;
     private Long salesPrice;
     private Integer saleRate;
+    private Long productPrice;
     private boolean deleted;
-    private LocalDateTime publishedAt;
 }

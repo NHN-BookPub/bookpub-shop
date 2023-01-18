@@ -23,7 +23,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 /**
- *  주문 Repo Test 입니다.
+ * 주문 Repo Test 입니다.
  *
  * @author : 김서현
  * @since : 1.0
@@ -57,7 +57,7 @@ class OrderRepositoryTest {
         packagePricePolicy = PricePolicyDummy.dummy();
         address = AddressDummy.dummy();
         orderStateCode = OrderStateCodeDummy.dummy();
-        order = OrderDummy.dummy(member,pricePolicy,packagePricePolicy,address,orderStateCode);
+        order = OrderDummy.dummy(member, pricePolicy, packagePricePolicy, address, orderStateCode);
     }
 
     @Test

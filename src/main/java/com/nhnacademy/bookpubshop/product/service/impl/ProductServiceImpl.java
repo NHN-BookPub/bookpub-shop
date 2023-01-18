@@ -1,17 +1,23 @@
 package com.nhnacademy.bookpubshop.product.service.impl;
 
+import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.author.exception.NotFoundAuthorException;
 import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
-import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
-import com.nhnacademy.bookpubshop.product.dto.GetProductDetailResponseDto;
-import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
+import com.nhnacademy.bookpubshop.category.entity.Category;
+import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
+import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
+import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundProductPolicyException;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductAuthor;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductCategory;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTag;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductAuthorRepository;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductPolicyRepository;
@@ -19,6 +25,9 @@ import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleSta
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
+import com.nhnacademy.bookpubshop.tag.entity.Tag;
+import com.nhnacademy.bookpubshop.tag.exception.TagNotFoundException;
+import com.nhnacademy.bookpubshop.tag.repository.TagRepository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +48,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductTypeStateCodeRepository typeStateCodeRepository;
     private final ProductAuthorRepository productAuthorRepository;
     private final AuthorRepository authorRepository;
+    private final CategoryRepository categoryRepository;
+    private final TagRepository tagRepository;
 
     /**
      * {@inheritDoc}
@@ -55,7 +66,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional
-    public GetProductDetailResponseDto createProduct(CreateProductRequestDto request) {
+    public void createProduct(CreateProductRequestDto request) {
         ProductPolicy productPolicy = productPolicyRepository
                 .findById(request.getProductPolicyNo())
                 .orElseThrow(NotFoundProductPolicyException::new);
@@ -68,32 +79,21 @@ public class ProductServiceImpl implements ProductService {
                 .findById(request.getSaleCodeNo())
                 .orElseThrow(NotFoundStateCodeException::new);
 
-        List<Product> relationProducts = new ArrayList<>();
-
-        for (Long relationProductNo : request.getRelationProducts()) {
-            relationProducts.add(
-                    productRepository.findById(relationProductNo)
-                            .orElseThrow(ProductNotFoundException::new));
-        }
-
         Product product = productRepository.save(
-                new Product(null,
+                new Product(
+                        null,
                         productPolicy,
                         typeStateCode,
                         saleStateCode,
-                        relationProducts,
+                        null,
                         request.getProductIsbn(),
                         request.getTitle(),
                         request.getProductPublisher(),
                         request.getPageCount(),
                         request.getProductDescription(),
-                        request.getThumbnailPath(),
-                        request.getEbookPath(),
                         request.getSalePrice(),
                         request.getProductPrice(),
-                        getSaleRateWithSalePrice(
-                                request.getProductPrice(),
-                                request.getSalePrice()),
+                        request.getSalesRate(),
                         0L,
                         request.getProductPriority(),
                         false,
@@ -101,38 +101,34 @@ public class ProductServiceImpl implements ProductService {
                         request.getPublishedAt(),
                         request.isSubscribed()));
 
-        if (!request.getAuthorNos().isEmpty()) {
-            for (Integer authorNo : request.getAuthorNos()) {
-                productAuthorRepository.save(
-                        new ProductAuthor(
-                                new ProductAuthor.Pk(authorNo,
-                                        product.getProductNo()),
-                                authorRepository.findById(authorNo)
-                                        .orElseThrow(NotFoundAuthorException::new),
-                                productRepository.findById(product.getProductNo())
-                                        .orElseThrow(ProductNotFoundException::new))
-                );
-            }
+        List<Integer> authorsNo = request.getAuthorsNo();
+        for (Integer authorNo : authorsNo) {
+            Author author = authorRepository.findById(authorNo)
+                    .orElseThrow(NotFoundAuthorException::new);
+
+            product.getProductAuthors().add(new ProductAuthor(
+                    new ProductAuthor.Pk(author.getAuthorNo(), product.getProductNo()), author, product));
         }
 
-        return new GetProductDetailResponseDto(
-                product.getProductNo(),
-                product.getProductIsbn(),
-                product.getTitle(),
-                product.getPageCount(),
-                product.getProductDescription(),
-                product.getProductThumbnail(),
-                product.getSalesPrice(),
-                product.getSalesRate(),
-                product.getProductPriority(),
-                product.getProductStock(),
-                product.getPublishDate(),
-                product.isProductDeleted(),
-                product.isProductSubscribed(),
-                product.getProductSaleStateCode(),
-                product.getProductTypeStateCode(),
-                product.getProductPolicy()
-        );
+        List<Integer> categoriesNo = request.getCategoriesNo();
+        for (Integer categoryNo : categoriesNo) {
+            Category category = categoryRepository.findById(categoryNo)
+                    .orElseThrow(CategoryNotFoundException::new);
+
+            product.getProductCategories().add(new ProductCategory(
+                    new ProductCategory.Pk(category.getCategoryNo(), product.getProductNo()), category, product));
+        }
+
+        List<Integer> tagsNo = request.getTagsNo();
+        if (!tagsNo.isEmpty()) {
+            for (Integer tagNo : tagsNo) {
+                Tag tag = tagRepository.findById(tagNo)
+                        .orElseThrow(() -> new TagNotFoundException(tagNo));
+
+                product.getProductTags().add(new ProductTag(
+                        new ProductTag.Pk(tag.getTagNo(), product.getProductNo()), tag, product));
+            }
+        }
     }
 
     /**
@@ -184,36 +180,34 @@ public class ProductServiceImpl implements ProductService {
 
         List<Product> relationProducts = new ArrayList<>();
 
-        for (Long relationProductNo : request.getRelationProducts()) {
-            relationProducts.add(
-                    productRepository.findById(relationProductNo)
-                            .orElseThrow(ProductNotFoundException::new));
-        }
+//        for (Long relationProductNo : request.getRelationProducts()) {
+//            relationProducts.add(
+//                    productRepository.findById(relationProductNo)
+//                            .orElseThrow(ProductNotFoundException::new));
+//        }
 
         Product save = productRepository.save(new Product(
-                            product.getProductNo(),
-                            productPolicy,
-                            typeStateCode,
-                            saleStateCode,
-                            relationProducts,
-                            request.getProductIsbn(),
-                            request.getTitle(),
-                            request.getProductPublisher(),
-                            request.getPageCount(),
-                            request.getProductDescription(),
-                            request.getThumbnailPath(),
-                            request.getEbookPath(),
-                            request.getSalePrice(),
-                            request.getProductPrice(),
-                            getSaleRateWithSalePrice(
-                                    request.getProductPrice(),
-                                    request.getSalePrice()),
-                            product.getViewCount(),
-                            request.getProductPriority(),
-                            product.isProductDeleted(),
-                            request.getProductStock(),
-                            request.getPublishedAt(),
-                            request.isSubscribed()));
+                product.getProductNo(),
+                productPolicy,
+
+                typeStateCode,
+                saleStateCode,
+                relationProducts,
+                request.getProductIsbn(),
+                request.getTitle(),
+                request.getProductPublisher(),
+                request.getPageCount(),
+                request.getProductDescription(),
+                request.getSalePrice(),
+                request.getProductPrice(),
+                request.getSalesRate(),
+                product.getViewCount(),
+                request.getProductPriority(),
+                product.isProductDeleted(),
+                null,
+//                            request.getProductStock(),
+                request.getPublishedAt(),
+                request.isSubscribed()));
     }
 
     /**
@@ -221,34 +215,11 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional
-    public void setDeleteProduct(Long id, boolean deleted) {
+    public void setDeleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(ProductNotFoundException::new);
 
-        Product modified = new Product(
-                product.getProductNo(),
-                product.getProductPolicy(),
-                product.getProductTypeStateCode(),
-                product.getProductSaleStateCode(),
-                product.getRelationProduct(),
-                product.getProductIsbn(),
-                product.getTitle(),
-                product.getProductPublisher(),
-                product.getPageCount(),
-                product.getProductDescription(),
-                product.getProductThumbnail(),
-                product.getEbookFilePath(),
-                product.getSalesPrice(),
-                product.getProductPrice(),
-                product.getSalesRate(),
-                product.getViewCount(),
-                product.getProductPriority(),
-                deleted,
-                product.getProductStock(),
-                product.getPublishDate(),
-                product.isProductSubscribed());
-
-        productRepository.save(modified);
+        product.modifyProductDeleted();
     }
 
     /**

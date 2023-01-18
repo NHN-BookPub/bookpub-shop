@@ -3,7 +3,7 @@ package com.nhnacademy.bookpubshop.product.relationship.service.impl;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodesException;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductTypeStateCodeRequestDto;
@@ -47,7 +47,11 @@ class ProductTypeStateCodeServiceTest {
         ReflectionTestUtils.setField(requestDto, "codeUsed", true);
         ReflectionTestUtils.setField(requestDto, "codeInfo", "test");
 
-        responseDto = new GetProductTypeStateCodeResponseDto(1, "test", true, "test");
+        responseDto = new GetProductTypeStateCodeResponseDto();
+        ReflectionTestUtils.setField(responseDto, "codeNo", 1);
+        ReflectionTestUtils.setField(responseDto, "codeName", "test");
+        ReflectionTestUtils.setField(responseDto, "codeUsed", true);
+        ReflectionTestUtils.setField(responseDto, "codeInfo", "test");
     }
 
     @Test
@@ -114,7 +118,7 @@ class ProductTypeStateCodeServiceTest {
         when(productTypeStateCodeRepository.findAll())
                 .thenReturn(Collections.EMPTY_LIST);
 
-        assertThatThrownBy(() ->productTypeStateCodeService.getAllTypeStateCodes())
+        assertThatThrownBy(() -> productTypeStateCodeService.getAllTypeStateCodes())
                 .isInstanceOf(NotFoundStateCodesException.class);
     }
 
@@ -143,7 +147,28 @@ class ProductTypeStateCodeServiceTest {
         when(productTypeStateCodeRepository.findById(any()))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() ->productTypeStateCodeService.getAllTypeStateCodes())
+        assertThatThrownBy(() -> productTypeStateCodeService.getAllTypeStateCodes())
                 .isInstanceOf(NotFoundStateCodesException.class);
+    }
+
+    @Test
+    @DisplayName("사용 중인 상품 유형 코드 전체 조회 테스트")
+    void getALlCodeUsed() {
+        // given
+        List<GetProductTypeStateCodeResponseDto> list = List.of(responseDto);
+
+        // when
+        when(productTypeStateCodeService.getAllTypeStateCodesUsed())
+                .thenReturn(list);
+
+        // then
+        assertThat(productTypeStateCodeService.getAllTypeStateCodesUsed().get(0)
+                .getCodeNo()).isEqualTo(list.get(0).getCodeNo());
+        assertThat(productTypeStateCodeService.getAllTypeStateCodesUsed().get(0)
+                .getCodeName()).isEqualTo(list.get(0).getCodeName());
+        assertThat(productTypeStateCodeService.getAllTypeStateCodesUsed().get(0)
+                .isCodeUsed()).isEqualTo(list.get(0).isCodeUsed());
+        assertThat(productTypeStateCodeService.getAllTypeStateCodesUsed().get(0)
+                .getCodeInfo()).isEqualTo(list.get(0).getCodeInfo());
     }
 }

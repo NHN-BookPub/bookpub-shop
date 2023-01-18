@@ -43,6 +43,18 @@ public class ProductTypeStateCodeController {
     }
 
     /**
+     * 사용중인 상품 유형 코드를 받는 API.
+     *
+     * @return 사용중인 모든 유형 코드
+     */
+    @GetMapping("/used")
+    public ResponseEntity<List<GetProductTypeStateCodeResponseDto>> getAllTypeCodesUsed() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(productTypeStateCodeService.getAllTypeStateCodesUsed());
+    }
+
+    /**
      * 유형 코드를 등록하는 api.
      *
      * @param requestDto 요청할 dto를 받습니다.

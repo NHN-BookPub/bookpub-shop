@@ -1,5 +1,10 @@
 package com.nhnacademy.bookpubshop.purchase.controller;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
@@ -17,6 +22,8 @@ import com.nhnacademy.bookpubshop.purchase.dummy.PurchaseDummy;
 import com.nhnacademy.bookpubshop.purchase.entity.Purchase;
 import com.nhnacademy.bookpubshop.purchase.service.PurchaseService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,15 +38,6 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * PurchaseControllerTest.
@@ -103,8 +101,8 @@ class PurchaseControllerTest {
                 .thenReturn(pageResult);
 
         mockMvc.perform(get(url + "?page=0&size=5")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(pageResult)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(pageResult)))
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -171,8 +169,8 @@ class PurchaseControllerTest {
                 .modifyPurchase(purchase.getPurchaseNo(), request);
 
         mockMvc.perform(put(url + "/{purchaseNo}", purchase.getPurchaseNo())
-                .content(objectMapper.writeValueAsString(request))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andDo(print());
 

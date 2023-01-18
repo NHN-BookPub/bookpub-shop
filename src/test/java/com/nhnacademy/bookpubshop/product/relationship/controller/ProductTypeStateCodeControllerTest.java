@@ -1,7 +1,8 @@
 package com.nhnacademy.bookpubshop.product.relationship.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -92,6 +93,25 @@ class ProductTypeStateCodeControllerTest {
                         .value(productTypeStateCode.getCodeInfo()))
                 .andExpect(jsonPath("$[0].codeUsed")
                         .value(productTypeStateCode.isCodeUsed()))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("사용중인 모든 유형 코드 조회 테스트")
+    void getAllTypeCodesUsed() throws Exception {
+        // given
+        List<GetProductTypeStateCodeResponseDto> responses = new ArrayList<>();
+        responses.add(responseDto);
+
+        // when
+        when(productTypeStateCodeService.getAllTypeStateCodesUsed())
+                .thenReturn(responses);
+
+        // then
+        mockMvc.perform(get(url + "/used")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].codeNo").value(responses.get(0).getCodeNo()))
                 .andDo(print());
     }
 

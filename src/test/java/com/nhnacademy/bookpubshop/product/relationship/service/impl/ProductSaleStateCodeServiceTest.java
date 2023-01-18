@@ -3,22 +3,25 @@ package com.nhnacademy.bookpubshop.product.relationship.service.impl;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
-import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodesException;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductSaleStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductSaleStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductSaleStateCodeService;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 
@@ -28,9 +31,15 @@ import org.springframework.test.util.ReflectionTestUtils;
  * @author : 여운석
  * @since : 1.0
  **/
+@ExtendWith(SpringExtension.class)
+@Import(ProductSaleStateCodeServiceImpl.class)
 class ProductSaleStateCodeServiceTest {
-    ProductSaleStateCodeRepository productSaleStateCodeRepository;
+
+    @Autowired
     ProductSaleStateCodeService productSaleStateCodeService;
+
+    @MockBean
+    ProductSaleStateCodeRepository productSaleStateCodeRepository;
     ProductSaleStateCode productSaleStateCode;
     CreateProductSaleStateCodeRequestDto requestDto;
     GetProductSaleStateCodeResponseDto responseDto;
@@ -50,7 +59,7 @@ class ProductSaleStateCodeServiceTest {
         ReflectionTestUtils.setField(requestDto, "codeInfo", "test");
 
         responseDto = new GetProductSaleStateCodeResponseDto(
-                productSaleStateCode.getCodeNumber(),
+                productSaleStateCode.getCodeNo(),
                 productSaleStateCode.getCodeCategory(),
                 productSaleStateCode.isCodeUsed(),
                 productSaleStateCode.getCodeInfo());
@@ -63,7 +72,7 @@ class ProductSaleStateCodeServiceTest {
 
         GetProductSaleStateCodeResponseDto result = productSaleStateCodeService.createSaleCode(requestDto);
 
-        assertThat(result.getCodeNumber()).isEqualTo(productSaleStateCode.getCodeNumber());
+        assertThat(result.getCodeNo()).isEqualTo(productSaleStateCode.getCodeNo());
         assertThat(result.getCodeCategory()).isEqualTo(productSaleStateCode.getCodeCategory());
         assertThat(result.getCodeInfo()).isEqualTo(productSaleStateCode.getCodeInfo());
         assertThat(result.isCodeUsed()).isEqualTo(productSaleStateCode.isCodeUsed());
@@ -76,9 +85,9 @@ class ProductSaleStateCodeServiceTest {
                 .thenReturn(Optional.ofNullable(productSaleStateCode));
 
         GetProductSaleStateCodeResponseDto result =
-                productSaleStateCodeService.getSaleCodeById(productSaleStateCode.getCodeNumber());
+                productSaleStateCodeService.getSaleCodeById(productSaleStateCode.getCodeNo());
 
-        assertThat(result.getCodeNumber()).isEqualTo(productSaleStateCode.getCodeNumber());
+        assertThat(result.getCodeNo()).isEqualTo(productSaleStateCode.getCodeNo());
         assertThat(result.getCodeCategory()).isEqualTo(productSaleStateCode.getCodeCategory());
         assertThat(result.getCodeInfo()).isEqualTo(productSaleStateCode.getCodeInfo());
         assertThat(result.isCodeUsed()).isEqualTo(productSaleStateCode.isCodeUsed());
@@ -90,7 +99,7 @@ class ProductSaleStateCodeServiceTest {
         when(productSaleStateCodeRepository.findById(any()))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> productSaleStateCodeService.getSaleCodeById(productSaleStateCode.getCodeNumber()))
+        assertThatThrownBy(() -> productSaleStateCodeService.getSaleCodeById(productSaleStateCode.getCodeNo()))
                 .isInstanceOf(NotFoundStateCodeException.class);
     }
 
@@ -104,10 +113,10 @@ class ProductSaleStateCodeServiceTest {
 
         GetProductSaleStateCodeResponseDto result =
                 productSaleStateCodeService
-                        .setUsedSaleCodeById(productSaleStateCode.getCodeNumber(),
+                        .setUsedSaleCodeById(productSaleStateCode.getCodeNo(),
                                 productSaleStateCode.isCodeUsed());
 
-        assertThat(result.getCodeNumber()).isEqualTo(productSaleStateCode.getCodeNumber());
+        assertThat(result.getCodeNo()).isEqualTo(productSaleStateCode.getCodeNo());
         assertThat(result.getCodeCategory()).isEqualTo(productSaleStateCode.getCodeCategory());
         assertThat(result.getCodeInfo()).isEqualTo(productSaleStateCode.getCodeInfo());
         assertThat(result.isCodeUsed()).isEqualTo(productSaleStateCode.isCodeUsed());
@@ -120,7 +129,7 @@ class ProductSaleStateCodeServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> productSaleStateCodeService
-                .setUsedSaleCodeById(productSaleStateCode.getCodeNumber(),
+                .setUsedSaleCodeById(productSaleStateCode.getCodeNo(),
                         productSaleStateCode.isCodeUsed()))
                 .isInstanceOf(NotFoundStateCodeException.class);
     }
@@ -135,8 +144,8 @@ class ProductSaleStateCodeServiceTest {
                 .thenReturn(returns);
 
         assertThat(productSaleStateCodeService
-                .getAllProductSaleStateCode().get(0).getCodeNumber())
-                .isEqualTo(responseDto.getCodeNumber());
+                .getAllProductSaleStateCode().get(0).getCodeNo())
+                .isEqualTo(responseDto.getCodeNo());
         assertThat(productSaleStateCodeService
                 .getAllProductSaleStateCode().get(0).getCodeInfo())
                 .isEqualTo(responseDto.getCodeInfo());
@@ -148,13 +157,25 @@ class ProductSaleStateCodeServiceTest {
                 .isEqualTo(responseDto.isCodeUsed());
     }
 
-    @Test
-    @DisplayName("모든 상품유형코드 조회 실패, 어떤 코드도 없음")
-    void getAllProductSaleStateCodeFailed() {
-        when(productSaleStateCodeRepository.findAll())
-                .thenReturn(Collections.EMPTY_LIST);
 
-        assertThatThrownBy(() -> productSaleStateCodeService.getAllProductSaleStateCode())
-                .isInstanceOf(NotFoundStateCodesException.class);
+    @Test
+    @DisplayName("사용중인 전체 판매유형코드 테스트")
+    void getAllCodesByUsed() {
+        // given
+        List<GetProductSaleStateCodeResponseDto> list = List.of(responseDto);
+
+        // when
+        when(productSaleStateCodeRepository.findByAllUsed())
+                .thenReturn(list);
+
+        // then
+        assertThat(productSaleStateCodeService.getAllProductSaleStateCodeUsed()
+                .get(0).getCodeNo()).isEqualTo(list.get(0).getCodeNo());
+        assertThat(productSaleStateCodeService.getAllProductSaleStateCodeUsed()
+                .get(0).getCodeCategory()).isEqualTo(list.get(0).getCodeCategory());
+        assertThat(productSaleStateCodeService.getAllProductSaleStateCodeUsed()
+                .get(0).isCodeUsed()).isEqualTo(list.get(0).isCodeUsed());
+        assertThat(productSaleStateCodeService.getAllProductSaleStateCodeUsed()
+                .get(0).getCodeInfo()).isEqualTo(list.get(0).getCodeInfo());
     }
 }

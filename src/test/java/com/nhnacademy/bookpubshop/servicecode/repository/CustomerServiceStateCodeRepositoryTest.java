@@ -26,6 +26,7 @@ class CustomerServiceStateCodeRepositoryTest {
     CustomerServiceStateCodeRepository customerServiceSateCodeRepository;
 
     CustomerServiceStateCode customerServiceStateCode;
+
     @BeforeEach
     void setUp() {
         customerServiceStateCode = CustomerServiceStateCodeDummy.dummy();

@@ -16,7 +16,6 @@ public interface ProductSaleStateCodeService {
      * 상품판매상태코드를 생성합니다.
      *
      * @param request 생성을 위한 Dto class.
-     *
      * @return 생성된 객체를 반환합니다.
      */
     GetProductSaleStateCodeResponseDto createSaleCode(CreateProductSaleStateCodeRequestDto request);
@@ -44,4 +43,11 @@ public interface ProductSaleStateCodeService {
      * @return 모든 상품판매유형코드를 반환합니다.
      */
     List<GetProductSaleStateCodeResponseDto> getAllProductSaleStateCode();
+
+    /**
+     * 사용중인 상품 판매 사태 코드를 조회합니다.
+     *
+     * @return 사용중인 모든 상품 판매 유형
+     */
+    List<GetProductSaleStateCodeResponseDto> getAllProductSaleStateCodeUsed();
 }

@@ -10,7 +10,7 @@ import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
  **/
 public class PricePolicyDummy {
 
-    public static PricePolicy dummy(){
+    public static PricePolicy dummy() {
         return new PricePolicy(
                 null,
                 "test_policy_name",

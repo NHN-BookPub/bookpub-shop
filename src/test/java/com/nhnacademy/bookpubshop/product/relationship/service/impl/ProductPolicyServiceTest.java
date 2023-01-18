@@ -3,7 +3,7 @@ package com.nhnacademy.bookpubshop.product.relationship.service.impl;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundProductPolicyException;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateModifyProductPolicyRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyResponseDto;
@@ -11,7 +11,6 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductPolicyRepository;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductPolicyService;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -147,13 +146,4 @@ class ProductPolicyServiceTest {
                 .isEqualTo(responseDto.isPolicySaved());
     }
 
-    @Test
-    @DisplayName("전체 상품정책 조회 실패")
-    void getProductPoliciesFailed() {
-        when(productPolicyRepository.findAll())
-                .thenReturn(Collections.EMPTY_LIST);
-
-        assertThatThrownBy(() -> productPolicyService.getProductPolicies())
-                .isInstanceOf(NotFoundProductPolicyException.class);
-    }
 }

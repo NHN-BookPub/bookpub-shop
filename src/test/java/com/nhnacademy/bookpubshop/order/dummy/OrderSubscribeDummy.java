@@ -21,9 +21,9 @@ public class OrderSubscribeDummy {
         return new OrderSubscribe(null,
                 SubscribeDummy.dummy(),
                 OrderDummy.dummy(MemberDummy.dummy(TierDummy.dummy()), PricePolicyDummy.dummy(), PricePolicyDummy.dummy(), AddressDummy.dummy(), OrderStateCodeDummy.dummy()),
-                        new OrderSubscribeStateCode(null, "테스트", true, "테스트"),
-                        1000L,
-                        8000L,
+                new OrderSubscribeStateCode(null, "테스트", true, "테스트"),
+                1000L,
+                8000L,
                 LocalDateTime.of(2000, 12, 12, 14, 30));
     }
 }

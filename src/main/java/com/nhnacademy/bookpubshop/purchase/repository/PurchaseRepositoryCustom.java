@@ -17,7 +17,7 @@ public interface PurchaseRepositoryCustom {
      * 상품 번호로 매입이력을 조회합니다.
      *
      * @param productNo 상품번호.
-     * @param pageable 페이저블.
+     * @param pageable  페이저블.
      * @return 페이징된 구매이력리스트를 반환.
      */
     Page<GetPurchaseListResponseDto> findByProductNumberWithPage(

@@ -45,8 +45,8 @@ public class CouponServiceImpl implements CouponService {
 
         CouponTemplate couponTemplate =
                 couponTemplateRepository.findById(createRequestDto.getTemplateNo())
-                .orElseThrow(() ->
-                        new CouponTemplateNotFoundException(createRequestDto.getTemplateNo()));
+                        .orElseThrow(() ->
+                                new CouponTemplateNotFoundException(createRequestDto.getTemplateNo()));
 
         couponRepository.save(new Coupon(null, couponTemplate, null, null,
                 member, false, null));

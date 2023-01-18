@@ -105,7 +105,7 @@ class TierControllerTest {
     @Test
     void tierModifySuccessTest() throws Exception {
         //given
-        ReflectionTestUtils.setField(modifyTierRequestDto,"tierNo",1);
+        ReflectionTestUtils.setField(modifyTierRequestDto, "tierNo", 1);
         ReflectionTestUtils.setField(modifyTierRequestDto, "tierName", "GOLD");
         doNothing().when(tierService).modifyTier(modifyTierRequestDto);
 
@@ -122,7 +122,7 @@ class TierControllerTest {
     @Test
     void tierDetailsTest() throws Exception {
         //given
-        TierResponseDto tierResponseDto = new TierResponseDto(1,"tierResponseDto");
+        TierResponseDto tierResponseDto = new TierResponseDto(1, "tierResponseDto");
         when(tierService.getTier(anyInt())).thenReturn(tierResponseDto);
 
         //when && then
@@ -140,7 +140,7 @@ class TierControllerTest {
     @Test
     void tierListTest() throws Exception {
         //given
-        TierResponseDto tierResponseDto = new TierResponseDto(1,"tierTest");
+        TierResponseDto tierResponseDto = new TierResponseDto(1, "tierTest");
         when(tierService.getTiers())
                 .thenReturn(List.of(tierResponseDto));
 

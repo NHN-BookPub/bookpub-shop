@@ -58,7 +58,7 @@ public class CouponTemplateController {
      */
     @GetMapping("/coupon-templates/details")
     public ResponseEntity<PageResponse<GetDetailCouponTemplateResponseDto>>
-        couponTemplateDetailList(Pageable pageable) {
+    couponTemplateDetailList(Pageable pageable) {
         Page<GetDetailCouponTemplateResponseDto> content =
                 couponTemplateService.getDetailCouponTemplates(pageable);
 
@@ -75,7 +75,7 @@ public class CouponTemplateController {
      */
     @GetMapping("/coupon-templates")
     public ResponseEntity<PageResponse<GetCouponTemplateResponseDto>>
-        couponTemplateList(Pageable pageable) {
+    couponTemplateList(Pageable pageable) {
         Page<GetCouponTemplateResponseDto> content =
                 couponTemplateService.getCouponTemplates(pageable);
 
