@@ -115,14 +115,16 @@ public class Product extends BaseCreateTimeEntity {
     @Column(name = "product_subscribed")
     private boolean productSubscribed;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private final Set<ProductCategory> productCategories = new HashSet<>();
 
     @OneToMany(mappedBy = "author", fetch = FetchType.EAGER,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private final Set<ProductAuthor> productAuthors = new HashSet<>();
 
-    @OneToMany(mappedBy = "tag", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "tag", fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private final Set<ProductTag> productTags = new HashSet<>();
 
     public void modifyProductDeleted() {
