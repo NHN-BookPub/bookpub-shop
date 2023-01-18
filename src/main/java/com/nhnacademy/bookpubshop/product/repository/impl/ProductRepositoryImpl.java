@@ -1,6 +1,8 @@
 package com.nhnacademy.bookpubshop.product.repository.impl;
 
+import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
 import com.nhnacademy.bookpubshop.product.dto.GetProductDetailResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.GetProductListForOrderResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
@@ -9,6 +11,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,6 +28,9 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 public class ProductRepositoryImpl extends QuerydslRepositorySupport
         implements ProductRepositoryCustom {
     private final EntityManager entityManager;
+    QProduct product = QProduct.product;
+    QOrderProduct orderProduct = QOrderProduct.orderProduct;
+
 
     public ProductRepositoryImpl(EntityManager entityManager) {
         super(Product.class);
@@ -36,8 +42,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public Page<GetProductListResponseDto> getAllProducts(Pageable pageable) {
-        QProduct product = QProduct.product;
-
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
         JPAQuery<GetProductListResponseDto> query = queryFactory
@@ -66,8 +70,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
     @Override
     public Page<GetProductListResponseDto> getProductListLikeTitle(
             String title, Pageable pageable) {
-        QProduct product = QProduct.product;
-
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
         JPAQuery<GetProductListResponseDto> query = queryFactory
@@ -99,8 +101,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public Optional<GetProductDetailResponseDto> getProductDetailById(Long id) {
-        QProduct product = QProduct.product;
-
         return Optional.of(from(product)
                 .select(Projections.constructor(GetProductDetailResponseDto.class,
                         product.productNo,
@@ -122,5 +122,20 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         ))
                 .where(product.productNo.eq(id))
                 .fetchOne());
+    }
+
+    @Override
+    public List<GetProductListForOrderResponseDto> getProductListByOrderNo(Long orderNo) {
+        return from(product)
+                .select(Projections.constructor(
+                        GetProductListForOrderResponseDto.class,
+                        product.productNo,
+                        product.productThumbnail,
+                        product.title,
+                        product.salesPrice,
+                        orderProduct.productAmount))
+                .join(orderProduct).on(orderProduct.product.productNo.eq(product.productNo))
+                .where(orderProduct.order.orderNo.eq(orderNo))
+                .fetch();
     }
 }
