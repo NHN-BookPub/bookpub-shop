@@ -1,0 +1,112 @@
+package com.nhnacademy.bookpubshop.order.controller;
+
+import com.nhnacademy.bookpubshop.order.dto.CreateOrderRequestDto;
+import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.service.OrderService;
+import com.nhnacademy.bookpubshop.utils.PageResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * 주문 컨트롤러 입니다.
+ *
+ * @author : 여운석
+ * @since : 1.0
+ **/
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/orders")
+public class OrderController {
+    private final OrderService orderService;
+
+    /**
+     * 모든 주문을 반환합니다.
+     *
+     * @param pageable 페이징을 위해 받습니다.
+     * @return 200, 모든 주문 반환.
+     */
+    @GetMapping
+    public ResponseEntity<PageResponse<GetOrderListResponseDto>> getOrders(Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(orderService.getOrderList(pageable));
+    }
+
+    /**
+     * 주문을 등록합니다.
+     * @param request 등록을 위한 Dto객체를 받습니다.
+     * @return 201 반환.
+     */
+    @PostMapping
+    public ResponseEntity<Void> createOrder(@RequestBody CreateOrderRequestDto request) {
+        orderService.createOrder(request, 142L);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 송장번호만 수정합니다.
+     *
+     * @param orderNo 주문번호입니다.
+     * @param no 수정할 송장번호.
+     * @return 201 반환.
+     */
+    @PutMapping("/{orderNo}/invoice")
+    public ResponseEntity<Void> modifyInvoiceNo(@PathVariable Long orderNo,
+                                                @RequestParam String no) {
+        orderService.modifyInvoiceNumber(orderNo, no);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 상태코드만 수정합니다.
+     *
+     * @param orderNo 주문번호.
+     * @param code 코드명.
+     * @return 201 반환.
+     */
+    @PutMapping("/{orderNo}/state")
+    public ResponseEntity<Void> modifyStateCode(@PathVariable Long orderNo,
+                                                @RequestParam String code) {
+        orderService.modifyStateCode(code, orderNo);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 멤버 번호로 멤버의 모든 주문을 반환합니다.
+     *
+     * @param pageable 페이징을 위해 받습니다.
+     * @param no 멤버 번호입니다.
+     * @return 200, 멤버의 모든 주문 반환.
+     */
+    @GetMapping("/member")
+    public ResponseEntity<PageResponse<GetOrderListResponseDto>> getOrdersByMember(
+            Pageable pageable, @RequestParam Long no) {
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(orderService.getOrderListByUsers(pageable, no));
+    }
+
+    /**
+     * 주문 상세 정보를 반환합니다.
+     *
+     * @param orderNo 주문번호입니다.
+     * @return 200, 주문상세정보 Dto를 반환합니다.
+     */
+    @GetMapping("/{orderNo}")
+    public ResponseEntity<GetOrderDetailResponseDto> getOrderDetailByOrderNo(
+            @PathVariable Long orderNo) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(orderService.getOrderDetailById(orderNo));
+    }
+}
