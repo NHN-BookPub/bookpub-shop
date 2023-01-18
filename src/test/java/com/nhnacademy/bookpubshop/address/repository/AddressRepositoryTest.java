@@ -3,6 +3,10 @@ package com.nhnacademy.bookpubshop.address.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
 import com.nhnacademy.bookpubshop.address.entity.Address;
+import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
+import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
+import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,23 +30,31 @@ class AddressRepositoryTest {
     @Autowired
     AddressRepository addressRepository;
 
+    BookPubTier tier;
     Address address;
+    Member member;
 
     @BeforeEach
     void setUp() {
-        address = AddressDummy.dummy();
+        tier = TierDummy.dummy();
+        tier = entityManager.persist(tier);
+
+        member = MemberDummy.dummy(tier);
+        member = entityManager.persist(member);
+
+        address = AddressDummy.dummy(member);
+        address = entityManager.persist(address);
     }
 
     @Test
     @DisplayName("주소 등록 테스트")
     void AddressSaveTest() {
-        Address persist = entityManager.persist(address);
 
-        Optional<Address> findAddress = addressRepository.findById(persist.getAddressNo());
+        Optional<Address> findAddress = addressRepository.findById(address.getAddressNo());
 
         assertThat(findAddress).isPresent();
-        assertThat(findAddress.get().getAddressZipcode()).isEqualTo(persist.getAddressZipcode());
-        assertThat(findAddress.get().getAddressBase()).contains(persist.getAddressBase());
-        assertThat(findAddress.get().getAddressMemberDetail()).isEqualTo(persist.getAddressMemberDetail());
+        assertThat(findAddress.get().getAddressNo()).isEqualTo(address.getAddressNo());
+        assertThat(findAddress.get().getRoadAddress()).contains(address.getRoadAddress());
+        assertThat(findAddress.get().getAddressDetail()).isEqualTo(address.getAddressDetail());
     }
 }

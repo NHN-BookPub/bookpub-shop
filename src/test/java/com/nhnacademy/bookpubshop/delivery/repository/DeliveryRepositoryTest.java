@@ -55,9 +55,9 @@ class DeliveryRepositoryTest {
         member = MemberDummy.dummy(bookPubTier);
         pricePolicy = PricePolicyDummy.dummy();
         packagePricePolicy = PricePolicyDummy.dummy();
-        address = AddressDummy.dummy();
+        address = AddressDummy.dummy(member);
         orderStateCode = OrderStateCodeDummy.dummy();
-        order = OrderDummy.dummy(member, pricePolicy, packagePricePolicy, address, orderStateCode);
+        order = OrderDummy.dummy(member, pricePolicy, packagePricePolicy, orderStateCode);
         delivery = DeliveryDummy.dummy(order);
     }
 

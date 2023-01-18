@@ -1,8 +1,6 @@
 package com.nhnacademy.bookpubshop.order.relationship.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
-import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
@@ -63,7 +61,6 @@ class OrderSubscribeRepositoryTest {
     PricePolicy deliveryPricePolicy;
     Member member;
     BookPubTier bookPubTier;
-    Address address;
     Subscribe subscribe;
     OrderStateCode orderStateCode;
     OrderSubscribeStateCode orderSubscribeStateCode;
@@ -75,13 +72,12 @@ class OrderSubscribeRepositoryTest {
         productSaleStateCode = ProductSaleStateCodeDummy.dummy();
         pricePolicy = PricePolicyDummy.dummy();
         bookPubTier = TierDummy.dummy();
-        address = AddressDummy.dummy();
         orderStateCode = OrderStateCodeDummy.dummy();
         deliveryPricePolicy = PricePolicyDummy.dummy();
         orderSubscribeStateCode = OrderSubscribeStateCodeDummy.dummy();
         orderProductStateCode = new OrderProductStateCode(null, "test", true, "test_info");
         member = MemberDummy.dummy(bookPubTier);
-        order = OrderDummy.dummy(member, pricePolicy, deliveryPricePolicy, address, orderStateCode);
+        order = OrderDummy.dummy(member, pricePolicy, deliveryPricePolicy, orderStateCode);
         subscribe = SubscribeDummy.dummy();
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode, 1, 100L, 5000L, "테스트");
@@ -92,7 +88,6 @@ class OrderSubscribeRepositoryTest {
         entityManager.persist(productSaleStateCode);
         entityManager.persist(pricePolicy);
         entityManager.persist(bookPubTier);
-        entityManager.persist(address);
         entityManager.persist(orderStateCode);
         entityManager.persist(deliveryPricePolicy);
         entityManager.persist(orderSubscribeStateCode);

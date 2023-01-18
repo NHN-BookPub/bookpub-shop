@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.address.dummy;
 
 import com.nhnacademy.bookpubshop.address.entity.Address;
+import com.nhnacademy.bookpubshop.member.entity.Member;
 
 /**
  * 주소 더미 클래스
@@ -11,11 +12,12 @@ import com.nhnacademy.bookpubshop.address.entity.Address;
  * @since : 1.0
  **/
 public class AddressDummy {
-    public static Address dummy() {
-        return new Address(null,
-                "61910",
-                "광주광역시 서구 상무버들로 40번길 14",
-                "109동 102호"
-        );
+    public static Address dummy(Member member) {
+        return Address.builder()
+                .member(member)
+                .addressMemberNumber(true)
+                .roadAddress("도로명 주소")
+                .addressDetail("상세주소")
+                .build();
     }
 }
