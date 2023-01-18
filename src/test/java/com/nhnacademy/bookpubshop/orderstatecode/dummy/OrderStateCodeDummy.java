@@ -18,7 +18,15 @@ public class OrderStateCodeDummy {
                 COMPLETE_PAYMENT.isUsed(),
                 "test_code_info"
         );
+    }
 
+    public static OrderStateCode dummy(Integer no) {
+        return new OrderStateCode(
+                no,
+                COMPLETE_PAYMENT.getName(),
+                COMPLETE_PAYMENT.isUsed(),
+                "test_code_info"
+        );
     }
 
 }

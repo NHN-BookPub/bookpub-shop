@@ -18,5 +18,13 @@ public class PricePolicyDummy {
         );
     }
 
+    public static PricePolicy dummy(Integer no){
+        return new PricePolicy(
+                no,
+                "test_policy_name",
+                3000L
+        );
+    }
+
 
 }
