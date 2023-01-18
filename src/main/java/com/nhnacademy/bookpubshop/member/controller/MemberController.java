@@ -122,6 +122,20 @@ public class MemberController {
     }
 
     /**
+     * 멤버가 회원탈퇴를 했을경우 실행되는 메서드입니다.
+     * 회원만 접근가능.
+     * 성공시 201반환.
+     *
+     * @param memeberNo 회원식별할수있는 번호.
+     * @return 성공시 201
+     */
+    @PutMapping("/members/{memberNo}")
+    public ResponseEntity<Void> memberDelete(@PathVariable("memberNo") Long memeberNo){
+        memberService.deleteMember(memeberNo);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+    /**
      * 단일 멤버에대한 차단 및 복구를 수행할 수 있습니다.
      *
      * @param memberNo 멤버 정보가 기입.

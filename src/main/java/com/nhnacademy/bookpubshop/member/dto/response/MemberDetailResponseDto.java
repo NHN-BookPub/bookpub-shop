@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemberDetailResponseDto {
     private Long memberNo;
+    private String memberName;
     private String tierName;
     private String nickname;
     private String gender;
@@ -30,6 +31,7 @@ public class MemberDetailResponseDto {
 
     public MemberDetailResponseDto(Member member) {
         this.memberNo = member.getMemberNo();
+        this.memberName = member.getMemberName();
         this.tierName = member.getTier().getTierName();
         this.nickname = member.getMemberNickname();
         this.gender = member.getMemberGender();
