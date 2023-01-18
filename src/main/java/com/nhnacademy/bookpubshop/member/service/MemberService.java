@@ -96,4 +96,21 @@ public interface MemberService {
      * @return 로그인 성공정보 리턴.
      */
     LoginMemberResponseDto loginMember(String loginId);
+
+    /**
+     * 회원가입시 사용되는 아이디 중복체크 메서드입니다.
+     *
+     * @param id 회원가입 시도하는 id
+     * @return 중복인지 아닌지 ture, false
+     */
+    boolean idDuplicateCheck(String id);
+
+    /**
+     * 회원가입시 사용되는 닉네임 중복체크 메서드입니다.
+     *
+     * @param nickName 회원가입 시도하는 nickName
+     * @return 중복인지 아닌지 ture, false
+     */
+    boolean nickNameDuplicateCheck(String nickName);
+
 }

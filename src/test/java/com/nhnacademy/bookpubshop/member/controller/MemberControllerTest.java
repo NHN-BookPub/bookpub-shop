@@ -9,9 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
+import com.nhnacademy.bookpubshop.member.dto.request.IdRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.NickRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
@@ -476,7 +478,7 @@ class MemberControllerTest {
         LoginMemberRequestDto login = new LoginMemberRequestDto();
         LoginMemberResponseDto loginDummy = MemberDummy.dummy2();
 
-        ReflectionTestUtils.setField(login,"memberId","tagkdj1");
+        ReflectionTestUtils.setField(login, "memberId", "tagkdj1");
 
         when(memberService.loginMember(anyString()))
                 .thenReturn(loginDummy);
@@ -489,6 +491,40 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.memberId").value(loginDummy.getMemberId()))
                 .andExpect(jsonPath("$.memberPwd").value(loginDummy.getMemberPwd()))
                 .andExpect(jsonPath("$.memberNo").value(loginDummy.getMemberNo()));
+    }
+
+    @Test
+    @DisplayName("아이디 중복체크 요청의 결과값 반환")
+    void idDuplicateCheckTest() throws Exception {
+        IdRequestDto idRequestDto = new IdRequestDto();
+        ReflectionTestUtils.setField(idRequestDto,"id","tagkdj1");
+
+        when(memberService.idDuplicateCheck(anyString()))
+                .thenReturn(true);
+
+        mvc.perform(post("/api/signup/idCheck")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(idRequestDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    @DisplayName("닉네임 중복체크 요청의 결과값 반환")
+    void nickDuplicateCheckTest() throws Exception {
+        NickRequestDto nickRequestDto = new NickRequestDto();
+        ReflectionTestUtils.setField(nickRequestDto,"nickname","taewon");
+
+        when(memberService.nickNameDuplicateCheck(anyString()))
+                .thenReturn(true);
+
+        mvc.perform(post("/api/signup/nickCheck")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(nickRequestDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
     }
 
 }

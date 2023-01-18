@@ -177,7 +177,22 @@ public class MemberServiceImpl implements MemberService {
 
     /**
      * {@inheritDoc}
-     *
+     */
+    @Override
+    public boolean idDuplicateCheck(String id) {
+        return memberRepository.existsByMemberId(id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean nickNameDuplicateCheck(String nickName) {
+        return memberRepository.existsByMemberNickname(nickName);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public List<MemberTierStatisticsResponseDto> getTierStatistics() {

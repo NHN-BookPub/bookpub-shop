@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
-
 import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
 import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
@@ -64,7 +63,6 @@ class MemberServiceTest {
     AuthorityRepository authorityRepository;
 
     SignUpMemberRequestDto signUpMemberRequestDto;
-    final String duplicate = "중복되는 항목";
     Member member;
     ModifyMemberNicknameRequestDto nicknameRequestDto;
 
@@ -439,5 +437,27 @@ class MemberServiceTest {
         assertThat(result.get(0).getTierCnt()).isEqualTo(dto.getTierCnt());
         assertThat(result.get(0).getTierValue()).isEqualTo(dto.getTierValue());
         assertThat(result.get(0).getTierName()).isEqualTo(dto.getTierName());
+    }
+
+    @DisplayName("아이디 중복 체크")
+    @Test
+    void idDuplicateCheckTest() {
+        when(memberRepository.existsByMemberId(anyString()))
+                .thenReturn(true);
+
+        boolean isDuplicateId = memberService.idDuplicateCheck("tagkdj1");
+
+        assertThat(isDuplicateId).isTrue();
+    }
+
+    @DisplayName("닉네임 중복 체크")
+    @Test
+    void nicknameDuplicateCheckTest() {
+        when(memberRepository.existsByMemberNickname(anyString()))
+                .thenReturn(true);
+
+        boolean isDuplicateNick = memberService.nickNameDuplicateCheck("taewon");
+
+        assertThat(isDuplicateNick).isTrue();
     }
 }
