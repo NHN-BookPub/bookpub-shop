@@ -1,11 +1,8 @@
 package com.nhnacademy.bookpubshop.product.dto;
 
-import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
