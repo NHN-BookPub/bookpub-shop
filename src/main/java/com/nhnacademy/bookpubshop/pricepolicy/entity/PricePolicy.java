@@ -36,4 +36,8 @@ public class PricePolicy {
     @NotNull
     @Column(name = "price_policy_fee")
     private Long policyFee;
+
+    public void modifyFee(Long fee) {
+        this.policyFee = fee;
+    }
 }
