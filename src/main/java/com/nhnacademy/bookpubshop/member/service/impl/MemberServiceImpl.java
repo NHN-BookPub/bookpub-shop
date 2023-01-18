@@ -107,7 +107,6 @@ public class MemberServiceImpl implements MemberService {
     /**
      * {@inheritDoc}
      *
-     * @throws EmailAlreadyExistsException 이메일이 이미 존재할 때 나오는 에러.
      */
     @Transactional
     @Override
