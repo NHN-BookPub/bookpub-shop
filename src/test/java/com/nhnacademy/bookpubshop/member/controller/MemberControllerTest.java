@@ -7,11 +7,14 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
@@ -144,8 +147,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "address", "광주");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
 
-        when(memberService.signup(any())).thenReturn(signUpMemberResponseDto);
-
+        when(memberService.signup(any(SignUpMemberRequestDto.class))).thenReturn(signUpMemberResponseDto);
         //when && then
         mvc.perform(post(path)
                         .content(objectMapper.writeValueAsString(signUpMemberRequestDto))
@@ -488,4 +490,92 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.memberNo").value(loginDummy.getMemberNo()));
     }
 
+    @DisplayName("휴대전화를 입력하지 않았을경우")
+    @Test
+    void memberModifyPhoneValidationFailTest() throws Exception {
+        ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
+        ReflectionTestUtils.setField(dto, "phone", null);
+
+        doNothing().when(memberService)
+                .modifyMemberPhone(anyLong(), any());
+
+        mvc.perform(put("/api/members/{memberNo}/phone", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$[0].message").value("빈값은 들어갈수없습니다."))
+                .andDo(print());
+    }
+
+    @DisplayName("휴대전화 양식이 맞지않을경우")
+    @Test
+    void memberModifyPhoneValidationLengthFailTest() throws Exception{
+        ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
+        ReflectionTestUtils.setField(dto, "phone", "111");
+
+        doNothing().when(memberService)
+                .modifyMemberPhone(anyLong(), any());
+        mvc.perform(put("/api/members/{memberNo}/phone", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$[0].message").value("전화번호는 숫자 11글자로 입력해주세요."))
+                .andDo(print());
+    }
+
+    @DisplayName("휴대전화 변경 성공")
+    @Test
+    void memberModifyPhoneTest() throws Exception{
+        ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
+        ReflectionTestUtils.setField(dto, "phone", "01066749927");
+
+        doNothing().when(memberService)
+                .modifyMemberPhone(anyLong(), any());
+        mvc.perform(put("/api/members/{memberNo}/phone", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print());
+    }
+
+    @DisplayName("회원 이름 변경 실패 null")
+    @Test
+    void memberModifyNameTestNotNull() throws Exception{
+        ModifyMemberNameRequestDto dto = new ModifyMemberNameRequestDto();
+        ReflectionTestUtils.setField(dto, "name", "a");
+
+        doNothing().when(memberService)
+                .modifyMemberName(anyLong(),any());
+        mvc.perform(put("/api/members/{memberNo}/name", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$[0].message").value("이름은 한글 또는 영어 2글자 이상 200글자 이하로 입력해주세요."));
+    }
+
+    @DisplayName("회원 이름 변경 성공")
+    @Test
+    void memberModifyNameTestSuccess() throws Exception{
+        ModifyMemberNameRequestDto dto = new ModifyMemberNameRequestDto();
+        ReflectionTestUtils.setField(dto, "name", "hi");
+
+        doNothing().when(memberService)
+                .modifyMemberName(anyLong(),any());
+        mvc.perform(put("/api/members/{memberNo}/name", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @DisplayName("회원 탈퇴 성공")
+    @Test
+    void memberDeleteSuccessTest() throws Exception{
+
+        doNothing().when(memberService)
+                .deleteMember(anyLong());
+
+        mvc.perform(put("/api/members/{memberNo}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+    }
 }

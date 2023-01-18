@@ -9,7 +9,9 @@ import static org.mockito.Mockito.*;
 import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
 import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
@@ -430,4 +432,34 @@ class MemberServiceTest {
         assertThat(result.get(0).getTierValue()).isEqualTo(dto.getTierValue());
         assertThat(result.get(0).getTierName()).isEqualTo(dto.getTierName());
     }
+
+    @DisplayName("멤버 휴대전화번호 수정 멤버 못찾을 경우")
+    @Test
+    void modifyMemberTestFail(){
+        ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
+        ReflectionTestUtils.setField(dto, "phone","10101010");
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> memberService.modifyMemberPhone(1L, dto))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+
+        then(memberRepository).should().findById(1L);
+    }
+
+    @DisplayName("멤버 휴대전화 수정 성공")
+    @Test
+    void modifyMemberTestSuccess(){
+        ModifyMemberNameRequestDto dto = new ModifyMemberNameRequestDto();
+        ReflectionTestUtils.setField(dto, "name", "12345");
+
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+
+        memberService.modifyMemberName(1L,dto);
+
+        then(memberRepository).should().findById(1L);
+    }
+
 }
