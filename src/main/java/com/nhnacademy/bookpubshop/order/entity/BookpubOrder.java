@@ -1,24 +1,13 @@
 package com.nhnacademy.bookpubshop.order.entity;
 
-import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * 주문(order) 테이블.
@@ -31,6 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "bookpub_order")
+@Builder
 public class BookpubOrder extends BaseCreateTimeEntity {
 
     @Id
@@ -51,11 +41,6 @@ public class BookpubOrder extends BaseCreateTimeEntity {
     @ManyToOne
     @JoinColumn(name = "price_policy_packaging_number")
     private PricePolicy packagingPricePolicy;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "address_number")
-    private Address address;
 
     @NotNull
     @ManyToOne
@@ -100,4 +85,17 @@ public class BookpubOrder extends BaseCreateTimeEntity {
     @Column(name = "order_coupon_discount")
     private Long couponDiscount;
 
+    @Column(name = "order_address_detail")
+    private String addressDetail;
+
+    @Column(name = "order_road_address")
+    private String roadAddress;
+
+    public void modifyInvoiceNo(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
+
+    public void modifyState(OrderStateCode orderStateCode) {
+        this.orderStateCode = orderStateCode;
+    }
 }
