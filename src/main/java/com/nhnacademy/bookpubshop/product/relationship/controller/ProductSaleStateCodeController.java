@@ -39,7 +39,7 @@ public class ProductSaleStateCodeController {
      * 상품판매정책코드를 생성하는 api.
      *
      * @param requestDto 생성에 사용하는 Dto.
-     * @return 성공시 201, 생성된 객체를 반환합니다.
+     * @return 성공시 201 반환합니다.
      */
     @PostMapping
     public ResponseEntity<Void> createProductSaleStateCode(
