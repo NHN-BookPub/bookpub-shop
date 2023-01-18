@@ -38,4 +38,8 @@ public class OrderProductStateCode {
 
     @Column(name = "order_product_state_code_info")
     private String codeInfo;
+
+    public void modifyUsed() {
+        this.codeUsed = !this.codeUsed;
+    }
 }
