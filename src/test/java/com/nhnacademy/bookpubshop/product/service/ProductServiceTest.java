@@ -96,8 +96,6 @@ class ProductServiceTest {
                 "test_publisher",
                 130,
                 "test_description",
-                "thumbnail.png",
-                "test.txt",
                 8000L,
                 10000L,
                 20,
@@ -115,7 +113,6 @@ class ProductServiceTest {
                 product.getTitle(),
                 product.getPageCount(),
                 product.getProductDescription(),
-                product.getProductThumbnail(),
                 product.getSalesPrice(),
                 product.getSalesRate(),
                 product.getProductPriority(),
@@ -129,7 +126,6 @@ class ProductServiceTest {
 
         listResponseDto = new GetProductListResponseDto(
                 product.getProductNo(),
-                product.getProductThumbnail(),
                 product.getTitle(),
                 product.getProductStock(),
                 product.getSalesPrice(),
@@ -144,8 +140,6 @@ class ProductServiceTest {
         ReflectionTestUtils.setField(requestDto, "productPublisher", product.getProductPublisher());
         ReflectionTestUtils.setField(requestDto, "pageCount", product.getPageCount());
         ReflectionTestUtils.setField(requestDto, "productDescription", product.getProductDescription());
-        ReflectionTestUtils.setField(requestDto, "thumbnailPath", product.getProductThumbnail());
-        ReflectionTestUtils.setField(requestDto, "ebookPath", product.getEbookFilePath());
         ReflectionTestUtils.setField(requestDto, "salePrice", product.getSalesPrice());
         ReflectionTestUtils.setField(requestDto, "productPrice", product.getProductPrice());
         ReflectionTestUtils.setField(requestDto, "productPriority", product.getProductPriority());
@@ -177,8 +171,6 @@ class ProductServiceTest {
                 .isEqualTo(product.getProductPriority());
         assertThat(productService.getProductDetailById(product.getProductNo()).getProductStock())
                 .isEqualTo(product.getProductStock());
-        assertThat(productService.getProductDetailById(product.getProductNo()).getProductThumbnail())
-                .isEqualTo(product.getProductThumbnail());
         assertThat(productService.getProductDetailById(product.getProductNo()).getPublishDate())
                 .isEqualTo(product.getPublishDate());
         assertThat(productService.getProductDetailById(product.getProductNo()).getPageCount())
@@ -310,9 +302,6 @@ class ProductServiceTest {
                 .getContent().get(0).getProductNo())
                 .isEqualTo(listResponseDto.getProductNo());
         assertThat(productService.getAllProducts(pageable)
-                .getContent().get(0).getThumbnailPath())
-                .isEqualTo(listResponseDto.getThumbnailPath());
-        assertThat(productService.getAllProducts(pageable)
                 .getContent().get(0).getSaleRate())
                 .isEqualTo(listResponseDto.getSaleRate());
         assertThat(productService.getAllProducts(pageable)
@@ -362,9 +351,6 @@ class ProductServiceTest {
         assertThat(productService.getProductListLikeTitle("tes", pageable)
                 .getContent().get(0).getProductNo())
                 .isEqualTo(listResponseDto.getProductNo());
-        assertThat(productService.getProductListLikeTitle("tes", pageable)
-                .getContent().get(0).getThumbnailPath())
-                .isEqualTo(listResponseDto.getThumbnailPath());
         assertThat(productService.getProductListLikeTitle("tes", pageable)
                 .getContent().get(0).getSaleRate())
                 .isEqualTo(listResponseDto.getSaleRate());

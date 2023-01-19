@@ -71,9 +71,7 @@ class ProductRepositoryTest {
         assertThat(product.get().getProductDescription()).isEqualTo(persist.getProductDescription());
         assertThat(product.get().getProductPriority()).isEqualTo(persist.getProductPriority());
         assertThat(product.get().getProductStock()).isEqualTo(persist.getProductStock());
-        assertThat(product.get().getProductThumbnail()).isEqualTo(persist.getProductThumbnail());
         assertThat(product.get().getSalesPrice()).isEqualTo(persist.getSalesPrice());
-        assertThat(product.get().getEbookFilePath()).isEqualTo(persist.getEbookFilePath());
         assertThat(product.get().getPageCount()).isEqualTo(persist.getPageCount());
         assertThat(product.get().getCreatedAt()).isAfter(now);
     }

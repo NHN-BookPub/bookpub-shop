@@ -15,9 +15,6 @@ import com.nhnacademy.bookpubshop.product.dto.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
-import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
-import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
-import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
@@ -40,7 +37,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  * ProductController 테스트.
@@ -81,7 +77,6 @@ class ProductControllerTest {
                 product.getTitle(),
                 product.getPageCount(),
                 product.getProductDescription(),
-                product.getProductThumbnail(),
                 product.getSalesPrice(),
                 product.getSalesRate(),
                 product.getProductPriority(),
@@ -95,7 +90,6 @@ class ProductControllerTest {
 
         listResponseDto = new GetProductListResponseDto(
                 product.getProductNo(),
-                product.getProductThumbnail(),
                 product.getTitle(),
                 product.getProductStock(),
                 product.getSalesPrice(),
@@ -114,8 +108,6 @@ class ProductControllerTest {
         ReflectionTestUtils.setField(requestDto, "productPublisher", product.getProductPublisher());
         ReflectionTestUtils.setField(requestDto, "pageCount", product.getPageCount());
         ReflectionTestUtils.setField(requestDto, "productDescription", product.getProductDescription());
-        ReflectionTestUtils.setField(requestDto, "thumbnailPath", product.getProductThumbnail());
-        ReflectionTestUtils.setField(requestDto, "ebookPath", product.getEbookFilePath());
         ReflectionTestUtils.setField(requestDto, "salePrice", product.getSalesPrice());
         ReflectionTestUtils.setField(requestDto, "productPrice", product.getProductPrice());
         ReflectionTestUtils.setField(requestDto, "productPriority", product.getProductPriority());
@@ -156,8 +148,6 @@ class ProductControllerTest {
                 .isEqualTo(listResponseDto.getProductNo());
         assertThat(productService.getAllProducts(pageable).getContent().get(0).getPublishedAt())
                 .isEqualTo(listResponseDto.getPublishedAt());
-        assertThat(productService.getAllProducts(pageable).getContent().get(0).getThumbnailPath())
-                .isEqualTo(listResponseDto.getThumbnailPath());
         assertThat(productService.getAllProducts(pageable).getContent().get(0).getSaleRate())
                 .isEqualTo(listResponseDto.getSaleRate());
         assertThat(productService.getAllProducts(pageable).getContent().get(0).getTitle())
@@ -199,7 +189,6 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.title").value(responseDto.getTitle()))
                 .andExpect(jsonPath("$.pageCount").value(responseDto.getPageCount()))
                 .andExpect(jsonPath("$.productDescription").value(responseDto.getProductDescription()))
-                .andExpect(jsonPath("$.productThumbnail").value(responseDto.getProductThumbnail()))
                 .andExpect(jsonPath("$.salesPrice").value(responseDto.getSalesPrice()))
                 .andExpect(jsonPath("$.salesRate").value(responseDto.getSalesRate()))
                 .andExpect(jsonPath("$.productPriority").value(responseDto.getProductPriority()))

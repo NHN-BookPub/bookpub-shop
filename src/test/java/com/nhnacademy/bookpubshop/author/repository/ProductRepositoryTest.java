@@ -54,8 +54,6 @@ class ProductRepositoryTest {
                 "publisher",
                 130,
                 "test_description",
-                "thumbnail.png",
-                "test.txt",
                 10000L,
                 10000L,
                 0,
@@ -86,8 +84,6 @@ class ProductRepositoryTest {
                 .isEqualTo(productPersist.getTitle());
         assertThat(productRepository.getAllProducts(pageable).getContent().get(0).getSalesPrice())
                 .isEqualTo(productPersist.getSalesPrice());
-        assertThat(productRepository.getAllProducts(pageable).getContent().get(0).getThumbnailPath())
-                .isEqualTo(productPersist.getProductThumbnail());
     }
 
     @Test
