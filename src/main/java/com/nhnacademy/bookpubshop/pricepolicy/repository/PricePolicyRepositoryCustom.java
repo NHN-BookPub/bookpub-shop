@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.pricepolicy.repository;
 
 import com.nhnacademy.bookpubshop.pricepolicy.dto.GetPricePolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -27,4 +28,12 @@ public interface PricePolicyRepositoryCustom {
      * @return 정책리스트를 반환합니다.
      */
     List<GetPricePolicyResponseDto> findAllPolicies();
+
+    /**
+     * 정책 이름으로 가장 최근 정책을 반환합니다.
+     *
+     * @param name 정책명입니다.
+     * @return 찾은 정책입니다.
+     */
+    Optional<PricePolicy> getLatestPricePolicyByName(String name);
 }

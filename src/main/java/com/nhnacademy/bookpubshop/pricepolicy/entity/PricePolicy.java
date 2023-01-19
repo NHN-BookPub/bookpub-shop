@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.pricepolicy.entity;
 
+import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "price_policy")
-public class PricePolicy {
+public class PricePolicy extends BaseCreateTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

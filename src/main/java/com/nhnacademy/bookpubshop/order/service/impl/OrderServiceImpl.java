@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.order.service.impl;
 
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.order.dto.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
@@ -26,7 +27,6 @@ import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.state.PricePolicyState;
 import com.nhnacademy.bookpubshop.state.anno.StateCode;
-import com.nhnacademy.bookpubshop.tier.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -75,11 +75,11 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(MemberNotFoundException::new);
 
         PricePolicy deliveryPolicy = pricePolicyRepository
-                .getByPolicyName(PricePolicyState.SHIPPING.getName())
+                .getLatestPricePolicyByName(PricePolicyState.SHIPPING.getName())
                 .orElseThrow(NotFoundPricePolicyException::new);
 
         PricePolicy packagingPricePolicy = pricePolicyRepository
-                .getByPolicyName(PricePolicyState.PACKAGING.getName())
+                .getLatestPricePolicyByName(PricePolicyState.PACKAGING.getName())
                 .orElseThrow(NotFoundPricePolicyException::new);
 
         OrderStateCode orderStateCode =

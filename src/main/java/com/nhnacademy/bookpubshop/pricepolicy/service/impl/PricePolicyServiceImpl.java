@@ -65,4 +65,14 @@ public class PricePolicyServiceImpl implements PricePolicyService {
     public List<GetPricePolicyResponseDto> getPricePolicies() {
         return pricePolicyRepository.findAllPolicies();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public PricePolicy getLatestPricePolicyByName(String name) {
+        return pricePolicyRepository.getLatestPricePolicyByName(name)
+                .orElseThrow(NotFoundPricePolicyException::new);
+    }
 }

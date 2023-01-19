@@ -28,7 +28,7 @@ public class PricePolicyRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public Optional<GetPricePolicyResponseDto> findPolicyByNo(Integer policyNo) {
-        return Optional.ofNullable(from(pricePolicy)
+        return Optional.of(from(pricePolicy)
                 .select(Projections.constructor(
                         GetPricePolicyResponseDto.class,
                         pricePolicy.policyNo,
@@ -52,5 +52,18 @@ public class PricePolicyRepositoryImpl extends QuerydslRepositorySupport
                         pricePolicy.policyFee
                 ))
                 .fetch();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<PricePolicy> getLatestPricePolicyByName(String name) {
+        return Optional.of(from(pricePolicy)
+                .select(pricePolicy)
+                        .where(pricePolicy.policyName.eq(name))
+                .orderBy(pricePolicy.createdAt.desc())
+                .limit(1L)
+                .fetchOne());
     }
 }

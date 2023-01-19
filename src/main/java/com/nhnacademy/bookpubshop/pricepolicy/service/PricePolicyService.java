@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.pricepolicy.service;
 
 import com.nhnacademy.bookpubshop.pricepolicy.dto.CreatePricePolicyRequestDto;
 import com.nhnacademy.bookpubshop.pricepolicy.dto.GetPricePolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import java.util.List;
 
 /**
@@ -40,4 +41,6 @@ public interface PricePolicyService {
      * @return 가격정책 리스트를 반환합니다.
      */
     List<GetPricePolicyResponseDto> getPricePolicies();
+
+    PricePolicy getLatestPricePolicyByName(String name);
 }
