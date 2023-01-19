@@ -8,7 +8,7 @@ package com.nhnacademy.bookpubshop.product.exception;
  * @since : 1.0
  **/
 public class ProductNotFoundException extends RuntimeException {
-    private static final String MESSAGE = ": 찾을 수 없습니다.";
+    public static final String MESSAGE = ": 찾을 수 없습니다.";
 
     public ProductNotFoundException() {
         super(MESSAGE);
