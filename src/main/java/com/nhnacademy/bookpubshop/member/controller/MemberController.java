@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.member.controller;
 
 import com.nhnacademy.bookpubshop.member.dto.request.IdRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.MemberModifyPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
@@ -10,6 +11,7 @@ import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.NickRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberPasswordResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
@@ -250,4 +252,19 @@ public class MemberController {
                 .body(memberService.getTierStatistics());
     }
 
+    @GetMapping("/members/{memberNo}/password-check")
+    public ResponseEntity<MemberPasswordResponseDto> memberPasswordCheck(@PathVariable("memberNo") Long memberNo){
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(memberService.getMemberPwd(memberNo));
+    }
+
+    @PutMapping("/members/{memberNo}/password")
+    public ResponseEntity<Void> memberModifyPassword(@PathVariable("memberNo") Long memberNo,
+                                                     @RequestBody MemberModifyPasswordRequest request) {
+        memberService.modifyMemberPassword(memberNo,request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+
+    }
 }
