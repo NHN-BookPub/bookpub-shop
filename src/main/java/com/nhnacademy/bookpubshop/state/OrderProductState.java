@@ -10,7 +10,8 @@ import lombok.Getter;
  * @since : 1.0
  **/
 @Getter
-public enum OrderProductState {
+public enum OrderProductState implements States {
+    COMPLETE("결제완료", true),
     CONFIRMED("구매확정", true),
     REFUND("환불", true),
     WAITING_EXCHANGE("교환중", true),

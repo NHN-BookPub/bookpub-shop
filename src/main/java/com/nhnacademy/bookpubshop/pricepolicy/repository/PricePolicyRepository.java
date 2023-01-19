@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.pricepolicy.repository;
 
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author : 김서현
  * @since : 1.0
  **/
-public interface PricePolicyRepository extends JpaRepository<PricePolicy, Integer> {
-
+public interface PricePolicyRepository extends JpaRepository<PricePolicy, Integer>,
+        PricePolicyRepositoryCustom {
+    Optional<PricePolicy> getByPolicyName(String name);
 }

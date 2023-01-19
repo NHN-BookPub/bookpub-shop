@@ -3,7 +3,6 @@ package com.nhnacademy.bookpubshop.coupon.service;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
 import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
@@ -74,19 +73,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 @ExtendWith(SpringExtension.class)
 @Import(CouponServiceImpl.class)
 class CouponServiceTest {
-
-    @Autowired
     CouponService couponService;
-
     @MockBean
     CouponRepository couponRepository;
-
     @MockBean
     MemberRepository memberRepository;
-
     @MockBean
     CouponTemplateRepository couponTemplateRepository;
-
     ArgumentCaptor<Coupon> captor;
 
     CouponPolicy couponPolicy;
@@ -112,6 +105,7 @@ class CouponServiceTest {
 
     @BeforeEach
     void setUp() {
+        couponService = new CouponServiceImpl(couponRepository, memberRepository, couponTemplateRepository);
         couponPolicy = CouponPolicyDummy.dummy();
         couponType = CouponTypeDummy.dummy();
         couponStateCode = CouponStateCodeDummy.dummy();
@@ -127,9 +121,8 @@ class CouponServiceTest {
         file = FileDummy.dummy(null, null, couponTemplate, product, null);
         tier = TierDummy.dummy();
         member = MemberDummy.dummy(tier);
-        address = AddressDummy.dummy();
         orderStateCode = OrderStateCodeDummy.dummy();
-        bookpubOrder = OrderDummy.dummy(member, pricePolicy, packagePolicy, address, orderStateCode);
+        bookpubOrder = OrderDummy.dummy(member, pricePolicy, packagePolicy, orderStateCode);
 
         coupon = CouponDummy.dummy(couponTemplate, bookpubOrder, orderProduct, member);
 
@@ -283,7 +276,7 @@ class CouponServiceTest {
                 .thenReturn(Optional.empty());
 
         // then
-        assertThatThrownBy(() -> couponService.getCoupon(anyLong()))
+        assertThatThrownBy(() -> couponService.getCoupon(coupon.getCouponNo()))
                 .isInstanceOf(CouponNotFoundException.class)
                 .hasMessageContaining(CouponNotFoundException.MESSAGE);
     }

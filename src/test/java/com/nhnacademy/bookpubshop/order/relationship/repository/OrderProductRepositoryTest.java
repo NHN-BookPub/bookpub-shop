@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.order.relationship.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
@@ -72,7 +71,6 @@ class OrderProductRepositoryTest {
                 member,
                 new PricePolicy(null, "배송비", 3000L),
                 new PricePolicy(null, "포장비", 1500L),
-                new Address(null, "51550", "광주광역시 동구 어딘가", "상세"),
                 new OrderStateCode(null, OrderState.COMPLETE_DELIVERY.getName(), OrderState.COMPLETE_DELIVERY.isUsed(), "배송완료"),
                 "test_recipient",
                 "test_recipient_phone",
@@ -84,14 +82,15 @@ class OrderProductRepositoryTest {
                 100L,
                 true,
                 null,
-                1000L
+                1000L,
+                "IT관",
+                "광주 동구 조선대길"
         );
         entityManager.persist(bookPubTier);
         entityManager.persist(member);
         entityManager.persist(productPolicy);
         entityManager.persist(order.getPackagingPricePolicy());
         entityManager.persist(order.getDeliveryPricePolicy());
-        entityManager.persist(order.getAddress());
         entityManager.persist(order.getOrderStateCode());
         entityManager.persist(productTypeStateCode);
         entityManager.persist(productSaleStateCode);

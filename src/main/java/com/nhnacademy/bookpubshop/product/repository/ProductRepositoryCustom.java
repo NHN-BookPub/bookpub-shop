@@ -1,7 +1,9 @@
 package com.nhnacademy.bookpubshop.product.repository;
 
+import com.nhnacademy.bookpubshop.product.dto.GetProductListForOrderResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,4 +41,12 @@ public interface ProductRepositoryCustom {
      * @return 상세정보 dto를 반환합니다.
      */
     Optional<GetProductDetailResponseDto> getProductDetailById(Long id);
+
+    /**
+     * 주문번호로 상품리스트를 조회합니다.
+     *
+     * @param orderNo 주문번호입니다.
+     * @return 주문에서 보여질 상품 Dto를 반환합니다.
+     */
+    List<GetProductListForOrderResponseDto> getProductListByOrderNo(Long orderNo);
 }

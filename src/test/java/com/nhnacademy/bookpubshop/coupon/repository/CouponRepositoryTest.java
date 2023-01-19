@@ -1,8 +1,6 @@
 package com.nhnacademy.bookpubshop.coupon.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
-import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.dummy.CouponDummy;
@@ -82,7 +80,6 @@ class CouponRepositoryTest {
     Member member;
     BookpubOrder order;
     OrderStateCode orderStateCode;
-    Address address;
     CouponPolicy couponPolicy;
     CouponType couponType;
     Category category;
@@ -107,13 +104,11 @@ class CouponRepositoryTest {
 
         bookPubTier = TierDummy.dummy();
         member = MemberDummy.dummy(bookPubTier);
-        address = AddressDummy.dummy();
         order = new BookpubOrder(
                 null,
                 member,
                 new PricePolicy(null, "배송비", 3000L),
                 new PricePolicy(null, "포장비", 1500L),
-                address,
                 new OrderStateCode(null, OrderState.COMPLETE_DELIVERY.getName(), OrderState.COMPLETE_DELIVERY.isUsed(), "배송완료"),
                 "test_recipient",
                 "test_recipient_phone",
@@ -125,7 +120,9 @@ class CouponRepositoryTest {
                 100L,
                 true,
                 null,
-                1000L
+                1000L,
+                "IT",
+                "광주 동구 조선대길"
         );
 
         productPolicy = ProductPolicyDummy.dummy();
@@ -156,7 +153,6 @@ class CouponRepositoryTest {
                 member,
                 deliveryPricePolicy,
                 packagePricePolicy,
-                address,
                 orderStateCode,
                 "test_recipient",
                 "test_recipient_phone",
@@ -168,7 +164,9 @@ class CouponRepositoryTest {
                 100L,
                 true,
                 null,
-                1000L
+                1000L,
+                "IT",
+                "광주 동구 조선대길"
         );
 
         couponStateCode = CouponStateCodeDummy.dummy();
@@ -213,7 +211,6 @@ class CouponRepositoryTest {
 
         entityManager.persist(bookPubTier);
         entityManager.persist(member);
-        entityManager.persist(address);
         entityManager.persist(productPolicy);
         entityManager.persist(productSaleStateCode);
         entityManager.persist(productTypeStateCode);

@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author : 김서현
  * @since : 1.0
  **/
-public interface OrderRepository extends JpaRepository<BookpubOrder, Long> {
+public interface OrderRepository extends JpaRepository<BookpubOrder, Long>, OrderRepositoryCustom {
 
 }

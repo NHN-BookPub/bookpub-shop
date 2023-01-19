@@ -1,24 +1,13 @@
 package com.nhnacademy.bookpubshop.order.entity;
 
-import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * 주문(order) 테이블.
@@ -27,38 +16,31 @@ import lombok.NoArgsConstructor;
  * @since : 1.0
  **/
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "bookpub_order")
 public class BookpubOrder extends BaseCreateTimeEntity {
-
     @Id
     @Column(name = "order_number")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderNo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "price_policy_delivery_number")
     private PricePolicy deliveryPricePolicy;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "price_policy_packaging_number")
     private PricePolicy packagingPricePolicy;
 
     @NotNull
-    @ManyToOne
-    @JoinColumn(name = "address_number")
-    private Address address;
-
-    @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_state_code_number")
     private OrderStateCode orderStateCode;
 
@@ -100,4 +82,60 @@ public class BookpubOrder extends BaseCreateTimeEntity {
     @Column(name = "order_coupon_discount")
     private Long couponDiscount;
 
+    @Column(name = "order_address_detail")
+    private String addressDetail;
+
+    @Column(name = "order_road_address")
+    private String roadAddress;
+
+    /**
+     * Builder 를 적용하기 위한 생성자입니다.
+     * 모든 필드를 받습니다.
+     */
+    @Builder
+    public BookpubOrder(Long orderNo,
+                        Member member,
+                        PricePolicy deliveryPricePolicy,
+                        PricePolicy packagingPricePolicy,
+                        OrderStateCode orderStateCode,
+                        String orderRecipient,
+                        String recipientPhone,
+                        String orderBuyer,
+                        String buyerPhone,
+                        LocalDateTime receivedAt,
+                        String invoiceNumber,
+                        Long orderPrice,
+                        Long pointAmount,
+                        boolean orderPackaged,
+                        String orderRequest,
+                        Long couponDiscount,
+                        String addressDetail,
+                        String roadAddress) {
+        this.orderNo = orderNo;
+        this.member = member;
+        this.deliveryPricePolicy = deliveryPricePolicy;
+        this.packagingPricePolicy = packagingPricePolicy;
+        this.orderStateCode = orderStateCode;
+        this.orderRecipient = orderRecipient;
+        this.recipientPhone = recipientPhone;
+        this.orderBuyer = orderBuyer;
+        this.buyerPhone = buyerPhone;
+        this.receivedAt = receivedAt;
+        this.invoiceNumber = invoiceNumber;
+        this.orderPrice = orderPrice;
+        this.pointAmount = pointAmount;
+        this.orderPackaged = orderPackaged;
+        this.orderRequest = orderRequest;
+        this.couponDiscount = couponDiscount;
+        this.addressDetail = addressDetail;
+        this.roadAddress = roadAddress;
+    }
+
+    public void modifyInvoiceNo(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
+
+    public void modifyState(OrderStateCode orderStateCode) {
+        this.orderStateCode = orderStateCode;
+    }
 }
