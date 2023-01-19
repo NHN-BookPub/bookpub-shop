@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Some description here.
+ * front로 파일을 보내기 위해 변환한 Dto.
  *
  * @author : 정유진
  * @since : 1.0

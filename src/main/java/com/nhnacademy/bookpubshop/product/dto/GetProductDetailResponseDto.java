@@ -23,7 +23,6 @@ public class GetProductDetailResponseDto {
     private String title;
     private Integer pageCount;
     private String productDescription;
-    private String productThumbnail;
     private Long salesPrice;
     private Integer salesRate;
     private Integer productPriority;

@@ -47,7 +47,6 @@ public class CreateCouponTemplateRequestDto {
     @NotNull(message = "발급일자를 기입해주세요.")
     private LocalDateTime issuedAt;
 
-    @NotNull(message = "중복 적용여부를 기입해주세요.")
     private boolean templateOverlapped;
 
     private boolean templateBundled;

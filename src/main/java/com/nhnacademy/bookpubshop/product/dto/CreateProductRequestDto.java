@@ -1,11 +1,8 @@
 package com.nhnacademy.bookpubshop.product.dto;
 
-import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -33,11 +30,6 @@ public class CreateProductRequestDto {
     @NotNull
     @Length(max = 2000, message = "설명은 최대 2000자입니다.")
     private String productDescription;
-    @NotNull
-    @Length(max = 200)
-    private String thumbnailPath;
-    @Length(max = 200)
-    private String ebookPath;
     @NotNull
     private Long salePrice;
     @NotNull
