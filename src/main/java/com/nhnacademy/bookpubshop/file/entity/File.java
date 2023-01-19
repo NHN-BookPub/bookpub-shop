@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -45,7 +46,7 @@ public class File extends BaseCreateTimeEntity {
     @JoinColumn(name = "personal_inquiry_number")
     private PersonalInquiry personalInquiry;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "coupon_template_number")
     private CouponTemplate couponTemplate;
 
@@ -76,5 +77,4 @@ public class File extends BaseCreateTimeEntity {
     @NotNull
     @Column(name = "file_name_saved")
     private String nameSaved;
-
 }

@@ -13,6 +13,8 @@ import com.nhnacademy.bookpubshop.coupontemplate.dto.request.CreateCouponTemplat
 import com.nhnacademy.bookpubshop.coupontemplate.dto.request.ModifyCouponTemplateRequestDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetDetailCouponTemplateResponseDto;
+import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetCouponTemplateResponseDto;
+import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetDetailCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontemplate.exception.CouponTemplateNotFoundException;
 import com.nhnacademy.bookpubshop.coupontemplate.repository.CouponTemplateRepository;
@@ -20,14 +22,18 @@ import com.nhnacademy.bookpubshop.coupontemplate.service.CouponTemplateService;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
 import com.nhnacademy.bookpubshop.coupontype.exception.CouponTypeNotFoundException;
 import com.nhnacademy.bookpubshop.coupontype.repository.CouponTypeRepository;
-import com.nhnacademy.bookpubshop.file.entity.File;
-import com.nhnacademy.bookpubshop.file.repository.FileRepository;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.utils.FileUtils;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +46,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @since : 1.0
  **/
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CouponTemplateServiceImpl implements CouponTemplateService {
@@ -49,31 +56,44 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final CouponStateCodeRepository couponStateCodeRepository;
-    private final FileRepository fileRepository;
+    private final FileUtils fileUtils;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public GetDetailCouponTemplateResponseDto getDetailCouponTemplate(Long templateNo) {
-        return couponTemplateRepository.findDetailByTemplateNo(templateNo)
-                .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
+    public RestGetDetailCouponTemplateResponseDto getDetailCouponTemplate(Long templateNo) throws IOException {
+        GetDetailCouponTemplateResponseDto detailDto =
+                couponTemplateRepository.findDetailByTemplateNo(templateNo)
+                        .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
+
+        if (Objects.nonNull(detailDto.getTemplateImage())) {
+            return detailDto.transform(fileUtils.loadFile(detailDto.getTemplateImage()));
+        }
+        return detailDto.transform(null);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Page<GetDetailCouponTemplateResponseDto> getDetailCouponTemplates(Pageable pageable) {
-        return couponTemplateRepository.findDetailAllBy(pageable);
-    }
+    public Page<RestGetCouponTemplateResponseDto> getCouponTemplates(Pageable pageable) throws IOException {
+        Page<GetCouponTemplateResponseDto> dto = couponTemplateRepository.findAllBy(pageable);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Page<GetCouponTemplateResponseDto> getCouponTemplates(Pageable pageable) {
-        return couponTemplateRepository.findAllBy(pageable);
+        List<GetCouponTemplateResponseDto> dtoList = dto.getContent();
+        List<RestGetCouponTemplateResponseDto> restList = new ArrayList<>();
+
+        for (GetCouponTemplateResponseDto tmpDto : dtoList) {
+            log.info(tmpDto.getTemplateImage());
+            if (Objects.nonNull(tmpDto.getTemplateImage())) {
+                restList.add(tmpDto.transform(
+                        fileUtils.loadFile(tmpDto.getTemplateImage()
+                        )));
+            } else
+                restList.add(tmpDto.transform(null));
+        }
+
+        return new PageImpl<>(restList, pageable, dto.getTotalElements());
     }
 
     /**
@@ -82,16 +102,7 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
     @Override
     @Transactional
     public void createCouponTemplate(CreateCouponTemplateRequestDto createRequestDto,
-                                     MultipartFile image) {
-
-        String path = FileUtils.saveFile(image);
-
-
-        int posImage = image.getName().indexOf(".");
-        String nameOrigin = image.getName().substring(0, posImage);
-        String fileExtension = image.getName().substring(posImage);
-        int posPath = path.indexOf(".");
-        String nameSaved = path.substring(0, posPath);
+                                     MultipartFile image) throws IOException {
 
         CouponTemplate couponTemplate = createRequestDto.createCouponTemplate(
                 getCouponPolicy(createRequestDto.getPolicyNo()),
@@ -101,39 +112,28 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
                 getCouponStateCode(createRequestDto.getCodeNo())
         );
 
-        couponTemplateRepository.save(couponTemplate);
+        couponTemplate.setFile(fileUtils.saveFile(null, couponTemplate, null, null, null, image, "coupon"));
 
-        fileRepository.save(new File(
-                null,
-                null,
-                null,
-                couponTemplate,
-                null,
-                null,
-                "coupon",
-                path,
-                fileExtension,
-                nameOrigin,
-                nameSaved
-        ));
+        couponTemplateRepository.save(couponTemplate);
     }
 
     /**
      * {@inheritDoc}
      */
-    // 이미지 첨부 이슈 해결 후 수정 해야함.
     @Override
     @Transactional
-    public void modifyCouponTemplate(ModifyCouponTemplateRequestDto modifyRequestDto) {
-        FileUtils.saveFile(modifyRequestDto.getTemplateImage());
+    public void modifyCouponTemplate(Long templateNo, ModifyCouponTemplateRequestDto modifyRequestDto,
+                                     MultipartFile image) throws IOException {
 
-        if (!couponTemplateRepository.existsById(modifyRequestDto.getTemplateNo())) {
-            throw new CouponTemplateNotFoundException(modifyRequestDto.getTemplateNo());
+
+        CouponTemplate couponTemplate = couponTemplateRepository.findById(templateNo)
+                .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
+
+        if (Objects.nonNull(couponTemplate.getFile())) {
+            fileUtils.deleteFile(couponTemplate.getFile().getFilePath());
         }
 
-        couponTemplateRepository.save(new CouponTemplate(
-                modifyRequestDto.getTemplateNo(),
-                getCouponPolicy(modifyRequestDto.getPolicyNo()),
+        couponTemplate.modifyCouponTemplate(getCouponPolicy(modifyRequestDto.getPolicyNo()),
                 getCouponType(modifyRequestDto.getTypeNo()),
                 getProduct(modifyRequestDto.getProductNo()),
                 getCategory(modifyRequestDto.getCategoryNo()),
@@ -142,8 +142,10 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
                 modifyRequestDto.getFinishedAt(),
                 modifyRequestDto.getIssuedAt(),
                 modifyRequestDto.isTemplateOverlapped(),
-                modifyRequestDto.isTemplateBundled()
-        ));
+                modifyRequestDto.isTemplateBundled());
+
+        couponTemplate.setFile(fileUtils.saveFile(null, couponTemplate, null, null, null, image, "coupon"));
+
     }
 
     /**
@@ -157,7 +159,7 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
             return null;
         }
         return productRepository.findById(productNo)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(ProductNotFoundException::new);
     }
 
     /**

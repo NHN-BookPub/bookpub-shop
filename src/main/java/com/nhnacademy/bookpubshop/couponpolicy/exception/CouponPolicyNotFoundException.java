@@ -7,7 +7,7 @@ package com.nhnacademy.bookpubshop.couponpolicy.exception;
  * @since : 1.0
  **/
 public class CouponPolicyNotFoundException extends RuntimeException {
-    private static final String MESSAGE = "번은 없는 쿠폰정책번호입니다.";
+    public static final String MESSAGE = "번은 없는 쿠폰정책번호입니다.";
 
     public CouponPolicyNotFoundException(Integer policyNo) {
         super(policyNo + MESSAGE);
