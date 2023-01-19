@@ -42,7 +42,7 @@ class AddressMemberRepositoryTest {
         bookPubTier = TierDummy.dummy();
         member = MemberDummy.dummy(bookPubTier);
         address = AddressDummy.dummy();
-        addressMember = AddressMemberDummy.dummy(member,address);
+        addressMember = AddressMemberDummy.dummy(member, address);
     }
 
     @Test

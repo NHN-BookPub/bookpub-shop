@@ -48,7 +48,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCo
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
-import com.nhnacademy.bookpubshop.tier.exception.MemberNotFoundException;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

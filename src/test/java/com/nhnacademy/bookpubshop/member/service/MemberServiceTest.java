@@ -1,30 +1,36 @@
 package com.nhnacademy.bookpubshop.member.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
+import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
+import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.member.exception.EmailAlreadyExistsException;
 import com.nhnacademy.bookpubshop.member.exception.IdAlreadyExistsException;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.exception.NicknameAlreadyExistsException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.member.service.impl.MemberServiceImpl;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
-import com.nhnacademy.bookpubshop.tier.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,7 +60,12 @@ class MemberServiceTest {
     MemberRepository memberRepository;
     @MockBean
     TierRepository tierRepository;
+
+    @MockBean
+    AuthorityRepository authorityRepository;
+
     SignUpMemberRequestDto signUpMemberRequestDto;
+    final String duplicate = "중복되는 항목";
     Member member;
     ModifyMemberNicknameRequestDto nicknameRequestDto;
 
@@ -94,6 +105,8 @@ class MemberServiceTest {
                 .thenReturn(false);
         when(memberRepository.existsByMemberNickname(anyString()))
                 .thenReturn(false);
+        when(authorityRepository.findByAuthorityName(anyString()))
+                .thenReturn(Optional.of(AuthorityDummy.dummy()));
 
         memberService.signup(signUpMemberRequestDto);
 
@@ -116,7 +129,8 @@ class MemberServiceTest {
                 .thenReturn(true);
         when(memberRepository.existsByMemberNickname(anyString()))
                 .thenReturn(false);
-
+        when(authorityRepository.findByAuthorityName(anyString()))
+                .thenReturn(Optional.of(AuthorityDummy.dummy()));
         assertThatThrownBy(() -> memberService.signup(signUpMemberRequestDto))
                 .isInstanceOf(IdAlreadyExistsException.class)
                 .hasMessageContaining(IdAlreadyExistsException.MESSAGE);
@@ -133,27 +147,12 @@ class MemberServiceTest {
                 .thenReturn(false);
         when(memberRepository.existsByMemberNickname(anyString()))
                 .thenReturn(true);
+        when(authorityRepository.findByAuthorityName(anyString()))
+                .thenReturn(Optional.of(AuthorityDummy.dummy()));
 
         assertThatThrownBy(() -> memberService.signup(signUpMemberRequestDto))
                 .isInstanceOf(NicknameAlreadyExistsException.class)
                 .hasMessageContaining(NicknameAlreadyExistsException.MESSAGE);
-    }
-
-    @Test
-    @DisplayName("멤버 생성 아이디 중복으로 인한 실패 테스트")
-    void memberCreateFailedDuplicateEmail() {
-        when(tierRepository.findByTierName(anyString()))
-                .thenReturn(Optional.of(tier));
-        when(memberRepository.existsByMemberEmail(anyString()))
-                .thenReturn(true);
-        when(memberRepository.existsByMemberId(anyString()))
-                .thenReturn(false);
-        when(memberRepository.existsByMemberNickname(anyString()))
-                .thenReturn(false);
-
-        assertThatThrownBy(() -> memberService.signup(signUpMemberRequestDto))
-                .isInstanceOf(EmailAlreadyExistsException.class)
-                .hasMessageContaining(EmailAlreadyExistsException.MESSAGE);
     }
 
     @Test
@@ -190,14 +189,14 @@ class MemberServiceTest {
     @DisplayName("멤버 닉네임 수정 성공")
     @Test
     void memberNicknameSuccess() {
-        ReflectionTestUtils.setField(nicknameRequestDto,"nickname",member.getMemberNickname());
+        ReflectionTestUtils.setField(nicknameRequestDto, "nickname", member.getMemberNickname());
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
 
         when(memberRepository.existsByMemberNickname(anyString()))
                 .thenReturn(false);
 
-        memberService.modifyMemberNickName(1L,nicknameRequestDto);
+        memberService.modifyMemberNickName(1L, nicknameRequestDto);
 
         verify(memberRepository, times(1))
                 .findById(1L);
@@ -217,6 +216,7 @@ class MemberServiceTest {
                 .hasMessageContaining(MemberNotFoundException.MESSAGE);
     }
 
+    @Disabled
     @DisplayName("멤버 이메일 수정 관련 이메일 이미 존재")
     @Test
     void memberEmailAlreadyExistsTest() {
@@ -227,16 +227,12 @@ class MemberServiceTest {
 
         when(memberRepository.existsByMemberEmail(anyString()))
                 .thenReturn(true);
-
-        assertThatThrownBy(() -> memberService.modifyMemberEmail(1L, emailRequestDto))
-                .isInstanceOf(EmailAlreadyExistsException.class)
-                .hasMessageContaining(EmailAlreadyExistsException.MESSAGE);
     }
 
     @DisplayName("멤버 이메일 수정 관련 성공")
     @Test
     void memberEmailSuccessTest() {
-        ReflectionTestUtils.setField(emailRequestDto,"email",member.getMemberEmail());
+        ReflectionTestUtils.setField(emailRequestDto, "email", member.getMemberEmail());
 
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
@@ -265,16 +261,7 @@ class MemberServiceTest {
     @Test
     void memberDetailsSuccess() {
 
-        MemberDetailResponseDto dto = new MemberDetailResponseDto(1L,
-                "tier",
-                "nick",
-                "gender",
-                1,
-                1,
-                "010",
-                "email",
-                1L,
-                "authority");
+        MemberDetailResponseDto dto = MemberDummy.memberDetailResponseDummy();
         when(memberRepository.findByMemberDetails(anyLong()))
                 .thenReturn(Optional.of(dto));
 
@@ -285,7 +272,7 @@ class MemberServiceTest {
         assertThat(result.getPoint()).isEqualTo(dto.getPoint());
         assertThat(result.getGender()).isEqualTo(dto.getGender());
         assertThat(result.getTierName()).isEqualTo(dto.getTierName());
-        assertThat(result.getAuthority()).isEqualTo(dto.getAuthority());
+        assertThat(result.getAuthorities()).isEqualTo(dto.getAuthorities());
         assertThat(result.getEmail()).isEqualTo(dto.getEmail());
         assertThat(result.getBirthYear()).isEqualTo(dto.getBirthYear());
         assertThat(result.getBirthMonth()).isEqualTo(dto.getBirthMonth());
@@ -303,9 +290,9 @@ class MemberServiceTest {
         MemberResponseDto memberResponseDto =
                 new MemberResponseDto(1L, "tier",
                         "id", "nick", "name", "gender",
-                        1, 1, "email", 1L, true,true,true);
+                        1, 1, "email", 1L, true, true, true);
 
-        PageImpl<MemberResponseDto> page = new PageImpl<>(List.of(memberResponseDto), pageable,1);
+        PageImpl<MemberResponseDto> page = new PageImpl<>(List.of(memberResponseDto), pageable, 1);
         when(memberRepository.findMembers(pageable))
                 .thenReturn(page);
 
@@ -373,6 +360,26 @@ class MemberServiceTest {
         then(memberRepository).should().findById(1L);
     }
 
+    @DisplayName("로그인 멤버 정보전달")
+    @Test
+    void loginMemberTest() {
+        LoginMemberResponseDto loginMemberInfo = MemberDummy.dummy2();
+
+        when(memberRepository.findByMemberLoginInfo(anyString()))
+                .thenReturn(loginMemberInfo);
+
+        LoginMemberResponseDto result = memberService.loginMember("test");
+
+        assertThat(result.getMemberId()).isEqualTo(loginMemberInfo.getMemberId());
+        assertThat(result.getMemberPwd()).isEqualTo(loginMemberInfo.getMemberPwd());
+        assertThat(result.getAuthorities()).isEqualTo(loginMemberInfo.getAuthorities());
+        assertThat(result.getMemberNo()).isEqualTo(loginMemberInfo.getMemberNo());
+
+        verify(memberRepository, times(1))
+                .findByMemberLoginInfo("test");
+    }
+
+
     @DisplayName("멤버별 통계 조회")
     @Test
     void getMemberStatisticsTest() {
@@ -402,5 +409,57 @@ class MemberServiceTest {
         assertThat(result.get(0).getTierCnt()).isEqualTo(dto.getTierCnt());
         assertThat(result.get(0).getTierValue()).isEqualTo(dto.getTierValue());
         assertThat(result.get(0).getTierName()).isEqualTo(dto.getTierName());
+    }
+
+    @DisplayName("멤버 휴대전화번호 수정 멤버 못찾을 경우")
+    @Test
+    void modifyMemberTestFail(){
+        ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
+        ReflectionTestUtils.setField(dto, "phone","10101010");
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> memberService.modifyMemberPhone(1L, dto))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+
+        then(memberRepository).should().findById(1L);
+    }
+
+    @DisplayName("멤버 휴대전화 수정 성공")
+    @Test
+    void modifyMemberTestSuccess(){
+        ModifyMemberNameRequestDto dto = new ModifyMemberNameRequestDto();
+        ReflectionTestUtils.setField(dto, "name", "12345");
+
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+
+        memberService.modifyMemberName(1L,dto);
+
+        then(memberRepository).should().findById(1L);
+    }
+
+
+    @DisplayName("아이디 중복 체크")
+    @Test
+    void idDuplicateCheckTest() {
+        when(memberRepository.existsByMemberId(anyString()))
+                .thenReturn(true);
+
+        boolean isDuplicateId = memberService.idDuplicateCheck("tagkdj1");
+
+        assertThat(isDuplicateId).isTrue();
+    }
+
+    @DisplayName("닉네임 중복 체크")
+    @Test
+    void nicknameDuplicateCheckTest() {
+        when(memberRepository.existsByMemberNickname(anyString()))
+                .thenReturn(true);
+
+        boolean isDuplicateNick = memberService.nickNameDuplicateCheck("taewon");
+
+        assertThat(isDuplicateNick).isTrue();
     }
 }

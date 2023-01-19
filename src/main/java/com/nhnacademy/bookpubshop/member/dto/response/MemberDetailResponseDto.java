@@ -1,7 +1,9 @@
 package com.nhnacademy.bookpubshop.member.dto.response;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import com.nhnacademy.bookpubshop.member.entity.Member;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,10 +14,10 @@ import lombok.NoArgsConstructor;
  * @since : 1.0
  **/
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class MemberDetailResponseDto {
     private Long memberNo;
+    private String memberName;
     private String tierName;
     private String nickname;
     private String gender;
@@ -24,5 +26,22 @@ public class MemberDetailResponseDto {
     private String phone;
     private String email;
     private Long point;
-    private String authority;
+
+    private List<String> authorities = new ArrayList<>();
+
+    public MemberDetailResponseDto(Member member) {
+        this.memberNo = member.getMemberNo();
+        this.memberName = member.getMemberName();
+        this.tierName = member.getTier().getTierName();
+        this.nickname = member.getMemberNickname();
+        this.gender = member.getMemberGender();
+        this.birthMonth = member.getMemberBirthMonth();
+        this.birthYear = member.getMemberBirthYear();
+        this.phone = member.getMemberPhone();
+        this.email = member.getMemberEmail();
+        this.point = member.getMemberPoint();
+        this.authorities = member.getMemberAuthorities().stream()
+                .map(m-> m.getAuthority().getAuthorityName())
+                .collect(Collectors.toList());
+    }
 }

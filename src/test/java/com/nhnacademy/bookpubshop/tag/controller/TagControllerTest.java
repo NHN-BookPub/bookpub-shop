@@ -88,7 +88,7 @@ class TagControllerTest {
 
         // then
         mockMvc.perform(get("/api/tags")
-                    .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].tagNo").value(getTagResponseDto.getTagNo()))
                 .andExpect(jsonPath("$[0].tagNo").value(getTagResponseDto.getTagNo()))
@@ -131,8 +131,8 @@ class TagControllerTest {
 
         // then
         mockMvc.perform(post("/api/tags")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(addTagRequestDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(addTagRequestDto)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("지원하지 않는 색상 코드입니다."))
                 .andDo(print());
@@ -151,8 +151,8 @@ class TagControllerTest {
 
         // then
         mockMvc.perform(put("/api/tags")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(mapper.writeValueAsString(modifyTagRequestDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(modifyTagRequestDto)))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
 

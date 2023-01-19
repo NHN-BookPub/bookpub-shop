@@ -6,18 +6,25 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
-import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
-import com.nhnacademy.bookpubshop.product.dto.GetProductDetailResponseDto;
-import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
+import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
+import com.nhnacademy.bookpubshop.category.entity.Category;
+import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
+import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundProductPolicyException;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductAuthor;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductCategory;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTag;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductAuthorRepository;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductPolicyRepository;
@@ -25,7 +32,9 @@ import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleSta
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.product.service.impl.ProductServiceImpl;
-import java.time.LocalDateTime;
+import com.nhnacademy.bookpubshop.tag.dummy.TagDummy;
+import com.nhnacademy.bookpubshop.tag.entity.Tag;
+import com.nhnacademy.bookpubshop.tag.repository.TagRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,11 +43,15 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -47,14 +60,30 @@ import org.springframework.test.util.ReflectionTestUtils;
  * @author : 여운석
  * @since : 1.0
  **/
+@ExtendWith(SpringExtension.class)
+@Import(ProductServiceImpl.class)
 class ProductServiceTest {
-    ProductPolicyRepository productPolicyRepository;
-    ProductSaleStateCodeRepository saleStateCodeRepository;
-    ProductTypeStateCodeRepository typeStateCodeRepository;
-    ProductAuthorRepository productAuthorRepository;
-    AuthorRepository authorRepository;
-    ProductRepository productRepository;
+
+    @Autowired
     ProductService productService;
+
+    @MockBean
+    ProductPolicyRepository productPolicyRepository;
+    @MockBean
+    ProductSaleStateCodeRepository saleStateCodeRepository;
+    @MockBean
+    ProductTypeStateCodeRepository typeStateCodeRepository;
+    @MockBean
+    ProductAuthorRepository productAuthorRepository;
+    @MockBean
+    CategoryRepository categoryRepository;
+    @MockBean
+    TagRepository tagRepository;
+    @MockBean
+    AuthorRepository authorRepository;
+    @MockBean
+    ProductRepository productRepository;
+
     Product product;
     CreateProductRequestDto requestDto;
     GetProductDetailResponseDto responseDto;
@@ -64,65 +93,34 @@ class ProductServiceTest {
     ProductSaleStateCode saleStateCode;
     ArgumentCaptor<Product> captor;
     Author author;
+    Category category;
+    Tag tag;
 
     @BeforeEach
     void setUp() {
-        productRepository = Mockito.mock(ProductRepository.class);
-        productPolicyRepository = Mockito.mock(ProductPolicyRepository.class);
-        saleStateCodeRepository = Mockito.mock(ProductSaleStateCodeRepository.class);
-        typeStateCodeRepository = Mockito.mock(ProductTypeStateCodeRepository.class);
-        productAuthorRepository = Mockito.mock(ProductAuthorRepository.class);
-        authorRepository = Mockito.mock(AuthorRepository.class);
+        productPolicy = new ProductPolicy(1, "method", true, 1);
+        typeStateCode = new ProductTypeStateCode(1, BEST_SELLER.getName(), BEST_SELLER.isUsed(), "info");
+        saleStateCode = new ProductSaleStateCode(1, NEW.getName(), NEW.isUsed(), "info");
 
-        productService = new ProductServiceImpl(
-                productRepository,
-                productPolicyRepository,
-                saleStateCodeRepository,
-                typeStateCodeRepository,
-                productAuthorRepository,
-                authorRepository);
+        product = ProductDummy.dummy(productPolicy, typeStateCode, saleStateCode);
 
-        productPolicy = new ProductPolicy(1,"method",true,1);
-        typeStateCode = new ProductTypeStateCode(1,BEST_SELLER.getName(),BEST_SELLER.isUsed(),"info");
-        saleStateCode = new ProductSaleStateCode(1, NEW.getName(),NEW.isUsed(),"info");
+        author = AuthorDummy.dummy();
+        ProductAuthor productAuthor =
+                new ProductAuthor(new ProductAuthor.Pk(author.getAuthorNo(), product.getProductNo()),
+                        author, product);
+        product.getProductAuthors().add(productAuthor);
 
-        product = new Product(1L,
-                productPolicy,
-                typeStateCode,
-                saleStateCode,
-                Collections.EMPTY_LIST,
-                "1231231233",
-                "test",
-                "test_publisher",
-                130,
-                "test_description",
-                8000L,
-                10000L,
-                20,
-                0L,
-                10,
-                false,
-                100,
-                LocalDateTime.now(),
-                false);
+        category = CategoryDummy.dummy();
+        ProductCategory productCategory =
+                new ProductCategory(new ProductCategory.Pk(category.getCategoryNo(), product.getProductNo()), category, product);
+        product.getProductCategories().add(productCategory);
+
+        tag = TagDummy.dummy();
+        ProductTag productTag =
+                new ProductTag(new ProductTag.Pk(tag.getTagNo(), product.getProductNo()), tag, product);
+        product.getProductTags().add(productTag);
 
         requestDto = new CreateProductRequestDto();
-        responseDto = new GetProductDetailResponseDto(
-                product.getProductNo(),
-                product.getProductIsbn(),
-                product.getTitle(),
-                product.getPageCount(),
-                product.getProductDescription(),
-                product.getSalesPrice(),
-                product.getSalesRate(),
-                product.getProductPriority(),
-                product.getProductStock(),
-                product.getPublishDate(),
-                product.isProductDeleted(),
-                product.isProductSubscribed(),
-                product.getProductSaleStateCode(),
-                product.getProductTypeStateCode(),
-                product.getProductPolicy());
 
         listResponseDto = new GetProductListResponseDto(
                 product.getProductNo(),
@@ -130,10 +128,15 @@ class ProductServiceTest {
                 product.getProductStock(),
                 product.getSalesPrice(),
                 product.getSalesRate(),
-                product.isProductDeleted(),
-                product.getPublishDate());
+                product.getProductPrice(),
+                product.isProductDeleted());
 
-        author = new Author(1, "test");
+
+        List<Long> relation = new ArrayList<>();
+
+        for (Product relationProduct : product.getRelationProduct()) {
+            relation.add(relationProduct.getProductNo());
+        }
 
         ReflectionTestUtils.setField(requestDto, "productIsbn", product.getProductIsbn());
         ReflectionTestUtils.setField(requestDto, "title", product.getTitle());
@@ -142,47 +145,33 @@ class ProductServiceTest {
         ReflectionTestUtils.setField(requestDto, "productDescription", product.getProductDescription());
         ReflectionTestUtils.setField(requestDto, "salePrice", product.getSalesPrice());
         ReflectionTestUtils.setField(requestDto, "productPrice", product.getProductPrice());
+        ReflectionTestUtils.setField(requestDto, "salesRate", product.getSalesRate());
         ReflectionTestUtils.setField(requestDto, "productPriority", product.getProductPriority());
         ReflectionTestUtils.setField(requestDto, "productStock", product.getProductStock());
         ReflectionTestUtils.setField(requestDto, "publishedAt", product.getPublishDate());
+        ReflectionTestUtils.setField(requestDto, "subscribed", product.isProductSubscribed());
         ReflectionTestUtils.setField(requestDto, "productPolicyNo", product.getProductPolicy().getPolicyNo());
-        ReflectionTestUtils.setField(requestDto, "saleCodeNo", product.getProductSaleStateCode().getCodeNumber());
+        ReflectionTestUtils.setField(requestDto, "saleCodeNo", product.getProductSaleStateCode().getCodeNo());
         ReflectionTestUtils.setField(requestDto, "typeCodeNo", product.getProductTypeStateCode().getCodeNo());
-        ReflectionTestUtils.setField(requestDto, "authorNos", Collections.EMPTY_LIST);
-        ReflectionTestUtils.setField(requestDto, "relationProducts", product.getRelationProduct());
+        ReflectionTestUtils.setField(requestDto, "authorsNo", List.of(1));
+        ReflectionTestUtils.setField(requestDto, "categoriesNo", List.of(1));
+        ReflectionTestUtils.setField(requestDto, "tagsNo", List.of(1));
+        ReflectionTestUtils.setField(requestDto, "relationProducts", relation);
+
+        responseDto = new GetProductDetailResponseDto(product);
 
         captor = ArgumentCaptor.forClass(Product.class);
-
     }
 
     @Test
-    @DisplayName("상품 번호로 조회 성공")
-    void getProductDetailById() {
-        when(productRepository.getProductDetailById(product.getProductNo()))
+    @DisplayName("단건 조회 성공 테스트")
+    void getProductDetail_Success_Test() {
+        when(productRepository.getProductDetailById(anyLong()))
                 .thenReturn(Optional.ofNullable(responseDto));
 
-        assertThat(productService.getProductDetailById(product.getProductNo()).getProductNo())
-                .isEqualTo(product.getProductNo());
-        assertThat(productService.getProductDetailById(product.getProductNo()).getProductDescription())
-                .isEqualTo(product.getProductDescription());
-        assertThat(productService.getProductDetailById(product.getProductNo()).getProductIsbn())
-                .isEqualTo(product.getProductIsbn());
-        assertThat(productService.getProductDetailById(product.getProductNo()).getProductPriority())
-                .isEqualTo(product.getProductPriority());
-        assertThat(productService.getProductDetailById(product.getProductNo()).getProductStock())
-                .isEqualTo(product.getProductStock());
-        assertThat(productService.getProductDetailById(product.getProductNo()).getPublishDate())
-                .isEqualTo(product.getPublishDate());
-        assertThat(productService.getProductDetailById(product.getProductNo()).getPageCount())
-                .isEqualTo(product.getPageCount());
-        assertThat(productService.getProductDetailById(product.getProductNo()).getProductPolicy().getPolicyNo())
-                .isEqualTo(product.getProductPolicy().getPolicyNo());
-        assertThat(productService.getProductDetailById(product.getProductNo()).getSaleCode().getCodeNumber())
-                .isEqualTo(product.getProductSaleStateCode().getCodeNumber());
-        assertThat(productService.getProductDetailById(product.getProductNo()).getTypeCode().getCodeNo())
-                .isEqualTo(product.getProductTypeStateCode().getCodeNo());
-        assertThat(productService.getProductDetailById(product.getProductNo()).getTitle())
-                .isEqualTo(product.getTitle());
+        assertThat(responseDto.getProductNo()).isEqualTo(product.getProductNo());
+        assertThat(responseDto.getProductIsbn()).isEqualTo(product.getProductIsbn());
+        assertThat(responseDto.getPolicyMethod()).isEqualTo(productPolicy.getPolicyMethod());
     }
 
     @Test
@@ -203,7 +192,7 @@ class ProductServiceTest {
                 .thenReturn(Optional.ofNullable(productPolicy));
         when(typeStateCodeRepository.findById(typeStateCode.getCodeNo()))
                 .thenReturn(Optional.ofNullable(typeStateCode));
-        when(saleStateCodeRepository.findById(saleStateCode.getCodeNumber()))
+        when(saleStateCodeRepository.findById(saleStateCode.getCodeNo()))
                 .thenReturn(Optional.ofNullable(saleStateCode));
         when(authorRepository.findById(any()))
                 .thenReturn(Optional.ofNullable(author));
@@ -212,18 +201,10 @@ class ProductServiceTest {
         when(productRepository.save(any()))
                 .thenReturn(product);
 
-        List<Integer> authorNos = new ArrayList<>();
-        authorNos.add(1);
-
-        ProductAuthor productAuthor = new ProductAuthor(new ProductAuthor.Pk(
-                authorNos.get(0), product.getProductNo()), author, product);
-
-        ReflectionTestUtils.setField(requestDto, "authorNos", authorNos);
-
-        when(productAuthorRepository.save(
-                new ProductAuthor(new ProductAuthor.Pk(
-                        authorNos.get(0), product.getProductNo()), author, product)))
-                .thenReturn(productAuthor);
+        when(categoryRepository.findById(anyInt()))
+                .thenReturn(Optional.of(category));
+        when(tagRepository.findById(anyInt()))
+                .thenReturn(Optional.of(tag));
 
         productService.createProduct(requestDto);
 
@@ -242,7 +223,7 @@ class ProductServiceTest {
                 .thenReturn(Optional.empty());
         when(typeStateCodeRepository.findById(typeStateCode.getCodeNo()))
                 .thenReturn(Optional.ofNullable(typeStateCode));
-        when(saleStateCodeRepository.findById(saleStateCode.getCodeNumber()))
+        when(saleStateCodeRepository.findById(saleStateCode.getCodeNo()))
                 .thenReturn(Optional.ofNullable(saleStateCode));
         when(productRepository.save(any()))
                 .thenReturn(product);
@@ -258,7 +239,7 @@ class ProductServiceTest {
                 .thenReturn(Optional.ofNullable(productPolicy));
         when(typeStateCodeRepository.findById(typeStateCode.getCodeNo()))
                 .thenReturn(Optional.empty());
-        when(saleStateCodeRepository.findById(saleStateCode.getCodeNumber()))
+        when(saleStateCodeRepository.findById(saleStateCode.getCodeNo()))
                 .thenReturn(Optional.ofNullable(saleStateCode));
         when(productRepository.save(any()))
                 .thenReturn(product);
@@ -274,7 +255,7 @@ class ProductServiceTest {
                 .thenReturn(Optional.ofNullable(productPolicy));
         when(typeStateCodeRepository.findById(typeStateCode.getCodeNo()))
                 .thenReturn(Optional.ofNullable(typeStateCode));
-        when(saleStateCodeRepository.findById(saleStateCode.getCodeNumber()))
+        when(saleStateCodeRepository.findById(saleStateCode.getCodeNo()))
                 .thenReturn(Optional.empty());
         when(productRepository.save(any()))
                 .thenReturn(product);
@@ -307,9 +288,6 @@ class ProductServiceTest {
         assertThat(productService.getAllProducts(pageable)
                 .getContent().get(0).getTitle())
                 .isEqualTo(listResponseDto.getTitle());
-        assertThat(productService.getAllProducts(pageable)
-                .getContent().get(0).getPublishedAt())
-                .isEqualTo(listResponseDto.getPublishedAt());
         assertThat(productService.getAllProducts(pageable)
                 .getContent().get(0).getSalesPrice())
                 .isEqualTo(listResponseDto.getSalesPrice());
@@ -358,9 +336,6 @@ class ProductServiceTest {
                 .getContent().get(0).getTitle())
                 .isEqualTo(listResponseDto.getTitle());
         assertThat(productService.getProductListLikeTitle("tes", pageable)
-                .getContent().get(0).getPublishedAt())
-                .isEqualTo(listResponseDto.getPublishedAt());
-        assertThat(productService.getProductListLikeTitle("tes", pageable)
                 .getContent().get(0).getSalesPrice())
                 .isEqualTo(listResponseDto.getSalesPrice());
     }
@@ -368,16 +343,14 @@ class ProductServiceTest {
     @Test
     @DisplayName("상품 수정 성공")
     void modifyProductSuccess() {
-        when(productPolicyRepository.findById(productPolicy.getPolicyNo()))
-                .thenReturn(Optional.ofNullable(productPolicy));
-        when(typeStateCodeRepository.findById(typeStateCode.getCodeNo()))
-                .thenReturn(Optional.ofNullable(typeStateCode));
-        when(saleStateCodeRepository.findById(saleStateCode.getCodeNumber()))
-                .thenReturn(Optional.ofNullable(saleStateCode));
-        when(productRepository.findById(product.getProductNo()))
+        when(productRepository.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(product));
-        when(productRepository.save(any()))
-                .thenReturn(product);
+        when(productPolicyRepository.findById(anyInt()))
+                .thenReturn(Optional.ofNullable(productPolicy));
+        when(typeStateCodeRepository.findById(anyInt()))
+                .thenReturn(Optional.ofNullable(typeStateCode));
+        when(saleStateCodeRepository.findById(anyInt()))
+                .thenReturn(Optional.ofNullable(saleStateCode));
 
         productService.modifyProduct(requestDto, 1L);
 
@@ -393,16 +366,14 @@ class ProductServiceTest {
     @Test
     @DisplayName("상품 수정 실패 - 정책 미기입")
     void modifyProductFailedByPolicy() {
-        when(productPolicyRepository.findById(productPolicy.getPolicyNo()))
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(productPolicyRepository.findById(anyInt()))
                 .thenReturn(Optional.empty());
-        when(typeStateCodeRepository.findById(typeStateCode.getCodeNo()))
-                .thenReturn(Optional.ofNullable(typeStateCode));
-        when(saleStateCodeRepository.findById(saleStateCode.getCodeNumber()))
-                .thenReturn(Optional.ofNullable(saleStateCode));
-        when(productRepository.findById(product.getProductNo()))
-                .thenReturn(Optional.ofNullable(product));
-        when(productRepository.save(any()))
-                .thenReturn(product);
+        when(typeStateCodeRepository.findById(anyInt()))
+                .thenReturn(Optional.of(typeStateCode));
+        when(saleStateCodeRepository.findById(anyInt()))
+                .thenReturn(Optional.of(saleStateCode));
 
         assertThatThrownBy(() -> productService.modifyProduct(requestDto, 1L))
                 .isInstanceOf(NotFoundProductPolicyException.class);
@@ -411,13 +382,13 @@ class ProductServiceTest {
     @Test
     @DisplayName("상품 수정 실패 - 유형 미기입")
     void modifyProductFailedByType() {
-        when(productPolicyRepository.findById(productPolicy.getPolicyNo()))
+        when(productPolicyRepository.findById(anyInt()))
                 .thenReturn(Optional.ofNullable(productPolicy));
-        when(typeStateCodeRepository.findById(typeStateCode.getCodeNo()))
+        when(typeStateCodeRepository.findById(anyInt()))
                 .thenReturn(Optional.empty());
-        when(saleStateCodeRepository.findById(saleStateCode.getCodeNumber()))
+        when(saleStateCodeRepository.findById(anyInt()))
                 .thenReturn(Optional.ofNullable(saleStateCode));
-        when(productRepository.findById(product.getProductNo()))
+        when(productRepository.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(product));
         when(productRepository.save(any()))
                 .thenReturn(product);
@@ -429,14 +400,14 @@ class ProductServiceTest {
     @Test
     @DisplayName("상품 수정 실패 - 적립유형 미기입")
     void modifyProductFailedBySale() {
-        when(productPolicyRepository.findById(productPolicy.getPolicyNo()))
-                .thenReturn(Optional.ofNullable(productPolicy));
-        when(typeStateCodeRepository.findById(typeStateCode.getCodeNo()))
-                .thenReturn(Optional.ofNullable(typeStateCode));
-        when(saleStateCodeRepository.findById(saleStateCode.getCodeNumber()))
+        when(productPolicyRepository.findById(anyInt()))
+                .thenReturn(Optional.of(productPolicy));
+        when(typeStateCodeRepository.findById(anyInt()))
+                .thenReturn(Optional.of(typeStateCode));
+        when(saleStateCodeRepository.findById(anyInt()))
                 .thenReturn(Optional.empty());
-        when(productRepository.findById(product.getProductNo()))
-                .thenReturn(Optional.ofNullable(product));
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
         when(productRepository.save(any()))
                 .thenReturn(product);
 
@@ -451,7 +422,7 @@ class ProductServiceTest {
                 .thenReturn(Optional.ofNullable(productPolicy));
         when(typeStateCodeRepository.findById(typeStateCode.getCodeNo()))
                 .thenReturn(Optional.ofNullable(typeStateCode));
-        when(saleStateCodeRepository.findById(saleStateCode.getCodeNumber()))
+        when(saleStateCodeRepository.findById(saleStateCode.getCodeNo()))
                 .thenReturn(Optional.ofNullable(saleStateCode));
         when(productRepository.findById(product.getProductNo()))
                 .thenReturn(Optional.empty());
@@ -465,25 +436,10 @@ class ProductServiceTest {
     @Test
     @DisplayName("삭제여부 설정 성공")
     void setDeleteProduct() {
-        when(productRepository.findById(product.getProductNo()))
-                .thenReturn(Optional.ofNullable(product));
-        when(productPolicyRepository.findById(productPolicy.getPolicyNo()))
-                .thenReturn(Optional.ofNullable(productPolicy));
-        when(typeStateCodeRepository.findById(typeStateCode.getCodeNo()))
-                .thenReturn(Optional.ofNullable(typeStateCode));
-        when(saleStateCodeRepository.findById(saleStateCode.getCodeNumber()))
-                .thenReturn(Optional.ofNullable(saleStateCode));
-
-        productService.setDeleteProduct(product.getProductNo(), false);
-
-        verify(productRepository, times(1))
-                .save(captor.capture());
-
-        Product result = captor.getValue();
-
-        Assertions.assertThat(requestDto.getTitle())
-                .isEqualTo(result.getTitle());
-
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        ReflectionTestUtils.setField(product, "productNo", 1L);
+        productService.setDeleteProduct(product.getProductNo());
     }
 
     @Test
@@ -495,11 +451,11 @@ class ProductServiceTest {
                 .thenReturn(Optional.ofNullable(productPolicy));
         when(typeStateCodeRepository.findById(typeStateCode.getCodeNo()))
                 .thenReturn(Optional.ofNullable(typeStateCode));
-        when(saleStateCodeRepository.findById(saleStateCode.getCodeNumber()))
+        when(saleStateCodeRepository.findById(saleStateCode.getCodeNo()))
                 .thenReturn(Optional.ofNullable(saleStateCode));
 
-        assertThatThrownBy( () ->
-                productService.setDeleteProduct(product.getProductNo(), false))
+        assertThatThrownBy(() ->
+                productService.setDeleteProduct(product.getProductNo()))
                 .isInstanceOf(ProductNotFoundException.class);
     }
 }

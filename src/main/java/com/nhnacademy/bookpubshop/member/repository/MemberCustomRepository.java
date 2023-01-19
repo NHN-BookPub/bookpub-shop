@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.member.repository;
 
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
@@ -47,4 +48,12 @@ public interface MemberCustomRepository {
      * @return 페이된 멤버들의 정보가 반환됩니다.
      */
     Page<MemberResponseDto> findMembers(Pageable pageable);
+
+    /**
+     * 로그인 한 멤버의 정보를 불러오는 메소드
+     *
+     * @param id 입력받은 id
+     * @return 로그인 멤버 정보 dto.
+     */
+    LoginMemberResponseDto findByMemberLoginInfo(String id);
 }

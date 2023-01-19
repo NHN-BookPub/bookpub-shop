@@ -23,7 +23,6 @@ public class TagRepositoryImpl extends QuerydslRepositorySupport implements TagR
 
     /**
      * {@inheritDoc}
-     *
      */
     @Override
     public Optional<GetTagResponseDto> findTagName(String tagName) {
@@ -33,16 +32,15 @@ public class TagRepositoryImpl extends QuerydslRepositorySupport implements TagR
                 from(tag)
                         .select(Projections
                                 .constructor(GetTagResponseDto.class,
-                                    tag.tagNo,
-                                    tag.tagName,
-                                    tag.colorCode))
-                .where(tag.tagName.eq(tagName))
-                .fetchOne());
+                                        tag.tagNo,
+                                        tag.tagName,
+                                        tag.colorCode))
+                        .where(tag.tagName.eq(tagName))
+                        .fetchOne());
     }
 
     /**
      * {@inheritDoc}
-     *
      */
     @Override
     public Optional<GetTagResponseDto> findTag(Integer tagNo) {
@@ -55,13 +53,12 @@ public class TagRepositoryImpl extends QuerydslRepositorySupport implements TagR
                                         tag.tagNo,
                                         tag.tagName,
                                         tag.colorCode))
-                .where(tag.tagNo.eq(tagNo))
-                .fetchOne());
+                        .where(tag.tagNo.eq(tagNo))
+                        .fetchOne());
     }
 
     /**
      * {@inheritDoc}
-     *
      */
     @Override
     public List<GetTagResponseDto> findTags() {

@@ -60,9 +60,9 @@ class PurchaseServiceTest {
 
         purchaseService = new PurchaseServiceImpl(purchaseRepository, productRepository);
 
-        productPolicy = new ProductPolicy(1,"method",true,1);
-        typeStateCode = new ProductTypeStateCode(1,BEST_SELLER.getName(),BEST_SELLER.isUsed(),"info");
-        saleStateCode = new ProductSaleStateCode(1, NEW.getName(),NEW.isUsed(),"info");
+        productPolicy = new ProductPolicy(1, "method", true, 1);
+        typeStateCode = new ProductTypeStateCode(1, BEST_SELLER.getName(), BEST_SELLER.isUsed(), "info");
+        saleStateCode = new ProductSaleStateCode(1, NEW.getName(), NEW.isUsed(), "info");
 
         product = new Product(1L,
                 productPolicy,
@@ -119,7 +119,7 @@ class PurchaseServiceTest {
                 .thenReturn(page);
 
         assertThat(purchaseService.getPurchaseByProductNo(
-                product.getProductNo(), pageable)
+                        product.getProductNo(), pageable)
                 .getContent().get(0).getProductNo())
                 .isEqualTo(product.getProductNo());
         assertThat(purchaseService.getPurchaseByProductNo(
@@ -163,6 +163,7 @@ class PurchaseServiceTest {
         verify(purchaseRepository, times(1))
                 .save(any());
     }
+
     @Test
     @DisplayName("구매이력 등록 실패(없는 상품)")
     void createPurchaseFailed() {

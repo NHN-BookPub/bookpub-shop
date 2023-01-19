@@ -6,8 +6,8 @@ import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.author.exception.NotFoundAuthorException;
 import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
 import com.nhnacademy.bookpubshop.author.service.AuthorService;
-import lombok.RequiredArgsConstructor;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -53,7 +53,7 @@ public class AuthorServiceImpl implements AuthorService {
     public List<GetAuthorResponseDto> getAuthorsByName(String name) {
         List<GetAuthorResponseDto> responses = authorRepository.getAuthorByName(name);
 
-        if(responses.isEmpty()) {
+        if (responses.isEmpty()) {
             throw new NotFoundAuthorException();
         }
 

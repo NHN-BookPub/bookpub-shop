@@ -11,8 +11,8 @@ import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontemplate.exception.CouponTemplateNotFoundException;
 import com.nhnacademy.bookpubshop.coupontemplate.repository.CouponTemplateRepository;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
-import com.nhnacademy.bookpubshop.tier.exception.MemberNotFoundException;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -45,8 +45,8 @@ public class CouponServiceImpl implements CouponService {
 
         CouponTemplate couponTemplate =
                 couponTemplateRepository.findById(createRequestDto.getTemplateNo())
-                .orElseThrow(() ->
-                        new CouponTemplateNotFoundException(createRequestDto.getTemplateNo()));
+                        .orElseThrow(() ->
+                                new CouponTemplateNotFoundException(createRequestDto.getTemplateNo()));
 
         couponRepository.save(new Coupon(null, couponTemplate, null, null,
                 member, false, null));

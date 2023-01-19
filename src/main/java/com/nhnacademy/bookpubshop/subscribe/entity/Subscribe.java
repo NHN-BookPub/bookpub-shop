@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.subscribe.entity;
 
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

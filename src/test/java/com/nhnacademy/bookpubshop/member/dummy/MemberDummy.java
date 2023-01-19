@@ -1,9 +1,13 @@
 package com.nhnacademy.bookpubshop.member.dummy;
 
+import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
+import java.util.ArrayList;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 회원 더미 클래스
@@ -27,6 +31,15 @@ public class MemberDummy {
                 .memberPhone("010-1111-2222")
                 .memberEmail("test@gmail.com")
                 .build();
+    }
+
+    public static LoginMemberResponseDto dummy2() {
+        return new LoginMemberResponseDto(
+                3L,
+                "tagkdj1",
+                "Abc123!@#",
+                new ArrayList<>()
+        );
     }
 
     public static Member dummy2(BookPubTier bookPubTier) {
@@ -55,5 +68,18 @@ public class MemberDummy {
 
     public static MemberTierStatisticsResponseDto memberTierStatisticsDummy() {
         return new MemberTierStatisticsResponseDto("tiername", 1, 1L);
+    }
+
+    public static MemberDetailResponseDto memberDetailResponseDummy(){
+        MemberDetailResponseDto dto = new MemberDetailResponseDto();
+        ReflectionTestUtils.setField(dto,"memberNo", 1L);
+        ReflectionTestUtils.setField(dto,"tierName", "tier_name");
+        ReflectionTestUtils.setField(dto,"gender", "gender");
+        ReflectionTestUtils.setField(dto,"birthMonth", 1);
+        ReflectionTestUtils.setField(dto,"birthYear", 97);
+        ReflectionTestUtils.setField(dto,"phone", "010");
+        ReflectionTestUtils.setField(dto,"email", "naver");
+        ReflectionTestUtils.setField(dto,"point", 0L);
+        return dto;
     }
 }

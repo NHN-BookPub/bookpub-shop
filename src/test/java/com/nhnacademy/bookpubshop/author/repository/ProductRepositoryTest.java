@@ -34,11 +34,12 @@ class ProductRepositoryTest {
     ProductPolicy policyPersist;
     ProductTypeStateCode typePersist;
     ProductSaleStateCode salePersist;
+
     @BeforeEach
     void setUp() {
-        ProductPolicy productPolicy = new ProductPolicy(null,"method",true,1);
-        ProductTypeStateCode typeStateCode = new ProductTypeStateCode(null,BEST_SELLER.getName(),BEST_SELLER.isUsed(),"info");
-        ProductSaleStateCode saleStateCode = new ProductSaleStateCode(null, NEW.getName(),NEW.isUsed(),"info");
+        ProductPolicy productPolicy = new ProductPolicy(null, "method", true, 1);
+        ProductTypeStateCode typeStateCode = new ProductTypeStateCode(null, BEST_SELLER.getName(), BEST_SELLER.isUsed(), "info");
+        ProductSaleStateCode saleStateCode = new ProductSaleStateCode(null, NEW.getName(), NEW.isUsed(), "info");
 
         policyPersist = entityManager.persist(productPolicy);
         typePersist = entityManager.persist(typeStateCode);

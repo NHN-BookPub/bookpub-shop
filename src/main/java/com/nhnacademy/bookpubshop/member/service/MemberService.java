@@ -1,8 +1,11 @@
 package com.nhnacademy.bookpubshop.member.service;
 
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
@@ -74,6 +77,23 @@ public interface MemberService {
      */
     void deleteMember(Long memberNo);
 
+
+    /**
+     * 멤버의 이름을 수정할때 쓰이는 메서드입니다.
+     *
+     * @param memberNo   the member no
+     * @param memberName the member name
+     */
+    void modifyMemberName(Long memberNo, ModifyMemberNameRequestDto memberName);
+
+    /**
+     * 멤버의 휴대전화 번호를 변경할때 쓰이는 메서드입니다.
+     *
+     * @param memberNo    the member no
+     * @param memberPhone the member phone
+     */
+    void modifyMemberPhone(Long memberNo, ModifyMemberPhoneRequestDto memberPhone);
+
     /**
      * 멤버의 등급별 통계를 얻기위한 메서드입니다.
      *
@@ -87,4 +107,29 @@ public interface MemberService {
      * @return the member statistics
      */
     MemberStatisticsResponseDto getMemberStatistics();
+
+    /**
+     * 멤버가 로그인할 때 사용되는 메서드입니다.
+     *
+     * @param loginId 멤버 로그인 아이디.
+     * @return 로그인 성공정보 리턴.
+     */
+    LoginMemberResponseDto loginMember(String loginId);
+
+    /**
+     * 회원가입시 사용되는 아이디 중복체크 메서드입니다.
+     *
+     * @param id 회원가입 시도하는 id
+     * @return 중복인지 아닌지 ture, false
+     */
+    boolean idDuplicateCheck(String id);
+
+    /**
+     * 회원가입시 사용되는 닉네임 중복체크 메서드입니다.
+     *
+     * @param nickName 회원가입 시도하는 nickName
+     * @return 중복인지 아닌지 ture, false
+     */
+    boolean nickNameDuplicateCheck(String nickName);
+
 }

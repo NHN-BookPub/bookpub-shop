@@ -1,13 +1,17 @@
 package com.nhnacademy.bookpubshop.member.repository.impl;
 
 import com.nhnacademy.bookpubshop.authority.entity.QAuthority;
+import com.nhnacademy.bookpubshop.member.dto.response.IdPwdMemberDto;
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.relationship.entity.QMemberAuthority;
+import com.nhnacademy.bookpubshop.member.relationship.exception.MemberAuthoritiesNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberCustomRepository;
 import com.nhnacademy.bookpubshop.tier.entity.QBookPubTier;
 import com.querydsl.core.types.ExpressionUtils;
@@ -41,24 +45,17 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
         QBookPubTier tier = QBookPubTier.bookPubTier;
         QMemberAuthority memberAuthority = QMemberAuthority.memberAuthority;
         QAuthority authority = QAuthority.authority;
-        // 권한들? 이 들어가게 되면 수정
-        return Optional.ofNullable(from(member, memberAuthority)
-                .innerJoin(member.tier, tier)
-                .innerJoin(memberAuthority.member, member)
+
+        Optional<Member> content = Optional.ofNullable(from(member)
+                .leftJoin(memberAuthority)
+                .on(member.memberNo.eq(memberAuthority.member.memberNo))
+                .leftJoin(member.tier, tier)
                 .innerJoin(memberAuthority.authority, authority)
                 .where(member.memberNo.eq(memberNo))
-                .select(Projections.constructor(MemberDetailResponseDto.class,
-                        member.memberNo,
-                        tier.tierName,
-                        member.memberNickname.as("nickname"),
-                        member.memberGender.as("gender"),
-                        member.memberBirthMonth.as("birthMonth"),
-                        member.memberBirthYear.as("birthYear"),
-                        member.memberPhone.as("phone"),
-                        member.memberEmail.as("email"),
-                        member.memberPoint.as("point"),
-                        authority.authorityName.as("authority")
-                )).fetchOne());
+                .select(member)
+                .fetchOne());
+
+        return content.map(MemberDetailResponseDto::new);
     }
 
     @Override
@@ -95,7 +92,7 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public List<MemberTierStatisticsResponseDto> memberTierStatistics(){
+    public List<MemberTierStatisticsResponseDto> memberTierStatistics() {
         QMember member = QMember.member;
         QBookPubTier tier = QBookPubTier.bookPubTier;
 
@@ -148,5 +145,34 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                 .fetch();
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public LoginMemberResponseDto findByMemberLoginInfo(String id) {
+        QMember member = QMember.member;
+        QMemberAuthority memberAuthority = QMemberAuthority.memberAuthority;
+
+        Optional<IdPwdMemberDto> findMember = Optional.ofNullable(from(member)
+                .select(Projections.constructor(IdPwdMemberDto.class,
+                        member.memberNo,
+                        member.memberId,
+                        member.memberPwd))
+                .where(member.memberId.eq(id))
+                .fetchOne());
+
+        Optional<List<String>> memberAuthorities = Optional.of(from(memberAuthority)
+                .innerJoin(memberAuthority.member, member)
+                .select(memberAuthority.authority.authorityName)
+                .where(member.memberId.eq(id))
+                .fetch());
+
+        IdPwdMemberDto responseMember = findMember.orElseThrow(() -> new MemberNotFoundException(id));
+        List<String> authorities = memberAuthorities.orElseThrow(MemberAuthoritiesNotFoundException::new);
+
+        return new LoginMemberResponseDto(
+                responseMember.getMemberNo(), responseMember.getMemberId(), responseMember.getMemberPwd(), authorities);
     }
 }

@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.product.relationship.dummy;
 
-import static com.nhnacademy.bookpubshop.state.ProductTypeState.NEW;
+import static com.nhnacademy.bookpubshop.state.ProductSaleState.SALE;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 
 /**
@@ -14,8 +14,8 @@ public class ProductSaleStateCodeDummy {
     public static ProductSaleStateCode dummy() {
         return new ProductSaleStateCode(
                 null,
-                NEW.getName(),
-                NEW.isUsed(),
+                SALE.getName(),
+                SALE.isUsed(),
                 "info"
         );
     }
@@ -23,8 +23,8 @@ public class ProductSaleStateCodeDummy {
     public static ProductSaleStateCode dummy(Integer id) {
         return new ProductSaleStateCode(
                 id,
-                NEW.getName(),
-                NEW.isUsed(),
+                SALE.getName(),
+                SALE.isUsed(),
                 "info"
         );
     }

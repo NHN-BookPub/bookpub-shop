@@ -17,6 +17,4 @@ public class SignUpMemberResponseDto {
     private String memberNickname;
     private String memberEmail;
     private String tierName;
-
-
 }

@@ -18,6 +18,5 @@ public class CreateModifyProductPolicyRequestDto {
     private String policyMethod;
     @NotNull
     private boolean policySaved;
-    @NotNull
     private Integer saveRate;
 }
