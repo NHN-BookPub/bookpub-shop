@@ -181,7 +181,17 @@ public class Member extends BaseCreateTimeEntity {
         this.blockedAt = LocalDateTime.now();
     }
 
+    /**
+     * 패스워드를 수정하기위한 메서드입니다.
+     *
+     * @param password the password
+     */
+    public void modifyPassword(String password) {
+        this.memberPwd = password;
+    }
     public void addMemberAuthority(MemberAuthority memberAuthority) {
         this.memberAuthorities.add(memberAuthority);
     }
+
+
 }
