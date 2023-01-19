@@ -77,12 +77,6 @@ public class Product extends BaseCreateTimeEntity {
     @Column(name = "product_description")
     private String productDescription;
 
-    @Column(name = "product_thumbnail")
-    private String productThumbnail;
-
-    @Column(name = "product_ebook_file_path")
-    private String ebookFilePath;
-
     @NotNull
     @Column(name = "product_sales_price")
     private Long salesPrice;

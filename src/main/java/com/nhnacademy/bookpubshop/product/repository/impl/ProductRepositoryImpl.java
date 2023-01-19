@@ -8,8 +8,8 @@ import com.nhnacademy.bookpubshop.product.repository.ProductRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import javax.persistence.EntityManager;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -45,7 +45,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .orderBy(product.publishDate.desc())
                 .select(Projections.constructor(GetProductListResponseDto.class,
                         product.productNo,
-                        product.productThumbnail,
                         product.title,
                         product.productStock,
                         product.salesPrice,
@@ -74,7 +73,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .from(product)
                 .select(Projections.constructor(GetProductListResponseDto.class,
                         product.productNo,
-                        product.productThumbnail,
                         product.title,
                         product.productStock,
                         product.salesPrice,
@@ -108,7 +106,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         product.title,
                         product.pageCount,
                         product.productDescription,
-                        product.productThumbnail,
                         product.salesPrice,
                         product.salesRate,
                         product.productPriority,
