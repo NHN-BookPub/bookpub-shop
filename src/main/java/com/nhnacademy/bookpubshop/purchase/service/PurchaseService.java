@@ -32,7 +32,7 @@ public interface PurchaseService {
      * 매입이력을 수정합니다.
      *
      * @param purchaseId 매입이력번호입니다.
-     * @param request 수정시 사용하는 dto.
+     * @param request    수정시 사용하는 dto.
      */
     void modifyPurchase(Long purchaseId, CreatePurchaseRequestDto request);
 

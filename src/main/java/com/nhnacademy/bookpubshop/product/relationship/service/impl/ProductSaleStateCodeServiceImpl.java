@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.product.relationship.service.impl;
 
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
-import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodesException;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductSaleStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductSaleStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
@@ -40,7 +39,7 @@ public class ProductSaleStateCodeServiceImpl implements ProductSaleStateCodeServ
                                 request.getCodeInfo()));
 
         return new GetProductSaleStateCodeResponseDto(
-                stateCode.getCodeNumber(),
+                stateCode.getCodeNo(),
                 stateCode.getCodeCategory(),
                 stateCode.isCodeUsed(),
                 stateCode.getCodeInfo());
@@ -58,7 +57,7 @@ public class ProductSaleStateCodeServiceImpl implements ProductSaleStateCodeServ
                         .orElseThrow(NotFoundStateCodeException::new);
 
         return new GetProductSaleStateCodeResponseDto(
-                productSaleStateCode.getCodeNumber(),
+                productSaleStateCode.getCodeNo(),
                 productSaleStateCode.getCodeCategory(),
                 productSaleStateCode.isCodeUsed(),
                 productSaleStateCode.getCodeInfo());
@@ -71,17 +70,17 @@ public class ProductSaleStateCodeServiceImpl implements ProductSaleStateCodeServ
     @Transactional
     public GetProductSaleStateCodeResponseDto setUsedSaleCodeById(Integer id, boolean used) {
         ProductSaleStateCode stateCode = productSaleStateCodeRepository
-                        .findById(id)
-                        .orElseThrow(NotFoundStateCodeException::new);
+                .findById(id)
+                .orElseThrow(NotFoundStateCodeException::new);
 
         ProductSaleStateCode resultCode = productSaleStateCodeRepository.save(
                 new ProductSaleStateCode(id,
-                stateCode.getCodeCategory(),
-                used,
-                stateCode.getCodeInfo()));
+                        stateCode.getCodeCategory(),
+                        used,
+                        stateCode.getCodeInfo()));
 
         return new GetProductSaleStateCodeResponseDto(
-                resultCode.getCodeNumber(),
+                resultCode.getCodeNo(),
                 resultCode.getCodeCategory(),
                 resultCode.isCodeUsed(),
                 resultCode.getCodeInfo());
@@ -95,20 +94,25 @@ public class ProductSaleStateCodeServiceImpl implements ProductSaleStateCodeServ
     public List<GetProductSaleStateCodeResponseDto> getAllProductSaleStateCode() {
         List<ProductSaleStateCode> codes = productSaleStateCodeRepository.findAll();
 
-        if (codes.isEmpty()) {
-            throw new NotFoundStateCodesException();
-        }
-
         List<GetProductSaleStateCodeResponseDto> responseDto = new ArrayList<>();
 
         for (ProductSaleStateCode code : codes) {
             responseDto.add(new GetProductSaleStateCodeResponseDto(
-                    code.getCodeNumber(),
+                    code.getCodeNo(),
                     code.getCodeCategory(),
                     code.isCodeUsed(),
                     code.getCodeInfo()
             ));
         }
         return responseDto;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetProductSaleStateCodeResponseDto> getAllProductSaleStateCodeUsed() {
+        return productSaleStateCodeRepository.findByAllUsed();
     }
 }

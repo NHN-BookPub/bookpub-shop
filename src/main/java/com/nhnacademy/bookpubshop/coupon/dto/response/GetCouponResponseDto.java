@@ -18,7 +18,7 @@ public class GetCouponResponseDto {
     private String templateName;
     private String templateImage;
     private boolean policyFixed;
-    private Long discountRate;
+    private Long policyPrice;
     private Long policyMinimum;
     private Long maxDiscount;
     private LocalDateTime finishedAt;

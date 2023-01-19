@@ -46,7 +46,7 @@ class CouponPolicyRepositoryTest {
         assertThat(result).isPresent();
         assertThat(result.get().getPolicyNo()).isEqualTo(couponPolicy.getPolicyNo());
         assertThat(result.get().isPolicyFixed()).isEqualTo(couponPolicy.isPolicyFixed());
-        assertThat(result.get().getDiscountRate()).isEqualTo(couponPolicy.getDiscountRate());
+        assertThat(result.get().getPolicyPrice()).isEqualTo(couponPolicy.getPolicyPrice());
         assertThat(result.get().getPolicyMinimum()).isEqualTo(couponPolicy.getPolicyMinimum());
         assertThat(result.get().getMaxDiscount()).isEqualTo(couponPolicy.getMaxDiscount());
     }
@@ -61,7 +61,7 @@ class CouponPolicyRepositoryTest {
         assertThat(result).isPresent();
         assertThat(result.get().getPolicyNo()).isEqualTo(couponPolicy.getPolicyNo());
         assertThat(result.get().isPolicyFixed()).isEqualTo(couponPolicy.isPolicyFixed());
-        assertThat(result.get().getDiscountRate()).isEqualTo(couponPolicy.getDiscountRate());
+        assertThat(result.get().getPolicyPrice()).isEqualTo(couponPolicy.getPolicyPrice());
         assertThat(result.get().getPolicyMinimum()).isEqualTo(couponPolicy.getPolicyMinimum());
         assertThat(result.get().getMaxDiscount()).isEqualTo(couponPolicy.getMaxDiscount());
     }
@@ -76,7 +76,7 @@ class CouponPolicyRepositoryTest {
         assertThat(result).isNotEmpty();
         assertThat(result.get(0).getPolicyNo()).isEqualTo(couponPolicy.getPolicyNo());
         assertThat(result.get(0).isPolicyFixed()).isEqualTo(couponPolicy.isPolicyFixed());
-        assertThat(result.get(0).getDiscountRate()).isEqualTo(couponPolicy.getDiscountRate());
+        assertThat(result.get(0).getPolicyPrice()).isEqualTo(couponPolicy.getPolicyPrice());
         assertThat(result.get(0).getPolicyMinimum()).isEqualTo(couponPolicy.getPolicyMinimum());
         assertThat(result.get(0).getMaxDiscount()).isEqualTo(couponPolicy.getMaxDiscount());
     }

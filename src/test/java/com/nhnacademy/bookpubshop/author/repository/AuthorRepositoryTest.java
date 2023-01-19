@@ -84,9 +84,9 @@ class AuthorRepositoryTest {
     @DisplayName("상품 번호로 저자 찾기")
     void getAuthorsByProductNo() {
         Author persist = entityManager.persist(author);
-        ProductPolicy productPolicy = new ProductPolicy(null,"method",true,1);
-        ProductTypeStateCode typeStateCode = new ProductTypeStateCode(null,BEST_SELLER.getName(),BEST_SELLER.isUsed(),"info");
-        ProductSaleStateCode saleStateCode = new ProductSaleStateCode(null, NEW.getName(),NEW.isUsed(),"info");
+        ProductPolicy productPolicy = new ProductPolicy(null, "method", true, 1);
+        ProductTypeStateCode typeStateCode = new ProductTypeStateCode(null, BEST_SELLER.getName(), BEST_SELLER.isUsed(), "info");
+        ProductSaleStateCode saleStateCode = new ProductSaleStateCode(null, NEW.getName(), NEW.isUsed(), "info");
 
         ProductPolicy policyPersist = entityManager.persist(productPolicy);
         ProductTypeStateCode typePersist = entityManager.persist(typeStateCode);
@@ -102,8 +102,6 @@ class AuthorRepositoryTest {
                 "publisher",
                 130,
                 "test_description",
-                "thumbnail.png",
-                "test.txt",
                 10000L,
                 10000L,
                 0,
@@ -117,8 +115,8 @@ class AuthorRepositoryTest {
         Product productPersist = entityManager.persist(product);
 
         ProductAuthor productAuthor = new ProductAuthor(
-                        new ProductAuthor.Pk(persist.getAuthorNo(), productPersist.getProductNo()),
-                        persist, productPersist);
+                new ProductAuthor.Pk(persist.getAuthorNo(), productPersist.getProductNo()),
+                persist, productPersist);
 
         entityManager.persist(productAuthor);
 

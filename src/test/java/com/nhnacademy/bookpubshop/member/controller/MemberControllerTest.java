@@ -1,20 +1,27 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
+import com.nhnacademy.bookpubshop.member.dto.request.IdRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.NickRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.util.List;
@@ -380,7 +387,7 @@ class MemberControllerTest {
     void memberListTest() throws Exception {
         MemberResponseDto dto = new MemberResponseDto(1L, "tier", "id", "nick",
                 "name", "gender", 1, 1, "email",
-                1L, false,false,false);
+                1L, false, false, false);
         List<MemberResponseDto> content = List.of(dto);
         PageRequest request = PageRequest.of(0, 10);
 
@@ -425,4 +432,99 @@ class MemberControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("멤버별 통계 ")
+    void memberStatisticsTest() throws Exception {
+        MemberStatisticsResponseDto dto = MemberDummy.memberStatisticsDummy();
+        when(memberService.getMemberStatistics())
+                .thenReturn(dto);
+
+        mvc.perform(get("/api/admin/members/statistics")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.memberCnt").value(dto.getMemberCnt()))
+                .andExpect(jsonPath("$.currentMemberCnt").value(dto.getCurrentMemberCnt()))
+                .andExpect(jsonPath("$.deleteMemberCnt").value(dto.getDeleteMemberCnt()))
+                .andExpect(jsonPath("$.blockMemberCnt").value(dto.getBlockMemberCnt()))
+                .andDo(print());
+
+        then(memberService)
+                .should().getMemberStatistics();
+    }
+
+    @Test
+    @DisplayName("멤버 등급별 통계")
+    void memberTierStatisticsTest() throws Exception {
+
+        MemberTierStatisticsResponseDto dto = MemberDummy.memberTierStatisticsDummy();
+        when(memberService.getTierStatistics())
+                .thenReturn(List.of(dto));
+
+        mvc.perform(get("/api/admin/tier/statistics")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].tierName").value(dto.getTierName()))
+                .andExpect(jsonPath("$[0].tierValue").value(objectMapper.writeValueAsString(dto.getTierValue())))
+                .andExpect(jsonPath("$[0].tierCnt").value(objectMapper.writeValueAsString(dto.getTierCnt())))
+                .andDo(print());
+
+        then(memberService)
+                .should().getTierStatistics();
+    }
+
+    @Test
+    @DisplayName("로그인 요청을 한 멤버의 정보를 조회")
+    void memberLoginSuccessTest() throws Exception {
+        LoginMemberRequestDto login = new LoginMemberRequestDto();
+        LoginMemberResponseDto loginDummy = MemberDummy.dummy2();
+
+        ReflectionTestUtils.setField(login, "memberId", "tagkdj1");
+
+        when(memberService.loginMember(anyString()))
+                .thenReturn(loginDummy);
+
+        mvc.perform(post("/api/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(login)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.memberId").value(loginDummy.getMemberId()))
+                .andExpect(jsonPath("$.memberPwd").value(loginDummy.getMemberPwd()))
+                .andExpect(jsonPath("$.memberNo").value(loginDummy.getMemberNo()));
+    }
+
+    @Test
+    @DisplayName("아이디 중복체크 요청의 결과값 반환")
+    void idDuplicateCheckTest() throws Exception {
+        IdRequestDto idRequestDto = new IdRequestDto();
+        ReflectionTestUtils.setField(idRequestDto,"id","tagkdj1");
+
+        when(memberService.idDuplicateCheck(anyString()))
+                .thenReturn(true);
+
+        mvc.perform(post("/api/signup/idCheck")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(idRequestDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    @DisplayName("닉네임 중복체크 요청의 결과값 반환")
+    void nickDuplicateCheckTest() throws Exception {
+        NickRequestDto nickRequestDto = new NickRequestDto();
+        ReflectionTestUtils.setField(nickRequestDto,"nickname","taewon");
+
+        when(memberService.nickNameDuplicateCheck(anyString()))
+                .thenReturn(true);
+
+        mvc.perform(post("/api/signup/nickCheck")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(nickRequestDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
+
 }

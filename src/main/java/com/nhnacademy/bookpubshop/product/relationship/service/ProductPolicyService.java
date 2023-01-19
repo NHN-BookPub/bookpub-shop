@@ -27,13 +27,18 @@ public interface ProductPolicyService {
      */
     GetProductPolicyResponseDto getProductPolicyById(Integer policyNo);
 
+    /**
+     * 전체 상품 정책 조회합니다.
+     *
+     * @return 전체 상품 정책 DTO
+     */
     List<GetProductPolicyResponseDto> getProductPolicies();
 
     /**
      * 정책번호로 조회한 후 그 정책을 수정합니다.
      *
      * @param policyNo 정책번호입니다.
-     * @param policy 수정할 정책입니다.
+     * @param policy   수정할 정책입니다.
      * @return 수정된 객체를 반환합니다.
      */
     GetProductPolicyResponseDto modifyProductPolicyById(Integer policyNo,

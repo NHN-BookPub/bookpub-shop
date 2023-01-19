@@ -34,11 +34,12 @@ class ProductRepositoryTest {
     ProductPolicy policyPersist;
     ProductTypeStateCode typePersist;
     ProductSaleStateCode salePersist;
+
     @BeforeEach
     void setUp() {
-        ProductPolicy productPolicy = new ProductPolicy(null,"method",true,1);
-        ProductTypeStateCode typeStateCode = new ProductTypeStateCode(null,BEST_SELLER.getName(),BEST_SELLER.isUsed(),"info");
-        ProductSaleStateCode saleStateCode = new ProductSaleStateCode(null, NEW.getName(),NEW.isUsed(),"info");
+        ProductPolicy productPolicy = new ProductPolicy(null, "method", true, 1);
+        ProductTypeStateCode typeStateCode = new ProductTypeStateCode(null, BEST_SELLER.getName(), BEST_SELLER.isUsed(), "info");
+        ProductSaleStateCode saleStateCode = new ProductSaleStateCode(null, NEW.getName(), NEW.isUsed(), "info");
 
         policyPersist = entityManager.persist(productPolicy);
         typePersist = entityManager.persist(typeStateCode);
@@ -54,8 +55,6 @@ class ProductRepositoryTest {
                 "publisher",
                 130,
                 "test_description",
-                "thumbnail.png",
-                "test.txt",
                 10000L,
                 10000L,
                 0,
@@ -86,8 +85,6 @@ class ProductRepositoryTest {
                 .isEqualTo(productPersist.getTitle());
         assertThat(productRepository.getAllProducts(pageable).getContent().get(0).getSalesPrice())
                 .isEqualTo(productPersist.getSalesPrice());
-        assertThat(productRepository.getAllProducts(pageable).getContent().get(0).getThumbnailPath())
-                .isEqualTo(productPersist.getProductThumbnail());
     }
 
     @Test

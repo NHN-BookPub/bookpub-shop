@@ -33,6 +33,10 @@ public class BookPubTier {
     @Column(name = "tier_name", unique = true)
     private String tierName;
 
+    @NotNull
+    @Column(name = "tier_value")
+    private Integer tierValue;
+
     /**
      * pk를 제외한 생성자입니다.
      *

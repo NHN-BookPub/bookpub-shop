@@ -42,5 +42,11 @@ public interface ProductRepositoryCustom {
      */
     Optional<GetProductDetailResponseDto> getProductDetailById(Long id);
 
+    /**
+     * 주문번호로 상품리스트를 조회합니다.
+     *
+     * @param orderNo 주문번호입니다.
+     * @return 주문에서 보여질 상품 Dto를 반환합니다.
+     */
     List<GetProductListForOrderResponseDto> getProductListByOrderNo(Long orderNo);
 }

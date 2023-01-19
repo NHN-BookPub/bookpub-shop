@@ -1,16 +1,20 @@
 package com.nhnacademy.bookpubshop.member.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
+import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dummy.MemberAuthorityDummy;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -109,7 +113,7 @@ class MemberRepositoryTest {
 
     @DisplayName("멤버 전체조회 테스트")
     @Test
-    void findMembersTest(){
+    void findMembersTest() {
         Member persist = entityManager.persist(member);
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -127,5 +131,65 @@ class MemberRepositoryTest {
         assertThat(content.get(0).getEmail()).isEqualTo(persist.getMemberEmail());
         assertThat(content.get(0).getPoint()).isEqualTo(persist.getMemberPoint());
         assertThat(content.get(0).isSocial()).isEqualTo(persist.isSocialJoined());
+    }
+
+    @DisplayName("멤버 통계")
+    @Test
+    void memberStatisticsTest(){
+        entityManager.persist(member);
+
+        MemberStatisticsResponseDto result = memberRepository.memberStatistics();
+
+        assertThat(result).isNotNull();
+        assertThat(result.getMemberCnt()).isEqualTo(1);
+        assertThat(result.getBlockMemberCnt()).isZero();
+        assertThat(result.getDeleteMemberCnt()).isZero();
+        assertThat(result.getCurrentMemberCnt()).isEqualTo(1);
+    }
+
+    @DisplayName("멤버 등급별 통계")
+    @Test
+    void memberTierStatisticsTest(){
+        Member persist = entityManager.persist(member);
+        Member dummy = MemberDummy.dummy2(bookPubTier);
+        entityManager.persist(dummy);
+
+        List<MemberTierStatisticsResponseDto> memberTierStatistics = memberRepository.memberTierStatistics();
+
+        assertThat(memberTierStatistics).isNotEmpty();
+        assertThat(memberTierStatistics.get(0).getTierValue().intValue()).isEqualTo(persist.getTier().getTierValue());
+        assertThat(memberTierStatistics.get(0).getTierName()).isEqualTo(persist.getTier().getTierName());
+        assertThat(memberTierStatistics.get(0).getTierCnt()).isEqualTo(2);
+    }
+
+    @DisplayName("로그인 멤버 조회 테스트")
+    @Test
+    void findLoginMemberSuccessTest() {
+        Member memberPersist = entityManager.persist(member);
+        entityManager.persist(authority);
+        entityManager.persist(memberAuthority);
+        entityManager.flush();
+        entityManager.clear();
+
+        LoginMemberResponseDto result
+                = memberRepository.findByMemberLoginInfo(memberPersist.getMemberId());
+
+        assertThat(result.getMemberNo()).isEqualTo(memberPersist.getMemberNo());
+        assertThat(result.getMemberPwd()).isEqualTo(memberPersist.getMemberPwd());
+        assertThat(result.getMemberId()).isEqualTo(memberPersist.getMemberId());
+    }
+
+    @DisplayName("로그인 멤버 조회 실패 테스트")
+    @Test
+    void findLoginMemberFailedTest() {
+        entityManager.persist(member);
+        entityManager.persist(authority);
+        entityManager.persist(memberAuthority);
+        entityManager.flush();
+        entityManager.clear();
+
+        assertThatThrownBy(()->memberRepository.findByMemberLoginInfo("failId"))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
     }
 }

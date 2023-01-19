@@ -58,7 +58,7 @@ public class Category {
      * @author : 김서현
      */
     public void modifyCategory(String categoryName, Category parentCategory,
-            Integer categoryPriority, boolean categoryDisplayed) {
+                               Integer categoryPriority, boolean categoryDisplayed) {
         this.categoryName = categoryName;
         this.parentCategory = parentCategory;
         this.categoryPriority = categoryPriority;

@@ -1,5 +1,10 @@
 package com.nhnacademy.bookpubshop.purchase.controller;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
@@ -101,8 +106,8 @@ class PurchaseControllerTest {
                 .thenReturn(pageResult);
 
         mockMvc.perform(get(url + "?page=0&size=5")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(pageResult)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(pageResult)))
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -169,8 +174,8 @@ class PurchaseControllerTest {
                 .modifyPurchase(purchase.getPurchaseNo(), request);
 
         mockMvc.perform(put(url + "/{purchaseNo}", purchase.getPurchaseNo())
-                .content(objectMapper.writeValueAsString(request))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andDo(print());
 

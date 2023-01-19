@@ -5,6 +5,7 @@ import com.nhnacademy.bookpubshop.coupon.dto.request.ModifyCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.service.CouponService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -66,7 +68,7 @@ public class CouponController {
      * @return 성공 경우 201 응답
      */
     @PostMapping("/coupons")
-    public ResponseEntity<Void> couponAdd(CreateCouponRequestDto request) {
+    public ResponseEntity<Void> couponAdd(@Valid @RequestBody CreateCouponRequestDto request) {
         couponService.createCoupon(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -80,7 +82,7 @@ public class CouponController {
      * @return 성공 경우 201 응답
      */
     @PutMapping("/coupons/modify")
-    public ResponseEntity<Void> couponModify(ModifyCouponRequestDto request) {
+    public ResponseEntity<Void> couponModify(@Valid @RequestBody ModifyCouponRequestDto request) {
         couponService.modifyCouponUsed(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)

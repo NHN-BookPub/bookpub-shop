@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.coupontemplate.repository.impl;
 
 import com.nhnacademy.bookpubshop.category.entity.QCategory;
-import com.nhnacademy.bookpubshop.couponpolicy.dto.response.GetCouponPolicyResponseDto;
 import com.nhnacademy.bookpubshop.couponpolicy.entity.QCouponPolicy;
 import com.nhnacademy.bookpubshop.couponstatecode.entity.QCouponStateCode;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetCouponTemplateResponseDto;
@@ -30,6 +29,8 @@ import org.springframework.data.support.PageableExecutionUtils;
 public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
         implements CouponTemplateRepositoryCustom {
 
+    private static final String TEMPLATE_IMAGE = "templateImage";
+
     public CouponTemplateRepositoryImpl() {
         super(CouponTemplate.class);
     }
@@ -48,26 +49,25 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
         QFile file = QFile.file;
 
         return Optional.of(from(couponTemplate)
-                        .where(couponTemplate.templateNo.eq(templateNo))
-                .leftJoin(couponTemplate.couponPolicy, couponPolicy)
-                .leftJoin(couponTemplate.couponType, couponType)
+                .where(couponTemplate.templateNo.eq(templateNo))
+                .leftJoin(file).on(couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
+                .join(couponTemplate.couponPolicy, couponPolicy)
+                .join(couponTemplate.couponType, couponType)
                 .leftJoin(couponTemplate.product, product)
                 .leftJoin(couponTemplate.category, category)
-                .leftJoin(couponTemplate.couponStateCode, couponStateCode)
+                .join(couponTemplate.couponStateCode, couponStateCode)
                 .select(Projections.constructor(GetDetailCouponTemplateResponseDto.class,
                         couponTemplate.templateNo,
-                        Projections.constructor(GetCouponPolicyResponseDto.class,
-                                couponPolicy.policyNo,
-                                couponPolicy.policyFixed,
-                                couponPolicy.discountRate,
-                                couponPolicy.policyMinimum,
-                                couponPolicy.maxDiscount),
+                        couponPolicy.policyFixed,
+                        couponPolicy.policyPrice,
+                        couponPolicy.policyMinimum,
+                        couponPolicy.maxDiscount,
                         couponType.typeName,
                         product.title.as("productTitle"),
                         category.categoryName,
                         couponStateCode.codeTarget,
                         couponTemplate.templateName,
-                        file.nameSaved.concat(file.fileExtension),
+                        file.nameSaved.concat(file.fileExtension).as(TEMPLATE_IMAGE),
                         couponTemplate.finishedAt,
                         couponTemplate.issuedAt,
                         couponTemplate.templateOverlapped,
@@ -93,25 +93,24 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
                 .select(couponTemplate.count());
 
         List<GetDetailCouponTemplateResponseDto> content = from(couponTemplate)
-                .leftJoin(couponTemplate.couponPolicy, couponPolicy)
-                .leftJoin(couponTemplate.couponType, couponType)
+                .leftJoin(file).on(couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
+                .join(couponTemplate.couponPolicy, couponPolicy)
+                .join(couponTemplate.couponType, couponType)
                 .leftJoin(couponTemplate.product, product)
                 .leftJoin(couponTemplate.category, category)
-                .leftJoin(couponTemplate.couponStateCode, couponStateCode)
+                .join(couponTemplate.couponStateCode, couponStateCode)
                 .select(Projections.constructor(GetDetailCouponTemplateResponseDto.class,
                         couponTemplate.templateNo,
-                        Projections.constructor(GetCouponPolicyResponseDto.class,
-                                couponPolicy.policyNo,
-                                couponPolicy.policyFixed,
-                                couponPolicy.discountRate,
-                                couponPolicy.policyMinimum,
-                                couponPolicy.maxDiscount),
+                        couponPolicy.policyFixed,
+                        couponPolicy.policyPrice,
+                        couponPolicy.policyMinimum,
+                        couponPolicy.maxDiscount,
                         couponType.typeName,
                         product.title.as("productTitle"),
                         category.categoryName,
                         couponStateCode.codeTarget,
                         couponTemplate.templateName,
-                        file.nameSaved.concat(file.fileExtension),
+                        file.nameSaved.concat(file.fileExtension).as(TEMPLATE_IMAGE),
                         couponTemplate.finishedAt,
                         couponTemplate.issuedAt,
                         couponTemplate.templateOverlapped,
@@ -136,10 +135,10 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
                 .select(couponTemplate.count());
 
         List<GetCouponTemplateResponseDto> content = from(couponTemplate)
-                .leftJoin(couponTemplate, file.couponTemplate)
+                .leftJoin(file).on(couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
                 .select(Projections.constructor(GetCouponTemplateResponseDto.class,
                         couponTemplate.templateName,
-                        file.nameSaved.concat(file.fileExtension),
+                        file.nameSaved.concat(file.fileExtension).as(TEMPLATE_IMAGE),
                         couponTemplate.issuedAt,
                         couponTemplate.finishedAt))
                 .limit(pageable.getPageSize())
