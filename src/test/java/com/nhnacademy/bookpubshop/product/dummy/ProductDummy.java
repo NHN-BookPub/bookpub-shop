@@ -134,8 +134,6 @@ public class ProductDummy {
                 "publisher",
                 100,
                 "description",
-                "thumbnail",
-                "path",
                 9000L,
                 10000L,
                 10,

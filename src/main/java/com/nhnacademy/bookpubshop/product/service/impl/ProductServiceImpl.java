@@ -6,7 +6,7 @@ import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
-import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.Product;
@@ -19,7 +19,6 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTag;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
-import com.nhnacademy.bookpubshop.product.relationship.repository.ProductAuthorRepository;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductPolicyRepository;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
@@ -46,7 +45,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductPolicyRepository productPolicyRepository;
     private final ProductSaleStateCodeRepository saleStateCodeRepository;
     private final ProductTypeStateCodeRepository typeStateCodeRepository;
-    private final ProductAuthorRepository productAuthorRepository;
     private final AuthorRepository authorRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
@@ -180,13 +178,7 @@ public class ProductServiceImpl implements ProductService {
 
         List<Product> relationProducts = new ArrayList<>();
 
-//        for (Long relationProductNo : request.getRelationProducts()) {
-//            relationProducts.add(
-//                    productRepository.findById(relationProductNo)
-//                            .orElseThrow(ProductNotFoundException::new));
-//        }
-
-        Product save = productRepository.save(new Product(
+        productRepository.save(new Product(
                 product.getProductNo(),
                 productPolicy,
 
@@ -205,7 +197,6 @@ public class ProductServiceImpl implements ProductService {
                 request.getProductPriority(),
                 product.isProductDeleted(),
                 null,
-//                            request.getProductStock(),
                 request.getPublishedAt(),
                 request.isSubscribed()));
     }
@@ -220,16 +211,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(ProductNotFoundException::new);
 
         product.modifyProductDeleted();
-    }
 
-    /**
-     * 할인율을 계산하여 반환합니다.
-     *
-     * @param originPrice 정가입니다.
-     * @param salePrice   할인가입니다.
-     * @return 할인율을 반환합니다.
-     */
-    private Integer getSaleRateWithSalePrice(Long originPrice, Long salePrice) {
-        return Math.toIntExact((originPrice - salePrice) / originPrice * 100);
+        productRepository.save(product);
     }
 }

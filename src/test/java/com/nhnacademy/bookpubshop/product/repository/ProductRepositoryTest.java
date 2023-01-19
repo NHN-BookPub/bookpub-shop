@@ -94,7 +94,6 @@ class ProductRepositoryTest {
     @DisplayName("모든 상품 조회 테스트")
     void getAllProducts() {
         // given
-        Product persist = entityManager.persist(product);
         Pageable pageable = Pageable.ofSize(10);
 
         // when
@@ -102,7 +101,8 @@ class ProductRepositoryTest {
 
         // then
         assertThat(allProducts.getContent()).isNotEmpty();
-        assertThat(allProducts.getContent().size()).isEqualTo(2);
+        assertThat(allProducts.getContent())
+                .hasSize(1);
     }
 
     @Test
@@ -147,9 +147,8 @@ class ProductRepositoryTest {
         // when
         Optional<GetProductDetailResponseDto> result = productRepository.getProductDetailById(save.getProductNo());
 
-        System.out.println(result);
         // then
-        assertThat(result).isEmpty();
+        assertThat(result).isNotEmpty();
     }
 
 }

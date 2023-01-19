@@ -12,7 +12,7 @@ import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
 import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
-import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
@@ -45,7 +45,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
@@ -63,10 +62,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 @ExtendWith(SpringExtension.class)
 @Import(ProductServiceImpl.class)
 class ProductServiceTest {
-
-    @Autowired
     ProductService productService;
-
     @MockBean
     ProductPolicyRepository productPolicyRepository;
     @MockBean
@@ -101,6 +97,14 @@ class ProductServiceTest {
         productPolicy = new ProductPolicy(1, "method", true, 1);
         typeStateCode = new ProductTypeStateCode(1, BEST_SELLER.getName(), BEST_SELLER.isUsed(), "info");
         saleStateCode = new ProductSaleStateCode(1, NEW.getName(), NEW.isUsed(), "info");
+
+        productService = new ProductServiceImpl(productRepository,
+                productPolicyRepository,
+                saleStateCodeRepository,
+                typeStateCodeRepository,
+                authorRepository,
+                categoryRepository,
+                tagRepository);
 
         product = ProductDummy.dummy(productPolicy, typeStateCode, saleStateCode);
 
@@ -296,9 +300,6 @@ class ProductServiceTest {
     @Test
     @DisplayName("모든 상품 조회 실패, 결과가 0개")
     void getAllProductsFailNotFound() {
-        List<GetProductListResponseDto> responses = new ArrayList<>();
-        responses.add(listResponseDto);
-
         Pageable pageable = Pageable.ofSize(5);
 
         when(productRepository.getAllProducts(pageable))
@@ -436,10 +437,14 @@ class ProductServiceTest {
     @Test
     @DisplayName("삭제여부 설정 성공")
     void setDeleteProduct() {
+        ReflectionTestUtils.setField(product, "productNo", 1L);
+
         when(productRepository.findById(anyLong()))
                 .thenReturn(Optional.of(product));
-        ReflectionTestUtils.setField(product, "productNo", 1L);
+
         productService.setDeleteProduct(product.getProductNo());
+
+        verify(productRepository, times(1)).save(any());
     }
 
     @Test

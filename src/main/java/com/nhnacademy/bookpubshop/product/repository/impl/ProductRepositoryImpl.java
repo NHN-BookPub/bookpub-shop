@@ -1,18 +1,13 @@
 package com.nhnacademy.bookpubshop.product.repository.impl;
 
+import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
+import com.nhnacademy.bookpubshop.product.dto.GetProductListForOrderResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
-import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
-import com.nhnacademy.bookpubshop.product.dto.GetProductDetailResponseDto;
-import com.nhnacademy.bookpubshop.product.dto.GetProductListForOrderResponseDto;
-import com.nhnacademy.bookpubshop.product.dto.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
-import com.nhnacademy.bookpubshop.product.relationship.entity.QProductAuthor;
-import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductSaleStateCode;
-import com.nhnacademy.bookpubshop.product.relationship.entity.QProductTag;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepositoryCustom;
 import com.querydsl.core.types.Projections;
@@ -108,17 +103,11 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
         QProductPolicy productPolicy = QProductPolicy.productPolicy;
         QProductSaleStateCode productSaleStateCode = QProductSaleStateCode.productSaleStateCode;
         QProductTypeStateCode productTypeStateCode = QProductTypeStateCode.productTypeStateCode;
-        QProductAuthor productAuthor = QProductAuthor.productAuthor;
-        QProductCategory productCategory = QProductCategory.productCategory;
-        QProductTag productTag = QProductTag.productTag;
 
         Optional<Product> content = Optional.ofNullable(from(product)
                 .innerJoin(product.productPolicy, productPolicy)
                 .innerJoin(product.productSaleStateCode, productSaleStateCode)
                 .innerJoin(product.productTypeStateCode, productTypeStateCode)
-                .innerJoin(product.productAuthors, productAuthor)
-                .innerJoin(product.productCategories, productCategory)
-                .innerJoin(product.productTags, productTag)
                 .select(product)
                 .where(product.productNo.eq(id))
                 .fetchOne());
@@ -132,7 +121,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .select(Projections.constructor(
                         GetProductListForOrderResponseDto.class,
                         product.productNo,
-                        product.productThumbnail,
                         product.title,
                         product.salesPrice,
                         orderProduct.productAmount))
