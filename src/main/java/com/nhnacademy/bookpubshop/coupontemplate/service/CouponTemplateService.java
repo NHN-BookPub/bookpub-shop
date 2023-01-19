@@ -2,7 +2,6 @@ package com.nhnacademy.bookpubshop.coupontemplate.service;
 
 import com.nhnacademy.bookpubshop.coupontemplate.dto.request.CreateCouponTemplateRequestDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.request.ModifyCouponTemplateRequestDto;
-import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetDetailCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetDetailCouponTemplateResponseDto;
 import java.io.IOException;
@@ -26,14 +25,6 @@ public interface CouponTemplateService {
     RestGetDetailCouponTemplateResponseDto getDetailCouponTemplate(Long templateNo) throws IOException;
 
     /**
-     * 전체 쿠폰템플릿 상세조회를 위한 메서드.
-     *
-     * @param pageable 조회할 페이지 정보
-     * @return 쿠폰템플릿 조회 상세정보를 담은 Dto 페이지
-     */
-    Page<GetDetailCouponTemplateResponseDto> getDetailCouponTemplates(Pageable pageable);
-
-    /**
      * 전체 쿠폰템플릿 조회를 위한 메서드.
      *
      * @param pageable 조회할 페이지 정보
@@ -54,6 +45,6 @@ public interface CouponTemplateService {
      *
      * @param modifyRequestDto 수정할 쿠폰템플릿 정보를 담은 Dto
      */
-    void modifyCouponTemplate(Long templateNo, ModifyCouponTemplateRequestDto modifyRequestDto);
+    void modifyCouponTemplate(Long templateNo, ModifyCouponTemplateRequestDto modifyRequestDto, MultipartFile image) throws IOException;
 
 }
