@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.member.service;
 
-import com.nhnacademy.bookpubshop.member.dto.request.MemberModifyPasswordRequest;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
@@ -102,7 +102,7 @@ public interface MemberService {
      * @param memberNo 회원번호.
      * @param password 비밀번호.
      */
-    void modifyMemberPassword(Long memberNo, MemberModifyPasswordRequest password);
+    void modifyMemberPassword(Long memberNo, ModifyMemberPasswordRequest password);
 
     /**
      * 멤버의 등급별 통계를 얻기위한 메서드입니다.

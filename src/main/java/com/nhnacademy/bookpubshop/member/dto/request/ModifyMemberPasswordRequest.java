@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  **/
 @Getter
 @NoArgsConstructor
-public class MemberModifyPasswordRequest {
+public class ModifyMemberPasswordRequest {
     @Pattern(regexp = "(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,50}$",
     message = "패스워드가 규격에 적합하지 않습니다.")
     private String password;

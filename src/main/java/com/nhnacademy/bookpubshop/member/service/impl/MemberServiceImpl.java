@@ -3,7 +3,7 @@ package com.nhnacademy.bookpubshop.member.service.impl;
 import com.nhnacademy.bookpubshop.author.exception.AuthorityNotFoundException;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
-import com.nhnacademy.bookpubshop.member.dto.request.MemberModifyPasswordRequest;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
@@ -229,7 +229,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public void modifyMemberPassword(Long memberNo, MemberModifyPasswordRequest password){
+    public void modifyMemberPassword(Long memberNo, ModifyMemberPasswordRequest password){
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(MemberNotFoundException::new);
 
