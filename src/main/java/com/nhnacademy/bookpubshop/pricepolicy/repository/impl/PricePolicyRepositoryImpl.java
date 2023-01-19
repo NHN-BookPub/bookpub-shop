@@ -63,7 +63,6 @@ public class PricePolicyRepositoryImpl extends QuerydslRepositorySupport
                 .select(pricePolicy)
                         .where(pricePolicy.policyName.eq(name))
                 .orderBy(pricePolicy.createdAt.desc())
-                .limit(1L)
                 .fetchOne());
     }
 }
