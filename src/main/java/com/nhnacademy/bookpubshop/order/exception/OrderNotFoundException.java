@@ -7,7 +7,7 @@ package com.nhnacademy.bookpubshop.order.exception;
  * @since : 1.0
  **/
 public class OrderNotFoundException extends RuntimeException {
-    private static final String MESSAGE = "찾을 수 없는 주문입니다.";
+    public static final String MESSAGE = "찾을 수 없는 주문입니다.";
 
     public OrderNotFoundException() {
         super(MESSAGE);

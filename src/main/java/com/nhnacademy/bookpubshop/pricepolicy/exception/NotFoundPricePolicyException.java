@@ -7,7 +7,7 @@ package com.nhnacademy.bookpubshop.pricepolicy.exception;
  * @since : 1.0
  **/
 public class NotFoundPricePolicyException extends RuntimeException{
-    private static final String MESSAGE = "존재하지 않는 정책입니다.";
+    public static final String MESSAGE = "존재하지 않는 정책입니다.";
 
     public NotFoundPricePolicyException() {
         super(MESSAGE);
