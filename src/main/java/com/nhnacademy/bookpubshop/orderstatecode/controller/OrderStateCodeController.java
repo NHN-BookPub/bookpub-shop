@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * @since : 1.0
  **/
 @RestController
-@RequestMapping("/api/state/orderState")
+@RequestMapping("/api/state/orderstates")
 @RequiredArgsConstructor
 public class OrderStateCodeController {
     private final OrderStateCodeService orderStateCodeService;

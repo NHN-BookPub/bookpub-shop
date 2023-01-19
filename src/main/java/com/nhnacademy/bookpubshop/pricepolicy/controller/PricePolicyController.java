@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  **/
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/state/pricePolicy")
+@RequestMapping("/api/state/pricepolicies")
 public class PricePolicyController {
     private final PricePolicyService pricePolicyService;
 
@@ -68,7 +68,7 @@ public class PricePolicyController {
      * @param policyNo 정책번호.
      * @return 200, 단건 정책 반환.
      */
-    @GetMapping("{policyNo}")
+    @GetMapping("/{policyNo}")
     public ResponseEntity<GetPricePolicyResponseDto> getPolicyByNo(
             @PathVariable Integer policyNo) {
         return ResponseEntity.status(HttpStatus.OK)
