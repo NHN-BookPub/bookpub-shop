@@ -32,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 멤버 서비스의 구현체.
@@ -67,6 +68,7 @@ public class OrderServiceImpl implements OrderService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void createOrder(CreateOrderRequestDto request, Long memberNo) {
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(MemberNotFoundException::new);
@@ -136,6 +138,7 @@ public class OrderServiceImpl implements OrderService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void modifyInvoiceNumber(Long orderNo, String invoiceNo) {
         BookpubOrder order = orderRepository.findById(orderNo)
                 .orElseThrow(OrderNotFoundException::new);
@@ -149,6 +152,7 @@ public class OrderServiceImpl implements OrderService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void modifyStateCode(
             @StateCode(enumClass = OrderState.class) String stateCode,
             Long orderNo) {

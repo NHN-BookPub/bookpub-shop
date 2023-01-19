@@ -9,6 +9,7 @@ import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodesException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 주문상태코드 서비스의 구현체입니다.
@@ -25,6 +26,7 @@ public class OrderStateCodeServiceImpl implements OrderStateCodeService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void createPricePolicy(CreateOrderStateCodeRequestDto request) {
         orderStateCodeRepository.save(
                 new OrderStateCode(null, request.getCodeName(),
@@ -53,6 +55,7 @@ public class OrderStateCodeServiceImpl implements OrderStateCodeService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void modifyOrderStateCodeUsed(Integer codeNo) {
         OrderStateCode code = orderStateCodeRepository.findById(codeNo)
                 .orElseThrow(NotFoundStateCodesException::new);

@@ -9,6 +9,7 @@ import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 주문상품상태코드 서비스입니다.
@@ -25,6 +26,7 @@ public class OrderProductStateCodeServiceImpl implements OrderProductStateCodeSe
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void createOrderProductStateCode(CreateOrderProductStateCodeRequestDto request) {
         orderProductStateCodeRepository.save(new OrderProductStateCode(
                 null, request.getCodeName(), request.isCodeUsed(), request.getCodeInfo()
@@ -35,6 +37,7 @@ public class OrderProductStateCodeServiceImpl implements OrderProductStateCodeSe
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void modifyUsedOrderProductStateCode(Integer codeNo) {
         OrderProductStateCode code = orderProductStateCodeRepository.findById(codeNo)
                 .orElseThrow(NotFoundStateCodeException::new);
