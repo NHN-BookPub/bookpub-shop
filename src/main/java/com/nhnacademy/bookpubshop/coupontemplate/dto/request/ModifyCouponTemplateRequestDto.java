@@ -34,11 +34,11 @@ public class ModifyCouponTemplateRequestDto {
     @Length(max = 50, message = "쿠폰이름의 최대 글자는 50글자입니다.")
     private String templateName;
 
-    @DateTimeFormat
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime finishedAt;
 
     @NotNull(message = "발급일자를 기입해주세요.")
-    @DateTimeFormat
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime issuedAt;
 
     private boolean templateOverlapped;

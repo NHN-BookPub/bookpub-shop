@@ -21,6 +21,12 @@ public class GetCouponTemplateResponseDto {
     private LocalDateTime issuedAt;
     private LocalDateTime finishedAt;
 
+    /**
+     * 쿠폰템플릿 dto를 이용하여 이미지 파일을 담아 조회할 수 있도록 변환해주는 메소드입니다.
+     *
+     * @param templateImage 쿠폰템플릿 이미지 경로
+     * @return 최종 쿠폰템플릿 Dto.
+     */
     public RestGetCouponTemplateResponseDto transform(String templateImage) {
         return new RestGetCouponTemplateResponseDto(
                 this.templateNo,
