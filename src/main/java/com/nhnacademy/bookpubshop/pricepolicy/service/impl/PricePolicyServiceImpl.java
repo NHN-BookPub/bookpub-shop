@@ -9,6 +9,7 @@ import com.nhnacademy.bookpubshop.pricepolicy.service.PricePolicyService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 가격정책 서비스의 구현체입니다.
@@ -25,6 +26,7 @@ public class PricePolicyServiceImpl implements PricePolicyService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void createPricePolicy(CreatePricePolicyRequestDto request) {
         pricePolicyRepository.save(
                 new PricePolicy(null, request.getPolicyName(),
@@ -35,6 +37,7 @@ public class PricePolicyServiceImpl implements PricePolicyService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void modifyPricePolicyFee(Integer pricePolicyNo, Long fee) {
         PricePolicy policy = pricePolicyRepository.findById(pricePolicyNo)
                 .orElseThrow(NotFoundPricePolicyException::new);
@@ -48,6 +51,7 @@ public class PricePolicyServiceImpl implements PricePolicyService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public GetPricePolicyResponseDto getPricePolicyById(Integer pricePolicyNo) {
         return pricePolicyRepository.findPolicyByNo(pricePolicyNo)
                         .orElseThrow(NotFoundPricePolicyException::new);
@@ -57,6 +61,7 @@ public class PricePolicyServiceImpl implements PricePolicyService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public List<GetPricePolicyResponseDto> getPricePolicies() {
         return pricePolicyRepository.findAllPolicies();
     }

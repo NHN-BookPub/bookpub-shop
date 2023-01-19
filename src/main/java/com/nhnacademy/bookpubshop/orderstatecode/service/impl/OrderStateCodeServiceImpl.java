@@ -38,6 +38,7 @@ public class OrderStateCodeServiceImpl implements OrderStateCodeService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public GetOrderStateCodeResponseDto getOrderStateCodeById(Integer pricePolicyNo) {
         return orderStateCodeRepository.findStateCodeByNo(pricePolicyNo)
                         .orElseThrow(NotFoundStateCodesException::new);
@@ -47,6 +48,7 @@ public class OrderStateCodeServiceImpl implements OrderStateCodeService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public List<GetOrderStateCodeResponseDto> getOrderStateCodes() {
         return orderStateCodeRepository.findStateCodes();
     }

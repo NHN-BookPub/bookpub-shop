@@ -55,6 +55,7 @@ public class OrderServiceImpl implements OrderService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public GetOrderDetailResponseDto getOrderDetailById(Long orderNo) {
         GetOrderDetailResponseDto response = orderRepository.getOrderDetailById(orderNo)
                 .orElseThrow(OrderNotFoundException::new);
@@ -169,6 +170,7 @@ public class OrderServiceImpl implements OrderService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public PageResponse<GetOrderListResponseDto> getOrderList(Pageable pageable) {
         Page<GetOrderListResponseDto> returns =
                 orderRepository.getOrdersList(pageable);
@@ -184,6 +186,7 @@ public class OrderServiceImpl implements OrderService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public PageResponse<GetOrderListResponseDto> getOrderListByUsers(
             Pageable pageable, Long memberNo) {
         Page<GetOrderListResponseDto> returns =
