@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Some description here.
+ * 가격정책을 반환하기 위한 Dto.
  *
  * @author : 여운석
  * @since : 1.0
