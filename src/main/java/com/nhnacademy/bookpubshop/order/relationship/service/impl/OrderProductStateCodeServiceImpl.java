@@ -38,10 +38,10 @@ public class OrderProductStateCodeServiceImpl implements OrderProductStateCodeSe
      */
     @Override
     @Transactional
-    public void modifyUsedOrderProductStateCode(Integer codeNo) {
+    public void modifyUsedOrderProductStateCode(Integer codeNo, boolean used) {
         OrderProductStateCode code = orderProductStateCodeRepository.findById(codeNo)
                 .orElseThrow(NotFoundStateCodeException::new);
-        code.modifyUsed();
+        code.modifyUsed(used);
         orderProductStateCodeRepository.save(code);
     }
 

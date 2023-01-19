@@ -23,7 +23,7 @@ public interface OrderProductStateCodeService {
      *
      * @param codeNo 코드번호.
      */
-    void modifyUsedOrderProductStateCode(Integer codeNo);
+    void modifyUsedOrderProductStateCode(Integer codeNo, boolean used);
 
     /**
      * 코드 번호로 조회합니다.

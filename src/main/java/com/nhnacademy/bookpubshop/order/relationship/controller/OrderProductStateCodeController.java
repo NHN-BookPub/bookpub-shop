@@ -68,8 +68,10 @@ public class OrderProductStateCodeController {
      * @return 201 반환.
      */
     @PutMapping("/{codeNo}")
-    public ResponseEntity<Void> modifyStateCode(@PathVariable Integer codeNo) {
-        orderProductStateCodeService.modifyUsedOrderProductStateCode(codeNo);
+    public ResponseEntity<Void> modifyStateCode(
+            @PathVariable Integer codeNo,
+            @RequestParam boolean used) {
+        orderProductStateCodeService.modifyUsedOrderProductStateCode(codeNo, used);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
