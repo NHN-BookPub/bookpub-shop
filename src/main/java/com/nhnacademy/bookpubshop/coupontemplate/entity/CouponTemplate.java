@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -43,25 +44,25 @@ public class CouponTemplate {
     private Long templateNo;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_policy_number")
     private CouponPolicy couponPolicy;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_type_number")
     private CouponType couponType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_number")
     private Product product;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_number")
     private Category category;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_state_code_number")
     private CouponStateCode couponStateCode;
 
@@ -123,6 +124,20 @@ public class CouponTemplate {
         this.templateBundled = templateBundled;
     }
 
+    /**
+     * 쿠폰템플릿 수정을 위한 메소드.
+     *
+     * @param couponPolicy       the coupon policy
+     * @param couponType         the coupon type
+     * @param product            the product
+     * @param category           the category
+     * @param couponStateCode    the coupon state code
+     * @param templateName       the template name
+     * @param finishedAt         the finished at
+     * @param issuedAt           the issued at
+     * @param templateOverlapped the template overlapped
+     * @param templateBundled    the template bundled
+     */
     public void modifyCouponTemplate(CouponPolicy couponPolicy,
                                      CouponType couponType, Product product,
                                      Category category, CouponStateCode couponStateCode,
