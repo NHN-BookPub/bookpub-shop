@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.member.service;
 
+import com.nhnacademy.bookpubshop.member.dto.request.MemberModifyPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
@@ -7,6 +8,7 @@ import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberPasswordResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
@@ -95,6 +97,14 @@ public interface MemberService {
     void modifyMemberPhone(Long memberNo, ModifyMemberPhoneRequestDto memberPhone);
 
     /**
+     * 회원의 비밀번호를 수정하기위한 메서드입니다.
+     *
+     * @param memberNo 회원번호.
+     * @param password 비밀번호.
+     */
+    void modifyMemberPassword(Long memberNo, MemberModifyPasswordRequest password);
+
+    /**
      * 멤버의 등급별 통계를 얻기위한 메서드입니다.
      *
      * @return the tier statistics
@@ -132,4 +142,8 @@ public interface MemberService {
      */
     boolean nickNameDuplicateCheck(String nickName);
 
+    /**
+     * {@inheritDoc}
+     */
+    MemberPasswordResponseDto getMemberPwd(Long memberNo);
 }
