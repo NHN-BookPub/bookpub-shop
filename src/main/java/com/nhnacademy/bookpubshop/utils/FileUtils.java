@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -28,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
  **/
 
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class FileUtils {
 
@@ -80,6 +78,12 @@ public class FileUtils {
         ));
     }
 
+    /**
+     * 파일을 삭제해주는 메소드입니다.
+     *
+     * @param path 파일경로
+     * @throws IOException the io exception
+     */
     public void deleteFile(String path) throws IOException {
         ClassPathResource resource = new ClassPathResource(path);
 
@@ -91,9 +95,15 @@ public class FileUtils {
     }
 
 
+    /**
+     * 파일을 로드해오는 메소드입니다.
+     *
+     * @param path 파일 경로
+     * @return 바이트 형식의 이미지
+     * @throws IOException the io exception
+     */
     public String loadFile(String path) throws IOException {
         ClassPathResource resource = new ClassPathResource(path);
-        log.info("*******************" + resource.getPath());
 
         byte[] bytes = Files.readAllBytes(resource.getFile().toPath());
         return Base64.encodeBase64String(bytes);
