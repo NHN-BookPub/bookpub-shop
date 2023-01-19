@@ -34,7 +34,6 @@ public class FileUtils {
 
     @Value("${file.save.path}")
     private String basePath;
-
     private final FileRepository fileRepository;
 
     /**
@@ -42,7 +41,7 @@ public class FileUtils {
      *
      * @param file 파일
      */
-    public void saveFile(PersonalInquiry personalInquiry,
+    public File saveFile(PersonalInquiry personalInquiry,
                          CouponTemplate couponTemplate,
                          Product product,
                          Review review,
@@ -50,11 +49,15 @@ public class FileUtils {
                          MultipartFile file,
                          String fileCategory) throws IOException {
 
+        if (Objects.isNull(file)) {
+            return null;
+        }
         String originalFileName = file.getOriginalFilename();
-        
+
         if (Objects.isNull(originalFileName)) {
             throw new NullPointerException();
         }
+
         int posImage = originalFileName.lastIndexOf(".");
         String nameOrigin = originalFileName.substring(0, posImage);
         String fileExtension = originalFileName.substring(posImage);
@@ -62,7 +65,7 @@ public class FileUtils {
 
         file.transferTo((Paths.get(basePath + nameSaved + fileExtension)));
 
-        fileRepository.save(new File(
+        return fileRepository.save(new File(
                 null,
                 review,
                 personalInquiry,
@@ -70,15 +73,27 @@ public class FileUtils {
                 product,
                 customerService,
                 fileCategory,
-                nameSaved,
+                "static/image/" + nameSaved + fileExtension,
                 fileExtension,
                 nameOrigin,
                 nameSaved
         ));
     }
 
+    public void deleteFile(String path) throws IOException {
+        ClassPathResource resource = new ClassPathResource(path);
+
+        fileRepository.delete(fileRepository.findByFilePath(path));
+
+        if (resource.getFile().exists()) {
+            resource.getFile().delete();
+        }
+    }
+
+
     public String loadFile(String path) throws IOException {
-        ClassPathResource resource = new ClassPathResource("static/image/" + path);
+        ClassPathResource resource = new ClassPathResource(path);
+        log.info("*******************" + resource.getPath());
 
         byte[] bytes = Files.readAllBytes(resource.getFile().toPath());
         return Base64.encodeBase64String(bytes);
