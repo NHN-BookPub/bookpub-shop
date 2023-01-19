@@ -42,5 +42,11 @@ public interface PricePolicyService {
      */
     List<GetPricePolicyResponseDto> getPricePolicies();
 
+    /**
+     * 가장 최근의 가격정책을 이름으로 조회합니다.
+     *
+     * @param name 정책명.
+     * @return 단건 반환.
+     */
     PricePolicy getLatestPricePolicyByName(String name);
 }
