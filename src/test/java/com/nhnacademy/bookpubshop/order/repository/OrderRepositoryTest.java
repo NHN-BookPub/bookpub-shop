@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.order.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
@@ -62,7 +61,6 @@ class OrderRepositoryTest {
     Member member;
     PricePolicy pricePolicy;
     PricePolicy packagePricePolicy;
-    Address address;
     Product product;
     OrderStateCode orderStateCode;
     ProductPolicy productPolicy;
@@ -186,7 +184,6 @@ class OrderRepositoryTest {
         assertThat(productsResult.get(0).getProductNo()).isEqualTo(product.getProductNo());
         assertThat(productsResult.get(0).getTitle()).isEqualTo(product.getTitle());
         assertThat(productsResult.get(0).getSalesPrice()).isEqualTo(product.getSalesPrice());
-        assertThat(productsResult.get(0).getThumbnailPath()).isEqualTo(product.getProductThumbnail());
         assertThat(productsResult.get(0).getProductAmount()).isEqualTo(orderProduct.getProductAmount());
     }
 
@@ -222,8 +219,6 @@ class OrderRepositoryTest {
                 .isEqualTo(orderProduct.getProductAmount());
         assertThat(response.get(0).getSalesPrice())
                 .isEqualTo(product.getSalesPrice());
-        assertThat(response.get(0).getThumbnailPath())
-                .isEqualTo(product.getProductThumbnail());
     }
 
     @Test
@@ -258,7 +253,5 @@ class OrderRepositoryTest {
                 .isEqualTo(orderProduct.getProductAmount());
         assertThat(response.get(0).getSalesPrice())
                 .isEqualTo(product.getSalesPrice());
-        assertThat(response.get(0).getThumbnailPath())
-                .isEqualTo(product.getProductThumbnail());
     }
 }

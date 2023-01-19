@@ -142,7 +142,7 @@ class OrderControllerTest {
         new OrderProduct(null, product, order, orderProductStateCode,
                 3, 1000L, 30000L, "reason");
 
-        productDto = new GetProductListForOrderResponseDto(1L, product.getProductThumbnail(),
+        productDto = new GetProductListForOrderResponseDto(1L,
                 product.getTitle(), product.getSalesPrice(), orderProduct.getProductAmount());
 
         products.add(productDto);

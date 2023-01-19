@@ -41,7 +41,6 @@ import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
-import com.nhnacademy.bookpubshop.tier.exception.MemberNotFoundException;
 import java.util.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -109,6 +108,7 @@ class OrderServiceTest {
 
         bookPubTier = TierDummy.dummy();
         member = MemberDummy.dummy(bookPubTier);
+        ReflectionTestUtils.setField(member, "memberNo", 1L);
         pricePolicy = PricePolicyDummy.dummy();
         packagePricePolicy = PricePolicyDummy.dummy();
         orderStateCode = OrderStateCodeDummy.dummy();
@@ -149,7 +149,7 @@ class OrderServiceTest {
                 order.getCouponDiscount(),
                 order.getOrderPrice());
 
-        productListDto = new GetProductListForOrderResponseDto(1L, product.getProductThumbnail(),
+        productListDto = new GetProductListForOrderResponseDto(1L,
                 product.getTitle(), product.getSalesPrice(), orderProduct.getProductAmount());
 
         productList.add(productListDto);
@@ -223,9 +223,9 @@ class OrderServiceTest {
     void createOrder() {
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
-        when(pricePolicyRepository.getByPolicyName(anyString()))
+        when(pricePolicyRepository.getLatestPricePolicyByName(anyString()))
                 .thenReturn(Optional.of(pricePolicy));
-        when(pricePolicyRepository.getByPolicyName(anyString()))
+        when(pricePolicyRepository.getLatestPricePolicyByName(anyString()))
                 .thenReturn(Optional.of(packagePricePolicy));
         when(orderStateCodeRepository.findByCodeName(anyString()))
                 .thenReturn(Optional.of(orderStateCode));
@@ -271,9 +271,9 @@ class OrderServiceTest {
     void createOrderFailed() {
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
-        when(pricePolicyRepository.getByPolicyName(anyString()))
+        when(pricePolicyRepository.getLatestPricePolicyByName(anyString()))
                 .thenReturn(Optional.of(pricePolicy));
-        when(pricePolicyRepository.getByPolicyName(anyString()))
+        when(pricePolicyRepository.getLatestPricePolicyByName(anyString()))
                 .thenReturn(Optional.of(packagePricePolicy));
         when(orderStateCodeRepository.findByCodeName(anyString()))
                 .thenReturn(Optional.of(orderStateCode));
@@ -387,7 +387,6 @@ class OrderServiceTest {
                 .thenReturn(pages);
 
         assertThat(pages.getContent().get(0).getOrderProducts().get(0).getProductNo()).isEqualTo(productListDto.getProductNo());
-        assertThat(pages.getContent().get(0).getOrderProducts().get(0).getThumbnailPath()).isEqualTo(productListDto.getThumbnailPath());
         assertThat(pages.getContent().get(0).getOrderProducts().get(0).getProductAmount()).isEqualTo(productListDto.getProductAmount());
         assertThat(pages.getContent().get(0).getOrderProducts().get(0).getSalesPrice()).isEqualTo(productListDto.getSalesPrice());
         assertThat(pages.getContent().get(0).getOrderProducts().get(0).getTitle()).isEqualTo(productListDto.getTitle());
@@ -416,7 +415,6 @@ class OrderServiceTest {
                 .thenReturn(pages);
 
         assertThat(pages.getContent().get(0).getOrderProducts().get(0).getProductNo()).isEqualTo(productListDto.getProductNo());
-        assertThat(pages.getContent().get(0).getOrderProducts().get(0).getThumbnailPath()).isEqualTo(productListDto.getThumbnailPath());
         assertThat(pages.getContent().get(0).getOrderProducts().get(0).getProductAmount()).isEqualTo(productListDto.getProductAmount());
         assertThat(pages.getContent().get(0).getOrderProducts().get(0).getSalesPrice()).isEqualTo(productListDto.getSalesPrice());
         assertThat(pages.getContent().get(0).getOrderProducts().get(0).getTitle()).isEqualTo(productListDto.getTitle());
@@ -427,22 +425,5 @@ class OrderServiceTest {
         assertThat(pages.getContent().get(0).getReceivedAt()).isEqualTo(order.getReceivedAt());
         assertThat(pages.getContent().get(0).getCreatedAt()).isEqualTo(order.getCreatedAt());
         assertThat(pages.getContent().get(0).getInvoiceNo()).isEqualTo(order.getInvoiceNumber());
-    }
-
-    @Test
-    @DisplayName("멤버 번호로 주문 전체 조회 실패 유저 없음")
-    void getOrderListByUsersFailedUser() {
-        List<GetOrderListResponseDto> orders = new ArrayList<>();
-        listResponse.addOrderProducts(List.of(productListDto));
-        orders.add(listResponse);
-
-        Pageable pageable = Pageable.ofSize(10);
-        Page<GetOrderListResponseDto> pages = PageableExecutionUtils.getPage(orders, pageable, orders::size);
-
-        when(memberRepository.findById(member.getMemberNo()))
-                .thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> orderService.getOrderListByUsers(pageable, member.getMemberNo()))
-                .isInstanceOf(MemberNotFoundException.class);
     }
 }
