@@ -14,17 +14,20 @@ import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.NickRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberPasswordResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
+import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -613,5 +616,34 @@ class MemberControllerTest {
         mvc.perform(put("/api/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
+    }
+
+    @DisplayName("패스워드 값 확인 valdaiton fail")
+    @Test
+    void passwordCheckFail() throws Exception {
+        MemberPasswordResponseDto dto = new MemberPasswordResponseDto(MemberDummy.dummy(TierDummy.dummy()));
+        when(memberService.getMemberPwd(anyLong()))
+                .thenReturn(dto);
+
+        mvc.perform(get("/api/members/{memberNo}/password-check", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.password").value(dto.getPassword()));
+    }
+
+    @DisplayName("패스워드 Success ")
+    @Test
+    void modifyPasswordFailTest() throws Exception {
+        ModifyMemberPasswordRequest dto = new ModifyMemberPasswordRequest();
+        ReflectionTestUtils.setField(dto, "password", "asdfsdf");
+
+        doNothing().when(memberService)
+                .modifyMemberPassword(anyLong(), any(ModifyMemberPasswordRequest.class));
+
+        mvc.perform(put("/api/members/{memberNo}/password", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print());
     }
 }
