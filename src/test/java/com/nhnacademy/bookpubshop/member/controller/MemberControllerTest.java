@@ -26,7 +26,6 @@ import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDt
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
-import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
