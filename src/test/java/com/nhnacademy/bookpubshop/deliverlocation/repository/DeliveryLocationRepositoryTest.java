@@ -1,8 +1,6 @@
 package com.nhnacademy.bookpubshop.deliverlocation.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
-import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.deliverlocation.dummy.DeliveryLocationDummy;
 import com.nhnacademy.bookpubshop.deliverlocation.entity.DeliveryLocation;
 import com.nhnacademy.bookpubshop.delivery.dummy.DeliveryDummy;
@@ -51,7 +49,6 @@ class DeliveryLocationRepositoryTest {
 
     PricePolicy pricePolicy;
     PricePolicy packagePricePolicy;
-    Address address;
 
     OrderStateCode orderStateCode;
 
@@ -61,9 +58,8 @@ class DeliveryLocationRepositoryTest {
         member = MemberDummy.dummy(bookPubTier);
         pricePolicy = PricePolicyDummy.dummy();
         packagePricePolicy = PricePolicyDummy.dummy();
-        address = AddressDummy.dummy();
         orderStateCode = OrderStateCodeDummy.dummy();
-        order = OrderDummy.dummy(member, pricePolicy, packagePricePolicy, address, orderStateCode);
+        order = OrderDummy.dummy(member, pricePolicy, packagePricePolicy, orderStateCode);
         delivery = DeliveryDummy.dummy(order);
         deliveryLocation = DeliveryLocationDummy.dummy(delivery);
     }
@@ -77,7 +73,6 @@ class DeliveryLocationRepositoryTest {
         entityManager.persist(member);
         entityManager.persist(pricePolicy);
         entityManager.persist(packagePricePolicy);
-        entityManager.persist(address);
         entityManager.persist(orderStateCode);
         entityManager.persist(order);
         entityManager.persist(delivery);

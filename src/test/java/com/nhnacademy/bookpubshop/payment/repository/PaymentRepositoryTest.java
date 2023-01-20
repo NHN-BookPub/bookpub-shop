@@ -1,8 +1,6 @@
 package com.nhnacademy.bookpubshop.payment.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
-import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
@@ -52,7 +50,6 @@ class PaymentRepositoryTest {
 
     PricePolicy pricePolicy;
     PricePolicy packagePricePolicy;
-    Address address;
     OrderStateCode orderStateCode;
 
     PaymentStateCode paymentStateCode;
@@ -65,9 +62,8 @@ class PaymentRepositoryTest {
         member = MemberDummy.dummy(bookPubTier);
         pricePolicy = PricePolicyDummy.dummy();
         packagePricePolicy = PricePolicyDummy.dummy();
-        address = AddressDummy.dummy();
         orderStateCode = OrderStateCodeDummy.dummy();
-        order = OrderDummy.dummy(member, pricePolicy, packagePricePolicy, address, orderStateCode);
+        order = OrderDummy.dummy(member, pricePolicy, packagePricePolicy, orderStateCode);
         paymentStateCode = PaymentStateCodeDummy.dummy();
         paymentTypeStateCode = PaymentTypeStateCodeDummy.dummy();
         payment = PaymentDummy.dummy(order, paymentStateCode, paymentTypeStateCode);
@@ -83,7 +79,6 @@ class PaymentRepositoryTest {
         entityManager.persist(member);
         entityManager.persist(pricePolicy);
         entityManager.persist(packagePricePolicy);
-        entityManager.persist(address);
         entityManager.persist(orderStateCode);
         entityManager.persist(order);
         entityManager.persist(paymentStateCode);

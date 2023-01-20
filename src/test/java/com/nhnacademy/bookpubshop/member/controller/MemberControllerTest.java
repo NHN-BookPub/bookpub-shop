@@ -9,18 +9,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
+import com.nhnacademy.bookpubshop.member.dto.request.IdRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.NickRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberPasswordResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
+import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -353,10 +360,7 @@ class MemberControllerTest {
     @Test
     @DisplayName("멤버 상세 조회 성공 테스트")
     void memberDetailsTest() throws Exception {
-        MemberDetailResponseDto dto = new MemberDetailResponseDto(1L,
-                "tt", "nick", "g", 1, 1,
-                "000", "Email", 1L, "authority");
-
+        MemberDetailResponseDto dto = MemberDummy.memberDetailResponseDummy();
         when(memberService.getMemberDetails(1L))
                 .thenReturn(dto);
 
@@ -372,7 +376,7 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.phone").value(dto.getPhone()))
                 .andExpect(jsonPath("$.email").value(dto.getEmail()))
                 .andExpect(jsonPath("$.point").value(objectMapper.writeValueAsString(dto.getPoint())))
-                .andExpect(jsonPath("$.authority").value(dto.getAuthority()))
+                .andExpect(jsonPath("$.authorities").value(dto.getAuthorities()))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
 
@@ -476,7 +480,7 @@ class MemberControllerTest {
         LoginMemberRequestDto login = new LoginMemberRequestDto();
         LoginMemberResponseDto loginDummy = MemberDummy.dummy2();
 
-        ReflectionTestUtils.setField(login,"memberId","tagkdj1");
+        ReflectionTestUtils.setField(login, "memberId", "tagkdj1");
 
         when(memberService.loginMember(anyString()))
                 .thenReturn(loginDummy);
@@ -491,4 +495,155 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.memberNo").value(loginDummy.getMemberNo()));
     }
 
+    @Test
+    @DisplayName("아이디 중복체크 요청의 결과값 반환")
+    void idDuplicateCheckTest() throws Exception {
+        IdRequestDto idRequestDto = new IdRequestDto();
+        ReflectionTestUtils.setField(idRequestDto,"id","tagkdj1");
+
+        when(memberService.idDuplicateCheck(anyString()))
+                .thenReturn(true);
+
+        mvc.perform(post("/api/signup/idCheck")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(idRequestDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    @DisplayName("닉네임 중복체크 요청의 결과값 반환")
+    void nickDuplicateCheckTest() throws Exception {
+        NickRequestDto nickRequestDto = new NickRequestDto();
+        ReflectionTestUtils.setField(nickRequestDto,"nickname","taewon");
+
+        when(memberService.nickNameDuplicateCheck(anyString()))
+                .thenReturn(true);
+
+        mvc.perform(post("/api/signup/nickCheck")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(nickRequestDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
+
+    @DisplayName("휴대전화를 입력하지 않았을경우")
+    @Test
+    void memberModifyPhoneValidationFailTest() throws Exception {
+        ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
+        ReflectionTestUtils.setField(dto, "phone", null);
+
+        doNothing().when(memberService)
+                .modifyMemberPhone(anyLong(), any());
+
+        mvc.perform(put("/api/members/{memberNo}/phone", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$[0].message").value("빈값은 들어갈수없습니다."))
+                .andDo(print());
+    }
+
+    @DisplayName("휴대전화 양식이 맞지않을경우")
+    @Test
+    void memberModifyPhoneValidationLengthFailTest() throws Exception{
+        ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
+        ReflectionTestUtils.setField(dto, "phone", "111");
+
+        doNothing().when(memberService)
+                .modifyMemberPhone(anyLong(), any());
+        mvc.perform(put("/api/members/{memberNo}/phone", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$[0].message").value("전화번호는 숫자 11글자로 입력해주세요."))
+                .andDo(print());
+    }
+
+    @DisplayName("휴대전화 변경 성공")
+    @Test
+    void memberModifyPhoneTest() throws Exception{
+        ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
+        ReflectionTestUtils.setField(dto, "phone", "01066749927");
+
+        doNothing().when(memberService)
+                .modifyMemberPhone(anyLong(), any());
+        mvc.perform(put("/api/members/{memberNo}/phone", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print());
+    }
+
+    @DisplayName("회원 이름 변경 실패 null")
+    @Test
+    void memberModifyNameTestNotNull() throws Exception{
+        ModifyMemberNameRequestDto dto = new ModifyMemberNameRequestDto();
+        ReflectionTestUtils.setField(dto, "name", "a");
+
+        doNothing().when(memberService)
+                .modifyMemberName(anyLong(),any());
+        mvc.perform(put("/api/members/{memberNo}/name", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$[0].message").value("이름은 한글 또는 영어 2글자 이상 200글자 이하로 입력해주세요."));
+    }
+
+    @DisplayName("회원 이름 변경 성공")
+    @Test
+    void memberModifyNameTestSuccess() throws Exception{
+        ModifyMemberNameRequestDto dto = new ModifyMemberNameRequestDto();
+        ReflectionTestUtils.setField(dto, "name", "hi");
+
+        doNothing().when(memberService)
+                .modifyMemberName(anyLong(),any());
+        mvc.perform(put("/api/members/{memberNo}/name", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @DisplayName("회원 탈퇴 성공")
+    @Test
+    void memberDeleteSuccessTest() throws Exception{
+
+        doNothing().when(memberService)
+                .deleteMember(anyLong());
+
+        mvc.perform(put("/api/members/{memberNo}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+    }
+
+    @DisplayName("패스워드 값 확인")
+    @Test
+    void passwordCheckSuccessTest() throws Exception {
+        MemberPasswordResponseDto dto = new MemberPasswordResponseDto(MemberDummy.dummy(TierDummy.dummy()));
+        when(memberService.getMemberPwd(anyLong()))
+                .thenReturn(dto);
+
+        mvc.perform(get("/api/members/{memberNo}/password-check", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.password").value(dto.getPassword()));
+    }
+
+    @DisplayName("패스워드 변경 Success ")
+    @Test
+    void modifyPasswordSuccessTest() throws Exception {
+        ModifyMemberPasswordRequest dto = new ModifyMemberPasswordRequest();
+        ReflectionTestUtils.setField(dto, "password", "asdfsdf");
+
+        doNothing().when(memberService)
+                .modifyMemberPassword(anyLong(), any(ModifyMemberPasswordRequest.class));
+
+        mvc.perform(put("/api/members/{memberNo}/password", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print());
+    }
 }

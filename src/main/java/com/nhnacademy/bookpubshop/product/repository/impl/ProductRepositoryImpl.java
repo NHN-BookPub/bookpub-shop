@@ -2,11 +2,16 @@ package com.nhnacademy.bookpubshop.product.repository.impl;
 
 import com.nhnacademy.bookpubshop.category.entity.QCategory;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
+import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
+import com.nhnacademy.bookpubshop.product.dto.GetProductListForOrderResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
+import com.nhnacademy.bookpubshop.product.relationship.entity.QProductPolicy;
+import com.nhnacademy.bookpubshop.product.relationship.entity.QProductSaleStateCode;
+import com.nhnacademy.bookpubshop.product.relationship.entity.QProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -16,6 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +37,9 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 public class ProductRepositoryImpl extends QuerydslRepositorySupport
         implements ProductRepositoryCustom {
     private final EntityManager entityManager;
+    QProduct product = QProduct.product;
+    QOrderProduct orderProduct = QOrderProduct.orderProduct;
+
 
     public ProductRepositoryImpl(EntityManager entityManager) {
         super(Product.class);
@@ -41,7 +51,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public Page<GetProductListResponseDto> getAllProducts(Pageable pageable) {
-        QProduct product = QProduct.product;
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
@@ -69,7 +78,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
     @Override
     public Page<GetProductListResponseDto> getProductListLikeTitle(
             String title, Pageable pageable) {
-        QProduct product = QProduct.product;
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
@@ -100,7 +108,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public Optional<GetProductDetailResponseDto> getProductDetailById(Long id) {
-        QProduct product = QProduct.product;
 
         Optional<Product> content = Optional.ofNullable(from(product)
                 .where(product.productNo.eq(id))
@@ -110,7 +117,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .leftJoin(product.productAuthors)
                 .leftJoin(product.productTags)
                 .select(product)
-                .fetchJoin()
+                .where(product.productNo.eq(id))
                 .fetchOne());
 
         return content.map(GetProductDetailResponseDto::new);
@@ -121,7 +128,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public List<GetProductByTypeResponseDto> findProductListByType(Integer typeNo, Integer limit) {
-        QProduct product = QProduct.product;
+
         QProductCategory productCategory = QProductCategory.productCategory;
         QCategory category = QCategory.category;
 
@@ -154,5 +161,19 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 )).collect(Collectors.toList());
 
         return result;
+    }
+
+    @Override
+    public List<GetProductListForOrderResponseDto> getProductListByOrderNo(Long orderNo) {
+        return from(product)
+                .select(Projections.constructor(
+                        GetProductListForOrderResponseDto.class,
+                        product.productNo,
+                        product.title,
+                        product.salesPrice,
+                        orderProduct.productAmount))
+                .join(orderProduct).on(orderProduct.product.productNo.eq(product.productNo))
+                .where(orderProduct.order.orderNo.eq(orderNo))
+                .fetch();
     }
 }

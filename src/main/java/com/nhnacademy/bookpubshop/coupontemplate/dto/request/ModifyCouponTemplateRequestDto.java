@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 쿠폰템플릿 수정을 위한 DTO 객체입니다.
@@ -18,9 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @NoArgsConstructor
 public class ModifyCouponTemplateRequestDto {
-    @NotNull(message = "수정할 쿠폰템플릿 번호를 기입해주세요.")
-    private Long templateNo;
-
     @NotNull(message = "정책번호를 기입해주세요.")
     private Integer policyNo;
 
@@ -38,16 +34,13 @@ public class ModifyCouponTemplateRequestDto {
     @Length(max = 50, message = "쿠폰이름의 최대 글자는 50글자입니다.")
     private String templateName;
 
-    private MultipartFile templateImage;
-
-    @DateTimeFormat
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime finishedAt;
 
-    @NotNull
-    @DateTimeFormat
+    @NotNull(message = "발급일자를 기입해주세요.")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime issuedAt;
 
-    @NotNull
     private boolean templateOverlapped;
 
     private boolean templateBundled;

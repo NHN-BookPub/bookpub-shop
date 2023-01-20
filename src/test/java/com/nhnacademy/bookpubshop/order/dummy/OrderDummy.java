@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.order.dummy;
 
-import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
@@ -14,13 +13,12 @@ import java.time.LocalDateTime;
  * @since : 1.0
  **/
 public class OrderDummy {
-    public static BookpubOrder dummy(Member member, PricePolicy pricePolicy, PricePolicy packagePricePolicy, Address address, OrderStateCode orderStateCode){
+    public static BookpubOrder dummy(Member member, PricePolicy pricePolicy, PricePolicy packagePricePolicy, OrderStateCode orderStateCode){
         return new BookpubOrder(
                 null,
                 member,
                 pricePolicy,
                 packagePricePolicy,
-                address,
                 orderStateCode,
                 "test_recipient",
                 "test_recipient_phone",
@@ -32,7 +30,9 @@ public class OrderDummy {
                 100L,
                 true,
                 null,
-                1000L
+                1000L,
+                "IT",
+                "광주 동구 조선대길"
         );
 
     }

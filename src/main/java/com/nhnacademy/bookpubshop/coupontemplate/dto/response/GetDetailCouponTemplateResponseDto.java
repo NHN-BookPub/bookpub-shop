@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class GetDetailCouponTemplateResponseDto {
     private Long templateNo;
     private boolean policyFixed;
-    private Long pricePrice;
+    private Long policyPrice;
     private Long policyMinimum;
     private Long maxDiscount;
     private String typeName;
@@ -26,8 +26,34 @@ public class GetDetailCouponTemplateResponseDto {
     private String codeTarget;
     private String templateName;
     private String templateImage;
-    private LocalDateTime finishedAt;
     private LocalDateTime issuedAt;
+    private LocalDateTime finishedAt;
     private boolean templateOverlapped;
     private boolean templateBundled;
+
+    /**
+     * 쿠폰템플릿 dto를 이용하여 이미지 파일을 담아 조회할 수 있도록 변환해주는 메소드입니다.
+     *
+     * @param templateImage 쿠폰템플릿 이미지 경로
+     * @return 최종 쿠폰템플릿 Dto.
+     */
+    public RestGetDetailCouponTemplateResponseDto transform(String templateImage) {
+        return new RestGetDetailCouponTemplateResponseDto(
+                this.templateNo,
+                this.policyFixed,
+                this.policyPrice,
+                this.policyMinimum,
+                this.maxDiscount,
+                this.typeName,
+                this.productTitle,
+                this.categoryName,
+                this.codeTarget,
+                this.templateName,
+                templateImage,
+                this.finishedAt,
+                this.issuedAt,
+                this.templateOverlapped,
+                this.templateBundled
+        );
+    }
 }

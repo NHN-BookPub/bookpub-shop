@@ -125,7 +125,7 @@ class CouponTemplateRepositoryTest {
         assertThat(result).isPresent();
         assertThat(result.get().getTemplateNo()).isEqualTo(save.getTemplateNo());
         assertThat(result.get().isPolicyFixed()).isEqualTo(save.getCouponPolicy().isPolicyFixed());
-        assertThat(result.get().getPricePrice()).isEqualTo(save.getCouponPolicy().getPolicyMinimum());
+        assertThat(result.get().getPolicyPrice()).isEqualTo(save.getCouponPolicy().getPolicyMinimum());
         assertThat(result.get().getPolicyMinimum()).isEqualTo(save.getCouponPolicy().getPolicyMinimum());
         assertThat(result.get().getMaxDiscount()).isEqualTo(save.getCouponPolicy().getMaxDiscount());
         assertThat(result.get().getTypeName()).isEqualTo(save.getCouponType().getTypeName());
@@ -133,7 +133,7 @@ class CouponTemplateRepositoryTest {
         assertThat(result.get().getCategoryName()).isEqualTo(save.getCategory().getCategoryName());
         assertThat(result.get().getCodeTarget()).isEqualTo(save.getCouponStateCode().getCodeTarget());
         assertThat(result.get().getTemplateName()).isEqualTo(save.getTemplateName());
-        assertThat(result.get().getTemplateImage()).isEqualTo(saveFile.getNameSaved().concat(saveFile.getFileExtension()));
+        assertThat(result.get().getTemplateImage()).isEqualTo(saveFile.getFilePath());
         assertThat(result.get().getFinishedAt()).isEqualTo(save.getFinishedAt());
         assertThat(result.get().getIssuedAt()).isEqualTo(save.getIssuedAt());
         assertThat(result.get().isTemplateOverlapped()).isEqualTo(save.isTemplateOverlapped());
@@ -164,7 +164,7 @@ class CouponTemplateRepositoryTest {
         assertThat(content).isNotEmpty();
         assertThat(content.get(0).getTemplateNo()).isEqualTo(save.getTemplateNo());
         assertThat(content.get(0).isPolicyFixed()).isEqualTo(save.getCouponPolicy().isPolicyFixed());
-        assertThat(content.get(0).getPricePrice()).isEqualTo(save.getCouponPolicy().getPolicyMinimum());
+        assertThat(content.get(0).getPolicyPrice()).isEqualTo(save.getCouponPolicy().getPolicyMinimum());
         assertThat(content.get(0).getPolicyMinimum()).isEqualTo(save.getCouponPolicy().getPolicyMinimum());
         assertThat(content.get(0).getMaxDiscount()).isEqualTo(save.getCouponPolicy().getMaxDiscount());
         assertThat(content.get(0).getTypeName()).isEqualTo(save.getCouponType().getTypeName());
@@ -172,7 +172,7 @@ class CouponTemplateRepositoryTest {
         assertThat(content.get(0).getCategoryName()).isEqualTo(save.getCategory().getCategoryName());
         assertThat(content.get(0).getCodeTarget()).isEqualTo(save.getCouponStateCode().getCodeTarget());
         assertThat(content.get(0).getTemplateName()).isEqualTo(save.getTemplateName());
-        assertThat(content.get(0).getTemplateImage()).isEqualTo(saveFile.getNameSaved().concat(saveFile.getFileExtension()));
+        assertThat(content.get(0).getTemplateImage()).isEqualTo(saveFile.getFilePath());
         assertThat(content.get(0).getFinishedAt()).isEqualTo(save.getFinishedAt());
         assertThat(content.get(0).getIssuedAt()).isEqualTo(save.getIssuedAt());
         assertThat(content.get(0).isTemplateOverlapped()).isEqualTo(save.isTemplateOverlapped());
@@ -202,7 +202,7 @@ class CouponTemplateRepositoryTest {
 
         assertThat(content).isNotEmpty();
         assertThat(content.get(0).getTemplateName()).isEqualTo(save.getTemplateName());
-        assertThat(content.get(0).getTemplateImage()).isEqualTo(saveFile.getNameSaved().concat(saveFile.getFileExtension()));
+        assertThat(content.get(0).getTemplateImage()).isEqualTo(saveFile.getFilePath());
         assertThat(content.get(0).getIssuedAt()).isEqualTo(save.getIssuedAt());
         assertThat(content.get(0).getFinishedAt()).isEqualTo(save.getFinishedAt());
     }

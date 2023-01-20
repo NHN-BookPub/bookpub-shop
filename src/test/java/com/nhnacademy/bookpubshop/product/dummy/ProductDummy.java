@@ -16,8 +16,6 @@ import java.util.List;
  * @since : 1.0
  **/
 public class ProductDummy {
-    List<Product> relations = new ArrayList<>();
-
     public static Product dummy(
             ProductPolicy productPolicy,
             ProductTypeStateCode productTypeStateCode,
@@ -103,6 +101,34 @@ public class ProductDummy {
                 productTypeStateCode,
                 productSaleStateCode,
                 relation,
+                "1111111111",
+                "title",
+                "publisher",
+                100,
+                "description",
+                9000L,
+                10000L,
+                10,
+                0L,
+                5,
+                false,
+                1,
+                LocalDateTime.now(),
+                true);
+    }
+
+    public static Product dummy(
+            ProductPolicy productPolicy,
+            ProductTypeStateCode productTypeStateCode,
+            ProductSaleStateCode productSaleStateCode,
+            Long id,
+            List<Product> relations) {
+        return new Product(
+                id,
+                productPolicy,
+                productTypeStateCode,
+                productSaleStateCode,
+                relations,
                 "1111111111",
                 "title",
                 "publisher",

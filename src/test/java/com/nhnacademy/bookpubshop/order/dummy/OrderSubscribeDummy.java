@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.order.dummy;
 
-import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderSubscribe;
 import com.nhnacademy.bookpubshop.orderstatecode.dummy.OrderStateCodeDummy;
@@ -20,10 +19,10 @@ public class OrderSubscribeDummy {
     public static OrderSubscribe dummy() {
         return new OrderSubscribe(null,
                 SubscribeDummy.dummy(),
-                OrderDummy.dummy(MemberDummy.dummy(TierDummy.dummy()), PricePolicyDummy.dummy(), PricePolicyDummy.dummy(), AddressDummy.dummy(), OrderStateCodeDummy.dummy()),
-                new OrderSubscribeStateCode(null, "테스트", true, "테스트"),
-                1000L,
-                8000L,
+                OrderDummy.dummy(MemberDummy.dummy(TierDummy.dummy()), PricePolicyDummy.dummy(), PricePolicyDummy.dummy(), OrderStateCodeDummy.dummy()),
+                        new OrderSubscribeStateCode(null, "테스트", true, "테스트"),
+                        1000L,
+                        8000L,
                 LocalDateTime.of(2000, 12, 12, 14, 30));
     }
 }

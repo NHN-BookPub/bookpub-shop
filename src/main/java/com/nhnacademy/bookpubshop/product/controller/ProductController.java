@@ -1,12 +1,10 @@
 package com.nhnacademy.bookpubshop.product.controller;
 
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
-import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
-import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

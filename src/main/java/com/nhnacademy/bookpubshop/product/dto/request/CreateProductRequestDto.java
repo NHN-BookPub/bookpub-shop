@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.product.dto.request;
+package com.nhnacademy.bookpubshop.product.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
@@ -11,7 +11,7 @@ import org.hibernate.validator.constraints.Length;
 /**
  * 상품 생성시 사용하는 Dto 클래스.
  *
- * @author : 여운석, 박경
+ * @author : 여운석, 박경서
  * @since : 1.0
  **/
 @Getter

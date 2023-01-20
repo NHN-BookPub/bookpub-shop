@@ -437,10 +437,14 @@ class ProductServiceTest {
     @Test
     @DisplayName("삭제여부 설정 성공")
     void setDeleteProduct() {
+        ReflectionTestUtils.setField(product, "productNo", 1L);
+
         when(productRepository.findById(anyLong()))
                 .thenReturn(Optional.of(product));
         ReflectionTestUtils.setField(product, "productNo", 1L);
         productService.setDeleteProduct(product.getProductNo());
+
+        verify(productRepository, times(1)).save(any());
     }
 
     @Test

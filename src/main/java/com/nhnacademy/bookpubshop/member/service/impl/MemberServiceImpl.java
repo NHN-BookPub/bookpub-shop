@@ -3,17 +3,20 @@ package com.nhnacademy.bookpubshop.member.service.impl;
 import com.nhnacademy.bookpubshop.author.exception.AuthorityNotFoundException;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberPasswordResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.member.exception.EmailAlreadyExistsException;
 import com.nhnacademy.bookpubshop.member.exception.IdAlreadyExistsException;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.exception.NicknameAlreadyExistsException;
@@ -105,8 +108,6 @@ public class MemberServiceImpl implements MemberService {
 
     /**
      * {@inheritDoc}
-     *
-     * @throws EmailAlreadyExistsException 이메일이 이미 존재할 때 나오는 에러.
      */
     @Transactional
     @Override
@@ -114,12 +115,9 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(MemberNotFoundException::new);
 
-        if (!Objects.equals(member.getMemberEmail(), requestDto.getEmail())
-                && memberRepository.existsByMemberEmail(requestDto.getEmail())) {
-            throw new EmailAlreadyExistsException(requestDto.getEmail());
+        if (!Objects.equals(member.getMemberEmail(), requestDto.getEmail())) {
+            member.modifyEmail(requestDto.getEmail());
         }
-
-        member.modifyEmail(requestDto.getEmail());
     }
 
     /**
@@ -177,7 +175,69 @@ public class MemberServiceImpl implements MemberService {
 
     /**
      * {@inheritDoc}
-     *
+     */
+    @Override
+    public boolean idDuplicateCheck(String id) {
+        return memberRepository.existsByMemberId(id);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean nickNameDuplicateCheck(String nickName) {
+        return memberRepository.existsByMemberNickname(nickName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MemberPasswordResponseDto getMemberPwd(Long memberNo) {
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        return new MemberPasswordResponseDto(member);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void modifyMemberName(Long memberNo, ModifyMemberNameRequestDto dto) {
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        member.modifyName(dto.getName());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void modifyMemberPhone(Long memberNo, ModifyMemberPhoneRequestDto dto) {
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        member.modifyPhone(dto.getPhone());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void modifyMemberPassword(Long memberNo, ModifyMemberPasswordRequest password){
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        member.modifyPassword(password.getPassword());
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public List<MemberTierStatisticsResponseDto> getTierStatistics() {
@@ -187,13 +247,11 @@ public class MemberServiceImpl implements MemberService {
 
     /**
      * {@inheritDoc}
-     *
      */
     @Override
     public MemberStatisticsResponseDto getMemberStatistics() {
         return memberRepository.memberStatistics();
     }
-
 
 
     private void duplicateCheck(SignUpMemberRequestDto member) {
@@ -203,10 +261,6 @@ public class MemberServiceImpl implements MemberService {
 
         if (memberRepository.existsByMemberId(member.getMemberId())) {
             throw new IdAlreadyExistsException(member.getMemberId());
-        }
-
-        if (memberRepository.existsByMemberEmail(member.getEmail())) {
-            throw new EmailAlreadyExistsException(member.getEmail());
         }
     }
 
