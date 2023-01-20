@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.author.repository.impl;
 
-import static com.querydsl.jpa.JPAExpressions.select;
 import com.nhnacademy.bookpubshop.author.dto.GetAuthorResponseDto;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.author.entity.QAuthor;
@@ -44,7 +43,7 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
-        JPQLQuery<Long> count = select(author.count()).from(author);
+        JPQLQuery<Long> count = from(author).select(author.count());
 
         return PageableExecutionUtils.getPage(query.fetch(), pageable, count::fetchOne);
     }
