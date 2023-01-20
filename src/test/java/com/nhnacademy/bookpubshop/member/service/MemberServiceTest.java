@@ -10,10 +10,12 @@ import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberPasswordResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
@@ -157,7 +159,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("멤버 아이디 수정 존재하지않는 아이디")
-    void memberNickNameCheckFailNotFoundTest(){
+    void memberNickNameCheckFailNotFoundTest() {
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
@@ -169,7 +171,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("멤버 아이디 수정 이미 존재하는 닉네임")
     void memberNickNameCheckFailExistsNickName() {
-        ReflectionTestUtils.setField(nicknameRequestDto,"nickname","nick");
+        ReflectionTestUtils.setField(nicknameRequestDto, "nickname", "nick");
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
 
@@ -335,13 +337,13 @@ class MemberServiceTest {
 
         memberService.blockMember(1L);
 
-        verify(memberRepository,times(1))
+        verify(memberRepository, times(1))
                 .findById(1L);
     }
 
     @DisplayName("멤버 탈퇴 실패")
     @Test
-    void deleteMemberFailTest(){
+    void deleteMemberFailTest() {
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
@@ -352,7 +354,7 @@ class MemberServiceTest {
 
     @DisplayName("멤버 탈퇴 성공")
     @Test
-    void deleteMemberSuccessTest(){
+    void deleteMemberSuccessTest() {
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
         memberService.deleteMember(1L);
@@ -413,9 +415,9 @@ class MemberServiceTest {
 
     @DisplayName("멤버 휴대전화번호 수정 멤버 못찾을 경우")
     @Test
-    void modifyMemberTestFail(){
+    void modifyMemberTestFail() {
         ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
-        ReflectionTestUtils.setField(dto, "phone","10101010");
+        ReflectionTestUtils.setField(dto, "phone", "10101010");
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
@@ -428,14 +430,14 @@ class MemberServiceTest {
 
     @DisplayName("멤버 휴대전화 수정 성공")
     @Test
-    void modifyMemberTestSuccess(){
+    void modifyMemberTestSuccess() {
         ModifyMemberNameRequestDto dto = new ModifyMemberNameRequestDto();
         ReflectionTestUtils.setField(dto, "name", "12345");
 
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
 
-        memberService.modifyMemberName(1L,dto);
+        memberService.modifyMemberName(1L, dto);
 
         then(memberRepository).should().findById(1L);
     }
@@ -462,4 +464,99 @@ class MemberServiceTest {
 
         assertThat(isDuplicateNick).isTrue();
     }
+
+    @DisplayName("회원 비밀번호 확인 실패")
+    @Test
+    void getMemberPwdTest() {
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+        assertThatThrownBy(() -> memberService.getMemberPwd(1L))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+    }
+
+    @DisplayName("회원 비밀번호 확인 성공")
+    @Test
+    void getMemberPwdSuccessTest() {
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+        MemberPasswordResponseDto memberPwd = memberService.getMemberPwd(1L);
+
+        assertThat(member.getMemberPwd()).isEqualTo(memberPwd.getPassword());
+    }
+
+    @DisplayName("회원 이름 수정 실패")
+    @Test
+    void getMemberNameFailTest() {
+        ModifyMemberNameRequestDto dto = new ModifyMemberNameRequestDto();
+        ReflectionTestUtils.setField(dto, "name", "name");
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+        assertThatThrownBy(() -> memberService.modifyMemberName(1L, dto))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+    }
+
+    @DisplayName("회원 이름 수정 성공")
+    @Test
+    void getMemberNameSuccessTest() {
+        ModifyMemberNameRequestDto dto = new ModifyMemberNameRequestDto();
+        ReflectionTestUtils.setField(dto, "name", "name");
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+
+        memberService.modifyMemberName(1L, dto);
+
+        then(memberRepository).should().findById(1L);
+
+    }
+
+    @DisplayName("회원 휴대폰번호 수정 실패")
+    @Test
+    void getMemberPhoneFailTest() {
+        ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
+        ReflectionTestUtils.setField(dto, "phone", "01010101011");
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+        assertThatThrownBy(() -> memberService.modifyMemberPhone(1L, dto))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+    }
+
+    @DisplayName("회원 휴대폰번호 수정 성공")
+    @Test
+    void getMemberPhoneSuccessTest() {
+        ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
+        ReflectionTestUtils.setField(dto, "phone", "01010101011");
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+        memberService.modifyMemberPhone(1L, dto);
+
+        then(memberRepository).should().findById(1L);
+    }
+
+    @DisplayName("회원 패스워드 수정 실패")
+    @Test
+    void getMemberPasswordFailTest() {
+        ModifyMemberPasswordRequest dto = new ModifyMemberPasswordRequest();
+        ReflectionTestUtils.setField(dto, "password", "password");
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+        assertThatThrownBy(() -> memberService.modifyMemberPassword(1L, dto))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+    }
+
+    @DisplayName("회원 패스워드 수정 성공")
+    @Test
+    void getMemberPasswordSuccessTest() {
+        ModifyMemberPasswordRequest dto = new ModifyMemberPasswordRequest();
+        ReflectionTestUtils.setField(dto, "password", "password");
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+        memberService.modifyMemberPassword(1L, dto);
+
+        then(memberRepository).should().findById(1L);
+    }
+
 }

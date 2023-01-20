@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.member.service.impl;
 import com.nhnacademy.bookpubshop.author.exception.AuthorityNotFoundException;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
@@ -10,6 +11,7 @@ import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberPasswordResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
@@ -106,7 +108,6 @@ public class MemberServiceImpl implements MemberService {
 
     /**
      * {@inheritDoc}
-     *
      */
     @Transactional
     @Override
@@ -114,10 +115,9 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(MemberNotFoundException::new);
 
-        if (Objects.equals(member.getMemberEmail(), requestDto.getEmail())) {
+        if (!Objects.equals(member.getMemberEmail(), requestDto.getEmail())) {
             member.modifyEmail(requestDto.getEmail());
         }
-
     }
 
     /**
@@ -192,6 +192,17 @@ public class MemberServiceImpl implements MemberService {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public MemberPasswordResponseDto getMemberPwd(Long memberNo) {
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        return new MemberPasswordResponseDto(member);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     @Override
     public void modifyMemberName(Long memberNo, ModifyMemberNameRequestDto dto) {
@@ -211,6 +222,18 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(MemberNotFoundException::new);
 
         member.modifyPhone(dto.getPhone());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void modifyMemberPassword(Long memberNo, ModifyMemberPasswordRequest password){
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        member.modifyPassword(password.getPassword());
     }
 
     /**
