@@ -26,6 +26,7 @@ import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDt
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
+import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
@@ -618,9 +619,9 @@ class MemberControllerTest {
                 .andExpect(status().is2xxSuccessful());
     }
 
-    @DisplayName("패스워드 값 확인 valdaiton fail")
+    @DisplayName("패스워드 값 확인")
     @Test
-    void passwordCheckFail() throws Exception {
+    void passwordCheckSuccessTest() throws Exception {
         MemberPasswordResponseDto dto = new MemberPasswordResponseDto(MemberDummy.dummy(TierDummy.dummy()));
         when(memberService.getMemberPwd(anyLong()))
                 .thenReturn(dto);
@@ -631,9 +632,9 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.password").value(dto.getPassword()));
     }
 
-    @DisplayName("패스워드 Success ")
+    @DisplayName("패스워드 변경 Success ")
     @Test
-    void modifyPasswordFailTest() throws Exception {
+    void modifyPasswordSuccessTest() throws Exception {
         ModifyMemberPasswordRequest dto = new ModifyMemberPasswordRequest();
         ReflectionTestUtils.setField(dto, "password", "asdfsdf");
 
