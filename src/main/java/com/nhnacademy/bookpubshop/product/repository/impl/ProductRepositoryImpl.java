@@ -1,28 +1,23 @@
 package com.nhnacademy.bookpubshop.product.repository.impl;
 
 import com.nhnacademy.bookpubshop.category.entity.QCategory;
-import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
 import com.nhnacademy.bookpubshop.product.dto.GetProductListForOrderResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
-import com.nhnacademy.bookpubshop.product.relationship.entity.QProductPolicy;
-import com.nhnacademy.bookpubshop.product.relationship.entity.QProductSaleStateCode;
-import com.nhnacademy.bookpubshop.product.relationship.entity.QProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepositoryCustom;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -146,7 +141,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .where(product.productTypeStateCode.codeNo.eq(typeNo))
                 .where(product.productSaleStateCode.codeCategory.eq("판매중"))
                 .distinct()
-                .orderBy(NumberExpression.random().asc())
+                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(limit)
                 .fetch();
 
