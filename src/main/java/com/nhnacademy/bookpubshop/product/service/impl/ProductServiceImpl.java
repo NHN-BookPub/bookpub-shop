@@ -143,10 +143,6 @@ public class ProductServiceImpl implements ProductService {
         Page<GetProductListResponseDto> response =
                 productRepository.getAllProducts(pageable);
 
-        if (response.getContent().isEmpty() || response.getTotalElements() == 0) {
-            throw new ProductNotFoundException();
-        }
-
         return response;
     }
 
