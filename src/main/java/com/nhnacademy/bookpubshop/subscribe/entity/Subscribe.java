@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.subscribe.entity;
 
-import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,7 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "subscribe")
-public class Subscribe extends BaseCreateTimeEntity {
+public class Subscribe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "subscribe_number")
