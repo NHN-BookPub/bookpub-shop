@@ -1,7 +1,9 @@
 package com.nhnacademy.bookpubshop.product.repository;
 
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +12,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 /**
  * 상품 레포지토리에서 쿼리 dsl 을 사용하기 위한 커스텀 레포입니다.
  *
- * @author : 여운석
+ * @author : 여운석, 박경서
  * @since : 1.0
  */
 @NoRepositoryBean
@@ -39,4 +41,13 @@ public interface ProductRepositoryCustom {
      * @return 상세정보 dto를 반환합니다.
      */
     Optional<GetProductDetailResponseDto> getProductDetailById(Long id);
+
+    /**
+     * 상품 타입과 제한 갯수를 가지고 상품을 조회.
+     *
+     * @param typeNo 타입 번호
+     * @param limit  제한 갯수
+     * @return 타입을 기준으로 상품 반환
+     */
+    List<GetProductByTypeResponseDto> findProductListByType(Integer typeNo, Integer limit);
 }

@@ -5,6 +5,7 @@ import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
@@ -21,8 +22,10 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCo
 import com.nhnacademy.bookpubshop.tag.dummy.TagDummy;
 import com.nhnacademy.bookpubshop.tag.entity.Tag;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +41,8 @@ import org.springframework.data.domain.Pageable;
  * @since : 1.0
  **/
 @DataJpaTest
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+//@Transactional
 class ProductRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
@@ -147,9 +152,50 @@ class ProductRepositoryTest {
         // when
         Optional<GetProductDetailResponseDto> result = productRepository.getProductDetailById(save.getProductNo());
 
-        System.out.println(result);
         // then
-        assertThat(result).isEmpty();
+        assertThat(result).isNotEmpty();
+        assertThat(result.get().getSalesRate()).isEqualTo(persist.getSalesRate());
+        assertThat(result.get().isProductSubscribed()).isTrue();
+        assertThat(result.get().getProductNo()).isEqualTo(persist.getProductNo());
+        assertThat(result.get().getProductIsbn()).isEqualTo(persist.getProductIsbn());
+        assertThat(result.get().getProductDescription()).isEqualTo(persist.getProductDescription());
+        assertThat(result.get().getProductPriority()).isEqualTo(persist.getProductPriority());
+        assertThat(result.get().getProductStock()).isEqualTo(persist.getProductStock());
+        assertThat(result.get().getSalesPrice()).isEqualTo(persist.getSalesPrice());
+        assertThat(result.get().getPageCount()).isEqualTo(persist.getPageCount());
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("상품 유형으로 조회하는 테스트")
+    void findProductListByType_Test() {
+        // given
+        Product persist = entityManager.persist(product);
+        Author author = AuthorDummy.dummy();
+        entityManager.persist(author);
+
+        persist.getProductAuthors().add(
+                new ProductAuthor(
+                        new ProductAuthor.Pk(author.getAuthorNo(), product.getProductNo()), author, product));
+
+        Category category = CategoryDummy.dummy();
+        entityManager.persist(category);
+
+        persist.getProductCategories().add(
+                new ProductCategory(
+                        new ProductCategory.Pk(category.getCategoryNo(), product.getProductNo()), category, product));
+
+        Tag tag = TagDummy.dummy();
+        entityManager.persist(tag);
+        persist.getProductTags().add(
+                new ProductTag(new ProductTag.Pk(tag.getTagNo(), product.getProductNo()), tag, product));
+        entityManager.persist(product);
+
+        // when
+        List<GetProductByTypeResponseDto> list = productRepository.findProductListByType(persist.getProductTypeStateCode().getCodeNo(), 5);
+
+        // then
+        assertThat(list).isNotEmpty();
     }
 
 }

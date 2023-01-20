@@ -7,6 +7,7 @@ import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.Product;
@@ -30,6 +31,7 @@ import com.nhnacademy.bookpubshop.tag.exception.TagNotFoundException;
 import com.nhnacademy.bookpubshop.tag.repository.TagRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +61,7 @@ public class ProductServiceImpl implements ProductService {
     public GetProductDetailResponseDto getProductDetailById(Long id) {
         return productRepository.getProductDetailById(id)
                 .orElseThrow(ProductNotFoundException::new);
+
     }
 
     /**
@@ -119,8 +122,8 @@ public class ProductServiceImpl implements ProductService {
                     new ProductCategory.Pk(category.getCategoryNo(), product.getProductNo()), category, product));
         }
 
-        List<Integer> tagsNo = request.getTagsNo();
-        if (!tagsNo.isEmpty()) {
+        if (Objects.nonNull(request.getTagsNo())) {
+            List<Integer> tagsNo = request.getTagsNo();
             for (Integer tagNo : tagsNo) {
                 Tag tag = tagRepository.findById(tagNo)
                         .orElseThrow(() -> new TagNotFoundException(tagNo));
@@ -223,13 +226,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
-     * 할인율을 계산하여 반환합니다.
-     *
-     * @param originPrice 정가입니다.
-     * @param salePrice   할인가입니다.
-     * @return 할인율을 반환합니다.
+     * {@inheritDoc}
      */
-    private Integer getSaleRateWithSalePrice(Long originPrice, Long salePrice) {
-        return Math.toIntExact((originPrice - salePrice) / originPrice * 100);
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetProductByTypeResponseDto> getProductsByType(Integer typeNo, Integer limit) {
+        return productRepository.findProductListByType(typeNo, limit);
     }
+
 }

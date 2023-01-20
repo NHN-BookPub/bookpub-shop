@@ -13,6 +13,7 @@ import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
@@ -457,5 +458,29 @@ class ProductServiceTest {
         assertThatThrownBy(() ->
                 productService.setDeleteProduct(product.getProductNo()))
                 .isInstanceOf(ProductNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("상품 유형별 상품 조회 테스트")
+    void getProductsByType() {
+        // given
+        GetProductByTypeResponseDto response = new GetProductByTypeResponseDto();
+        ReflectionTestUtils.setField(response, "productNo", product.getProductNo());
+        ReflectionTestUtils.setField(response, "title", product.getTitle());
+        ReflectionTestUtils.setField(response, "salesPrice", product.getSalesPrice());
+        ReflectionTestUtils.setField(response, "productPrice", product.getProductPrice());
+        ReflectionTestUtils.setField(response, "salesRate", product.getSalesRate());
+        ReflectionTestUtils.setField(response, "productCategories", List.of("1", "2"));
+
+        List<GetProductByTypeResponseDto> list = List.of(response);
+
+        // when
+        when(productRepository.findProductListByType(1, 1))
+                .thenReturn(list);
+        productService.getProductsByType(1, 1);
+
+        // then
+        verify(productRepository, times(1))
+                .findProductListByType(1, 1);
     }
 }

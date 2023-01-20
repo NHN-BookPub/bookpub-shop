@@ -16,6 +16,7 @@ import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
@@ -101,29 +102,6 @@ class ProductControllerTest {
 
         requestDto = new CreateProductRequestDto();
         responseDto = new GetProductDetailResponseDto(product);
-
-//        ReflectionTestUtils.setField(responseDto, "productNo", product.getProductNo());
-//        ReflectionTestUtils.setField(responseDto, "productIsbn", product.getProductIsbn());
-//        ReflectionTestUtils.setField(responseDto, "title", product.getTitle());
-//        ReflectionTestUtils.setField(responseDto, "pageCount", 1L);
-//        ReflectionTestUtils.setField(responseDto, "productDescription", 1L);
-//        ReflectionTestUtils.setField(responseDto, "salesPrice", 1L);
-//        ReflectionTestUtils.setField(responseDto, "productPrice", 1L);
-//        ReflectionTestUtils.setField(responseDto, "salesRate", 1L);
-//        ReflectionTestUtils.setField(responseDto, "productPriority", 1L);
-//        ReflectionTestUtils.setField(responseDto, "productStock", 1L);
-//        ReflectionTestUtils.setField(responseDto, "publishDate", 1L);
-//        ReflectionTestUtils.setField(responseDto, "deleted", 1L);
-//        ReflectionTestUtils.setField(responseDto, "productSubscribed", 1L);
-//        ReflectionTestUtils.setField(responseDto, "saleStateCodeCategory", 1L);
-//        ReflectionTestUtils.setField(responseDto, "typeStateCodeName", 1L);
-//        ReflectionTestUtils.setField(responseDto, "policyMethod", 1L);
-//        ReflectionTestUtils.setField(responseDto, "policySaved", 1L);
-//        ReflectionTestUtils.setField(responseDto, "policySaveRate", 1L);
-//        ReflectionTestUtils.setField(responseDto, "authors", 1L);
-//        ReflectionTestUtils.setField(responseDto, "categories", 1L);
-//        ReflectionTestUtils.setField(responseDto, "tags", 1L);
-//        ReflectionTestUtils.setField(responseDto, "tagsColors", 1L);
 
         listResponseDto = new GetProductListResponseDto(
                 product.getProductNo(),
@@ -295,4 +273,34 @@ class ProductControllerTest {
         verify(productService, times(1))
                 .setDeleteProduct(anyLong());
     }
+
+    @Test
+    @DisplayName("상품 유형 번호를 가지고 상품 리스트 조회")
+    void getProductsByType() throws Exception {
+        // given
+        GetProductByTypeResponseDto response = new GetProductByTypeResponseDto();
+        ReflectionTestUtils.setField(response, "productNo", product.getProductNo());
+        ReflectionTestUtils.setField(response, "title", product.getTitle());
+        ReflectionTestUtils.setField(response, "salesPrice", product.getSalesPrice());
+        ReflectionTestUtils.setField(response, "productPrice", product.getProductPrice());
+        ReflectionTestUtils.setField(response, "salesRate", product.getSalesRate());
+        ReflectionTestUtils.setField(response, "productCategories", List.of("1", "2"));
+
+        List<GetProductByTypeResponseDto> list = List.of(response);
+
+        // when
+        when(productService.getProductsByType(anyInt(), anyInt()))
+                .thenReturn(list);
+
+        // then
+        mockMvc.perform(get(url + "/types/{typeNo}", 5)
+                        .param("limit", "5")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$[0].salesPrice").value(9000))
+                .andExpect(jsonPath("$[0].productPrice").value(10000))
+                .andExpect(jsonPath("$[0].salesRate").value(10))
+                .andDo(print());
+    }
+
 }
