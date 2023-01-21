@@ -2,8 +2,8 @@ package com.nhnacademy.bookpubshop.product.dto.response;
 
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +22,7 @@ public class GetProductDetailResponseDto {
     private Long productNo;
     private String productIsbn;
     private String title;
+    private String productPublisher;
     private Integer pageCount;
     private String productDescription;
     private Long salesPrice;
@@ -42,10 +43,10 @@ public class GetProductDetailResponseDto {
     private boolean policySaved;
     private Integer policySaveRate;
 
-    private Set<String> authors = new HashSet<>();
-    private Set<String> categories = new HashSet<>();
-    private Set<String> tags = new HashSet<>();
-    private Set<String> tagsColors = new HashSet<>();
+    private List<String> authors = new ArrayList<>();
+    private List<String> categories = new ArrayList<>();
+    private List<String> tags = new ArrayList<>();
+    private List<String> tagsColors = new ArrayList<>();
 
     /**
      * 상품 등록을 위한 DTO 다대다 관계까지 한번에 save.
@@ -56,6 +57,7 @@ public class GetProductDetailResponseDto {
         this.productNo = product.getProductNo();
         this.productIsbn = product.getProductIsbn();
         this.title = product.getTitle();
+        this.productPublisher = product.getProductPublisher();
         this.pageCount = product.getPageCount();
         this.productDescription = product.getProductDescription();
         this.salesPrice = product.getSalesPrice();
@@ -73,15 +75,15 @@ public class GetProductDetailResponseDto {
         this.policySaveRate = product.getProductPolicy().getSaveRate();
         this.authors = product.getProductAuthors().stream()
                 .map(m -> m.getAuthor().getAuthorName())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         this.categories = product.getProductCategories().stream()
                 .map(m -> m.getCategory().getCategoryName())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         this.tags = product.getProductTags().stream()
                 .map(m -> m.getTag().getTagName())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         this.tagsColors = product.getProductTags().stream()
                 .map(m -> m.getTag().getColorCode())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 }

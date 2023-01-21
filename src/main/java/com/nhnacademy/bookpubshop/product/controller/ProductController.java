@@ -1,10 +1,12 @@
 package com.nhnacademy.bookpubshop.product.controller;
 
 import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 상품을 다루는 컨트롤러입니다.
  *
- * @author : 여운석
+ * @author : 여운석, 박경서
  * @since : 1.0
  */
 @RestController
@@ -128,5 +130,21 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
                 .build();
+    }
+
+    /**
+     * 상품 유형 번호를 가지고 상품 리스트 조회.
+     *
+     * @param typeNo 유형 번호
+     * @param limit  제한 갯수
+     * @return 상품 유형별 리스트
+     */
+    @GetMapping("/types/{typeNo}")
+    public ResponseEntity<List<GetProductByTypeResponseDto>> getProductsByType(@PathVariable Integer typeNo,
+                                                                               @RequestParam(name = "limit") Integer limit) {
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(productService.getProductsByType(typeNo, limit));
     }
 }

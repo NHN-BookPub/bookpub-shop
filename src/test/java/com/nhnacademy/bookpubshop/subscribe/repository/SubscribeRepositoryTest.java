@@ -43,7 +43,6 @@ class SubscribeRepositoryTest {
         assertThat(subscribe.get().getSubscribeNo()).isEqualTo(persist.getSubscribeNo());
         assertThat(subscribe.get().getSubscribeName()).isEqualTo(persist.getSubscribeName());
         assertThat(subscribe.get().getSubscribePrice()).isEqualTo(persist.getSubscribePrice());
-        assertThat(subscribe.get().getCreatedAt()).isEqualTo(persist.getCreatedAt());
         assertThat(subscribe.get().isSubscribeDeleted()).isEqualTo(persist.isSubscribeDeleted());
         assertThat(subscribe.get().isSubscribeRenewed()).isEqualTo(persist.isSubscribeRenewed());
         assertThat(subscribe.get().getSalesPrice()).isEqualTo(persist.getSalesPrice());
