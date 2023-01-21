@@ -41,8 +41,6 @@ import org.springframework.data.domain.Pageable;
  * @since : 1.0
  **/
 @DataJpaTest
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-//@Transactional
 class ProductRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
