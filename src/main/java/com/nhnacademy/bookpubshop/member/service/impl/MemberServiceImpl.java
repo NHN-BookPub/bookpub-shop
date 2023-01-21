@@ -6,6 +6,7 @@ import com.nhnacademy.bookpubshop.address.repository.AddressRepository;
 import com.nhnacademy.bookpubshop.author.exception.AuthorityNotFoundException;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
+import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
@@ -233,7 +234,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public void modifyMemberPassword(Long memberNo, ModifyMemberPasswordRequest password){
+    public void modifyMemberPassword(Long memberNo, ModifyMemberPasswordRequest password) {
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(MemberNotFoundException::new);
 
@@ -262,7 +263,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public void modifyMemberBaseAddress(Long memberNo, Long addressNo){
+    public void modifyMemberBaseAddress(Long memberNo, Long addressNo) {
         Address baseAddress = addressRepository.findByMemberBaseAddress(memberNo)
                 .orElseThrow(AddressNotFoundException::new);
 
@@ -271,6 +272,36 @@ public class MemberServiceImpl implements MemberService {
 
         baseAddress.modifyAddressBase(false);
         address.modifyAddressBase(true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void addMemberAddress(Long memberNo, CreateAddressRequestDto requestDto) {
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        if (member.getMemberAddress().size() < 10) {
+            member.getMemberAddress().add(Address.builder()
+                    .addressMemberNumber(false)
+                    .roadAddress(requestDto.getAddress())
+                    .addressDetail(requestDto.getAddressDetail())
+                    .member(member)
+                    .build());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void deleteMemberAddress(Long memberNo, Long addressNo) {
+        Address address = addressRepository.findByMemberExchangeAddress(memberNo, addressNo)
+                .orElseThrow(AddressNotFoundException::new);
+        addressRepository.delete(address);
     }
 
 

@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.member.service;
 
+import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
@@ -157,4 +158,21 @@ public interface MemberService {
      * @param addressNo 회원이 변경할 주소
      */
     void modifyMemberBaseAddress(Long memberNo, Long addressNo);
+
+    /**
+     * 회원의 주소를 추가하는 메서드입니다.
+     *
+     * @param memberNo   회원번호
+     * @param requestDto 추가할 주소 정보
+     */
+    void addMemberAddress(Long memberNo, CreateAddressRequestDto requestDto);
+
+
+    /**
+     * 회원의 해당하는 주소를 삭제하기위한 메서드입니다.
+     *
+     * @param memberNo  회원번호
+     * @param addressNo 주소번호
+     */
+    void deleteMemberAddress(Long memberNo, Long addressNo);
 }
