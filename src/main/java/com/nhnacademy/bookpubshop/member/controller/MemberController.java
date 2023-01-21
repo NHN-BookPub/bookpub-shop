@@ -252,6 +252,15 @@ public class MemberController {
                 .body(memberService.getTierStatistics());
     }
 
+    /**
+     * 회원만 접근가능합니다.
+     * 회원의 패스워드를 검사하기위한 메서드입니다.
+     * 회원의 password 를 반환합니다.
+     * 성공시 200이 반환됩니다.
+     *
+     * @param memberNo 회원번호
+     * @return the response entity
+     */
     @GetMapping("/members/{memberNo}/password-check")
     public ResponseEntity<MemberPasswordResponseDto> memberPasswordCheck(@PathVariable("memberNo") Long memberNo){
         return ResponseEntity.status(HttpStatus.OK)
@@ -259,6 +268,15 @@ public class MemberController {
                 .body(memberService.getMemberPwd(memberNo));
     }
 
+    /**
+     *  회원만 접근가능합니다.
+     *  회원의 패스워드가 수정될때 사용되는 메서드입니다.
+     *  성공시 201 이 반환됩니다.
+     *
+     * @param memberNo 회원번호
+     * @param request  수정할 회원의 비밀번호가 기입됩니다.
+     * @return the response entity
+     */
     @PutMapping("/members/{memberNo}/password")
     public ResponseEntity<Void> memberModifyPassword(@PathVariable("memberNo") Long memberNo,
                                                      @RequestBody ModifyMemberPasswordRequest request) {
@@ -266,5 +284,22 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
 
+    }
+
+    /**
+     * 회원만 접근가능합니다.
+     * 회원의 기준주소지를 변경하기위한 메서드입니다.
+     * 성공시 201 이 반환됩니다.
+     *
+     * @param memberNo  회원번호가 기입됩니다.
+     * @param addressNo 회원의 주소번호가 기입됩니다.
+     * @return the response entity
+     */
+    @PutMapping("/members/{memberNo}/addresses/{addressNo}")
+    public ResponseEntity<Void> memberModifyBaseAddress(@PathVariable("memberNo") Long memberNo,
+                                                        @PathVariable("addressNo") Long addressNo){
+        memberService.modifyMemberBaseAddress(memberNo, addressNo);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
     }
 }
