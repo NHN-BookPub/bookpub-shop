@@ -12,6 +12,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.data.support.PageableExecutionUtils;
 
 /**
  * 상품 레포지토리의 구현체입니다.
@@ -76,7 +78,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
-        JPAQuery<GetProductListResponseDto> query = queryFactory
+        List<GetProductListResponseDto> content = queryFactory
                 .from(product)
                 .select(Projections.constructor(GetProductListResponseDto.class,
                         product.productNo,
@@ -88,14 +90,14 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         product.productDeleted))
                 .where(product.title.like(title))
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                .limit(pageable.getPageSize())
+                .fetch();
 
-        Long count = queryFactory.select(product.count())
-                .where(product.title.like(title))
-                .from(product)
-                .fetchOne();
+        JPQLQuery<Long> count = from(product)
+                .select(product.count())
+                .where(product.title.like(title));
 
-        return new PageImpl<>(query.fetch(), pageable, count);
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 
     /**
@@ -145,6 +147,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .limit(limit)
                 .fetch();
 
+        // TODO: 쿼리 수정 (Check)
         result.stream()
                 .map(m -> m.getProductCategories().add(
                         String.valueOf(
