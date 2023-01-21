@@ -1,5 +1,8 @@
 package com.nhnacademy.bookpubshop.member.service.impl;
 
+import com.nhnacademy.bookpubshop.address.entity.Address;
+import com.nhnacademy.bookpubshop.address.exception.AddressNotFoundException;
+import com.nhnacademy.bookpubshop.address.repository.AddressRepository;
 import com.nhnacademy.bookpubshop.author.exception.AuthorityNotFoundException;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
@@ -49,6 +52,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final TierRepository tierRepository;
     private final AuthorityRepository authorityRepository;
+    private final AddressRepository addressRepository;
 
     private static final String TIER_NAME = "basic";
     private static final String AUTHORITY_NAME = "ROLE_MEMBER";
@@ -251,6 +255,22 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberStatisticsResponseDto getMemberStatistics() {
         return memberRepository.memberStatistics();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void modifyMemberBaseAddress(Long memberNo, Long addressNo){
+        Address baseAddress = addressRepository.findByMemberBaseAddress(memberNo)
+                .orElseThrow(AddressNotFoundException::new);
+
+        Address address = addressRepository.findByMemberExchangeAddress(memberNo, addressNo)
+                .orElseThrow(AddressNotFoundException::new);
+
+        baseAddress.modifyAddressBase(false);
+        address.modifyAddressBase(true);
     }
 
 
