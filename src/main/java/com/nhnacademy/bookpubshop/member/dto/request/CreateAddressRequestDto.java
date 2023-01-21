@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.member.dto.request;
 
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class CreateAddressRequestDto {
+    @NotNull(message = "주소값은 비어있을 수 없습니다.")
     private String address;
+    @NotNull(message = "상세주소는 비어있을 수 없습니다.")
     private String addressDetail;
 }
