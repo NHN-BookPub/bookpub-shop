@@ -316,7 +316,7 @@ public class MemberController {
      */
     @PostMapping("/members/{memberNo}/addresses")
     public ResponseEntity<Void> memberAddressAdd(@PathVariable("memberNo") Long memberNo,
-                                                 @RequestBody CreateAddressRequestDto requestDto) {
+                                                 @Valid @RequestBody CreateAddressRequestDto requestDto) {
         memberService.addMemberAddress(memberNo, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
