@@ -5,6 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
+import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
+import com.nhnacademy.bookpubshop.address.entity.Address;
+import com.nhnacademy.bookpubshop.address.exception.AddressNotFoundException;
+import com.nhnacademy.bookpubshop.address.repository.AddressRepository;
 import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
 import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
@@ -62,6 +66,8 @@ class MemberServiceTest {
     MemberRepository memberRepository;
     @MockBean
     TierRepository tierRepository;
+    @MockBean
+    AddressRepository addressRepository;
 
     @MockBean
     AuthorityRepository authorityRepository;
@@ -70,6 +76,8 @@ class MemberServiceTest {
     final String duplicate = "중복되는 항목";
     Member member;
     ModifyMemberNicknameRequestDto nicknameRequestDto;
+
+    Address address;
 
     ModifyMemberEmailRequestDto emailRequestDto;
     BookPubTier tier;
@@ -83,6 +91,7 @@ class MemberServiceTest {
         signUpMemberRequestDto = new SignUpMemberRequestDto();
         nicknameRequestDto = new ModifyMemberNicknameRequestDto();
         emailRequestDto = new ModifyMemberEmailRequestDto();
+        address = AddressDummy.dummy(member);
 
         ReflectionTestUtils.setField(signUpMemberRequestDto, "name", "임태원");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "nickname", "taewon");
@@ -557,6 +566,43 @@ class MemberServiceTest {
         memberService.modifyMemberPassword(1L, dto);
 
         then(memberRepository).should().findById(1L);
+    }
+
+    @DisplayName("기준주소지 찾기 테스트 실패")
+    @Test
+    void findMemberBaseAddressFailTest() {
+        when(addressRepository.findByMemberBaseAddress(anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> memberService.modifyMemberBaseAddress(1L, 1L))
+                .isInstanceOf(AddressNotFoundException.class)
+                .hasMessageContaining(AddressNotFoundException.MESSAGE);
+    }
+
+    @DisplayName("변경할 주소 찾기 실패 테스트")
+    @Test
+    void findMemberBaseAddressFail2Test() {
+        when(addressRepository.findByMemberBaseAddress(anyLong()))
+                .thenReturn(Optional.of(address));
+        when(addressRepository.findByMemberExchangeAddress(anyLong(), anyLong()))
+                .thenReturn(Optional.empty());
+        assertThatThrownBy(() -> memberService.modifyMemberBaseAddress(1L, 1L))
+                .isInstanceOf(AddressNotFoundException.class)
+                .hasMessageContaining(AddressNotFoundException.MESSAGE);
+    }
+
+    @DisplayName("주소지 변경 테스트 성공")
+    @Test
+    void modifyMemberBaseAddressSuccessTest(){
+        when(addressRepository.findByMemberBaseAddress(anyLong()))
+                .thenReturn(Optional.of(address));
+        when(addressRepository.findByMemberExchangeAddress(anyLong(), anyLong()))
+                .thenReturn(Optional.of(address));
+
+        memberService.modifyMemberBaseAddress(1L,1L);
+
+        then(addressRepository).should().findByMemberBaseAddress(1L);
+        then(addressRepository).should().findByMemberExchangeAddress(1L,1L);
     }
 
 }
