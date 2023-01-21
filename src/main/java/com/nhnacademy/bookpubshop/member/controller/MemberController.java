@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
+import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.IdRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -302,4 +304,39 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
+
+    /**
+     * 회원만 접근할수있습니다.
+     * 회원의 주소를 첨가하기위한 메서드입니다.
+     * 성공시 201 이 반환됩니다.
+     *
+     * @param memberNo   the member no
+     * @param requestDto the request dto
+     * @return the response entity
+     */
+    @PostMapping("/members/{memberNo}/addresses")
+    public ResponseEntity<Void> memberAddressAdd(@PathVariable("memberNo") Long memberNo,
+                                                 @RequestBody CreateAddressRequestDto requestDto) {
+        memberService.addMemberAddress(memberNo, requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 회원만 접근할수있습니다.
+     * 회원의 주소를 지우기위한 메서드입니다.
+     * 성공시 200 이반환됩니다.
+     *
+     * @param memberNo  the member no
+     * @param addressNo the address no
+     * @return the response entity
+     */
+    @DeleteMapping("/members/{memberNo}/addresses/{addressNo}")
+    public ResponseEntity<Void> memberAddressDelete(@PathVariable("memberNo") Long memberNo,
+                                                    @PathVariable("addressNo") Long addressNo){
+        memberService.deleteMemberAddress(memberNo, addressNo);
+        return ResponseEntity.ok()
+                .build();
+    }
+
 }
