@@ -11,6 +11,7 @@ import com.nhnacademy.bookpubshop.address.exception.AddressNotFoundException;
 import com.nhnacademy.bookpubshop.address.repository.AddressRepository;
 import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
 import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
+import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
@@ -605,4 +606,51 @@ class MemberServiceTest {
         then(addressRepository).should().findByMemberExchangeAddress(1L,1L);
     }
 
+    @DisplayName("멤버의 주소지 추가 실패")
+    @Test
+    void memberAddressAddFailTest() {
+        CreateAddressRequestDto dto = AddressDummy.createAddressDtoDummy();
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> memberService.addMemberAddress(1L, dto))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+    }
+
+    @DisplayName("멤버의 주소지 추가 성공")
+    @Test
+    void memberAddressAddSuccessTest(){
+        CreateAddressRequestDto dto = AddressDummy.createAddressDtoDummy();
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+
+        memberService.addMemberAddress(1L, dto);
+
+        then(memberRepository).should().findById(1L);
+    }
+
+    @DisplayName("멤버의 주소 삭제 테스트 Fail ")
+    @Test
+    void memberAddressDeleteFailTest() {
+        when(addressRepository.findByMemberExchangeAddress(anyLong(), anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> memberService.deleteMemberAddress(1L, 1L))
+                .isInstanceOf(AddressNotFoundException.class)
+                .hasMessageContaining(AddressNotFoundException.MESSAGE);
+    }
+
+    @DisplayName("멤버의 주소 삭제 테스트 Success")
+    @Test
+    void memberAddressDeleteSuccessTest(){
+        when(addressRepository.findByMemberExchangeAddress(anyLong(), anyLong()))
+                .thenReturn(Optional.of(address));
+        doNothing().when(addressRepository)
+                        .delete(any(Address.class));
+        memberService.deleteMemberAddress(1L, 1L);
+
+        then(addressRepository).should().findByMemberExchangeAddress(1L, 1L);
+        then(addressRepository).should().delete(address);
+    }
 }

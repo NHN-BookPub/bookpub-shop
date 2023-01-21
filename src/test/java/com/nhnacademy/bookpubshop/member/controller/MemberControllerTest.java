@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
+import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.IdRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
@@ -30,6 +31,7 @@ import com.nhnacademy.bookpubshop.member.service.MemberService;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.util.List;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -659,6 +661,72 @@ class MemberControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
 
-        then(memberService).should().modifyMemberBaseAddress(1L,1L);
+        then(memberService).should().modifyMemberBaseAddress(1L, 1L);
+    }
+
+    @DisplayName("회원 주소 등록 테스트 address- validation 실패")
+    @Test
+    void memberAddressCreateFailTest() throws Exception{
+
+        doNothing().when(memberService).addMemberAddress(anyLong(), any(CreateAddressRequestDto.class));
+
+        CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
+        ReflectionTestUtils.setField(createAddressRequestDto,"addressDetail","asdf");
+
+        mvc.perform(post("/api/members/{memberNo}/addresses", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createAddressRequestDto)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$[0].message").value("주소값은 비어있을 수 없습니다."))
+                .andDo(print());
+    }
+
+    @DisplayName("회원 주소 등록 테스트 addressdetail- validation 실패")
+    @Test
+    void memberAddressCreateFail2Test() throws Exception{
+
+        doNothing().when(memberService).addMemberAddress(anyLong(), any(CreateAddressRequestDto.class));
+
+        CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
+        ReflectionTestUtils.setField(createAddressRequestDto,"address","aaaa");
+
+        mvc.perform(post("/api/members/{memberNo}/addresses", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createAddressRequestDto)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$[0].message").value("상세주소는 비어있을 수 없습니다."))
+                .andDo(print());
+    }
+
+    @DisplayName("회원 주소 등록 테스트 성공")
+    @Test
+    void memberAddressCreateSuccessTest() throws Exception{
+
+        doNothing().when(memberService).addMemberAddress(anyLong(), any(CreateAddressRequestDto.class));
+
+        CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
+        ReflectionTestUtils.setField(createAddressRequestDto,"address","aaaa");
+        ReflectionTestUtils.setField(createAddressRequestDto,"addressDetail","aaaa");
+
+        mvc.perform(post("/api/members/{memberNo}/addresses", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createAddressRequestDto)))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print());
+
+    }
+
+    @SneakyThrows
+    @DisplayName("회원 주소 삭제 테스트 성공")
+    @Test
+    void memberAddressDeleteTest() throws Exception {
+        doNothing().when(memberService).deleteMemberAddress(anyLong(),anyLong());
+
+        mvc.perform(delete("/api/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print());
+
+        then(memberService).should().deleteMemberAddress(1L, 1L);
     }
 }
