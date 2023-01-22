@@ -16,6 +16,7 @@ import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDt
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
+import com.nhnacademy.bookpubshop.token.util.JwtUtil;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -87,7 +88,9 @@ public class MemberController {
 
     @GetMapping("/auth")
     public MemberAuthResponseDto authMemberInfo(HttpServletRequest request) {
-        return memberService.authMemberInfo(request);
+        String accessToken = request.getHeader(JwtUtil.AUTH_HEADER);
+
+        return memberService.authMemberInfo(accessToken);
     }
 
 

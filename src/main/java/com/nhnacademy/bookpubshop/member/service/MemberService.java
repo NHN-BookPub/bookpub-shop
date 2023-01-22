@@ -13,7 +13,6 @@ import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDt
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -134,5 +133,5 @@ public interface MemberService {
      */
     boolean nickNameDuplicateCheck(String nickName);
 
-    MemberAuthResponseDto authMemberInfo(HttpServletRequest request);
+    MemberAuthResponseDto authMemberInfo(String accessToken);
 }

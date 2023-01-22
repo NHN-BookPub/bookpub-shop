@@ -27,12 +27,11 @@ import com.nhnacademy.bookpubshop.member.service.MemberService;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import com.nhnacademy.bookpubshop.tier.exception.TierNotFoundException;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
-import com.nhnacademy.bookpubshop.token.exception.TokenParsingException;
 import com.nhnacademy.bookpubshop.token.dto.TokenInfoDto;
+import com.nhnacademy.bookpubshop.token.exception.TokenParsingException;
 import com.nhnacademy.bookpubshop.token.util.JwtUtil;
 import java.util.List;
 import java.util.Objects;
-import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -200,8 +199,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberAuthResponseDto authMemberInfo(HttpServletRequest request) {
-        String accessToken = request.getHeader(JwtUtil.AUTH_HEADER);
+    public MemberAuthResponseDto authMemberInfo(String accessToken) {
         String payload = JwtUtil.decodeJwt(accessToken);
         TokenInfoDto tokenInfo;
         try {
