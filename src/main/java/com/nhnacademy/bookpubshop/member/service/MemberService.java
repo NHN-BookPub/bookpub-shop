@@ -6,12 +6,14 @@ import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequest
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberAuthResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -132,4 +134,5 @@ public interface MemberService {
      */
     boolean nickNameDuplicateCheck(String nickName);
 
+    MemberAuthResponseDto authMemberInfo(HttpServletRequest request);
 }

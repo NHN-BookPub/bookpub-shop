@@ -6,9 +6,10 @@ import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
-import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.NickRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberAuthResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
@@ -17,6 +18,7 @@ import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -83,6 +85,10 @@ public class MemberController {
         return memberService.nickNameDuplicateCheck(requestDto.getNickname());
     }
 
+    @GetMapping("/auth")
+    public MemberAuthResponseDto authMemberInfo(HttpServletRequest request) {
+        return memberService.authMemberInfo(request);
+    }
 
 
     /**
@@ -130,7 +136,7 @@ public class MemberController {
      */
     @PutMapping("/members/{memberNo}/phone")
     public ResponseEntity<Void> memberModifyPhone(@PathVariable("memberNo") Long memberNo,
-                                                  @Valid @RequestBody ModifyMemberPhoneRequestDto requestDto){
+                                                  @Valid @RequestBody ModifyMemberPhoneRequestDto requestDto) {
         memberService.modifyMemberPhone(memberNo, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
@@ -147,7 +153,7 @@ public class MemberController {
      */
     @PutMapping("/members/{memberNo}/name")
     public ResponseEntity<Void> memberModifyName(@PathVariable("memberNo") Long memberNo,
-                                                  @Valid @RequestBody ModifyMemberNameRequestDto requestDto){
+                                                 @Valid @RequestBody ModifyMemberNameRequestDto requestDto) {
         memberService.modifyMemberName(memberNo, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
@@ -192,11 +198,12 @@ public class MemberController {
      * @return 성공시 201
      */
     @PutMapping("/members/{memberNo}")
-    public ResponseEntity<Void> memberDelete(@PathVariable("memberNo") Long memberNo){
+    public ResponseEntity<Void> memberDelete(@PathVariable("memberNo") Long memberNo) {
         memberService.deleteMember(memberNo);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
+
     /**
      * 단일 멤버에대한 차단 및 복구를 수행할 수 있습니다.
      *
