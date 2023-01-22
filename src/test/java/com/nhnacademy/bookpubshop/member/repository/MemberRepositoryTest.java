@@ -2,6 +2,8 @@ package com.nhnacademy.bookpubshop.member.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
+import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
@@ -50,6 +52,8 @@ class MemberRepositoryTest {
 
     MemberAuthority memberAuthority;
 
+    Address address;
+
     @BeforeEach
     void setUp() {
         bookPubTier = TierDummy.dummy();
@@ -57,6 +61,7 @@ class MemberRepositoryTest {
         authority = AuthorityDummy.dummy();
         entityManager.persist(bookPubTier);
         memberAuthority = MemberAuthorityDummy.dummy(member, authority);
+        address = AddressDummy.dummy(member);
     }
 
     @Test
@@ -93,6 +98,7 @@ class MemberRepositoryTest {
         Member persist = entityManager.persist(member);
         entityManager.persist(authority);
         entityManager.persist(memberAuthority);
+        entityManager.persist(address);
         entityManager.flush();
         entityManager.clear();
 
@@ -109,6 +115,10 @@ class MemberRepositoryTest {
         assertThat(result.get().getBirthYear()).isEqualTo(persist.getMemberBirthYear());
         assertThat(result.get().getPhone()).isEqualTo(persist.getMemberPhone());
         assertThat(result.get().getPoint()).isEqualTo(persist.getMemberPoint());
+        assertThat(result.get().getAddresses().get(0).getAddressDetail()).isEqualTo(address.getAddressDetail());
+        assertThat(result.get().getAddresses().get(0).getRoadAddress()).isEqualTo(address.getRoadAddress());
+        assertThat(result.get().getAddresses().get(0).isAddressBased()).isEqualTo(address.isAddressMemberNumber());
+        assertThat(result.get().getAddresses().get(0).getAddressNo()).isEqualTo(address.getAddressNo());
     }
 
     @DisplayName("멤버 전체조회 테스트")

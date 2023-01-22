@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
+import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.IdRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
@@ -30,6 +31,7 @@ import com.nhnacademy.bookpubshop.member.service.MemberService;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.util.List;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -499,14 +501,14 @@ class MemberControllerTest {
     @DisplayName("아이디 중복체크 요청의 결과값 반환")
     void idDuplicateCheckTest() throws Exception {
         IdRequestDto idRequestDto = new IdRequestDto();
-        ReflectionTestUtils.setField(idRequestDto,"id","tagkdj1");
+        ReflectionTestUtils.setField(idRequestDto, "id", "tagkdj1");
 
         when(memberService.idDuplicateCheck(anyString()))
                 .thenReturn(true);
 
         mvc.perform(post("/api/signup/idCheck")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(idRequestDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(idRequestDto)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
@@ -516,7 +518,7 @@ class MemberControllerTest {
     @DisplayName("닉네임 중복체크 요청의 결과값 반환")
     void nickDuplicateCheckTest() throws Exception {
         NickRequestDto nickRequestDto = new NickRequestDto();
-        ReflectionTestUtils.setField(nickRequestDto,"nickname","taewon");
+        ReflectionTestUtils.setField(nickRequestDto, "nickname", "taewon");
 
         when(memberService.nickNameDuplicateCheck(anyString()))
                 .thenReturn(true);
@@ -548,7 +550,7 @@ class MemberControllerTest {
 
     @DisplayName("휴대전화 양식이 맞지않을경우")
     @Test
-    void memberModifyPhoneValidationLengthFailTest() throws Exception{
+    void memberModifyPhoneValidationLengthFailTest() throws Exception {
         ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
         ReflectionTestUtils.setField(dto, "phone", "111");
 
@@ -564,7 +566,7 @@ class MemberControllerTest {
 
     @DisplayName("휴대전화 변경 성공")
     @Test
-    void memberModifyPhoneTest() throws Exception{
+    void memberModifyPhoneTest() throws Exception {
         ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
         ReflectionTestUtils.setField(dto, "phone", "01066749927");
 
@@ -579,12 +581,12 @@ class MemberControllerTest {
 
     @DisplayName("회원 이름 변경 실패 null")
     @Test
-    void memberModifyNameTestNotNull() throws Exception{
+    void memberModifyNameTestNotNull() throws Exception {
         ModifyMemberNameRequestDto dto = new ModifyMemberNameRequestDto();
         ReflectionTestUtils.setField(dto, "name", "a");
 
         doNothing().when(memberService)
-                .modifyMemberName(anyLong(),any());
+                .modifyMemberName(anyLong(), any());
         mvc.perform(put("/api/members/{memberNo}/name", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -594,12 +596,12 @@ class MemberControllerTest {
 
     @DisplayName("회원 이름 변경 성공")
     @Test
-    void memberModifyNameTestSuccess() throws Exception{
+    void memberModifyNameTestSuccess() throws Exception {
         ModifyMemberNameRequestDto dto = new ModifyMemberNameRequestDto();
         ReflectionTestUtils.setField(dto, "name", "hi");
 
         doNothing().when(memberService)
-                .modifyMemberName(anyLong(),any());
+                .modifyMemberName(anyLong(), any());
         mvc.perform(put("/api/members/{memberNo}/name", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -608,7 +610,7 @@ class MemberControllerTest {
 
     @DisplayName("회원 탈퇴 성공")
     @Test
-    void memberDeleteSuccessTest() throws Exception{
+    void memberDeleteSuccessTest() throws Exception {
 
         doNothing().when(memberService)
                 .deleteMember(anyLong());
@@ -645,5 +647,86 @@ class MemberControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
+    }
+
+    @DisplayName("회원 기준주소지 변경 Success")
+    @Test
+    void memberModifyBaseAddressTest() throws Exception {
+
+        doNothing().when(memberService)
+                .modifyMemberBaseAddress(anyLong(), anyLong());
+
+        mvc.perform(put("/api/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print());
+
+        then(memberService).should().modifyMemberBaseAddress(1L, 1L);
+    }
+
+    @DisplayName("회원 주소 등록 테스트 address- validation 실패")
+    @Test
+    void memberAddressCreateFailTest() throws Exception{
+
+        doNothing().when(memberService).addMemberAddress(anyLong(), any(CreateAddressRequestDto.class));
+
+        CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
+        ReflectionTestUtils.setField(createAddressRequestDto,"addressDetail","asdf");
+
+        mvc.perform(post("/api/members/{memberNo}/addresses", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createAddressRequestDto)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$[0].message").value("주소값은 비어있을 수 없습니다."))
+                .andDo(print());
+    }
+
+    @DisplayName("회원 주소 등록 테스트 addressdetail- validation 실패")
+    @Test
+    void memberAddressCreateFail2Test() throws Exception{
+
+        doNothing().when(memberService).addMemberAddress(anyLong(), any(CreateAddressRequestDto.class));
+
+        CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
+        ReflectionTestUtils.setField(createAddressRequestDto,"address","aaaa");
+
+        mvc.perform(post("/api/members/{memberNo}/addresses", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createAddressRequestDto)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$[0].message").value("상세주소는 비어있을 수 없습니다."))
+                .andDo(print());
+    }
+
+    @DisplayName("회원 주소 등록 테스트 성공")
+    @Test
+    void memberAddressCreateSuccessTest() throws Exception{
+
+        doNothing().when(memberService).addMemberAddress(anyLong(), any(CreateAddressRequestDto.class));
+
+        CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
+        ReflectionTestUtils.setField(createAddressRequestDto,"address","aaaa");
+        ReflectionTestUtils.setField(createAddressRequestDto,"addressDetail","aaaa");
+
+        mvc.perform(post("/api/members/{memberNo}/addresses", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createAddressRequestDto)))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print());
+
+    }
+
+    @SneakyThrows
+    @DisplayName("회원 주소 삭제 테스트 성공")
+    @Test
+    void memberAddressDeleteTest() throws Exception {
+        doNothing().when(memberService).deleteMemberAddress(anyLong(),anyLong());
+
+        mvc.perform(delete("/api/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print());
+
+        then(memberService).should().deleteMemberAddress(1L, 1L);
     }
 }

@@ -29,6 +29,7 @@ public class MemberDetailResponseDto {
 
     private List<String> authorities = new ArrayList<>();
 
+    private List<MemberAddressResponseDto> addresses = new ArrayList<>();
     public MemberDetailResponseDto(Member member) {
         this.memberNo = member.getMemberNo();
         this.memberName = member.getMemberName();
@@ -41,7 +42,10 @@ public class MemberDetailResponseDto {
         this.email = member.getMemberEmail();
         this.point = member.getMemberPoint();
         this.authorities = member.getMemberAuthorities().stream()
-                .map(m-> m.getAuthority().getAuthorityName())
+                .map(m -> m.getAuthority().getAuthorityName())
+                .collect(Collectors.toList());
+        this.addresses = member.getMemberAddress().stream()
+                .map(MemberAddressResponseDto::new)
                 .collect(Collectors.toList());
     }
 }
