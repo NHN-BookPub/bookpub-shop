@@ -13,7 +13,8 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  * @author : 유호철
  * @since : 1.0
  **/
-public class AddressRepositoryImpl extends QuerydslRepositorySupport implements AddressCustomRepository {
+public class AddressRepositoryImpl extends QuerydslRepositorySupport
+    implements AddressCustomRepository {
     public AddressRepositoryImpl() {
         super(Address.class);
     }
