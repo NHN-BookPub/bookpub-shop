@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.member.dto.response;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * 인증 성공한 유저의 반환 dto.
@@ -12,6 +13,7 @@ import lombok.Getter;
  **/
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class MemberAuthResponseDto {
     private Long memberNo;
     private String memberPwd;

@@ -1,22 +1,10 @@
 package com.nhnacademy.bookpubshop.member.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
 import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
-import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
-import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
-import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
-import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
-import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
-import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
-import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
-import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
-import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
-import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.request.*;
+import com.nhnacademy.bookpubshop.member.dto.response.*;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.IdAlreadyExistsException;
@@ -27,8 +15,6 @@ import com.nhnacademy.bookpubshop.member.service.impl.MemberServiceImpl;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -42,8 +28,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.*;
 
 /**
  * 멤버 서비스 테스트.
@@ -63,6 +59,12 @@ class MemberServiceTest {
 
     @MockBean
     AuthorityRepository authorityRepository;
+
+    @MockBean
+    ObjectMapper objectMapper;
+
+    @MockBean
+    RedisTemplate<String, String> redisTemplate;
 
     SignUpMemberRequestDto signUpMemberRequestDto;
     final String duplicate = "중복되는 항목";
@@ -157,7 +159,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("멤버 아이디 수정 존재하지않는 아이디")
-    void memberNickNameCheckFailNotFoundTest(){
+    void memberNickNameCheckFailNotFoundTest() {
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
@@ -169,7 +171,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("멤버 아이디 수정 이미 존재하는 닉네임")
     void memberNickNameCheckFailExistsNickName() {
-        ReflectionTestUtils.setField(nicknameRequestDto,"nickname","nick");
+        ReflectionTestUtils.setField(nicknameRequestDto, "nickname", "nick");
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
 
@@ -335,13 +337,13 @@ class MemberServiceTest {
 
         memberService.blockMember(1L);
 
-        verify(memberRepository,times(1))
+        verify(memberRepository, times(1))
                 .findById(1L);
     }
 
     @DisplayName("멤버 탈퇴 실패")
     @Test
-    void deleteMemberFailTest(){
+    void deleteMemberFailTest() {
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
@@ -352,7 +354,7 @@ class MemberServiceTest {
 
     @DisplayName("멤버 탈퇴 성공")
     @Test
-    void deleteMemberSuccessTest(){
+    void deleteMemberSuccessTest() {
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
         memberService.deleteMember(1L);
@@ -413,9 +415,9 @@ class MemberServiceTest {
 
     @DisplayName("멤버 휴대전화번호 수정 멤버 못찾을 경우")
     @Test
-    void modifyMemberTestFail(){
+    void modifyMemberTestFail() {
         ModifyMemberPhoneRequestDto dto = new ModifyMemberPhoneRequestDto();
-        ReflectionTestUtils.setField(dto, "phone","10101010");
+        ReflectionTestUtils.setField(dto, "phone", "10101010");
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
@@ -428,14 +430,14 @@ class MemberServiceTest {
 
     @DisplayName("멤버 휴대전화 수정 성공")
     @Test
-    void modifyMemberTestSuccess(){
+    void modifyMemberTestSuccess() {
         ModifyMemberNameRequestDto dto = new ModifyMemberNameRequestDto();
         ReflectionTestUtils.setField(dto, "name", "12345");
 
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
 
-        memberService.modifyMemberName(1L,dto);
+        memberService.modifyMemberName(1L, dto);
 
         then(memberRepository).should().findById(1L);
     }
