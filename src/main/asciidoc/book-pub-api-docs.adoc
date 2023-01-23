@@ -1,0 +1,25 @@
+
+= Book-Pub
+:toc:left
+
+== Api 명세
+
+== 등급 리스트 조회
+
+=== 요청구조
+include::../../../target/snippets/get-tiers/http-request.adoc[]
+
+
+==== 요청 파라미터들
+
+include::../../../target/snippets/get-tiers/request-body.adoc[]
+
+
+=== 응답 구조
+
+include::../../../target/snippets/get-tiers/response-body.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../target/snippets/get-tiers/response-fields.adoc[]
+
