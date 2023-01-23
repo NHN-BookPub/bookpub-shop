@@ -28,8 +28,6 @@ public class CouponTemplateDummy {
                 couponStateCode,
                 "test_templateName",
                 LocalDateTime.of(1, 1, 1, 1, 1),
-                LocalDateTime.of(1, 1, 1, 1, 1),
-                false,
                 false,
                 null
         );

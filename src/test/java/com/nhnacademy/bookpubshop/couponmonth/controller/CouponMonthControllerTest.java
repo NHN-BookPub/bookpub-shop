@@ -172,7 +172,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).modifyCouponMonth(request);
 
         // then
-        mockMvc.perform(put(url + "/modify")
+        mockMvc.perform(put(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is2xxSuccessful())
@@ -192,7 +192,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).modifyCouponMonth(request);
 
         // then
-        mockMvc.perform(put(url + "/modify")
+        mockMvc.perform(put(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(jsonPath("$[0].message").value("수정할 이달의 쿠폰 번호를 입력하세요."))
@@ -209,7 +209,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).modifyCouponMonth(request);
 
         // then
-        mockMvc.perform(put(url + "/modify")
+        mockMvc.perform(put(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
@@ -227,7 +227,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).modifyCouponMonth(request);
 
         // then
-        mockMvc.perform(put(url + "/modify")
+        mockMvc.perform(put(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
@@ -245,7 +245,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).modifyCouponMonth(request);
 
         // then
-        mockMvc.perform(put(url + "/modify")
+        mockMvc.perform(put(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
@@ -266,31 +266,6 @@ class CouponMonthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print());
-    }
-
-    @Test
-    @DisplayName("이달의 쿠폰 단건 조회 테스트")
-    void couponMonth_Detail_Success_Test() throws Exception {
-        // given
-        GetCouponMonthResponseDto response = new GetCouponMonthResponseDto(1L, 1L, "name", "image", LocalDateTime.now(), 100);
-
-        // when
-        when(couponMonthService.getCouponMonth(anyLong()))
-                .thenReturn(response);
-
-        // then
-        mockMvc.perform(get(url + "/{monthNo}", anyLong())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.monthNo").value(response.getMonthNo()))
-                .andExpect(jsonPath("$.templateNo").value(response.getTemplateNo()))
-                .andExpect(jsonPath("$.templateName").value(response.getTemplateName()))
-                .andExpect(jsonPath("$.templateImage").value(response.getTemplateImage()))
-                .andExpect(jsonPath("$.monthQuantity").value(response.getMonthQuantity()))
-                .andDo(print());
-
-        then(couponMonthService).should()
-                .getCouponMonth(anyLong());
     }
 
     @Test
