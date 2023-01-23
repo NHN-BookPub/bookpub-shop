@@ -16,6 +16,6 @@ public class CreateCouponRequestDto {
     @NotNull(message = "쿠폰템플릿 번호를 입력해주세요.")
     private Long templateNo;
 
-    @NotNull(message = "멤버 번호를 입력해주세요.")
-    private Long memberNo;
+    @NotNull(message = "멤버 아이디를 입력해주세요.")
+    private String memberId;
 }

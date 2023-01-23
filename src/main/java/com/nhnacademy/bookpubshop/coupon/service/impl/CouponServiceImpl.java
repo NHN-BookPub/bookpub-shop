@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.coupon.service.impl;
 
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
-import com.nhnacademy.bookpubshop.coupon.dto.request.ModifyCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
 import com.nhnacademy.bookpubshop.coupon.exception.CouponNotFoundException;
@@ -13,9 +12,16 @@ import com.nhnacademy.bookpubshop.coupontemplate.repository.CouponTemplateReposi
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
-import java.time.LocalDateTime;
+import com.nhnacademy.bookpubshop.utils.FileUtils;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +39,7 @@ public class CouponServiceImpl implements CouponService {
     private final CouponRepository couponRepository;
     private final MemberRepository memberRepository;
     private final CouponTemplateRepository couponTemplateRepository;
+    private final FileUtils fileUtils;
 
     /**
      * {@inheritDoc}
@@ -40,7 +47,7 @@ public class CouponServiceImpl implements CouponService {
     @Override
     @Transactional
     public void createCoupon(CreateCouponRequestDto createRequestDto) {
-        Member member = memberRepository.findById(createRequestDto.getMemberNo())
+        Member member = memberRepository.findByMemberId(createRequestDto.getMemberId())
                 .orElseThrow(MemberNotFoundException::new);
 
         CouponTemplate couponTemplate =
@@ -48,8 +55,10 @@ public class CouponServiceImpl implements CouponService {
                         .orElseThrow(() ->
                                 new CouponTemplateNotFoundException(createRequestDto.getTemplateNo()));
 
-        couponRepository.save(new Coupon(null, couponTemplate, null, null,
-                member, false, null));
+        couponRepository.save(Coupon.builder()
+                .couponTemplate(couponTemplate)
+                .member(member)
+                .build());
     }
 
     /**
@@ -57,15 +66,13 @@ public class CouponServiceImpl implements CouponService {
      */
     @Override
     @Transactional
-    public void modifyCouponUsed(ModifyCouponRequestDto modifyRequestDto) {
-        Coupon coupon = couponRepository.findById(modifyRequestDto.getCouponNo())
-                .orElseThrow(() -> new CouponNotFoundException(modifyRequestDto.getCouponNo()));
+    public void modifyCouponUsed(Long couponNo) {
+        Coupon coupon = couponRepository.findById(couponNo)
+                .orElseThrow(() -> new CouponNotFoundException(couponNo));
 
-        coupon.modifyCouponUsed(modifyRequestDto.isCouponUsed());
-        if (coupon.isCouponUsed()) {
-            coupon.modifyCouponUsedAt(LocalDateTime.now());
-        } else {
-            coupon.modifyCouponUsedAt(null);
+        coupon.modifyCouponUsed();
+        if (!coupon.isCouponUsed()) {
+            coupon.transferEmpty();
         }
     }
 
@@ -74,7 +81,7 @@ public class CouponServiceImpl implements CouponService {
      */
     @Override
     public GetCouponResponseDto getCoupon(Long couponNo) {
-        return couponRepository.getCoupon(couponNo)
+        return couponRepository.findByCouponNo(couponNo)
                 .orElseThrow(() -> new CouponNotFoundException(couponNo));
     }
 
@@ -82,8 +89,22 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
-    public Page<GetCouponResponseDto> getCoupons(Pageable pageable) {
+    public Page<GetCouponResponseDto> getCoupons(Pageable pageable, String searchKey, String search) throws IOException {
 
-        return couponRepository.getCoupons(pageable);
+        Page<GetCouponResponseDto> dto = couponRepository.findAllBy(pageable, searchKey, URLDecoder.decode(search, StandardCharsets.UTF_8));
+
+        List<GetCouponResponseDto> dtoList = dto.getContent();
+        List<GetCouponResponseDto> transformList = new ArrayList<>();
+
+        for (GetCouponResponseDto tmpDto : dtoList) {
+            if (Objects.nonNull(tmpDto.getTemplateImage())) {
+                transformList.add(tmpDto.transform(
+                        fileUtils.loadFile(tmpDto.getTemplateImage()
+                        )));
+            } else
+                transformList.add(tmpDto.transform(null));
+        }
+
+        return new PageImpl<>(transformList, pageable, dto.getTotalElements());
     }
 }

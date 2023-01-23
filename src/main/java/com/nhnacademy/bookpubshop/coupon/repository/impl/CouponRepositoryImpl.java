@@ -9,8 +9,10 @@ import com.nhnacademy.bookpubshop.coupontemplate.entity.QCouponTemplate;
 import com.nhnacademy.bookpubshop.file.entity.QFile;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,32 +31,31 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
         super(Coupon.class);
     }
 
+    QCoupon coupon = QCoupon.coupon;
+    QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
+    QCouponPolicy couponPolicy = QCouponPolicy.couponPolicy;
+    QMember member = QMember.member;
+    QFile file = QFile.file;
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public Optional<GetCouponResponseDto> getCoupon(Long couponNo) {
-
-        QCoupon coupon = QCoupon.coupon;
-        QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
-        QCouponPolicy couponPolicy = QCouponPolicy.couponPolicy;
-        QMember member = QMember.member;
-        QFile file = QFile.file;
+    public Optional<GetCouponResponseDto> findByCouponNo(Long couponNo) {
 
         return Optional.of(from(coupon)
-                        .where(coupon.couponNo.eq(couponNo))
-                .leftJoin(file)
-                        .on(coupon.couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
+                .where(coupon.couponNo.eq(couponNo))
+                .leftJoin(file).on(coupon.couponTemplate.eq(file.couponTemplate))
                 .innerJoin(coupon.couponTemplate, couponTemplate)
                 .innerJoin(couponPolicy)
-                        .on(coupon.couponTemplate.couponPolicy.policyNo
-                                .eq(couponTemplate.couponPolicy.policyNo))
+                .on(coupon.couponTemplate.couponPolicy.policyNo
+                        .eq(couponTemplate.couponPolicy.policyNo))
                 .innerJoin(coupon.member, member)
                 .select(Projections.constructor(GetCouponResponseDto.class,
                         coupon.couponNo,
                         member.memberId,
                         couponTemplate.templateName,
-                        file.nameSaved.concat(file.fileExtension).as("templateImage"),
+                        file.filePath.as("templateImage"),
                         couponPolicy.policyFixed,
                         couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
@@ -68,28 +69,22 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public Page<GetCouponResponseDto> getCoupons(Pageable pageable) {
-        QCoupon coupon = QCoupon.coupon;
-        QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
-        QCouponPolicy couponPolicy = QCouponPolicy.couponPolicy;
-        QMember member = QMember.member;
-        QFile file = QFile.file;
+    public Page<GetCouponResponseDto> findAllBy(Pageable pageable, String searchKey, String search) {
 
         JPQLQuery<Long> count = from(coupon).select(coupon.count());
 
         List<GetCouponResponseDto> content = from(coupon)
-                .leftJoin(file)
-                    .on(coupon.couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
-                .innerJoin(coupon.couponTemplate, couponTemplate)
-                .innerJoin(couponPolicy)
-                    .on(coupon.couponTemplate.couponPolicy.policyNo
-                            .eq(couponTemplate.couponPolicy.policyNo))
-                .innerJoin(coupon.member, member)
+                .where(searchEq(searchKey, search))
+                .leftJoin(file).on(coupon.couponTemplate.eq(file.couponTemplate))
+                .join(coupon.couponTemplate, couponTemplate)
+                .join(couponPolicy)
+                .on(coupon.couponTemplate.couponPolicy.eq(couponPolicy))
+                .join(coupon.member, member)
                 .select(Projections.constructor(GetCouponResponseDto.class,
                         coupon.couponNo,
                         member.memberId,
                         couponTemplate.templateName,
-                        file.nameSaved.concat(file.fileExtension),
+                        file.filePath.as("templateImage"),
                         couponPolicy.policyFixed,
                         couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
@@ -101,5 +96,24 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                 .fetch();
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    /**
+     * 검색 조건에 따라 쿼리문을 다르게 주기위한 메소드.
+     *
+     * @param searchKey 검색 조건
+     * @param search    검색어
+     * @return 조건에 맞는 querydsl
+     */
+    private BooleanExpression searchEq(String searchKey, String search) {
+        if (Objects.isNull(searchKey) || Objects.isNull(search)) return null;
+
+        if (searchKey.equals("memberId"))
+            return coupon.member.memberId.eq(search);
+        if (searchKey.equals("templateName"))
+            return coupon.couponTemplate.templateName.eq(search);
+        if (searchKey.equals("couponNo"))
+            return coupon.couponNo.eq(Long.parseLong(search));
+        else return null;
     }
 }
