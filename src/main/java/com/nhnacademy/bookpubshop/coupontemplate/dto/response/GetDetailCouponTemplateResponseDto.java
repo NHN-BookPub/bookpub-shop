@@ -26,9 +26,7 @@ public class GetDetailCouponTemplateResponseDto {
     private String codeTarget;
     private String templateName;
     private String templateImage;
-    private LocalDateTime issuedAt;
     private LocalDateTime finishedAt;
-    private boolean templateOverlapped;
     private boolean templateBundled;
 
     /**
@@ -51,8 +49,6 @@ public class GetDetailCouponTemplateResponseDto {
                 this.templateName,
                 templateImage,
                 this.finishedAt,
-                this.issuedAt,
-                this.templateOverlapped,
                 this.templateBundled
         );
     }
