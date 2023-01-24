@@ -90,6 +90,8 @@ public class CouponMonthServiceImpl implements CouponMonthService {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws IOException 파일 입출력 에러
      */
     @Override
     public List<GetCouponMonthResponseDto> getCouponMonths() throws IOException {

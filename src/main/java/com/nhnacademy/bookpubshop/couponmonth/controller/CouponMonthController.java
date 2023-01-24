@@ -77,6 +77,7 @@ public class CouponMonthController {
      * 이달의쿠폰 전체 리스트를 조회하는 메서드입니다.
      *
      * @return 성공 경우 200, 이달의쿠폰 리스트 응답
+     * @throws IOException 파일 입출력 에러
      */
     @GetMapping("/coupon-months")
     public ResponseEntity<List<GetCouponMonthResponseDto>> couponMonthList() throws IOException {
