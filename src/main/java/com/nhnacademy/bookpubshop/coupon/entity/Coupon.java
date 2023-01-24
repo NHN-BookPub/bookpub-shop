@@ -64,11 +64,7 @@ public class Coupon {
     @Builder
     public Coupon(CouponTemplate couponTemplate, Member member) {
         this.couponTemplate = couponTemplate;
-        this.order = null;
-        this.orderProduct = null;
         this.member = member;
-        this.couponUsed = false;
-        this.usedAt = null;
     }
 
     /**
