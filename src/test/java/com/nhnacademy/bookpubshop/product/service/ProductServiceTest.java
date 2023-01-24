@@ -7,6 +7,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
+
 import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
@@ -489,5 +490,28 @@ class ProductServiceTest {
         // then
         verify(productRepository, times(1))
                 .findProductListByType(1, 1);
+    }
+
+    @Test
+    @DisplayName("카트에 담긴 상품 조회 테스트")
+    void getProductsInCart() {
+        // given
+        GetProductDetailResponseDto dto = new GetProductDetailResponseDto();
+        ReflectionTestUtils.setField(dto, "productNo", 1L);
+        ReflectionTestUtils.setField(dto, "title", "설명");
+        ReflectionTestUtils.setField(dto, "productPublisher", "출판");
+        ReflectionTestUtils.setField(dto, "salesPrice", 1000L);
+        ReflectionTestUtils.setField(dto, "productPrice", 2000L);
+
+        List<GetProductDetailResponseDto> list = List.of(dto);
+
+        // when
+        when(productRepository.getProductsInCart(List.of(dto.getProductNo())))
+                .thenReturn(list);
+        productService.getProductsInCart(List.of(dto.getProductNo()));
+
+        // then
+        verify(productRepository, times(1))
+                .getProductsInCart(List.of(dto.getProductNo()));
     }
 }

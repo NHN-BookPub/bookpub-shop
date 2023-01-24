@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
@@ -300,6 +301,36 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$[0].salesPrice").value(9000))
                 .andExpect(jsonPath("$[0].productPrice").value(10000))
                 .andExpect(jsonPath("$[0].salesRate").value(10))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("카트에 담긴 상품들 번호를 가지고 상품 조회 테스트")
+    void getProductsInCart() throws Exception {
+        // given
+        GetProductDetailResponseDto dto = new GetProductDetailResponseDto();
+        ReflectionTestUtils.setField(dto, "productNo", 1L);
+        ReflectionTestUtils.setField(dto, "title", "설명");
+        ReflectionTestUtils.setField(dto, "productPublisher", "출판");
+        ReflectionTestUtils.setField(dto, "salesPrice", 1000L);
+        ReflectionTestUtils.setField(dto, "productPrice", 2000L);
+
+        List<GetProductDetailResponseDto> list = List.of(dto);
+
+        // when
+        when(productService.getProductsInCart(List.of(dto.getProductNo())))
+                .thenReturn(list);
+
+        // then
+        mockMvc.perform(get(url + "/cart")
+                        .param("productNo", String.valueOf(dto.getProductNo()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$[0].productNo").value(dto.getProductNo()))
+                .andExpect(jsonPath("$[0].title").value(dto.getTitle()))
+                .andExpect(jsonPath("$[0].productPublisher").value(dto.getProductPublisher()))
+                .andExpect(jsonPath("$[0].salesPrice").value(dto.getSalesPrice()))
+                .andExpect(jsonPath("$[0].productPrice").value(dto.getProductPrice()))
                 .andDo(print());
     }
 
