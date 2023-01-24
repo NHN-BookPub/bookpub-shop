@@ -174,4 +174,20 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .where(orderProduct.order.orderNo.eq(orderNo))
                 .fetch();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<GetProductDetailResponseDto> getProductsInCart(List<Long> productsNo) {
+        return from(product)
+                .select(Projections.fields(GetProductDetailResponseDto.class,
+                        product.productNo,
+                        product.title,
+                        product.productPublisher,
+                        product.productPrice,
+                        product.salesPrice))
+                .where(product.productNo.in(productsNo))
+                .fetch();
+    }
 }

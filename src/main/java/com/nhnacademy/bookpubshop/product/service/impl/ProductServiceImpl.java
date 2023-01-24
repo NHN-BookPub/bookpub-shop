@@ -20,7 +20,6 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTag;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
-import com.nhnacademy.bookpubshop.product.relationship.repository.ProductAuthorRepository;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductPolicyRepository;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
@@ -48,7 +47,6 @@ public class ProductServiceImpl implements ProductService {
     private final ProductPolicyRepository productPolicyRepository;
     private final ProductSaleStateCodeRepository saleStateCodeRepository;
     private final ProductTypeStateCodeRepository typeStateCodeRepository;
-    private final ProductAuthorRepository productAuthorRepository;
     private final AuthorRepository authorRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
@@ -140,10 +138,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public Page<GetProductListResponseDto> getAllProducts(Pageable pageable) {
-        Page<GetProductListResponseDto> response =
-                productRepository.getAllProducts(pageable);
-
-        return response;
+        return productRepository.getAllProducts(pageable);
     }
 
     /**
@@ -230,4 +225,12 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findProductListByType(typeNo, limit);
     }
 
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<GetProductDetailResponseDto> getProductsInCart(List<Long> productsNo) {
+        return productRepository.getProductsInCart(productsNo);
+    }
 }
