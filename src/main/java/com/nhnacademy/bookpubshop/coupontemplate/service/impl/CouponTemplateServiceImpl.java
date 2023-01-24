@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +45,6 @@ import org.springframework.web.multipart.MultipartFile;
  * @since : 1.0
  **/
 @Service
-@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CouponTemplateServiceImpl implements CouponTemplateService {
@@ -63,6 +61,10 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
      */
     @Override
     public RestGetDetailCouponTemplateResponseDto getDetailCouponTemplate(Long templateNo) throws IOException {
+        if (!couponTemplateRepository.existsById(templateNo)) {
+            throw new CouponTemplateNotFoundException(templateNo);
+        }
+
         GetDetailCouponTemplateResponseDto detailDto =
                 couponTemplateRepository.findDetailByTemplateNo(templateNo)
                         .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
@@ -84,7 +86,6 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
         List<RestGetCouponTemplateResponseDto> restList = new ArrayList<>();
 
         for (GetCouponTemplateResponseDto tmpDto : dtoList) {
-            log.info(tmpDto.getTemplateImage());
             if (Objects.nonNull(tmpDto.getTemplateImage())) {
                 restList.add(tmpDto.transform(
                         fileUtils.loadFile(tmpDto.getTemplateImage()
@@ -140,8 +141,6 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
                 getCouponStateCode(modifyRequestDto.getCodeNo()),
                 modifyRequestDto.getTemplateName(),
                 modifyRequestDto.getFinishedAt(),
-                modifyRequestDto.getIssuedAt(),
-                modifyRequestDto.isTemplateOverlapped(),
                 modifyRequestDto.isTemplateBundled());
 
         couponTemplate.setFile(fileUtils.saveFile(null, couponTemplate, null, null, null, image, "coupon"));
@@ -208,4 +207,5 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
         return couponStateCodeRepository.findById(codeNo)
                 .orElseThrow(() -> new CouponStateCodeNotFoundException(codeNo));
     }
+
 }

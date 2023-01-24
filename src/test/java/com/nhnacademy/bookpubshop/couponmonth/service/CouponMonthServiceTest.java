@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.couponmonth.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -33,6 +34,8 @@ import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCod
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.utils.FileUtils;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -65,6 +68,8 @@ class CouponMonthServiceTest {
 
     @MockBean
     CouponTemplateRepository couponTemplateRepository;
+    @MockBean
+    FileUtils fileUtils;
 
     ArgumentCaptor<CouponMonth> captor;
 
@@ -214,7 +219,15 @@ class CouponMonthServiceTest {
                 .thenReturn(Optional.of(response));
 
         // then
-        couponMonthService.getCouponMonth(anyLong());
+        GetCouponMonthResponseDto result = couponMonthService.getCouponMonth(anyLong());
+
+        assertThat(result.getMonthNo()).isEqualTo(response.getMonthNo());
+        assertThat(result.getTemplateNo()).isEqualTo(response.getTemplateNo());
+        assertThat(result.getTemplateName()).isEqualTo(response.getTemplateName());
+        assertThat(result.getTemplateImage()).isEqualTo(response.getTemplateImage());
+        assertThat(result.getOpenedAt()).isEqualTo(response.getOpenedAt());
+        assertThat(result.getMonthQuantity()).isEqualTo(response.getMonthQuantity());
+
         verify(couponMonthRepository, times(1))
                 .getCouponMonth(anyLong());
     }
@@ -234,18 +247,53 @@ class CouponMonthServiceTest {
 
     @Test
     @DisplayName("이달의 쿠폰 전체를 조회 성공 테스트")
-    void getCouponMonths_Success_Test() {
+    void getCouponMonths_Success_Test() throws IOException {
         // given
-        List<GetCouponMonthResponseDto> list = List.of(new GetCouponMonthResponseDto(null, null, null, null, null, null));
+        GetCouponMonthResponseDto dto = new GetCouponMonthResponseDto(null, null, null, null, null, null);
 
         // when
         when(couponMonthRepository.getCouponMonths())
-                .thenReturn(list);
+                .thenReturn(List.of(dto));
 
         // then
-        couponMonthService.getCouponMonths();
+        List<GetCouponMonthResponseDto> result = couponMonthService.getCouponMonths();
+
+        assertThat(result.get(0).getMonthNo()).isEqualTo(dto.getMonthNo());
+        assertThat(result.get(0).getTemplateNo()).isEqualTo(dto.getTemplateNo());
+        assertThat(result.get(0).getTemplateName()).isEqualTo(dto.getTemplateName());
+        assertThat(result.get(0).getTemplateImage()).isEqualTo(dto.getTemplateImage());
+        assertThat(result.get(0).getOpenedAt()).isEqualTo(dto.getOpenedAt());
+        assertThat(result.get(0).getMonthQuantity()).isEqualTo(dto.getMonthQuantity());
+
         verify(couponMonthRepository, times(1))
                 .getCouponMonths();
+    }
+
+    @Test
+    @DisplayName("이달의 쿠폰 전체를 조회 성공 테스트_이미지가 있는 경우")
+    void getCouponMonths_Success_Test_WithImage() throws IOException {
+        // given
+        GetCouponMonthResponseDto dto = new GetCouponMonthResponseDto(null, null, null, "Image", null, null);
+        String transferImage = "image_ex";
+
+        // when
+        when(couponMonthRepository.getCouponMonths())
+                .thenReturn(List.of(dto));
+        when(fileUtils.loadFile(dto.getTemplateImage()))
+                .thenReturn(transferImage);
+
+        // then
+        List<GetCouponMonthResponseDto> result = couponMonthService.getCouponMonths();
+
+        assertThat(result.get(0).getMonthNo()).isEqualTo(dto.getMonthNo());
+        assertThat(result.get(0).getTemplateNo()).isEqualTo(dto.getTemplateNo());
+        assertThat(result.get(0).getTemplateName()).isEqualTo(dto.getTemplateName());
+        assertThat(result.get(0).getTemplateImage()).isEqualTo(transferImage);
+        assertThat(result.get(0).getOpenedAt()).isEqualTo(dto.getOpenedAt());
+        assertThat(result.get(0).getMonthQuantity()).isEqualTo(dto.getMonthQuantity());
+        verify(couponMonthRepository, times(1))
+                .getCouponMonths();
+        verify(fileUtils, times(1)).loadFile(anyString());
     }
 
 }

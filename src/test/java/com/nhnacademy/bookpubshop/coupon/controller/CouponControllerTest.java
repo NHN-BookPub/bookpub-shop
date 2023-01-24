@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
-import com.nhnacademy.bookpubshop.coupon.dto.request.ModifyCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.service.CouponService;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
@@ -67,7 +66,7 @@ class CouponControllerTest {
         PageImpl<GetCouponResponseDto> page = new PageImpl<>(List.of(response), pageable, 1);
 
         // when
-        when(couponService.getCoupons(pageable))
+        when(couponService.getCoupons(pageable, null, null))
                 .thenReturn(page);
 
         // then
@@ -88,7 +87,7 @@ class CouponControllerTest {
                 .andDo(print());
 
         then(couponService).should()
-                .getCoupons(any());
+                .getCoupons(any(), any(), any());
     }
 
     @Test
@@ -118,7 +117,7 @@ class CouponControllerTest {
         // given
         CreateCouponRequestDto request = new CreateCouponRequestDto();
         ReflectionTestUtils.setField(request, "templateNo", 1L);
-        ReflectionTestUtils.setField(request, "memberNo", 1L);
+        ReflectionTestUtils.setField(request, "memberId", "idId");
 
         // when
         doNothing().when(couponService).createCoupon(request);
@@ -140,7 +139,7 @@ class CouponControllerTest {
         // given
         CreateCouponRequestDto request = new CreateCouponRequestDto();
         ReflectionTestUtils.setField(request, "templateNo", null);
-        ReflectionTestUtils.setField(request, "memberNo", 1L);
+        ReflectionTestUtils.setField(request, "memberId", "idId");
 
         // when
         doNothing().when(couponService).createCoupon(request);
@@ -156,11 +155,11 @@ class CouponControllerTest {
 
     @Test
     @DisplayName("쿠폰 생성 api memberNo Validation 테스트")
-    void addCoupon_NullMemberNo_Validation_Test() throws Exception {
+    void addCoupon_NullMemberId_Validation_Test() throws Exception {
         // given
         CreateCouponRequestDto request = new CreateCouponRequestDto();
         ReflectionTestUtils.setField(request, "templateNo", 1L);
-        ReflectionTestUtils.setField(request, "memberNo", null);
+        ReflectionTestUtils.setField(request, "memberId", null);
 
         // when
         doNothing().when(couponService).createCoupon(request);
@@ -170,51 +169,22 @@ class CouponControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$[0].message").value("멤버 번호를 입력해주세요."))
+                .andExpect(jsonPath("$[0].message").value("멤버 아이디를 입력해주세요."))
                 .andDo(print());
     }
 
 
     @Test
-    @DisplayName("쿠폰 수정 api 테스트")
-    void modifyCoupon_Test() throws Exception {
-        // given
-        ModifyCouponRequestDto request = new ModifyCouponRequestDto();
-        ReflectionTestUtils.setField(request, "couponNo", 1L);
-        ReflectionTestUtils.setField(request, "couponUsed", true);
-
+    @DisplayName("쿠폰 사용여부 수정 api 테스트")
+    void modifyCouponUsed_Test() throws Exception {
         // when
-        doNothing().when(couponService).modifyCouponUsed(request);
+        doNothing().when(couponService).modifyCouponUsed(anyLong());
 
         // then
-        mockMvc.perform(put(uri + "/modify")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andExpect(status().is2xxSuccessful())
-                .andDo(print());
+        mockMvc.perform(put(uri + "/{couponNo}" + "/used", 1L))
+                .andExpect(status().is2xxSuccessful());
 
         then(couponService).should()
-                .modifyCouponUsed(any(ModifyCouponRequestDto.class));
+                .modifyCouponUsed(any(Long.class));
     }
-
-    @Test
-    @DisplayName("쿠폰 수정 api Validation 테스트")
-    void modifyCoupon_NullMonthNo_Validation_Test() throws Exception {
-        // given
-        ModifyCouponRequestDto request = new ModifyCouponRequestDto();
-        ReflectionTestUtils.setField(request, "couponNo", null);
-        ReflectionTestUtils.setField(request, "couponUsed", true);
-
-        // when
-        doNothing().when(couponService).modifyCouponUsed(request);
-
-        // then
-        mockMvc.perform(put(uri + "/modify")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(request)))
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$[0].message").value("쿠폰 번호를 입력해주세요."))
-                .andDo(print());
-    }
-
 }

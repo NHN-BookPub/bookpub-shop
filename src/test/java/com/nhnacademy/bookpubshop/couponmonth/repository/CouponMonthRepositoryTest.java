@@ -105,7 +105,6 @@ class CouponMonthRepositoryTest {
     @DisplayName("이달의 쿠폰 get Test")
     @Test
     void getCouponMonthTest() {
-        File fileDummy = entityManager.persist(file);
         CouponMonth persist = entityManager.persist(couponMonth);
 
         Optional<GetCouponMonthResponseDto> result = couponMonthRepository.getCouponMonth(persist.getMonthNo());
@@ -114,7 +113,7 @@ class CouponMonthRepositoryTest {
         assertThat(result.get().getMonthNo()).isEqualTo(persist.getMonthNo());
         assertThat(result.get().getTemplateNo()).isEqualTo(persist.getCouponTemplate().getTemplateNo());
         assertThat(result.get().getTemplateName()).isEqualTo(persist.getCouponTemplate().getTemplateName());
-        assertThat(result.get().getTemplateImage()).isEqualTo(fileDummy.getNameSaved() + fileDummy.getFileExtension());
+        assertThat(result.get().getTemplateImage()).isEqualTo(file.getFilePath());
         assertThat(result.get().getOpenedAt()).isEqualTo(couponMonth.getOpenedAt());
         assertThat(result.get().getMonthQuantity()).isEqualTo(couponMonth.getMonthQuantity());
     }
@@ -124,7 +123,6 @@ class CouponMonthRepositoryTest {
     @Test
     void getCouponMonthsTest() {
         // given
-        File fileDummy = entityManager.persist(file);
         CouponMonth persist = entityManager.persist(couponMonth);
 
         // when
@@ -135,7 +133,7 @@ class CouponMonthRepositoryTest {
         assertThat(result.get(0).getMonthNo()).isEqualTo(couponMonth.getMonthNo());
         assertThat(result.get(0).getTemplateNo()).isEqualTo(persist.getCouponTemplate().getTemplateNo());
         assertThat(result.get(0).getTemplateName()).isEqualTo(persist.getCouponTemplate().getTemplateName());
-        assertThat(result.get(0).getTemplateImage()).isEqualTo(fileDummy.getNameSaved() + fileDummy.getFileExtension());
+        assertThat(result.get(0).getTemplateImage()).isEqualTo(file.getFilePath());
         assertThat(result.get(0).getOpenedAt()).isEqualTo(couponMonth.getOpenedAt());
         assertThat(result.get(0).getMonthQuantity()).isEqualTo(couponMonth.getMonthQuantity());
 

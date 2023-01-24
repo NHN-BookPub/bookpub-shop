@@ -43,12 +43,6 @@ public class CreateCouponTemplateRequestDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime finishedAt;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @NotNull(message = "발급일자를 기입해주세요.")
-    private LocalDateTime issuedAt;
-
-    private boolean templateOverlapped;
-
     private boolean templateBundled;
 
 
@@ -75,8 +69,6 @@ public class CreateCouponTemplateRequestDto {
                 .category(category)
                 .templateName(this.templateName)
                 .finishedAt(this.finishedAt)
-                .issuedAt(this.issuedAt)
-                .templateOverlapped(this.templateOverlapped)
                 .templateBundled(this.templateBundled)
                 .build();
     }

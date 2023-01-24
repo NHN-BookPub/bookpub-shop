@@ -18,7 +18,6 @@ public class GetCouponTemplateResponseDto {
     private Long templateNo;
     private String templateName;
     private String templateImage;
-    private LocalDateTime issuedAt;
     private LocalDateTime finishedAt;
 
     /**
@@ -32,7 +31,6 @@ public class GetCouponTemplateResponseDto {
                 this.templateNo,
                 this.templateName,
                 templateImage,
-                this.issuedAt,
                 this.finishedAt
         );
     }

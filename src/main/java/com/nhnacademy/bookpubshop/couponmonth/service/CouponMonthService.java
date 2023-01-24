@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.couponmonth.service;
 import com.nhnacademy.bookpubshop.couponmonth.dto.request.CreateCouponMonthRequestDto;
 import com.nhnacademy.bookpubshop.couponmonth.dto.request.ModifyCouponMonthRequestDto;
 import com.nhnacademy.bookpubshop.couponmonth.dto.response.GetCouponMonthResponseDto;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -47,5 +48,5 @@ public interface CouponMonthService {
      *
      * @return 쿠폰 조회에 필요한 정보를 담은 Dto 리스트
      */
-    List<GetCouponMonthResponseDto> getCouponMonths();
+    List<GetCouponMonthResponseDto> getCouponMonths() throws IOException;
 }

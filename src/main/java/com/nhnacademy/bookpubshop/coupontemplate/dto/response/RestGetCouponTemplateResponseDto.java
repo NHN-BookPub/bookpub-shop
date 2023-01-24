@@ -18,6 +18,5 @@ public class RestGetCouponTemplateResponseDto {
     private Long templateNo;
     private String templateName;
     private String templateImage;
-    private LocalDateTime issuedAt;
     private LocalDateTime finishedAt;
 }

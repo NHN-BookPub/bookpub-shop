@@ -3,11 +3,9 @@ package com.nhnacademy.bookpubshop.coupon.service;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
-import com.nhnacademy.bookpubshop.coupon.dto.request.ModifyCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.dummy.CouponDummy;
 import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
@@ -30,6 +28,7 @@ import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
@@ -47,7 +46,8 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCo
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
-import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
+import com.nhnacademy.bookpubshop.utils.FileUtils;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +56,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
@@ -80,6 +79,8 @@ class CouponServiceTest {
     MemberRepository memberRepository;
     @MockBean
     CouponTemplateRepository couponTemplateRepository;
+    @MockBean
+    FileUtils fileUtils;
     ArgumentCaptor<Coupon> captor;
 
     CouponPolicy couponPolicy;
@@ -100,12 +101,11 @@ class CouponServiceTest {
     OrderProduct orderProduct;
     PricePolicy pricePolicy;
     PricePolicy packagePolicy;
-    Address address;
     OrderStateCode orderStateCode;
 
     @BeforeEach
     void setUp() {
-        couponService = new CouponServiceImpl(couponRepository, memberRepository, couponTemplateRepository);
+        couponService = new CouponServiceImpl(couponRepository, memberRepository, couponTemplateRepository, fileUtils);
         couponPolicy = CouponPolicyDummy.dummy();
         couponType = CouponTypeDummy.dummy();
         couponStateCode = CouponStateCodeDummy.dummy();
@@ -135,10 +135,10 @@ class CouponServiceTest {
         // given
         CreateCouponRequestDto request = new CreateCouponRequestDto();
         ReflectionTestUtils.setField(request, "templateNo", 1L);
-        ReflectionTestUtils.setField(request, "memberNo", 1L);
+        ReflectionTestUtils.setField(request, "memberId", "idid");
 
         // when
-        when(memberRepository.findById(anyLong()))
+        when(memberRepository.findByMemberId(anyString()))
                 .thenReturn(Optional.of(member));
         when(couponTemplateRepository.findById(anyLong()))
                 .thenReturn(Optional.of(couponTemplate));
@@ -147,7 +147,7 @@ class CouponServiceTest {
         couponService.createCoupon(request);
 
         verify(memberRepository, times(1))
-                .findById(anyLong());
+                .findByMemberId(anyString());
         verify(couponTemplateRepository, times(1))
                 .findById(anyLong());
         verify(couponRepository, times(1))
@@ -160,10 +160,10 @@ class CouponServiceTest {
         // given
         CreateCouponRequestDto request = new CreateCouponRequestDto();
         ReflectionTestUtils.setField(request, "templateNo", 1L);
-        ReflectionTestUtils.setField(request, "memberNo", 1L);
+        ReflectionTestUtils.setField(request, "memberId", "idid");
 
         // when
-        when(memberRepository.findById(anyLong()))
+        when(memberRepository.findByMemberId(anyString()))
                 .thenReturn(Optional.empty());
 
         // then
@@ -178,10 +178,10 @@ class CouponServiceTest {
         // given
         CreateCouponRequestDto request = new CreateCouponRequestDto();
         ReflectionTestUtils.setField(request, "templateNo", 1L);
-        ReflectionTestUtils.setField(request, "memberNo", 1L);
+        ReflectionTestUtils.setField(request, "memberId", "idId");
 
         // when
-        when(memberRepository.findById(anyLong()))
+        when(memberRepository.findByMemberId(anyString()))
                 .thenReturn(Optional.of(member));
         when(couponTemplateRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
@@ -193,38 +193,31 @@ class CouponServiceTest {
     }
 
     @Test
-    @DisplayName("쿠폰 수정 성공 테스트 (사용시간 변경)")
+    @DisplayName("쿠폰 수정 성공 테스트(사용 상태로 변경)")
     void modifyCoupon_Success_ChangeTime_Test() {
-        // given
-        ModifyCouponRequestDto request = new ModifyCouponRequestDto();
-        ReflectionTestUtils.setField(request, "couponNo", 1L);
-        ReflectionTestUtils.setField(request, "couponUsed", true);
-
         // when
         when(couponRepository.findById(anyLong()))
                 .thenReturn(Optional.of(coupon));
 
         // then
-        couponService.modifyCouponUsed(request);
+        couponService.modifyCouponUsed(1L);
 
         verify(couponRepository, times(1))
                 .findById(anyLong());
     }
 
     @Test
-    @DisplayName("쿠폰 수정 성공 테스트 (사용시간 변경 X)")
+    @DisplayName("쿠폰 수정 성공 테스트 (사용 안함 상태로 변경)")
     void modifyCoupon_Success_Test() {
         // given
-        ModifyCouponRequestDto request = new ModifyCouponRequestDto();
-        ReflectionTestUtils.setField(request, "couponNo", 1L);
-        ReflectionTestUtils.setField(request, "couponUsed", false);
+        Coupon couponUsed = new Coupon(null, couponTemplate, null, null, member, true, LocalDateTime.now());
 
         // when
         when(couponRepository.findById(anyLong()))
-                .thenReturn(Optional.of(coupon));
+                .thenReturn(Optional.of(couponUsed));
 
         // then
-        couponService.modifyCouponUsed(request);
+        couponService.modifyCouponUsed(1L);
 
         verify(couponRepository, times(1))
                 .findById(anyLong());
@@ -233,17 +226,12 @@ class CouponServiceTest {
     @Test
     @DisplayName("쿠폰 수정 실패 테스트 (coupon 못 찾은 경우)")
     void modifyCoupon_Fail_NotFoundCoupon_Test() {
-        // given
-        ModifyCouponRequestDto request = new ModifyCouponRequestDto();
-        ReflectionTestUtils.setField(request, "couponNo", 1L);
-        ReflectionTestUtils.setField(request, "couponUsed", false);
-
         // when
         when(couponRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
         // then
-        assertThatThrownBy(() -> couponService.modifyCouponUsed(request))
+        assertThatThrownBy(() -> couponService.modifyCouponUsed(1L))
                 .isInstanceOf(CouponNotFoundException.class)
                 .hasMessageContaining(CouponNotFoundException.MESSAGE);
     }
@@ -256,23 +244,21 @@ class CouponServiceTest {
                 new GetCouponResponseDto(1L, "member", "template", "image", true, 1L, 10L, 100L, LocalDateTime.now(), true);
 
         // when
-        when(couponRepository.getCoupon(anyLong()))
+        when(couponRepository.findByCouponNo(anyLong()))
                 .thenReturn(Optional.of(response));
 
         // then
         couponService.getCoupon(anyLong());
 
         verify(couponRepository, times(1))
-                .getCoupon(anyLong());
+                .findByCouponNo(anyLong());
     }
 
     @Test
     @DisplayName("쿠폰 조회 실패 테스트 (coupon 못 찾은 경우)")
     void getCoupon_Fail_NotFoundCoupon_Test() {
-        // given
-
         // when
-        when(couponRepository.getCoupon(anyLong()))
+        when(couponRepository.findByCouponNo(anyLong()))
                 .thenReturn(Optional.empty());
 
         // then
@@ -283,7 +269,7 @@ class CouponServiceTest {
 
     @Test
     @DisplayName("쿠폰 전체 조회 테스트")
-    void getCoupons_Success_Test() {
+    void getCoupons_Success_Test() throws IOException {
         // given
         GetCouponResponseDto response =
                 new GetCouponResponseDto(1L, "member", "template", "image", true, 1L, 10L, 100L, LocalDateTime.now(), true);
@@ -291,14 +277,14 @@ class CouponServiceTest {
         PageImpl<GetCouponResponseDto> page = new PageImpl<>(List.of(response), pageable, 1);
 
         // when
-        when(couponRepository.getCoupons(pageable))
+        when(couponRepository.findAllBy(pageable, "", ""))
                 .thenReturn(page);
 
         // then
-        couponService.getCoupons(pageable);
+        couponService.getCoupons(pageable, "", "");
 
         verify(couponRepository, times(1))
-                .getCoupons(pageable);
+                .findAllBy(pageable, "", "");
     }
 
 }

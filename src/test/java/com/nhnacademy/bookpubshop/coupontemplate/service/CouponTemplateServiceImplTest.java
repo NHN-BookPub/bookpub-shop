@@ -129,8 +129,6 @@ class CouponTemplateServiceImplTest {
         ReflectionTestUtils.setField(createRequestDto, "codeNo", 1);
         ReflectionTestUtils.setField(createRequestDto, "templateName", "test_templateName");
         ReflectionTestUtils.setField(createRequestDto, "finishedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createRequestDto, "issuedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createRequestDto, "templateOverlapped", true);
         ReflectionTestUtils.setField(createRequestDto, "templateBundled", true);
 
         ReflectionTestUtils.setField(modifyRequestDto, "policyNo", 1);
@@ -140,8 +138,6 @@ class CouponTemplateServiceImplTest {
         ReflectionTestUtils.setField(modifyRequestDto, "codeNo", 1);
         ReflectionTestUtils.setField(modifyRequestDto, "templateName", "test_templateName");
         ReflectionTestUtils.setField(modifyRequestDto, "finishedAt", LocalDateTime.now());
-        ReflectionTestUtils.setField(modifyRequestDto, "issuedAt", LocalDateTime.now());
-        ReflectionTestUtils.setField(modifyRequestDto, "templateOverlapped", true);
         ReflectionTestUtils.setField(modifyRequestDto, "templateBundled", true);
 
     }
@@ -150,9 +146,11 @@ class CouponTemplateServiceImplTest {
     @DisplayName("쿠폰템플릿 상세 정보 조회 성공 테스트_이미지가 있는 경우")
     void restGetDetailCouponTemplateTestWithImage_Success() throws IOException {
         GetDetailCouponTemplateResponseDto dto =
-                new GetDetailCouponTemplateResponseDto(1L, true, 1L, 1L, 1L, "test_typeName", "test_title", "test_categoryName", "test_target", "test_name", "test_image", LocalDateTime.of(1, 1, 1, 1, 1), LocalDateTime.of(1, 1, 1, 1, 1), true, true);
+                new GetDetailCouponTemplateResponseDto(1L, true, 1L, 1L, 1L, "test_typeName", "test_title", "test_categoryName", "test_target", "test_name", "test_image", LocalDateTime.of(1, 1, 1, 1, 1), true);
         RestGetDetailCouponTemplateResponseDto restDto =
-                new RestGetDetailCouponTemplateResponseDto(1L, true, 1L, 1L, 1L, "test_typeName", "test_title", "test_categoryName", "test_target", "test_name", "test_restImage", dto.getIssuedAt(), dto.getFinishedAt(), true, true);
+                new RestGetDetailCouponTemplateResponseDto(1L, true, 1L, 1L, 1L, "test_typeName", "test_title", "test_categoryName", "test_target", "test_name", "test_restImage", dto.getFinishedAt(), true);
+
+        when(couponTemplateRepository.existsById(anyLong())).thenReturn(true);
 
         when(couponTemplateRepository.findDetailByTemplateNo(anyLong()))
                 .thenReturn(Optional.of(dto));
@@ -173,10 +171,9 @@ class CouponTemplateServiceImplTest {
         assertThat(result.getCodeTarget()).isEqualTo(restDto.getCodeTarget());
         assertThat(result.getTemplateName()).isEqualTo(restDto.getTemplateName());
         assertThat(result.getFinishedAt()).isEqualTo(restDto.getFinishedAt());
-        assertThat(result.getIssuedAt()).isEqualTo(restDto.getIssuedAt());
-        assertThat(result.isTemplateOverlapped()).isEqualTo(restDto.isTemplateOverlapped());
         assertThat(result.isTemplateBundled()).isEqualTo(restDto.isTemplateBundled());
 
+        verify(couponTemplateRepository, times(1)).existsById(anyLong());
         verify(couponTemplateRepository, times(1)).findDetailByTemplateNo(anyLong());
         verify(fileUtils, times(1)).loadFile(anyString());
     }
@@ -190,19 +187,17 @@ class CouponTemplateServiceImplTest {
         assertThatThrownBy(() -> couponTemplateService.getDetailCouponTemplate(anyLong()))
                 .isInstanceOf(CouponTemplateNotFoundException.class)
                 .hasMessageContaining(CouponTemplateNotFoundException.MESSAGE);
-
-        verify(couponTemplateRepository, times(1)).findDetailByTemplateNo(anyLong());
     }
 
     @Test
     @DisplayName("쿠폰템플릿 기본 정보 리스트 조회 성공 테스트")
     void getCouponTemplatesTest_Success() throws IOException {
         GetCouponTemplateResponseDto dto =
-                new GetCouponTemplateResponseDto(1L, "test_name", "test_image", LocalDateTime.now(), LocalDateTime.now());
+                new GetCouponTemplateResponseDto(1L, "test_name", "test_image", LocalDateTime.now());
         GetCouponTemplateResponseDto dto_twice =
-                new GetCouponTemplateResponseDto(1L, "test_name", null, LocalDateTime.now(), LocalDateTime.now());
+                new GetCouponTemplateResponseDto(1L, "test_name", null, LocalDateTime.now());
         RestGetCouponTemplateResponseDto restDto =
-                new RestGetCouponTemplateResponseDto(1L, "test_name", "1234EJD2E", dto.getIssuedAt(), dto.getFinishedAt());
+                new RestGetCouponTemplateResponseDto(1L, "test_name", "1234EJD2E", dto.getFinishedAt());
 
 
         Pageable pageable = PageRequest.of(0, 10);
@@ -219,11 +214,7 @@ class CouponTemplateServiceImplTest {
 
         assertThat(content.get(0).getTemplateName()).isEqualTo(restDto.getTemplateName());
         assertThat(content.get(0).getTemplateImage()).isEqualTo(restDto.getTemplateImage());
-        assertThat(content.get(0).getIssuedAt()).isEqualTo(restDto.getIssuedAt());
         assertThat(content.get(0).getFinishedAt()).isEqualTo(restDto.getFinishedAt());
-
-        verify(couponTemplateRepository, times(1)).findAllBy(pageable);
-
     }
 
     @Test
@@ -238,8 +229,6 @@ class CouponTemplateServiceImplTest {
         ReflectionTestUtils.setField(createDto, "codeNo", 1);
         ReflectionTestUtils.setField(createDto, "templateName", "test_templateName");
         ReflectionTestUtils.setField(createDto, "finishedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createDto, "issuedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createDto, "templateOverlapped", true);
         ReflectionTestUtils.setField(createDto, "templateBundled", true);
 
         File file = new File(null, null, null, null, null, null, "test_category", "test_path", "test_extension", "test_origin", "test_saved");
@@ -268,8 +257,6 @@ class CouponTemplateServiceImplTest {
         assertThat(result.getCategory()).isNull();
         assertThat(result.getTemplateName()).isEqualTo(createDto.getTemplateName());
         assertThat(result.getFinishedAt()).isEqualTo(createDto.getFinishedAt());
-        assertThat(result.getIssuedAt()).isEqualTo(createDto.getIssuedAt());
-        assertThat(result.isTemplateOverlapped()).isEqualTo(createDto.isTemplateOverlapped());
         assertThat(result.isTemplateBundled()).isEqualTo(createDto.isTemplateBundled());
 
         verify(fileUtils, times(1)).saveFile(any(), any(), any(), any(), any(), any(), any());
@@ -290,8 +277,6 @@ class CouponTemplateServiceImplTest {
         ReflectionTestUtils.setField(createDto, "codeNo", 1);
         ReflectionTestUtils.setField(createDto, "templateName", "test_templateName");
         ReflectionTestUtils.setField(createDto, "finishedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createDto, "issuedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createDto, "templateOverlapped", true);
         ReflectionTestUtils.setField(createDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
@@ -318,8 +303,6 @@ class CouponTemplateServiceImplTest {
         ReflectionTestUtils.setField(createDto, "codeNo", 1);
         ReflectionTestUtils.setField(createDto, "templateName", "test_templateName");
         ReflectionTestUtils.setField(createDto, "finishedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createDto, "issuedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createDto, "templateOverlapped", true);
         ReflectionTestUtils.setField(createDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
@@ -346,8 +329,6 @@ class CouponTemplateServiceImplTest {
         ReflectionTestUtils.setField(createDto, "codeNo", 1);
         ReflectionTestUtils.setField(createDto, "templateName", "test_templateName");
         ReflectionTestUtils.setField(createDto, "finishedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createDto, "issuedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createDto, "templateOverlapped", true);
         ReflectionTestUtils.setField(createDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
@@ -373,8 +354,6 @@ class CouponTemplateServiceImplTest {
         ReflectionTestUtils.setField(createDto, "codeNo", 1);
         ReflectionTestUtils.setField(createDto, "templateName", "test_templateName");
         ReflectionTestUtils.setField(createDto, "finishedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createDto, "issuedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createDto, "templateOverlapped", true);
         ReflectionTestUtils.setField(createDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
@@ -400,8 +379,6 @@ class CouponTemplateServiceImplTest {
         ReflectionTestUtils.setField(createDto, "codeNo", 1);
         ReflectionTestUtils.setField(createDto, "templateName", "test_templateName");
         ReflectionTestUtils.setField(createDto, "finishedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createDto, "issuedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(createDto, "templateOverlapped", true);
         ReflectionTestUtils.setField(createDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
@@ -490,8 +467,6 @@ class CouponTemplateServiceImplTest {
         ReflectionTestUtils.setField(modifyDto, "codeNo", 1);
         ReflectionTestUtils.setField(modifyDto, "templateName", "test_templateName");
         ReflectionTestUtils.setField(modifyDto, "finishedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(modifyDto, "issuedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(modifyDto, "templateOverlapped", true);
         ReflectionTestUtils.setField(modifyDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
@@ -520,8 +495,6 @@ class CouponTemplateServiceImplTest {
         ReflectionTestUtils.setField(modifyDto, "codeNo", 1);
         ReflectionTestUtils.setField(modifyDto, "templateName", "test_templateName");
         ReflectionTestUtils.setField(modifyDto, "finishedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(modifyDto, "issuedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(modifyDto, "templateOverlapped", true);
         ReflectionTestUtils.setField(modifyDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
@@ -550,8 +523,6 @@ class CouponTemplateServiceImplTest {
         ReflectionTestUtils.setField(modifyDto, "codeNo", 1);
         ReflectionTestUtils.setField(modifyDto, "templateName", "test_templateName");
         ReflectionTestUtils.setField(modifyDto, "finishedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(modifyDto, "issuedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(modifyDto, "templateOverlapped", true);
         ReflectionTestUtils.setField(modifyDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
@@ -579,8 +550,6 @@ class CouponTemplateServiceImplTest {
         ReflectionTestUtils.setField(modifyDto, "codeNo", 1);
         ReflectionTestUtils.setField(modifyDto, "templateName", "test_templateName");
         ReflectionTestUtils.setField(modifyDto, "finishedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(modifyDto, "issuedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(modifyDto, "templateOverlapped", true);
         ReflectionTestUtils.setField(modifyDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
@@ -608,8 +577,6 @@ class CouponTemplateServiceImplTest {
         ReflectionTestUtils.setField(modifyDto, "codeNo", 1);
         ReflectionTestUtils.setField(modifyDto, "templateName", "test_templateName");
         ReflectionTestUtils.setField(modifyDto, "finishedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(modifyDto, "issuedAt", LocalDateTime.of(1, 1, 1, 1, 1));
-        ReflectionTestUtils.setField(modifyDto, "templateOverlapped", true);
         ReflectionTestUtils.setField(modifyDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";

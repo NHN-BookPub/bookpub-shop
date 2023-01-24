@@ -9,7 +9,6 @@ import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.io.IOException;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -30,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
  * @author : 정유진
  * @since : 1.0
  **/
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -43,9 +41,10 @@ public class CouponTemplateController {
      * @param templateNo 조회할 쿠폰템플릿 번호
      * @return 성공 경우 200, 쿠폰템플릿의 자세한 정보 응답
      */
-    @GetMapping("/coupon-templates/details/{templateNo}")
+    @GetMapping("/coupon-templates/{templateNo}")
     public ResponseEntity<RestGetDetailCouponTemplateResponseDto> couponTemplateDetail(
             @PathVariable("templateNo") Long templateNo) throws IOException {
+
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(couponTemplateService.getDetailCouponTemplate(templateNo));
@@ -71,8 +70,9 @@ public class CouponTemplateController {
 
     /**
      * 쿠폰템플릿을 등록하는 메서드입니다.
-     * 추후 작성이 필요합니다. (파일 관련 미완성)
      *
+     * @param request 등록할 정보를 담은 Dto
+     * @param image   등록할 이미지 파일
      * @return 성공 경우 201
      */
     @PostMapping(value = "/coupon-templates")
@@ -89,6 +89,7 @@ public class CouponTemplateController {
      * 쿠폰템플릿을 수정하는 메서드입니다.
      *
      * @param request 수정할 정보를 담은 Dto
+     * @param image   수정할 이미지 파일
      * @return 성공 경우 201
      */
     @PutMapping("/coupon-templates/{templateNo}")
