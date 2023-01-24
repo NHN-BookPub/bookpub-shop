@@ -59,4 +59,12 @@ public interface ProductRepositoryCustom {
      * @return 주문에서 보여질 상품 Dto를 반환합니다.
      */
     List<GetProductListForOrderResponseDto> getProductListByOrderNo(Long orderNo);
+
+    /**
+     * 카트에 담긴 상품들 조회.
+     *
+     * @param productsNo 카트에 담긴 상품들 번호
+     * @return 카트에 담긴 상품들 정보
+     */
+    List<GetProductDetailResponseDto> getProductsInCart(List<Long> productsNo);
 }

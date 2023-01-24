@@ -147,4 +147,18 @@ public class ProductController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productService.getProductsByType(typeNo, limit));
     }
+
+    /**
+     * 카트에 담긴 상품들만 조회.
+     *
+     * @param productsNo 카트에 담긴 상품들 번호
+     * @return 카트에 담긴 상품들 정보
+     */
+    @GetMapping("/cart")
+    public ResponseEntity<List<GetProductDetailResponseDto>> getProductInCart(
+            @RequestParam(name = "productNo") List<Long> productsNo) {
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(productService.getProductsInCart(productsNo));
+    }
 }

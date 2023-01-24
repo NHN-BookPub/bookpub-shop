@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.product.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
@@ -196,4 +197,40 @@ class ProductRepositoryTest {
         assertThat(list).isNotEmpty();
     }
 
+    @Test
+    @DisplayName("카트에 담긴 상품 정보 조회 테스트")
+    void getProductsInCart() {
+        // given
+        Product persist = entityManager.persist(product);
+        Author author = AuthorDummy.dummy();
+        entityManager.persist(author);
+
+        persist.getProductAuthors().add(
+                new ProductAuthor(
+                        new ProductAuthor.Pk(author.getAuthorNo(), product.getProductNo()), author, product));
+
+        Category category = CategoryDummy.dummy();
+        entityManager.persist(category);
+
+        persist.getProductCategories().add(
+                new ProductCategory(
+                        new ProductCategory.Pk(category.getCategoryNo(), product.getProductNo()), category, product));
+
+        Tag tag = TagDummy.dummy();
+        entityManager.persist(tag);
+        persist.getProductTags().add(
+                new ProductTag(new ProductTag.Pk(tag.getTagNo(), product.getProductNo()), tag, product));
+        entityManager.persist(product);
+
+        // when
+        List<GetProductDetailResponseDto> productsInCart = productRepository.getProductsInCart(List.of(persist.getProductNo()));
+
+        // then
+        assertThat(productsInCart).isNotEmpty();
+        assertThat(productsInCart.get(0).getProductNo()).isEqualTo(persist.getProductNo());
+        assertThat(productsInCart.get(0).getTitle()).isEqualTo(persist.getTitle());
+        assertThat(productsInCart.get(0).getProductPublisher()).isEqualTo(persist.getProductPublisher());
+        assertThat(productsInCart.get(0).getProductPrice()).isEqualTo(persist.getProductPrice());
+        assertThat(productsInCart.get(0).getSalesPrice()).isEqualTo(persist.getSalesPrice());
+    }
 }
