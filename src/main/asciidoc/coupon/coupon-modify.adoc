@@ -1,0 +1,20 @@
+= Coupon
+:toc:left
+
+== 쿠폰 수정
+Coupon-modify
+
+=== 요청구조
+include::../../../../target/snippets/coupon-modify/http-request.adoc
+
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/coupon-modify/request-fields.adoc
+
+=== 응답 구조
+include::../../../../target/snippets/coupon-modify/http-response.adoc
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-modify/response-body.adoc

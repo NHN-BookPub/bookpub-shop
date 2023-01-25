@@ -1,0 +1,26 @@
+= Coupon
+:toc:left
+
+== 쿠폰 생성
+Coupon-create
+
+=== 요청구조
+include::../../../../target/snippets/coupon-add/http-request.adoc
+
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/coupon-add/request-fields.adoc
+
+=== 응답 구조
+include::../../../../target/snippets/coupon-add/http-response.adoc
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-add/response-body.adoc
+
+
+==== 예외사항
+
+include::../../../../target/snippets/coupon-add-no-memberId-validation/response-body.adoc
+include::../../../../target/snippets/coupon-add-no-templateNo-validation/response-body.adoc
