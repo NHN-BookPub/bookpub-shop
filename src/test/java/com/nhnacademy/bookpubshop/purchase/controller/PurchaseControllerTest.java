@@ -2,9 +2,14 @@ package com.nhnacademy.bookpubshop.purchase.controller;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
@@ -28,6 +33,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -38,11 +44,6 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * PurchaseControllerTest.
@@ -53,6 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PurchaseController.class)
 @Import(ShopAdviceController.class)
 @MockBean(JpaMetamodelMappingContext.class)
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 class PurchaseControllerTest {
     @Autowired
     MockMvc mockMvc;
@@ -109,7 +111,20 @@ class PurchaseControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pageResult)))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("purchaseList-get",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("content[].purchaseNo").description("매입이력의 고유 number가 반환됩니다."),
+                                fieldWithPath("content[].purchaseAmount").description("매입 수량이 반환됩니다."),
+                                fieldWithPath("content[].purchasePrice").description("매입한 금액이 반환됩니다."),
+                                fieldWithPath("content[].productNo").description("매입한 상품의 고유번호가 반환됩니다."),
+                                fieldWithPath("totalPages").description("총 페이지 수 입니다."),
+                                fieldWithPath("number").description("현재 페이지 입니다."),
+                                fieldWithPath("previous").description("이전페이지 존재 여부 입니다."),
+                                fieldWithPath("next").description("다음페이지 존재 여부 입니다.")
+                        )));
 
         verify(purchaseService, times(1))
                 .getPurchaseListDesc(pageable);
@@ -148,7 +163,20 @@ class PurchaseControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pageResult)))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("purchase-get",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("content[].purchaseNo").description("매입이력의 고유 number가 반환됩니다."),
+                                fieldWithPath("content[].purchaseAmount").description("매입 수량이 반환됩니다."),
+                                fieldWithPath("content[].purchasePrice").description("매입한 금액이 반환됩니다."),
+                                fieldWithPath("content[].productNo").description("매입한 상품의 고유번호가 반환됩니다."),
+                                fieldWithPath("totalPages").description("총 페이지 수 입니다."),
+                                fieldWithPath("number").description("현재 페이지 입니다."),
+                                fieldWithPath("previous").description("이전페이지 존재 여부 입니다."),
+                                fieldWithPath("next").description("다음페이지 존재 여부 입니다.")
+                        )));
 
         verify(purchaseService, times(1))
                 .getPurchaseByProductNo(product.getProductNo(), pageable);
@@ -177,7 +205,16 @@ class PurchaseControllerTest {
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("purchase-put",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("productNo").description("변경하려는 매입이력의 상품번호를 기입합니다."),
+                                fieldWithPath("purchasePrice").description("변경하려는 매입이력의 가격입니다."),
+                                fieldWithPath("purchaseAmount").description("변경하려는 매입이력의 양입니다.")
+                        )
+                ));
 
         verify(purchaseService, times(1))
                 .modifyPurchase(anyLong(), any());
@@ -193,7 +230,16 @@ class PurchaseControllerTest {
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("purchase-add",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("productNo").description("구매한 상품의 번호가 기입됩니다."),
+                                fieldWithPath("purchasePrice").description("상품의 매입 가격이 기입됩니다."),
+                                fieldWithPath("purchaseAmount").description("상품의 매입 수량이 기입됩니다.")
+                        )
+                ));
 
         verify(purchaseService, times(1))
                 .createPurchase(any());
