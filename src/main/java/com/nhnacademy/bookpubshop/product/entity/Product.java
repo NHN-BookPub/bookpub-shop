@@ -96,11 +96,9 @@ public class Product extends BaseCreateTimeEntity {
     @Column(name = "product_view_count")
     private Long viewCount;
 
-    @NotNull
     @Column(name = "product_priority")
     private Integer productPriority;
 
-    @NotNull
     @Column(name = "product_deleted")
     private boolean productDeleted;
 
