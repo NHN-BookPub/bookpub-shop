@@ -1,0 +1,25 @@
+= Product-Policy
+:toc:
+
+== 상품 정책 생성
+
+Product-Policy create
+
+== 요청 구조
+
+include::../../../../target/snippets/product-policy-add-success/http-request.adoc[]
+
+== 요청 파라미터
+
+include::../../../../target/snippets/product-policy-add-success/request-fields.adoc[]
+
+== 응답 구조
+
+include::../../../../target/snippets/product-policy-add-success/http-response.adoc[]
+
+== 예외 사항
+
+- policyMethod가 10글자 넘는 경우
+
+include::../../../../target/snippets/product-policy-policyMethod-validationFail/http-request.adoc[]
+include::../../../../target/snippets/product-policy-policyMethod-validationFail/http-response.adoc[]
