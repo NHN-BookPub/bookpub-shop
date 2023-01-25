@@ -1,0 +1,31 @@
+
+= CouponMonth
+:toc:left
+
+== 이달의 쿠폰 생성
+Coupon-Month-create
+
+=== 요청구조
+include::../../../../target/snippets/coupon-month-create/http-request.adoc[]
+
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/coupon-month-create/request-fields.adoc[]
+
+
+=== 응답 구조
+include::../../../../target/snippets/coupon-month-create/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-month-create/response-body.adoc[]
+
+
+==== 예외사항
+
+include::../../../../target/snippets/coupon-month-create-monthQuantityFail/http-response.adoc[]
+include::../../../../target/snippets/coupon-month-create-openAtFail/http-response.adoc[]
+include::../../../../target/snippets/coupon-month-create-templateNoFail/http-response.adoc[]
+
+

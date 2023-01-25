@@ -4,6 +4,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,10 +20,12 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -27,6 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
  **/
 @WebMvcTest(CouponStateCodeRestController.class)
 @MockBean(JpaMetamodelMappingContext.class)
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 class CouponStateCodeRestControllerTest {
     @Autowired
     ObjectMapper objectMapper;
@@ -44,11 +54,20 @@ class CouponStateCodeRestControllerTest {
         given(couponStateCodeService.getCouponStateCode(anyInt()))
                 .willReturn(dto);
 
-        mockMvc.perform(get("/api/coupon-state-codes/{codeNo}", 1))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/coupon-state-codes/{codeNo}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.codeNo", equalTo(dto.getCodeNo())))
-                .andExpect(jsonPath("$.codeTarget", equalTo(dto.getCodeTarget())));
+                .andExpect(jsonPath("$.codeTarget", equalTo(dto.getCodeTarget())))
+                .andDo(document("coupon-state-detail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("codeNo").description("Path 로 상태코드 번호 기입")),
+                        responseFields(
+                                fieldWithPath("codeNo").description("쿠폰 상태코드 번호"),
+                                fieldWithPath("codeTarget").description("적용 대상")
+                        )
+                ));
 
         verify(couponStateCodeService).getCouponStateCode(1);
     }
@@ -67,7 +86,15 @@ class CouponStateCodeRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].codeNo", equalTo(dto.get(0).getCodeNo())))
-                .andExpect(jsonPath("$[0].codeTarget", equalTo(dto.get(0).getCodeTarget())));
+                .andExpect(jsonPath("$[0].codeTarget", equalTo(dto.get(0).getCodeTarget())))
+                .andDo(document("coupon-state-list",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].codeNo").description("쿠폰 상태코드 번호"),
+                                fieldWithPath("[].codeTarget").description("적용 대상")
+                        )
+                ));
 
         verify(couponStateCodeService).getCouponStateCodes();
     }

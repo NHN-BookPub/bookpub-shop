@@ -4,7 +4,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -24,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -34,6 +38,7 @@ import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -45,6 +50,7 @@ import org.springframework.test.web.servlet.MockMvc;
  **/
 @WebMvcTest(CouponTemplateController.class)
 @Import(ShopAdviceController.class)
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 @MockBean(JpaMetamodelMappingContext.class)
 class CouponTemplateControllerTest {
 
@@ -74,7 +80,7 @@ class CouponTemplateControllerTest {
 
         when(couponTemplateService.getDetailCouponTemplate(anyLong())).thenReturn(dto);
 
-        mockMvc.perform(get(path + "/{templateNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.get(path + "/{templateNo}", 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -90,7 +96,27 @@ class CouponTemplateControllerTest {
                 .andExpect(jsonPath("$.templateName").value(dto.getTemplateName()))
                 .andExpect(jsonPath("$.templateImage").value(dto.getTemplateImage()))
                 .andExpect(jsonPath("$.finishedAt").value(dto.getFinishedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
-                .andExpect(jsonPath("$.templateBundled").value(objectMapper.writeValueAsString(dto.isTemplateBundled())));
+                .andExpect(jsonPath("$.templateBundled").value(objectMapper.writeValueAsString(dto.isTemplateBundled())))
+                .andDo(document("coupon_template_detail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("templateNo").description("Path 로 쿠폰템플릿 번호기입")),
+                        responseFields(
+                                fieldWithPath("templateNo").description("템플릿 번호 반환"),
+                                fieldWithPath("policyFixed").description("쿠폰 정액 여부 반환"),
+                                fieldWithPath("policyPrice").description("쿠폰 할인가격 반환"),
+                                fieldWithPath("policyMinimum").description("쿠폰 최소주문 금액 반환"),
+                                fieldWithPath("maxDiscount").description("쿠폰 최대할인 가격 반환"),
+                                fieldWithPath("typeName").description("쿠폰 유형이름 반환"),
+                                fieldWithPath("productTitle").description("상품 이름 반환"),
+                                fieldWithPath("categoryName").description("카테고리 이름 반환"),
+                                fieldWithPath("codeTarget").description("쿠폰 적용타겟 반환"),
+                                fieldWithPath("templateName").description("쿠폰 템플릿 이름 반환"),
+                                fieldWithPath("templateImage").description("쿠폰 이미지 경로 반환"),
+                                fieldWithPath("finishedAt").description("쿠폰 만료일자 반환"),
+                                fieldWithPath("templateBundled").description("쿠폰 묶음 할인여부 반환")
+                        )
+                ));
 
         then(couponTemplateService)
                 .should().getDetailCouponTemplate(anyLong());
@@ -112,7 +138,7 @@ class CouponTemplateControllerTest {
                 .thenReturn(page);
 
         // then
-        mockMvc.perform(get(path)
+        mockMvc.perform(RestDocumentationRequestBuilders.get(path)
                         .param("page", objectMapper.writeValueAsString(pageable.getPageNumber()))
                         .param("size", objectMapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -120,7 +146,26 @@ class CouponTemplateControllerTest {
                 .andExpect(jsonPath("$.content[0].templateName").value(list.get(0).getTemplateName()))
                 .andExpect(jsonPath("$.content[0].templateImage").value(list.get(0).getTemplateImage()))
                 .andExpect(jsonPath("$.content[0].finishedAt").value(dto.getFinishedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon_template_list",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("page").description("페이지 정보 기입"),
+                                parameterWithName("size").description("페이지 사이즈 기입")
+                        ),
+                        responseFields(
+                                fieldWithPath("content[].templateNo").description("쿠폰 템플릿 번호 반환"),
+                                fieldWithPath("content[].templateName").description("쿠폰 템플릿 이름 반환"),
+                                fieldWithPath("content[].templateImage").description("쿠폰 템플릿 이미지 경로 반환"),
+                                fieldWithPath("content[].finishedAt").description("쿠폰 만료일자 반환"),
+                                fieldWithPath("totalPages").description("총 페이지 수 반환"),
+                                fieldWithPath("number").description("현재 페이지 반환"),
+                                fieldWithPath("previous").description("이전 페이지 여부"),
+                                fieldWithPath("next").description("다음 페이지 여부")
+                        )
+                ));
+
         then(couponTemplateService).should().getCouponTemplates(any());
     }
 
@@ -137,16 +182,34 @@ class CouponTemplateControllerTest {
         ReflectionTestUtils.setField(createRequestDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
 
         String dtoToJson = objectMapper.writeValueAsString(createRequestDto);
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
+
         mockMvc.perform(multipart(path)
-                        .file(createRequestDto)
-                        .file(multipartFile))
+                        .file(multipartFile)
+                        .file(createRequestDto))
                 .andExpect(status().isCreated())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon_template_create",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description("이미지 기입"),
+                                partWithName("createRequestDto").description("쿠폰 생성 정보기입")),
+                        requestPartFields("createRequestDto",
+                                fieldWithPath("policyNo").description("쿠폰등급 번호 기입"),
+                                fieldWithPath("typeNo").description("쿠폰타입 번호 기입"),
+                                fieldWithPath("productNo").description("상품 번호 기입"),
+                                fieldWithPath("categoryNo").description("카테고리 번호 기입"),
+                                fieldWithPath("codeNo").description("코드번호 기입"),
+                                fieldWithPath("templateName").description("등록할 쿠폰 템플릿 명 기입"),
+                                fieldWithPath("finishedAt").description("만료일자 기입"),
+                                fieldWithPath("templateBundled").description("중복 쿠폰사용여부 기입")
+                        )
+                ));
     }
 
     @DisplayName("쿠폰 템플릿 생성 validation 오류_policyNoIsNull")
@@ -162,7 +225,7 @@ class CouponTemplateControllerTest {
         ReflectionTestUtils.setField(createRequestDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
 
         String dtoToJson = objectMapper.writeValueAsString(createRequestDto);
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
@@ -173,7 +236,27 @@ class CouponTemplateControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("정책번호를 기입해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon_template_create_policyNoIsNull",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description("이미지 기입"),
+                                partWithName("createRequestDto").description("쿠폰 생성 정보기입")),
+                        requestPartFields("createRequestDto",
+                                fieldWithPath("policyNo").description("쿠폰등급 번호 기입"),
+                                fieldWithPath("typeNo").description("쿠폰타입 번호 기입"),
+                                fieldWithPath("productNo").description("상품 번호 기입"),
+                                fieldWithPath("categoryNo").description("카테고리 번호 기입"),
+                                fieldWithPath("codeNo").description("코드번호 기입"),
+                                fieldWithPath("templateName").description("등록할 쿠폰 템플릿 명 기입"),
+                                fieldWithPath("finishedAt").description("만료일자 기입"),
+                                fieldWithPath("templateBundled").description("중복 쿠폰사용여부 기입")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("정책번호를 기입해주세요.")
+                        )
+                ));
     }
 
     @DisplayName("쿠폰 템플릿 생성 validation 오류_typeNoIsNull")
@@ -189,7 +272,7 @@ class CouponTemplateControllerTest {
         ReflectionTestUtils.setField(createRequestDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
 
         String dtoToJson = objectMapper.writeValueAsString(createRequestDto);
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
@@ -200,7 +283,27 @@ class CouponTemplateControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("유형번호를 기입해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon_template_create_typeNoIsNull",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description("이미지 기입"),
+                                partWithName("createRequestDto").description("쿠폰 생성 정보기입")),
+                        requestPartFields("createRequestDto",
+                                fieldWithPath("policyNo").description("쿠폰등급 번호 기입"),
+                                fieldWithPath("typeNo").description("쿠폰타입 번호 기입"),
+                                fieldWithPath("productNo").description("상품 번호 기입"),
+                                fieldWithPath("categoryNo").description("카테고리 번호 기입"),
+                                fieldWithPath("codeNo").description("코드번호 기입"),
+                                fieldWithPath("templateName").description("등록할 쿠폰 템플릿 명 기입"),
+                                fieldWithPath("finishedAt").description("만료일자 기입"),
+                                fieldWithPath("templateBundled").description("중복 쿠폰사용여부 기입")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("유형번호를 기입해주세요.")
+                        )
+                ));
     }
 
     @DisplayName("쿠폰 템플릿 생성 validation 오류_CodeNoIsNull")
@@ -216,7 +319,7 @@ class CouponTemplateControllerTest {
         ReflectionTestUtils.setField(createRequestDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
 
         String dtoToJson = objectMapper.writeValueAsString(createRequestDto);
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
@@ -227,7 +330,27 @@ class CouponTemplateControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("상태번호를 기입해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon_template_create_CodeNoIsNull",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description("이미지 기입"),
+                                partWithName("createRequestDto").description("쿠폰 생성 정보기입")),
+                        requestPartFields("createRequestDto",
+                                fieldWithPath("policyNo").description("쿠폰등급 번호 기입"),
+                                fieldWithPath("typeNo").description("쿠폰타입 번호 기입"),
+                                fieldWithPath("productNo").description("상품 번호 기입"),
+                                fieldWithPath("categoryNo").description("카테고리 번호 기입"),
+                                fieldWithPath("codeNo").description("코드번호 기입"),
+                                fieldWithPath("templateName").description("등록할 쿠폰 템플릿 명 기입"),
+                                fieldWithPath("finishedAt").description("만료일자 기입"),
+                                fieldWithPath("templateBundled").description("중복 쿠폰사용여부 기입")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("상태번호를 기입해주세요.")
+                        )
+                ));
     }
 
     @DisplayName("쿠폰 템플릿 생성 validation 오류_TemplateNameIsNull")
@@ -243,7 +366,7 @@ class CouponTemplateControllerTest {
         ReflectionTestUtils.setField(createRequestDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
 
         String dtoToJson = objectMapper.writeValueAsString(createRequestDto);
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
@@ -254,7 +377,27 @@ class CouponTemplateControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("쿠폰이름을 기입해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon_template_create_TemplateNameIsNull",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description("이미지 기입"),
+                                partWithName("createRequestDto").description("쿠폰 생성 정보기입")),
+                        requestPartFields("createRequestDto",
+                                fieldWithPath("policyNo").description("쿠폰등급 번호 기입"),
+                                fieldWithPath("typeNo").description("쿠폰타입 번호 기입"),
+                                fieldWithPath("productNo").description("상품 번호 기입"),
+                                fieldWithPath("categoryNo").description("카테고리 번호 기입"),
+                                fieldWithPath("codeNo").description("코드번호 기입"),
+                                fieldWithPath("templateName").description("등록할 쿠폰 템플릿 명 기입"),
+                                fieldWithPath("finishedAt").description("만료일자 기입"),
+                                fieldWithPath("templateBundled").description("중복 쿠폰사용여부 기입")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("쿠폰이름을 기입해주세요.")
+                        )
+                ));
     }
 
     @DisplayName("쿠폰 템플릿 생성 validation 오류_TemplateNameIsTooLong")
@@ -270,7 +413,7 @@ class CouponTemplateControllerTest {
         ReflectionTestUtils.setField(createRequestDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
 
         String dtoToJson = objectMapper.writeValueAsString(createRequestDto);
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
@@ -281,7 +424,28 @@ class CouponTemplateControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("쿠폰이름의 최대 글자는 50글자입니다."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon_template_create_TemplateNameIsTooLong",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description("이미지 기입"),
+                                partWithName("createRequestDto").description("쿠폰 생성 정보기입")),
+                        requestPartFields("createRequestDto",
+                                fieldWithPath("policyNo").description("쿠폰등급 번호 기입"),
+                                fieldWithPath("typeNo").description("쿠폰타입 번호 기입"),
+                                fieldWithPath("productNo").description("상품 번호 기입"),
+                                fieldWithPath("categoryNo").description("카테고리 번호 기입"),
+                                fieldWithPath("codeNo").description("코드번호 기입"),
+                                fieldWithPath("templateName").description("등록할 쿠폰 템플릿 명 기입"),
+                                fieldWithPath("finishedAt").description("만료일자 기입"),
+                                fieldWithPath("templateBundled").description("중복 쿠폰사용여부 기입")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("쿠폰이름의 최대 글자는 50글자입니다.")
+                        )
+                ));
+
     }
 
     @DisplayName("쿠폰 템플릿 수정 성공 테스트")
@@ -297,7 +461,7 @@ class CouponTemplateControllerTest {
         ReflectionTestUtils.setField(modifyRequestDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
 
         String dtoToJson = objectMapper.writeValueAsString(modifyRequestDto);
         MockMultipartFile modifyRequestDto = new MockMultipartFile("modifyRequestDto", "modifyRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
@@ -310,7 +474,24 @@ class CouponTemplateControllerTest {
                             return req;
                         }))
                 .andExpect(status().isCreated())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon_template_modify",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description("이미지 기입"),
+                                partWithName("modifyRequestDto").description("쿠폰 수정 정보기입")),
+                        requestPartFields("modifyRequestDto",
+                                fieldWithPath("policyNo").description("쿠폰등급 번호 기입"),
+                                fieldWithPath("typeNo").description("쿠폰타입 번호 기입"),
+                                fieldWithPath("productNo").description("상품 번호 기입"),
+                                fieldWithPath("categoryNo").description("카테고리 번호 기입"),
+                                fieldWithPath("codeNo").description("코드번호 기입"),
+                                fieldWithPath("templateName").description("등록할 쿠폰 템플릿 명 기입"),
+                                fieldWithPath("finishedAt").description("만료일자 기입"),
+                                fieldWithPath("templateBundled").description("중복 쿠폰사용여부 기입")
+                        )
+                ));
     }
 
     @DisplayName("쿠폰 템플릿 수정 실패 validation 오류_PolicyNoIsNull")
@@ -326,7 +507,7 @@ class CouponTemplateControllerTest {
         ReflectionTestUtils.setField(modifyRequestDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
 
         String dtoToJson = objectMapper.writeValueAsString(modifyRequestDto);
         MockMultipartFile modifyRequestDto = new MockMultipartFile("modifyRequestDto", "modifyRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
@@ -341,7 +522,28 @@ class CouponTemplateControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("정책번호를 기입해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon_template_modify_policyEx",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description("이미지 기입"),
+                                partWithName("modifyRequestDto").description("쿠폰 수정 정보기입")),
+                        requestPartFields("modifyRequestDto",
+                                fieldWithPath("policyNo").description("쿠폰등급 번호 기입"),
+                                fieldWithPath("typeNo").description("쿠폰타입 번호 기입"),
+                                fieldWithPath("productNo").description("상품 번호 기입"),
+                                fieldWithPath("categoryNo").description("카테고리 번호 기입"),
+                                fieldWithPath("codeNo").description("코드번호 기입"),
+                                fieldWithPath("templateName").description("등록할 쿠폰 템플릿 명 기입"),
+                                fieldWithPath("finishedAt").description("만료일자 기입"),
+                                fieldWithPath("templateBundled").description("중복 쿠폰사용여부 기입")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("정책번호를 기입해주세요.")
+                        )
+                ));
+
     }
 
     @DisplayName("쿠폰 템플릿 수정 실패 validation 오류_TypeNoIsNull")
@@ -357,7 +559,7 @@ class CouponTemplateControllerTest {
         ReflectionTestUtils.setField(modifyRequestDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
 
         String dtoToJson = objectMapper.writeValueAsString(modifyRequestDto);
         MockMultipartFile modifyRequestDto = new MockMultipartFile("modifyRequestDto", "modifyRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
@@ -372,7 +574,27 @@ class CouponTemplateControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("유형번호를 기입해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon_template_modify_typeEx",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description("이미지 기입"),
+                                partWithName("modifyRequestDto").description("쿠폰 수정 정보기입")),
+                        requestPartFields("modifyRequestDto",
+                                fieldWithPath("policyNo").description("쿠폰등급 번호 기입"),
+                                fieldWithPath("typeNo").description("쿠폰타입 번호 기입"),
+                                fieldWithPath("productNo").description("상품 번호 기입"),
+                                fieldWithPath("categoryNo").description("카테고리 번호 기입"),
+                                fieldWithPath("codeNo").description("코드번호 기입"),
+                                fieldWithPath("templateName").description("등록할 쿠폰 템플릿 명 기입"),
+                                fieldWithPath("finishedAt").description("만료일자 기입"),
+                                fieldWithPath("templateBundled").description("중복 쿠폰사용여부 기입")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("유형번호를 기입해주세요.")
+                        )
+                ));
     }
 
     @DisplayName("쿠폰 템플릿 수정 실패 validation 오류_TemplateNameIsNull")
@@ -388,7 +610,7 @@ class CouponTemplateControllerTest {
         ReflectionTestUtils.setField(modifyRequestDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
 
         String dtoToJson = objectMapper.writeValueAsString(modifyRequestDto);
         MockMultipartFile modifyRequestDto = new MockMultipartFile("modifyRequestDto", "modifyRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
@@ -403,7 +625,27 @@ class CouponTemplateControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("쿠폰이름을 기입해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon_template_modify_templateNameEx",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description("이미지 기입"),
+                                partWithName("modifyRequestDto").description("쿠폰 수정 정보기입")),
+                        requestPartFields("modifyRequestDto",
+                                fieldWithPath("policyNo").description("쿠폰등급 번호 기입"),
+                                fieldWithPath("typeNo").description("쿠폰타입 번호 기입"),
+                                fieldWithPath("productNo").description("상품 번호 기입"),
+                                fieldWithPath("categoryNo").description("카테고리 번호 기입"),
+                                fieldWithPath("codeNo").description("코드번호 기입"),
+                                fieldWithPath("templateName").description("등록할 쿠폰 템플릿 명 기입"),
+                                fieldWithPath("finishedAt").description("만료일자 기입"),
+                                fieldWithPath("templateBundled").description("중복 쿠폰사용여부 기입")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("쿠폰이름을 기입해주세요.")
+                        )
+                ));
     }
 
     @DisplayName("쿠폰 템플릿 수정 실패 validation 오류_TemplateNameIsTooLong")
@@ -419,7 +661,7 @@ class CouponTemplateControllerTest {
         ReflectionTestUtils.setField(modifyRequestDto, "templateBundled", true);
 
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
-        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+        MockMultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
 
         String dtoToJson = objectMapper.writeValueAsString(modifyRequestDto);
         MockMultipartFile modifyRequestDto = new MockMultipartFile("modifyRequestDto", "modifyRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
@@ -434,7 +676,27 @@ class CouponTemplateControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("쿠폰이름의 최대 글자는 50글자입니다."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon_template_modify_nameLongEx",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description("이미지 기입"),
+                                partWithName("modifyRequestDto").description("쿠폰 수정 정보기입")),
+                        requestPartFields("modifyRequestDto",
+                                fieldWithPath("policyNo").description("쿠폰등급 번호 기입"),
+                                fieldWithPath("typeNo").description("쿠폰타입 번호 기입"),
+                                fieldWithPath("productNo").description("상품 번호 기입"),
+                                fieldWithPath("categoryNo").description("카테고리 번호 기입"),
+                                fieldWithPath("codeNo").description("코드번호 기입"),
+                                fieldWithPath("templateName").description("등록할 쿠폰 템플릿 명 기입"),
+                                fieldWithPath("finishedAt").description("만료일자 기입"),
+                                fieldWithPath("templateBundled").description("중복 쿠폰사용여부 기입")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("쿠폰이름의 최대 글자는 50글자입니다.")
+                        )
+                ));
     }
 
 }
