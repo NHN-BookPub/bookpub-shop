@@ -1,5 +1,5 @@
 = Purchase
-:toc:left
+:toc:
 
 == 매입이력 생성
 purchase-create

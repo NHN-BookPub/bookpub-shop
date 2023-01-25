@@ -93,6 +93,8 @@ class CouponControllerTest {
                 .andExpect(jsonPath("$.content[0].couponUsed").value(response.isCouponUsed()))
                 .andDo(print())
                 .andDo(document("couponList-get",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("content[].couponNo").description("쿠폰의 고유 번호가 반환됩니다."),
                                 fieldWithPath("content[].memberId").description("발급받은 유저의 아이디가 반환됩니다."),
@@ -131,6 +133,8 @@ class CouponControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
                 .andDo(document("coupon-get.adoc",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("couponNo").description("쿠폰의 고유 번호가 반환됩니다."),
                                 fieldWithPath("memberId").description("발급받은 유저의 아이디가 반환됩니다."),

@@ -3,6 +3,8 @@ package com.nhnacademy.bookpubshop.purchase.controller;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -111,6 +113,8 @@ class PurchaseControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("purchaseList-get",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("content[].purchaseNo").description("매입이력의 고유 number가 반환됩니다."),
                                 fieldWithPath("content[].purchaseAmount").description("매입 수량이 반환됩니다."),
@@ -161,6 +165,8 @@ class PurchaseControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("purchase-get",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("content[].purchaseNo").description("매입이력의 고유 number가 반환됩니다."),
                                 fieldWithPath("content[].purchaseAmount").description("매입 수량이 반환됩니다."),
@@ -201,6 +207,8 @@ class PurchaseControllerTest {
                 .andExpect(status().isCreated())
                 .andDo(print())
                 .andDo(document("purchase-put",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("productNo").description("변경하려는 매입이력의 상품번호를 기입합니다."),
                                 fieldWithPath("purchasePrice").description("변경하려는 매입이력의 가격입니다."),
@@ -224,6 +232,8 @@ class PurchaseControllerTest {
                 .andExpect(status().isCreated())
                 .andDo(print())
                 .andDo(document("purchase-add",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("productNo").description("구매한 상품의 번호가 기입됩니다."),
                                 fieldWithPath("purchasePrice").description("상품의 매입 가격이 기입됩니다."),

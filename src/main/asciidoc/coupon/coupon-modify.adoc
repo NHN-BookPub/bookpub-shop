@@ -1,5 +1,5 @@
 = Coupon
-:toc:left
+:toc:
 
 == 쿠폰 수정
 Coupon-modify
