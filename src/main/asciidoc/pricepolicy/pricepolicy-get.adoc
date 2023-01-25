@@ -1,0 +1,28 @@
+= Price-Policy
+:toc:
+
+== 가격 정책 조회
+
+Price-Policy 단건 조회 / 전체 조회
+
+== 요청 구조 (단건)
+
+include::../../../../target/snippets/price-policy-get/http-request.adoc[]
+include::../../../../target/snippets/price-policy-get/path-parameters.adoc[]
+
+== 응답 구조 (단건)
+
+include::../../../../target/snippets/price-policy-get/http-response.adoc[]
+
+== 요청 구조 (전체)
+
+include::../../../../target/snippets/price-policies-get/http-request.adoc[]
+
+== 응답 구조 (전체)
+
+include::../../../../target/snippets/price-policies-get/http-response.adoc[]
+
+== 응답 파라미터
+
+include::../../../../target/snippets/price-policy-get/response-fields.adoc[]
+
