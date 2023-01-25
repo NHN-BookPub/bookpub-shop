@@ -17,7 +17,7 @@ public interface ProductPolicyService {
      * @param requestDto 생성시 필요한 dto class.
      * @return 생성된 객체를 반환합니다.
      */
-    GetProductPolicyResponseDto createProductPolicy(CreateModifyProductPolicyRequestDto requestDto);
+    void createProductPolicy(CreateModifyProductPolicyRequestDto requestDto);
 
     /**
      * 번호를 이용하여 상품 정책을 조회합니다.
@@ -41,6 +41,6 @@ public interface ProductPolicyService {
      * @param policy   수정할 정책입니다.
      * @return 수정된 객체를 반환합니다.
      */
-    GetProductPolicyResponseDto modifyProductPolicyById(Integer policyNo,
-                                                        CreateModifyProductPolicyRequestDto policy);
+    void modifyProductPolicyById(Integer policyNo,
+                                 CreateModifyProductPolicyRequestDto policy);
 }
