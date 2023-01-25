@@ -28,21 +28,14 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
      */
     @Override
     @Transactional
-    public GetProductPolicyResponseDto createProductPolicy(
+    public void createProductPolicy(
             CreateModifyProductPolicyRequestDto request) {
-        ProductPolicy productPolicy = productPolicyRepository.save(
-                new ProductPolicy(
-                        null,
-                        request.getPolicyMethod(),
-                        request.isPolicySaved(),
-                        request.getSaveRate()));
+        productPolicyRepository.save(new ProductPolicy(
+                null,
+                request.getPolicyMethod(),
+                request.isPolicySaved(),
+                request.getSaveRate()));
 
-        return new GetProductPolicyResponseDto(
-                productPolicy.getPolicyNo(),
-                productPolicy.getPolicyMethod(),
-                productPolicy.isPolicySaved(),
-                productPolicy.getSaveRate()
-        );
     }
 
     /**
@@ -89,25 +82,15 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
      */
     @Override
     @Transactional
-    public GetProductPolicyResponseDto modifyProductPolicyById(Integer policyNo,
-                                                               CreateModifyProductPolicyRequestDto policy) {
-        ProductPolicy productPolicy =
-                productPolicyRepository
-                        .findById(policyNo)
-                        .orElseThrow(NotFoundProductPolicyException::new);
+    public void modifyProductPolicyById(Integer policyNo,
+                                        CreateModifyProductPolicyRequestDto policy) {
+        ProductPolicy productPolicy = productPolicyRepository
+                .findById(policyNo)
+                .orElseThrow(NotFoundProductPolicyException::new);
 
-        ProductPolicy savePolicy = productPolicyRepository.save(
-                new ProductPolicy(
-                        productPolicy.getPolicyNo(),
-                        policy.getPolicyMethod(),
-                        policy.isPolicySaved(),
-                        policy.getSaveRate()));
-
-        return new GetProductPolicyResponseDto(
-                savePolicy.getPolicyNo(),
-                savePolicy.getPolicyMethod(),
-                savePolicy.isPolicySaved(),
-                savePolicy.getSaveRate()
-        );
+        productPolicy.modifyPolicy(
+                policy.getPolicyMethod(),
+                policy.isPolicySaved(),
+                policy.getSaveRate());
     }
 }

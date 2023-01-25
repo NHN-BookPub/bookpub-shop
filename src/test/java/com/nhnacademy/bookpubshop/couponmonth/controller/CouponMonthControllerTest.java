@@ -5,6 +5,12 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -22,11 +28,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -39,6 +47,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(CouponMonthController.class)
 @Import(ShopAdviceController.class)
 @MockBean(JpaMetamodelMappingContext.class)
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 class CouponMonthControllerTest {
 
     @Autowired
@@ -72,7 +81,17 @@ class CouponMonthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is2xxSuccessful())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon-month-create",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                                requestFields(
+                                        fieldWithPath("templateNo").description("쿠쿤템플릿 번호 기입"),
+                                        fieldWithPath("openedAt").description("쿠폰 오픈일자 기입"),
+                                        fieldWithPath("monthQuantity").description("쿠폰 수량")
+                                )
+                        )
+                );
 
         then(couponMonthService).should()
                 .createCouponMonth(any(CreateCouponMonthRequestDto.class));
@@ -96,7 +115,21 @@ class CouponMonthControllerTest {
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("쿠폰 템플릿 번호를 입력하세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon-month-create-templateNoFail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                                requestFields(
+                                        fieldWithPath("templateNo").description("쿠쿤템플릿 번호 기입"),
+                                        fieldWithPath("openedAt").description("쿠폰 오픈일자 기입"),
+                                        fieldWithPath("monthQuantity").description("쿠폰 수량")
+                                ),
+                                responseFields(
+                                        fieldWithPath("[].message").description("쿠폰 템플릿 번호를 입력하세요.")
+                                )
+                        )
+                );
+
     }
 
     @Test
@@ -117,7 +150,20 @@ class CouponMonthControllerTest {
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("쿠폰 오픈 시간을 입력하세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon-month-create-openAtFail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                                requestFields(
+                                        fieldWithPath("templateNo").description("쿠쿤템플릿 번호 기입"),
+                                        fieldWithPath("openedAt").description("쿠폰 오픈일자 기입"),
+                                        fieldWithPath("monthQuantity").description("쿠폰 수량")
+                                ),
+                                responseFields(
+                                        fieldWithPath("[].message").description("쿠폰 템플릿 번호를 입력하세요.")
+                                )
+                        )
+                );
     }
 
     @Test
@@ -138,7 +184,20 @@ class CouponMonthControllerTest {
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("수량을 입력하세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon-month-create-monthQuantityFail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                                requestFields(
+                                        fieldWithPath("templateNo").description("쿠쿤템플릿 번호 기입"),
+                                        fieldWithPath("openedAt").description("쿠폰 오픈일자 기입"),
+                                        fieldWithPath("monthQuantity").description("쿠폰 수량")
+                                ),
+                                responseFields(
+                                        fieldWithPath("[].message").description("수량을 입력하세요.")
+                                )
+                        )
+                );
     }
 
     @Test
@@ -159,7 +218,20 @@ class CouponMonthControllerTest {
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("0이상의 수량을 입력하세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon-month-create-monthQuantityFail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                                requestFields(
+                                        fieldWithPath("templateNo").description("쿠쿤템플릿 번호 기입"),
+                                        fieldWithPath("openedAt").description("쿠폰 오픈일자 기입"),
+                                        fieldWithPath("monthQuantity").description("쿠폰 수량")
+                                ),
+                                responseFields(
+                                        fieldWithPath("[].message").description("0이상의 수량을 입력하세요.")
+                                )
+                        )
+                );
     }
 
     @Test
@@ -176,7 +248,15 @@ class CouponMonthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is2xxSuccessful())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon-month-modify",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("monthNo").description("수정할 쿠폰의 번호"),
+                                fieldWithPath("openedAt").description("쿠폰의 오픈 시각 "),
+                                fieldWithPath("monthQuantity").description("수정할 쿠폰의 수량"))
+                ));
 
         then(couponMonthService).should()
                 .modifyCouponMonth(any(ModifyCouponMonthRequestDto.class));
@@ -196,7 +276,18 @@ class CouponMonthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(jsonPath("$[0].message").value("수정할 이달의 쿠폰 번호를 입력하세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon-month-modify-monthNoFail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("monthNo").description("수정할 쿠폰의 번호"),
+                                fieldWithPath("openedAt").description("쿠폰의 오픈 시각 "),
+                                fieldWithPath("monthQuantity").description("수정할 쿠폰의 수량")),
+                        responseFields(
+                                fieldWithPath("[].message").description("수정할 이달의 쿠폰 번호를 입력하세요.")
+                        )
+                ));
     }
 
     @Test
@@ -214,7 +305,18 @@ class CouponMonthControllerTest {
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("쿠폰 오픈 시간을 입력하세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon-month-modify-openFail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("monthNo").description("수정할 쿠폰의 번호"),
+                                fieldWithPath("openedAt").description("쿠폰의 오픈 시각 "),
+                                fieldWithPath("monthQuantity").description("수정할 쿠폰의 수량")),
+                        responseFields(
+                                fieldWithPath("[].message").description("수정할 이달의 쿠폰 번호를 입력하세요.")
+                        )
+                ));
     }
 
     @Test
@@ -232,7 +334,18 @@ class CouponMonthControllerTest {
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("수량을 입력하세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon-month-modify-quantityFail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("monthNo").description("수정할 쿠폰의 번호"),
+                                fieldWithPath("openedAt").description("쿠폰의 오픈 시각 "),
+                                fieldWithPath("monthQuantity").description("수정할 쿠폰의 수량")),
+                        responseFields(
+                                fieldWithPath("[].message").description("수량을 입력하세요.")
+                        )
+                ));
     }
 
     @Test
@@ -250,7 +363,18 @@ class CouponMonthControllerTest {
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("0이상의 수량을 입력하세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon-month-modify-quantityMinusFail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("monthNo").description("수정할 쿠폰의 번호"),
+                                fieldWithPath("openedAt").description("쿠폰의 오픈 시각 "),
+                                fieldWithPath("monthQuantity").description("수정할 쿠폰의 수량")),
+                        responseFields(
+                                fieldWithPath("[].message").description("0이상의 수량을 입력하세요.")
+                        )
+                ));
     }
 
     @Test
@@ -262,10 +386,17 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).deleteCouponMonth(anyLong());
 
         // then
-        mockMvc.perform(delete(url + "/{monthNo}", anyLong())
+        mockMvc.perform(RestDocumentationRequestBuilders.delete(url + "/{monthNo}", anyLong())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon-month-delete",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("monthNo").description("이달의 쿠폰 번호")
+                        ))
+                );
     }
 
     @Test
@@ -288,7 +419,18 @@ class CouponMonthControllerTest {
                 .andExpect(jsonPath("$[0].templateName").value(response.getTemplateName()))
                 .andExpect(jsonPath("$[0].templateImage").value(response.getTemplateImage()))
                 .andExpect(jsonPath("$[0].monthQuantity").value(response.getMonthQuantity()))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("coupon-month-list",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].monthNo").description("이달의 쿠폰 번호"),
+                                fieldWithPath("[].templateNo").description("쿠폰템플릿 번호"),
+                                fieldWithPath("[].templateName").description("쿠폰템플릿 이름"),
+                                fieldWithPath("[].templateImage").description("쿠폰템플릿 이미지"),
+                                fieldWithPath("[].monthQuantity").description("쿠폰 수량"),
+                                fieldWithPath("[].openedAt").description("쿠폰 오픈 일시")
+                        )));
 
         then(couponMonthService).should()
                 .getCouponMonths();

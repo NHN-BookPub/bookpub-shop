@@ -1,0 +1,49 @@
+= Coupon-Policy
+:toc:
+
+== 쿠폰 정책 수정
+
+Coupon-Policy modify
+
+== 요청 구조
+
+include::../../../../target/snippets/coupon-policy-modify-success/http-request.adoc[]
+
+== 요청 파라미터
+
+include::../../../../target/snippets/coupon-policy-modify-success/request-fields.adoc[]
+
+== 응답 구조
+
+include::../../../../target/snippets/coupon-policy-modify-success/http-response.adoc[]
+
+== 예외 사항
+
+- maxDiscount가 음수인 경우
+
+include::../../../../target/snippets/coupon-policy-modify-maxDiscount-negativeFail/http-request.adoc[]
+include::../../../../target/snippets/coupon-policy-modify-maxDiscount-negativeFail/http-response.adoc[]
+
+- policyMinimum이 음수인 경우
+
+include::../../../../target/snippets/coupon-policy-modify-policyMinimum-negativeFail/http-request.adoc[]
+include::../../../../target/snippets/coupon-policy-modify-policyMinimum-negativeFail/http-response.adoc[]
+
+- policyMinimum이 null인 경우
+
+include::../../../../target/snippets/coupon-policy-modify-policyMinimumFail/http-request.adoc[]
+include::../../../../target/snippets/coupon-policy-modify-policyMinimumFail/http-response.adoc[]
+
+- policyNo가 null인 경우
+
+include::../../../../target/snippets/coupon-policy-modify-policyNoFail/http-request.adoc[]
+include::../../../../target/snippets/coupon-policy-modify-policyNoFail/http-response.adoc[]
+
+- policyPrice가 음수인 경우
+include::../../../../target/snippets/coupon-policy-modify-policyPrice-negativeFail/http-request.adoc[]
+include::../../../../target/snippets/coupon-policy-modify-policyPrice-negativeFail/http-response.adoc[]
+
+- policyPrice가 null인 경우
+
+include::../../../../target/snippets/coupon-policy-modify-policyPriceFail/http-request.adoc[]
+include::../../../../target/snippets/coupon-policy-modify-policyPriceFail/http-response.adoc[]

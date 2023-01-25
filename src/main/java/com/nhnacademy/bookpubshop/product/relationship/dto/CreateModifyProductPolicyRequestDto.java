@@ -14,7 +14,7 @@ import org.hibernate.validator.constraints.Length;
 @Getter
 @NoArgsConstructor
 public class CreateModifyProductPolicyRequestDto {
-    @Length(max = 10)
+    @Length(max = 10, message = "10글자를 넘을 수 없습니다.")
     private String policyMethod;
     @NotNull
     private boolean policySaved;

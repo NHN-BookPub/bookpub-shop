@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.member.repository.impl;
 import com.nhnacademy.bookpubshop.authority.entity.QAuthority;
 import com.nhnacademy.bookpubshop.member.dto.response.IdPwdMemberDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberAuthResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
@@ -174,5 +175,33 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
 
         return new LoginMemberResponseDto(
                 responseMember.getMemberNo(), responseMember.getMemberId(), responseMember.getMemberPwd(), authorities);
+    }
+
+    @Override
+    public MemberAuthResponseDto findByAuthMemberInfo(String memberNo) {
+        QMember member = QMember.member;
+        QMemberAuthority memberAuthority = QMemberAuthority.memberAuthority;
+
+        Optional<IdPwdMemberDto> findMember = Optional.ofNullable(from(member)
+                .select(Projections.constructor(IdPwdMemberDto.class,
+                        member.memberNo,
+                        member.memberId,
+                        member.memberPwd))
+                .where(member.memberNo.eq(Long.valueOf(memberNo)))
+                .fetchOne());
+
+        Optional<List<String>> memberAuthorities = Optional.of(from(memberAuthority)
+                .innerJoin(memberAuthority.member, member)
+                .select(memberAuthority.authority.authorityName)
+                .where(member.memberNo.eq(Long.valueOf(memberNo)))
+                .fetch());
+
+        IdPwdMemberDto responseMember = findMember.orElseThrow(() -> new MemberNotFoundException(memberNo));
+        List<String> authorities = memberAuthorities.orElseThrow(MemberAuthoritiesNotFoundException::new);
+
+        return new MemberAuthResponseDto(
+                responseMember.getMemberNo(),
+                responseMember.getMemberPwd(),
+                authorities);
     }
 }

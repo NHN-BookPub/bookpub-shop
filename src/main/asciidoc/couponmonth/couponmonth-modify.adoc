@@ -1,0 +1,33 @@
+
+= CouponMonth
+:toc:left
+
+== 이달의 쿠폰 수정
+Coupon-Month-modify
+
+=== 요청구조
+include::../../../../target/snippets/coupon-month-modify/http-request.adoc[]
+
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/coupon-month-modify/request-fields.adoc[]
+
+
+=== 응답 구조
+include::../../../../target/snippets/coupon-month-modify/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-month-modify/response-body.adoc[]
+
+
+==== 예외사항
+
+include::../../../../target/snippets/coupon-month-modify-monthFail/http-response.adoc[]
+include::../../../../target/snippets/coupon-month-modify-monthNoFail/http-response.adoc[]
+include::../../../../target/snippets/coupon-month-modify-openFail/http-response.adoc[]
+include::../../../../target/snippets/coupon-month-modify-quantityFail/http-response.adoc[]
+include::../../../../target/snippets/coupon-month-modify-quantityMinusFail/http-response.adoc[]
+
+

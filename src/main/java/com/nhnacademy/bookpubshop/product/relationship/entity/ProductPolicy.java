@@ -38,4 +38,18 @@ public class ProductPolicy {
 
     @Column(name = "product_policy_save_rate")
     private Integer saveRate;
+
+    /**
+     * 상품 정책을 수정하기 위한 메서드.
+     *
+     * @param policyMethod 적립 방법
+     * @param policySaved  적립 여부
+     * @param saveRate     적립률
+     */
+    public void modifyPolicy(String policyMethod, boolean policySaved,
+                             Integer saveRate) {
+        this.policyMethod = policyMethod;
+        this.policySaved = policySaved;
+        this.saveRate = saveRate;
+    }
 }

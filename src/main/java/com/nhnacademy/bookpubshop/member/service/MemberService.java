@@ -8,6 +8,7 @@ import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequest
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberAuthResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberPasswordResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
@@ -175,4 +176,11 @@ public interface MemberService {
      * @param addressNo 주소번호
      */
     void deleteMemberAddress(Long memberNo, Long addressNo);
+
+    /**
+     * 회원 정보를 가져오는 메서드 입니다.
+     * @param accessToken 인증 accessToken.
+     * @return 인증된 회원정보.
+     */
+    MemberAuthResponseDto authMemberInfo(String accessToken);
 }
