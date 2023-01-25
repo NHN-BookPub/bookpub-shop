@@ -2,7 +2,7 @@ package com.nhnacademy.bookpubshop.token.exception;
 
 
 /**
- * Some description here
+ * 토큰을 dto로 파싱하면서 발생될 수 있는 exception.
  *
  * @author : 임태원
  * @since : 1.0

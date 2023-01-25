@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.token.util;
 
 import java.util.Base64;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
  * @author : 임태원
  * @since : 1.0
  **/
-@RequiredArgsConstructor
 @Component
 @Slf4j
 public class JwtUtil {
@@ -20,6 +18,9 @@ public class JwtUtil {
 
     private static final Base64.Decoder decoder = Base64.getUrlDecoder();
 
+    private JwtUtil() {
+    }
+
     /**
      * 토큰을 복호화해주는 메소드.
      *
@@ -27,8 +28,7 @@ public class JwtUtil {
      * @return 복호화 된 정보를 리턴해준다.
      */
     public static String decodeJwt(String jwt) {
-        String jsonWebToken = jwt.split(" ")[1];
-        String payload = jsonWebToken.split("\\.")[1];
+        String payload = jwt.split("\\.")[1];
 
         return new String(decoder.decode(payload));
     }

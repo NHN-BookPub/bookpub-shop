@@ -208,8 +208,7 @@ public class MemberServiceImpl implements MemberService {
             throw new TokenParsingException();
         }
 
-        String memberNo = (String) redisTemplate.opsForHash()
-                .get(tokenInfo.getMemberUUID(), JwtUtil.ACCESS_TOKEN);
+        String memberNo = redisTemplate.opsForValue().get(tokenInfo.getMemberUUID());
 
         return memberRepository.findByAuthMemberInfo(memberNo);
     }
