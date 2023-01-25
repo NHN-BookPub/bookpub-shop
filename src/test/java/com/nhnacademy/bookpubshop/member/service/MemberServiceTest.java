@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
 import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.address.exception.AddressNotFoundException;
@@ -49,6 +51,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -69,12 +72,14 @@ class MemberServiceTest {
     TierRepository tierRepository;
     @MockBean
     AddressRepository addressRepository;
-
+    @MockBean
+    RedisTemplate<String, String> redisTemplate;
+    @MockBean
+    ObjectMapper objectMapper;
     @MockBean
     AuthorityRepository authorityRepository;
 
     SignUpMemberRequestDto signUpMemberRequestDto;
-    final String duplicate = "중복되는 항목";
     Member member;
     ModifyMemberNicknameRequestDto nicknameRequestDto;
 
@@ -594,16 +599,16 @@ class MemberServiceTest {
 
     @DisplayName("주소지 변경 테스트 성공")
     @Test
-    void modifyMemberBaseAddressSuccessTest(){
+    void modifyMemberBaseAddressSuccessTest() {
         when(addressRepository.findByMemberBaseAddress(anyLong()))
                 .thenReturn(Optional.of(address));
         when(addressRepository.findByMemberExchangeAddress(anyLong(), anyLong()))
                 .thenReturn(Optional.of(address));
 
-        memberService.modifyMemberBaseAddress(1L,1L);
+        memberService.modifyMemberBaseAddress(1L, 1L);
 
         then(addressRepository).should().findByMemberBaseAddress(1L);
-        then(addressRepository).should().findByMemberExchangeAddress(1L,1L);
+        then(addressRepository).should().findByMemberExchangeAddress(1L, 1L);
     }
 
     @DisplayName("멤버의 주소지 추가 실패")
@@ -620,7 +625,7 @@ class MemberServiceTest {
 
     @DisplayName("멤버의 주소지 추가 성공")
     @Test
-    void memberAddressAddSuccessTest(){
+    void memberAddressAddSuccessTest() {
         CreateAddressRequestDto dto = AddressDummy.createAddressDtoDummy();
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
@@ -643,11 +648,11 @@ class MemberServiceTest {
 
     @DisplayName("멤버의 주소 삭제 테스트 Success")
     @Test
-    void memberAddressDeleteSuccessTest(){
+    void memberAddressDeleteSuccessTest() {
         when(addressRepository.findByMemberExchangeAddress(anyLong(), anyLong()))
                 .thenReturn(Optional.of(address));
         doNothing().when(addressRepository)
-                        .delete(any(Address.class));
+                .delete(any(Address.class));
         memberService.deleteMemberAddress(1L, 1L);
 
         then(addressRepository).should().findByMemberExchangeAddress(1L, 1L);

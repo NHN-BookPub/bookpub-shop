@@ -1,5 +1,7 @@
 package com.nhnacademy.bookpubshop.member.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.address.exception.AddressNotFoundException;
 import com.nhnacademy.bookpubshop.address.repository.AddressRepository;
@@ -14,6 +16,7 @@ import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequest
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberAuthResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberPasswordResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
@@ -30,12 +33,16 @@ import com.nhnacademy.bookpubshop.member.service.MemberService;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import com.nhnacademy.bookpubshop.tier.exception.TierNotFoundException;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
+import com.nhnacademy.bookpubshop.token.dto.TokenInfoDto;
+import com.nhnacademy.bookpubshop.token.exception.TokenParsingException;
+import com.nhnacademy.bookpubshop.token.util.JwtUtil;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +60,8 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final TierRepository tierRepository;
     private final AuthorityRepository authorityRepository;
+    private final ObjectMapper objectMapper;
+    private final RedisTemplate<String, String> redisTemplate;
     private final AddressRepository addressRepository;
 
     private static final String TIER_NAME = "basic";
@@ -203,6 +212,24 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(MemberNotFoundException::new);
 
         return new MemberPasswordResponseDto(member);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MemberAuthResponseDto authMemberInfo(String accessToken) {
+        String payload = JwtUtil.decodeJwt(accessToken);
+        TokenInfoDto tokenInfo;
+        try {
+            tokenInfo = objectMapper.readValue(payload, TokenInfoDto.class);
+        } catch (JsonProcessingException e) {
+            throw new TokenParsingException();
+        }
+
+        String memberNo = redisTemplate.opsForValue().get(tokenInfo.getMemberUUID());
+
+        return memberRepository.findByAuthMemberInfo(memberNo);
     }
 
     /**

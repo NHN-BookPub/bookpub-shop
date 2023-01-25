@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 /**
@@ -15,6 +16,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
  * @author 박경서
  */
 @EnableJpaAuditing
+@ConfigurationPropertiesScan
 @SpringBootApplication
 public class BookpubShopApplication {
 
