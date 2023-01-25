@@ -1,0 +1,18 @@
+= Price-Policy
+:toc:
+
+== 가격 정책 생성
+
+Price-Policy create
+
+== 요청 구조
+
+include::../../../../target/snippets/price-policy-add-success/http-request.adoc[]
+
+== 요청 파라미터
+
+include::../../../../target/snippets/price-policy-add-success/request-fields.adoc[]
+
+== 응답 구조
+
+include::../../../../target/snippets/price-policy-add-success/http-response.adoc[]
