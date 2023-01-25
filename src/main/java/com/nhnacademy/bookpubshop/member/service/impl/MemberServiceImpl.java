@@ -214,6 +214,9 @@ public class MemberServiceImpl implements MemberService {
         return new MemberPasswordResponseDto(member);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MemberAuthResponseDto authMemberInfo(String accessToken) {
         String payload = JwtUtil.decodeJwt(accessToken);

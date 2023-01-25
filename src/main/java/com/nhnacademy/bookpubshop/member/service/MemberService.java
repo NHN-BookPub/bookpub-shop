@@ -176,5 +176,11 @@ public interface MemberService {
      * @param addressNo 주소번호
      */
     void deleteMemberAddress(Long memberNo, Long addressNo);
+
+    /**
+     * 회원 정보를 가져오는 메서드 입니다.
+     * @param accessToken 인증 accessToken.
+     * @return 인증된 회원정보.
+     */
     MemberAuthResponseDto authMemberInfo(String accessToken);
 }
