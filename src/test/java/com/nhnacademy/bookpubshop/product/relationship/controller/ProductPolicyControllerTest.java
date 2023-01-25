@@ -21,6 +21,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -35,6 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
  * @author : 여운석
  * @since : 1.0
  **/
+@AutoConfigureRestDocs
 @WebMvcTest(ProductPolicyController.class)
 @Import(ShopAdviceController.class)
 @MockBean(JpaMetamodelMappingContext.class)
@@ -56,14 +58,11 @@ class ProductPolicyControllerTest {
 
         requestDto = new CreateModifyProductPolicyRequestDto();
         ReflectionTestUtils.setField(requestDto,
-                "policyMethod",
-                productPolicy.getPolicyMethod());
+                "policyMethod", productPolicy.getPolicyMethod());
         ReflectionTestUtils.setField(requestDto,
-                "policySaved",
-                productPolicy.isPolicySaved());
+                "policySaved", productPolicy.isPolicySaved());
         ReflectionTestUtils.setField(requestDto,
-                "saveRate",
-                productPolicy.getSaveRate());
+                "saveRate", productPolicy.getSaveRate());
 
         responseDto = new GetProductPolicyResponseDto(
                 productPolicy.getPolicyNo(),

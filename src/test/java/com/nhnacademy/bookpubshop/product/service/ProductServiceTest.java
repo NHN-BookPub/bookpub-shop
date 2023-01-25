@@ -7,14 +7,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
-
 import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
 import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
-import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
