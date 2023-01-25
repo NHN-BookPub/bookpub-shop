@@ -1,0 +1,66 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+카테고리(Category) 조회에 관한 Api 명세입니다.
+
+== 카테고리 단건 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-category/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/get-category/path-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-category/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-category/response-fields.adoc[]
+
+== 카테고리 리스트 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-categories/http-request.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-categories/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-categories/response-fields.adoc[]
+
+== 최상위 카테고리 리스트 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-parentCategories/http-request.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-parentCategories/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-parentCategories/response-fields.adoc[]
+
+== 메인페이지용 카테고리 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-parentChildCategories/http-request.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-parentChildCategories/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-parentChildCategories/response-fields.adoc[]
