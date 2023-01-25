@@ -1,7 +1,9 @@
 package com.nhnacademy.bookpubshop.address.dummy;
 
 import com.nhnacademy.bookpubshop.address.entity.Address;
+import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 주소 더미 클래스
@@ -19,5 +21,13 @@ public class AddressDummy {
                 .roadAddress("도로명 주소")
                 .addressDetail("상세주소")
                 .build();
+    }
+
+    public static CreateAddressRequestDto createAddressDtoDummy(){
+        CreateAddressRequestDto dto = new CreateAddressRequestDto();
+        ReflectionTestUtils.setField(dto, "address", "address");
+        ReflectionTestUtils.setField(dto,"addressDetail","addressDetail");
+
+        return dto;
     }
 }

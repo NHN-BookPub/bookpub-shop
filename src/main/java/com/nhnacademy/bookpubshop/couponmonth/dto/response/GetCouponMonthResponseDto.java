@@ -19,4 +19,21 @@ public class GetCouponMonthResponseDto {
     private String templateImage;
     private LocalDateTime openedAt;
     private Integer monthQuantity;
+
+    /**
+     * 쿠폰 조회시 이미지를 가져오기 위해 변환시켜주는 dto 입니다.
+     *
+     * @param templateImage 이미지 byte
+     * @return 이미지를 들고있는 dto
+     */
+    public GetCouponMonthResponseDto transform(String templateImage) {
+        return new GetCouponMonthResponseDto(
+                this.monthNo,
+                this.templateNo,
+                this.templateName,
+                templateImage,
+                this.openedAt,
+                this.monthQuantity
+        );
+    }
 }

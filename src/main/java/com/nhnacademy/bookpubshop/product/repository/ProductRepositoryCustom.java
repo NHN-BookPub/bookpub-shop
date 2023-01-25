@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.product.repository;
 
 import com.nhnacademy.bookpubshop.product.dto.GetProductListForOrderResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import java.util.List;
@@ -12,7 +13,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 /**
  * 상품 레포지토리에서 쿼리 dsl 을 사용하기 위한 커스텀 레포입니다.
  *
- * @author : 여운석
+ * @author : 여운석, 박경서
  * @since : 1.0
  */
 @NoRepositoryBean
@@ -43,10 +44,27 @@ public interface ProductRepositoryCustom {
     Optional<GetProductDetailResponseDto> getProductDetailById(Long id);
 
     /**
+     * 상품 타입과 제한 갯수를 가지고 상품을 조회.
+     *
+     * @param typeNo 타입 번호
+     * @param limit  제한 갯수
+     * @return 타입을 기준으로 상품 반환
+     */
+    List<GetProductByTypeResponseDto> findProductListByType(Integer typeNo, Integer limit);
+
+    /**
      * 주문번호로 상품리스트를 조회합니다.
      *
      * @param orderNo 주문번호입니다.
      * @return 주문에서 보여질 상품 Dto를 반환합니다.
      */
     List<GetProductListForOrderResponseDto> getProductListByOrderNo(Long orderNo);
+
+    /**
+     * 카트에 담긴 상품들 조회.
+     *
+     * @param productsNo 카트에 담긴 상품들 번호
+     * @return 카트에 담긴 상품들 정보
+     */
+    List<GetProductDetailResponseDto> getProductsInCart(List<Long> productsNo);
 }

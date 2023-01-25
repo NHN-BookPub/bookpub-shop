@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.member.repository;
 
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -35,4 +36,13 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberCus
      */
     boolean existsByMemberNickname(String nickname);
 
+
+    /**
+     * 멤버 id로 멤버를 가져오는 메소드.
+     * 쿠폰 등록 시 사용되는 메소드입니다.
+     *
+     * @param memberId 멤버 id
+     * @return 멤버 entity
+     */
+    Optional<Member> findByMemberId(String memberId);
 }

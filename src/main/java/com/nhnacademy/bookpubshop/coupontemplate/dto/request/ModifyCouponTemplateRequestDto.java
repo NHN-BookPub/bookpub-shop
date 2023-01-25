@@ -37,11 +37,5 @@ public class ModifyCouponTemplateRequestDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime finishedAt;
 
-    @NotNull(message = "발급일자를 기입해주세요.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime issuedAt;
-
-    private boolean templateOverlapped;
-
     private boolean templateBundled;
 }

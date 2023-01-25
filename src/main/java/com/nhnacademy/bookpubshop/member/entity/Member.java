@@ -1,10 +1,13 @@
 package com.nhnacademy.bookpubshop.member.entity;
 
+import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -98,6 +101,9 @@ public class Member extends BaseCreateTimeEntity {
     @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<MemberAuthority> memberAuthorities = new HashSet<>();
 
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Address> memberAddress = new ArrayList<>();
+
     /**
      * front서버에서 전달해 준 DTO 매핑 생성자.
      * Builder를 이용해 default값이 있는 값은 null값을 넣어준다.
@@ -181,7 +187,17 @@ public class Member extends BaseCreateTimeEntity {
         this.blockedAt = LocalDateTime.now();
     }
 
+    /**
+     * 패스워드를 수정하기위한 메서드입니다.
+     *
+     * @param password the password
+     */
+    public void modifyPassword(String password) {
+        this.memberPwd = password;
+    }
     public void addMemberAuthority(MemberAuthority memberAuthority) {
         this.memberAuthorities.add(memberAuthority);
     }
+
+
 }

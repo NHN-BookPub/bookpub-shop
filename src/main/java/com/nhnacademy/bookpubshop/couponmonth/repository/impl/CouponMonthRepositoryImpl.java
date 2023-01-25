@@ -35,12 +35,12 @@ public class CouponMonthRepositoryImpl extends QuerydslRepositorySupport
         return Optional.ofNullable(from(couponMonth)
                 .join(couponMonth.couponTemplate, couponTemplate)
                 .leftJoin(file)
-                    .on(couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
+                .on(couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
                 .select(Projections.constructor(GetCouponMonthResponseDto.class,
                         couponMonth.monthNo,
                         couponTemplate.templateNo,
                         couponTemplate.templateName,
-                        file.nameSaved.concat(file.fileExtension).as("templateImage"),
+                        file.filePath.as("templateImage"),
                         couponMonth.openedAt,
                         couponMonth.monthQuantity))
                 .fetchOne());
@@ -58,12 +58,12 @@ public class CouponMonthRepositoryImpl extends QuerydslRepositorySupport
         return from(couponMonth)
                 .join(couponMonth.couponTemplate, couponTemplate)
                 .leftJoin(file)
-                    .on(couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
+                .on(couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
                 .select(Projections.constructor(GetCouponMonthResponseDto.class,
                         couponMonth.monthNo,
                         couponTemplate.templateNo,
                         couponTemplate.templateName,
-                        file.nameSaved.concat(file.fileExtension),
+                        file.filePath.as("templateImage"),
                         couponMonth.openedAt,
                         couponMonth.monthQuantity))
                 .fetch();

@@ -2,9 +2,14 @@ package com.nhnacademy.bookpubshop.member.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhnacademy.bookpubshop.address.entity.Address;
+import com.nhnacademy.bookpubshop.address.exception.AddressNotFoundException;
+import com.nhnacademy.bookpubshop.address.repository.AddressRepository;
 import com.nhnacademy.bookpubshop.author.exception.AuthorityNotFoundException;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.authority.repository.AuthorityRepository;
+import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
@@ -13,6 +18,7 @@ import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberAuthResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberPasswordResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
@@ -56,6 +62,7 @@ public class MemberServiceImpl implements MemberService {
     private final AuthorityRepository authorityRepository;
     private final ObjectMapper objectMapper;
     private final RedisTemplate<String, String> redisTemplate;
+    private final AddressRepository addressRepository;
 
     private static final String TIER_NAME = "basic";
     private static final String AUTHORITY_NAME = "ROLE_MEMBER";
@@ -115,7 +122,6 @@ public class MemberServiceImpl implements MemberService {
 
     /**
      * {@inheritDoc}
-     *
      */
     @Transactional
     @Override
@@ -123,10 +129,9 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(MemberNotFoundException::new);
 
-        if (Objects.equals(member.getMemberEmail(), requestDto.getEmail())) {
+        if (!Objects.equals(member.getMemberEmail(), requestDto.getEmail())) {
             member.modifyEmail(requestDto.getEmail());
         }
-
     }
 
     /**
@@ -198,6 +203,17 @@ public class MemberServiceImpl implements MemberService {
         return memberRepository.existsByMemberNickname(nickName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MemberPasswordResponseDto getMemberPwd(Long memberNo) {
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        return new MemberPasswordResponseDto(member);
+    }
+
     @Override
     public MemberAuthResponseDto authMemberInfo(String accessToken) {
         String payload = JwtUtil.decodeJwt(accessToken);
@@ -240,6 +256,18 @@ public class MemberServiceImpl implements MemberService {
     /**
      * {@inheritDoc}
      */
+    @Transactional
+    @Override
+    public void modifyMemberPassword(Long memberNo, ModifyMemberPasswordRequest password) {
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        member.modifyPassword(password.getPassword());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<MemberTierStatisticsResponseDto> getTierStatistics() {
         return memberRepository.memberTierStatistics();
@@ -252,6 +280,52 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberStatisticsResponseDto getMemberStatistics() {
         return memberRepository.memberStatistics();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void modifyMemberBaseAddress(Long memberNo, Long addressNo) {
+        Address baseAddress = addressRepository.findByMemberBaseAddress(memberNo)
+                .orElseThrow(AddressNotFoundException::new);
+
+        Address address = addressRepository.findByMemberExchangeAddress(memberNo, addressNo)
+                .orElseThrow(AddressNotFoundException::new);
+
+        baseAddress.modifyAddressBase(false);
+        address.modifyAddressBase(true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void addMemberAddress(Long memberNo, CreateAddressRequestDto requestDto) {
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        if (member.getMemberAddress().size() < 10) {
+            member.getMemberAddress().add(Address.builder()
+                    .addressMemberNumber(false)
+                    .roadAddress(requestDto.getAddress())
+                    .addressDetail(requestDto.getAddressDetail())
+                    .member(member)
+                    .build());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void deleteMemberAddress(Long memberNo, Long addressNo) {
+        Address address = addressRepository.findByMemberExchangeAddress(memberNo, addressNo)
+                .orElseThrow(AddressNotFoundException::new);
+        addressRepository.delete(address);
     }
 
 
