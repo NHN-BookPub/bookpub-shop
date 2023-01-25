@@ -25,7 +25,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
- * Some description here.
+ * 가격 정책 서비스 테스트.
  *
  * @author : 박경서
  * @since : 1.0

@@ -8,7 +8,7 @@ package com.nhnacademy.bookpubshop.tag.exception;
  **/
 public class TagNameDuplicatedException extends RuntimeException {
 
-    private static final String ERROR_MESSAGE = " 태그 이름이 중복입니다.";
+    public static final String ERROR_MESSAGE = " 태그 이름이 중복입니다.";
 
     public TagNameDuplicatedException(String tagName) {
         super(tagName + ERROR_MESSAGE);
