@@ -4,11 +4,18 @@ import com.nhnacademy.bookpubshop.orderstatecode.dto.CreateOrderStateCodeRequest
 import com.nhnacademy.bookpubshop.orderstatecode.dto.GetOrderStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.orderstatecode.service.OrderStateCodeService;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 주문상태코드 컨트롤러 입니다.
@@ -57,7 +64,7 @@ public class OrderStateCodeController {
      */
     @PostMapping
     public ResponseEntity<Void> createOrderStateCode(
-            @RequestBody CreateOrderStateCodeRequestDto request) {
+            @RequestBody @Valid CreateOrderStateCodeRequestDto request) {
         orderStateCodeService.createPricePolicy(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
