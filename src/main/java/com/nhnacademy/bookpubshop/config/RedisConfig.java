@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanClassLoaderAware;
@@ -70,6 +71,7 @@ public class RedisConfig implements BeanClassLoaderAware {
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        objectMapper.registerModule(new JavaTimeModule());
 
         return objectMapper;
     }
