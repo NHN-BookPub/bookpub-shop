@@ -261,7 +261,7 @@ class TagControllerTest {
         ReflectionTestUtils.setField(modifyTagRequestDto, "modifyTagNo", 1);
         ReflectionTestUtils.setField(modifyTagRequestDto, "modifyTagName",
                 "태그A1234567891011121314");
-        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyColorCode", "#47F1ZZ");
+        ReflectionTestUtils.setField(modifyTagRequestDto, "modifyColorCode", "#47FF9C");
 
         ArgumentCaptor<ModifyTagRequestDto> captor = ArgumentCaptor.forClass(
                 ModifyTagRequestDto.class);
