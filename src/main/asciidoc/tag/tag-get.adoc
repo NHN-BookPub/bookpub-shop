@@ -1,0 +1,40 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+태그(Tag) 조회에 관한 Api 명세입니다.
+
+== 태그 단건 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/tag-detail/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/tag-detail/path-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/tag-detail/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/tag-detail/response-fields.adoc[]
+
+== 태그 리스트 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/tag-list/http-request.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/tag-list/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/tag-list/response-fields.adoc[]
+
+

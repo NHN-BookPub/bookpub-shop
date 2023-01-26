@@ -1,0 +1,20 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+주문 (Order) 등록에 관한 Api 명세입니다.
+
+== 주문 등록
+
+=== 요청구조
+
+include::../../../../target/snippets/order-create/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/order-create/request-fields.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/order-create/http-response.adoc[]

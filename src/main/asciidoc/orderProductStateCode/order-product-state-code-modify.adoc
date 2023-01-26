@@ -1,0 +1,21 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+주문 상품 상태 코드(OrderProductStateCode) 수정에 관한 Api 명세입니다.
+
+== 주문 상품 상태 코드 수정
+
+=== 요청구조
+
+include::../../../../target/snippets/order-product-state-code-modify/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/order-product-state-code-modify/path-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/order-product-state-code-modify/http-response.adoc[]
+
