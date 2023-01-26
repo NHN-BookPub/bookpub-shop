@@ -6,6 +6,8 @@ import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -118,6 +120,9 @@ class OrderStateCodeControllerTest {
                 .andDo(document("order-state-code-detail",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("codeNo").description("주문 상태코드 번호")
+                        ),
                         responseFields(
                                 fieldWithPath("codeNo").description("주문 상태 코드 번호"),
                                 fieldWithPath("codeName").description("주문 상태 코드명"),
@@ -290,7 +295,10 @@ class OrderStateCodeControllerTest {
                                 MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andDo(print())
-                .andDo(document("order-state-code-modify")
+                .andDo(document("order-state-code-modify",
+                        pathParameters(
+                                parameterWithName("codeNo").description("주문 상태 코드 번호")
+                        ))
                 );
 
         verify(orderStateCodeService, times(1)).modifyOrderStateCodeUsed(anyInt());

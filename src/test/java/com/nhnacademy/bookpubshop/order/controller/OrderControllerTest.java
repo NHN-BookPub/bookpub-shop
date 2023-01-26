@@ -4,8 +4,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -54,6 +53,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -194,7 +194,7 @@ class OrderControllerTest {
         listDto.addOrderProducts(List.of(productDto));
         orders.add(listDto);
 
-        pageable = Pageable.ofSize(10);
+        pageable = PageRequest.of(0, 10);
 
         pages = PageableExecutionUtils.getPage(orders, pageable, orders::size);
     }
@@ -205,7 +205,9 @@ class OrderControllerTest {
         when(orderService.getOrderList(pageable))
                 .thenReturn(new PageResponse<>(pages));
 
-        mockMvc.perform(get(url + "?page=0&size=10")
+        mockMvc.perform(get(url)
+                        .param("page", mapper.writeValueAsString(pageable.getPageNumber()))
+                        .param("size", mapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(new PageResponse<>(pages))))
                 .andExpect(status().is2xxSuccessful())
@@ -226,6 +228,10 @@ class OrderControllerTest {
                 .andDo(print())
                 .andDo(document("order-list",
                         preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("page").description("조회할 페이지 번호"),
+                                parameterWithName("size").description("페이지 사이즈")
+                        ),
                         responseFields(
                                 fieldWithPath("content[].orderNo").description("주문번호"),
                                 fieldWithPath("content[].orderProducts[].productNo").description(
@@ -304,13 +310,17 @@ class OrderControllerTest {
         doNothing().when(orderService).modifyInvoiceNumber(order.getOrderNo(), "1231231231");
 
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.put(url + "/{orderNo}/invoice?no=1231231231", 1)
+                        RestDocumentationRequestBuilders.put(url + "/{orderNo}/invoice", 1)
+                                .param("no", mapper.writeValueAsString(order.getInvoiceNumber()))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
                 .andDo(document("invoiceNo-modify",
                         pathParameters(
                                 parameterWithName("orderNo").description("주문 번호")
+                        ),
+                        requestParameters(
+                                parameterWithName("no").description("송장 번호")
                         )
                 ));
 
@@ -323,13 +333,17 @@ class OrderControllerTest {
     void modifyStateCode() throws Exception {
         doNothing().when(orderService).modifyStateCode("결제완료", order.getOrderNo());
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(url + "/{orderNo}/state?code=결제완료", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(url + "/{orderNo}/state", 1)
+                        .param("code", mapper.writeValueAsString(order.getOrderStateCode()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andDo(print())
                 .andDo(document("state-code-modify",
                         pathParameters(
-                                parameterWithName("orderNo").description("주문 번호"))));
+                                parameterWithName("orderNo").description("주문 번호")),
+                        requestParameters(
+                                parameterWithName("code").description("주문 상태 코드")
+                        )));
 
         verify(orderService, times(1))
                 .modifyStateCode(anyString(), anyLong());

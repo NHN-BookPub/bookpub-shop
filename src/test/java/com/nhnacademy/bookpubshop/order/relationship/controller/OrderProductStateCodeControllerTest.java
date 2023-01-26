@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -305,12 +306,19 @@ class OrderProductStateCodeControllerTest {
 
         //then
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.put(path + "/{codeNo}?used={codeUsed}", anyInt(),
-                                anyBoolean()).contentType(
-                                MediaType.APPLICATION_JSON))
+                        RestDocumentationRequestBuilders.put(path + "/{codeNo}", anyInt())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .param("used", mapper.writeValueAsString(anyBoolean())))
+
                 .andExpect(status().isCreated())
                 .andDo(print())
-                .andDo(document("order-product-state-code-modify")
+                .andDo(document("order-product-state-code-modify",
+                        pathParameters(
+                                parameterWithName("codeNo").description("주문 상품 번호")
+                        ),
+                        requestParameters(
+                                parameterWithName("used").description("주문 상품 상태 코드 사용 여부")
+                        ))
                 );
 
         verify(orderProductStateCodeService, times(1)).modifyUsedOrderProductStateCode(anyInt(),
