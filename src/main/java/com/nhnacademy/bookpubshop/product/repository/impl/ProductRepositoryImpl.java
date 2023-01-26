@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.product.repository.impl;
 
+import com.nhnacademy.bookpubshop.order.entity.QBookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
 import com.nhnacademy.bookpubshop.product.dto.GetProductListForOrderResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
@@ -117,15 +118,18 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
 
     @Override
     public List<GetProductListForOrderResponseDto> getProductListByOrderNo(Long orderNo) {
-        return from(product)
+        QBookpubOrder order = QBookpubOrder.bookpubOrder;
+
+        return from(orderProduct)
+                .leftJoin(orderProduct.product, product)
+                .leftJoin(orderProduct.order, order)
                 .select(Projections.constructor(
                         GetProductListForOrderResponseDto.class,
                         product.productNo,
                         product.title,
                         product.salesPrice,
                         orderProduct.productAmount))
-                .join(orderProduct).on(orderProduct.product.productNo.eq(product.productNo))
-                .where(orderProduct.order.orderNo.eq(orderNo))
+                .where(order.orderNo.eq(orderNo))
                 .fetch();
     }
 }
