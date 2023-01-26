@@ -117,7 +117,7 @@ class MemberRepositoryTest {
         assertThat(result.get().getPoint()).isEqualTo(persist.getMemberPoint());
         assertThat(result.get().getAddresses().get(0).getAddressDetail()).isEqualTo(address.getAddressDetail());
         assertThat(result.get().getAddresses().get(0).getRoadAddress()).isEqualTo(address.getRoadAddress());
-        assertThat(result.get().getAddresses().get(0).isAddressBased()).isEqualTo(address.isAddressMemberNumber());
+        assertThat(result.get().getAddresses().get(0).isAddressBased()).isEqualTo(address.isAddressMemberBased());
         assertThat(result.get().getAddresses().get(0).getAddressNo()).isEqualTo(address.getAddressNo());
     }
 

@@ -312,7 +312,7 @@ public class MemberServiceImpl implements MemberService {
 
         if (member.getMemberAddress().size() < 10) {
             member.getMemberAddress().add(Address.builder()
-                    .addressMemberNumber(false)
+                    .addressMemberBased(false)
                     .roadAddress(requestDto.getAddress())
                     .addressDetail(requestDto.getAddressDetail())
                     .member(member)

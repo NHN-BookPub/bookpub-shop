@@ -37,8 +37,8 @@ public class Address {
     @JoinColumn(name = "member_number")
     private Member member;
 
-    @Column(name = "address_member_number")
-    private boolean addressMemberNumber;
+    @Column(name = "address_member_based")
+    private boolean addressMemberBased;
 
     @Column(name = "road_address")
     private String roadAddress;
@@ -51,15 +51,15 @@ public class Address {
      * 주소를 등록하기위한 builder 클래스입니다.
      *
      * @param member              회원정보
-     * @param addressMemberNumber 주 주소로 사용할 정보인지 조회
+     * @param addressMemberBased 주 주소로 사용할 정보인지 조회
      * @param roadAddress         도로명 주소
      * @param addressDetail       상세주소 기입.
      */
     @Builder
-    public Address(Member member, boolean addressMemberNumber,
+    public Address(Member member, boolean addressMemberBased,
                    String roadAddress, String addressDetail) {
         this.member = member;
-        this.addressMemberNumber = addressMemberNumber;
+        this.addressMemberBased = addressMemberBased;
         this.roadAddress = roadAddress;
         this.addressDetail = addressDetail;
     }
@@ -71,6 +71,6 @@ public class Address {
      * @param baseAddress 기준주소지에대한 T/F 값이 들어옵니다.
      */
     public void modifyAddressBase(boolean baseAddress) {
-        this.addressMemberNumber = baseAddress;
+        this.addressMemberBased = baseAddress;
     }
 }

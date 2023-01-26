@@ -17,7 +17,7 @@ public class AddressDummy {
     public static Address dummy(Member member) {
         return Address.builder()
                 .member(member)
-                .addressMemberNumber(true)
+                .addressMemberBased(true)
                 .roadAddress("도로명 주소")
                 .addressDetail("상세주소")
                 .build();
