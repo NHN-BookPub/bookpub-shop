@@ -38,7 +38,7 @@ public class OrderProduct {
 
     @NotNull
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "order_number")
     private BookpubOrder order;
 
     @NotNull
