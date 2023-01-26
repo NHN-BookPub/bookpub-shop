@@ -69,8 +69,6 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
                         couponTemplate.templateName,
                         file.filePath.as(TEMPLATE_IMAGE),
                         couponTemplate.finishedAt,
-                        couponTemplate.issuedAt,
-                        couponTemplate.templateOverlapped,
                         couponTemplate.templateBundled
                 ))
                 .fetchOne());
@@ -112,8 +110,6 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
                         couponTemplate.templateName,
                         file.filePath.as(TEMPLATE_IMAGE),
                         couponTemplate.finishedAt,
-                        couponTemplate.issuedAt,
-                        couponTemplate.templateOverlapped,
                         couponTemplate.templateBundled
                 ))
                 .offset(pageable.getOffset())
@@ -140,7 +136,6 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
                         couponTemplate.templateNo,
                         couponTemplate.templateName,
                         file.filePath.as(TEMPLATE_IMAGE),
-                        couponTemplate.issuedAt,
                         couponTemplate.finishedAt))
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())

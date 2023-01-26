@@ -63,4 +63,14 @@ public class Address {
         this.roadAddress = roadAddress;
         this.addressDetail = addressDetail;
     }
+
+
+    /**
+     * 기준주소지를 변경하기위한 메서드입니다.
+     *
+     * @param baseAddress 기준주소지에대한 T/F 값이 들어옵니다.
+     */
+    public void modifyAddressBase(boolean baseAddress) {
+        this.addressMemberNumber = baseAddress;
+    }
 }

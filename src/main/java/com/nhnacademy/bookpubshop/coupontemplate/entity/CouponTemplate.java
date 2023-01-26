@@ -73,14 +73,6 @@ public class CouponTemplate {
     @Column(name = "coupon_template_finished_at")
     private LocalDateTime finishedAt;
 
-    @NotNull
-    @Column(name = "coupon_template_issued_at")
-    private LocalDateTime issuedAt;
-
-    @NotNull
-    @Column(name = "coupon_template_overlapped")
-    private boolean templateOverlapped;
-
     @Column(name = "coupon_template_bundled")
     private boolean templateBundled;
 
@@ -102,16 +94,13 @@ public class CouponTemplate {
      * @param couponStateCode    the coupon state code
      * @param templateName       the template name
      * @param finishedAt         the finished at
-     * @param issuedAt           the issued at
-     * @param templateOverlapped the template overlapped
      * @param templateBundled    the template bundled
      */
     @Builder
     public CouponTemplate(CouponPolicy couponPolicy, CouponType couponType,
                           Product product, Category category,
                           CouponStateCode couponStateCode, String templateName,
-                          LocalDateTime finishedAt, LocalDateTime issuedAt,
-                          boolean templateOverlapped, boolean templateBundled) {
+                          LocalDateTime finishedAt, boolean templateBundled) {
         this.couponPolicy = couponPolicy;
         this.couponType = couponType;
         this.product = product;
@@ -119,8 +108,6 @@ public class CouponTemplate {
         this.couponStateCode = couponStateCode;
         this.templateName = templateName;
         this.finishedAt = finishedAt;
-        this.issuedAt = issuedAt;
-        this.templateOverlapped = templateOverlapped;
         this.templateBundled = templateBundled;
     }
 
@@ -134,15 +121,12 @@ public class CouponTemplate {
      * @param couponStateCode    the coupon state code
      * @param templateName       the template name
      * @param finishedAt         the finished at
-     * @param issuedAt           the issued at
-     * @param templateOverlapped the template overlapped
      * @param templateBundled    the template bundled
      */
     public void modifyCouponTemplate(CouponPolicy couponPolicy,
                                      CouponType couponType, Product product,
                                      Category category, CouponStateCode couponStateCode,
                                      String templateName, LocalDateTime finishedAt,
-                                     LocalDateTime issuedAt, boolean templateOverlapped,
                                      boolean templateBundled) {
         this.couponPolicy = couponPolicy;
         this.couponType = couponType;
@@ -151,8 +135,6 @@ public class CouponTemplate {
         this.couponStateCode = couponStateCode;
         this.templateName = templateName;
         this.finishedAt = finishedAt;
-        this.issuedAt = issuedAt;
-        this.templateOverlapped = templateOverlapped;
         this.templateBundled = templateBundled;
     }
 }

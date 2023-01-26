@@ -50,17 +50,17 @@ public class Product extends BaseCreateTimeEntity {
     @JoinColumn(name = "product_policy_number")
     private ProductPolicy productPolicy;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "product_type_code_number")
     private ProductTypeStateCode productTypeStateCode;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "product_sale_code_number")
     private ProductSaleStateCode productSaleStateCode;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_relation_number")
     private List<Product> relationProduct = new ArrayList<>();
 
@@ -96,11 +96,9 @@ public class Product extends BaseCreateTimeEntity {
     @Column(name = "product_view_count")
     private Long viewCount;
 
-    @NotNull
     @Column(name = "product_priority")
     private Integer productPriority;
 
-    @NotNull
     @Column(name = "product_deleted")
     private boolean productDeleted;
 
@@ -115,15 +113,15 @@ public class Product extends BaseCreateTimeEntity {
     @Column(name = "product_subscribed")
     private boolean productSubscribed;
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER,
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private final Set<ProductCategory> productCategories = new HashSet<>();
 
-    @OneToMany(mappedBy = "author", fetch = FetchType.EAGER,
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private final Set<ProductAuthor> productAuthors = new HashSet<>();
 
-    @OneToMany(mappedBy = "tag", fetch = FetchType.EAGER,
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private final Set<ProductTag> productTags = new HashSet<>();
 

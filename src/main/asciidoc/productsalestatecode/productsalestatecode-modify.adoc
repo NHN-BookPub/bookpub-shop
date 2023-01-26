@@ -1,0 +1,23 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+상품판매여부코드(ProductSaleStateCode) 수정에 관한 Api 명세입니다.
+
+== 상품판매여부코드 사용여부 수정
+
+=== 요청구조
+
+include::../../../../target/snippets/productSaleStateCode-modifyUsed/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/productSaleStateCode-modifyUsed/path-parameters.adoc[]
+
+
+include::../../../../target/snippets/productSaleStateCode-modifyUsed/request-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/productSaleStateCode-modifyUsed/http-response.adoc[]

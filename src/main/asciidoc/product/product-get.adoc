@@ -1,0 +1,93 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+상품(Product) 조회에 관한 Api 명세입니다.
+
+== 상품 단건 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-product/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/get-product/path-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-product/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-product/response-fields.adoc[]
+
+== 상품 리스트 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-products/http-request.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-products/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-products/response-fields.adoc[]
+
+== 상품 제목을 통한 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-titleProducts/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/get-titleProducts/request-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-titleProducts/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-titleProducts/response-fields.adoc[]
+
+== 상품 유형 번호를 통한 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-typeProducts/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/get-typeProducts/path-parameters.adoc[]
+include::../../../../target/snippets/get-typeProducts/request-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-typeProducts/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-typeProducts/response-fields.adoc[]
+
+== 카트에 담긴 상품 번호들을 통한 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-cartProducts/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/get-cartProducts/request-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-cartProducts/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-cartProducts/response-fields.adoc[]

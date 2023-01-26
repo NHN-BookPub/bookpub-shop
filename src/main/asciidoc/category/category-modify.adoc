@@ -1,0 +1,37 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+카테고리(Category) 수정에 관한 Api 명세입니다.
+
+== 카테고리 수
+
+=== 요청구조
+
+include::../../../../target/snippets/category-modify/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/category-modify/request-fields.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/category-modify/http-response.adoc[]
+
+=== 예외 상황
+
+==== 1. 카테고리 이름이 기입되지 않은 경우
+
+include::../../../../target/snippets/category-modify-categoryNameFail/http-request.adoc[]
+include::../../../../target/snippets/category-modify-categoryNameFail/http-response.adoc[]
+
+==== 2. 카테고리 이름 길이가 초과된 경우
+
+include::../../../../target/snippets/category-modify-categoryNameFail-tooLong/http-request.adoc[]
+include::../../../../target/snippets/category-modify-categoryNameFail-tooLong/http-response.adoc[]
+
+==== 3. 수정할 카테고리 번호를 기입하지 않은 경우
+
+include::../../../../target/snippets/category-modify-categoryNoFail/http-request.adoc[]
+include::../../../../target/snippets/category-modify-categoryNoFail/http-response.adoc[]

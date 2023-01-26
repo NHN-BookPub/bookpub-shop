@@ -1,0 +1,87 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+상품(Product) 등록에 관한 Api 명세입니다.
+
+== 상품 등록
+
+=== 요청구조
+
+include::../../../../target/snippets/product-create/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/product-create/request-fields.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/product-create/http-response.adoc[]
+
+=== 예외 상황
+
+==== 1. 상품 ISBN이 기입되지 않은 경우
+
+include::../../../../target/snippets/product-create-isbnFail/http-request.adoc[]
+include::../../../../target/snippets/product-create-isbnFail/http-response.adoc[]
+
+==== 1-2. 상품 ISBN의 길이가 초과된 경우
+
+include::../../../../target/snippets/product-create-isbnFail-tooLong/http-request.adoc[]
+include::../../../../target/snippets/product-create-isbnFail-tooLong/http-response.adoc[]
+
+==== 2. 상품 설명 길이가 초과된 경우
+
+include::../../../../target/snippets/product-create-productDescriptionFail/http-request.adoc[]
+include::../../../../target/snippets/product-create-productDescriptionFail/http-response.adoc[]
+
+==== 3. 상품 정책이 기입되지 않은 경우
+
+include::../../../../target/snippets/product-create-productPolicyNoFail/http-request.adoc[]
+include::../../../../target/snippets/product-create-productPolicyNoFail/http-response.adoc[]
+
+==== 4. 상품 정가가 기입되지 않은 경우
+
+include::../../../../target/snippets/product-create-productPriceFail/http-request.adoc[]
+include::../../../../target/snippets/product-create-productPriceFail/http-response.adoc[]
+
+==== 5. 상품의 출판사가 기입되지 않은 경우
+
+include::../../../../target/snippets/product-create-productPublisherFail/http-request.adoc[]
+include::../../../../target/snippets/product-create-productPublisherFail/http-response.adoc[]
+
+==== 5-2. 상품의 출판사 길이가 초과된 경우
+
+include::../../../../target/snippets/product-create-productPublisherFail-tooLong/http-request.adoc[]
+include::../../../../target/snippets/product-create-productPublisherFail-tooLong/http-response.adoc[]
+
+==== 6. 상품 수량재고를 기입하지 않은 경우
+
+include::../../../../target/snippets/product-create-productStockFail/http-request.adoc[]
+include::../../../../target/snippets/product-create-productStockFail/http-response.adoc[]
+
+==== 7. 상품의 출판일시를 기입하지 않은 경우
+
+include::../../../../target/snippets/product-create-publishedAtFail/http-request.adoc[]
+include::../../../../target/snippets/product-create-publishedAtFail/http-response.adoc[]
+
+==== 8. 상품의 판매여부코드 번호를 기입하지 않은 경우
+
+include::../../../../target/snippets/product-create-saleCodeNoFail/http-request.adoc[]
+include::../../../../target/snippets/product-create-saleCodeNoFail/http-response.adoc[]
+
+==== 9. 상품의 판매가를 기입하지 않은 경우
+
+include::../../../../target/snippets/product-create-salePriceFail/http-request.adoc[]
+include::../../../../target/snippets/product-create-salePriceFail/http-response.adoc[]
+
+==== 10. 상품의 제목 길이가 초과된 경우
+
+include::../../../../target/snippets/product-create-titleFail/http-request.adoc[]
+include::../../../../target/snippets/product-create-titleFail/http-response.adoc[]
+
+==== 11. 상품의 유형코드가 기입되지 않은 경우
+
+include::../../../../target/snippets/product-create-typeCodeNoFail/http-request.adoc[]
+include::../../../../target/snippets/product-create-typeCodeNoFail/http-response.adoc[]

@@ -1,0 +1,53 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+상품유형코드(ProductTypeStateCode) 조회에 관한 Api 명세입니다.
+
+== 상품유형코드 단건 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-productTypeStateCode/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/get-productTypeStateCode/path-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-productTypeStateCode/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-productTypeStateCode/response-fields.adoc[]
+
+== 상품유형코드 리스트 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-productTypeStateCodes/http-request.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-productTypeStateCodes/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-productTypeStateCodes/response-fields.adoc[]
+
+== 상품유형코드 리스트 조회 (사용여부 true인 것만)
+
+=== 요청구조
+
+include::../../../../target/snippets/get-usedProductTypeStateCodes/http-request.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-usedProductTypeStateCodes/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-usedProductTypeStateCodes/response-fields.adoc[]
+

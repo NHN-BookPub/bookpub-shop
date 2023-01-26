@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -60,11 +61,26 @@ public class Coupon {
     @Column(name = "coupon_used_at")
     private LocalDateTime usedAt;
 
-    public void modifyCouponUsed(boolean couponUsed) {
-        this.couponUsed = couponUsed;
+    @Builder
+    public Coupon(CouponTemplate couponTemplate, Member member) {
+        this.couponTemplate = couponTemplate;
+        this.member = member;
     }
 
-    public void modifyCouponUsedAt(LocalDateTime usedAt) {
-        this.usedAt = usedAt;
+    /**
+     * 쿠폰 사용 여부를 바꿀 시 사용되는 메소드입니다.
+     */
+    public void modifyCouponUsed() {
+        this.couponUsed = !this.couponUsed;
+    }
+
+    /**
+     * 쿠폰의 사용시각, 주문 등을 초기화해주는 메소드입니다.
+     * 쿠폰 사용 여부가 0으로 바뀔 경우 함께 사용될 메소드입니다.
+     */
+    public void transferEmpty() {
+        this.order = null;
+        this.orderProduct = null;
+        this.usedAt = null;
     }
 }

@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.product.relationship.service;
 
-import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductTypeStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductTypeStateCodeResponseDto;
 import java.util.List;
 
@@ -11,14 +10,6 @@ import java.util.List;
  * @since : 1.0
  */
 public interface ProductTypeStateCodeService {
-    /**
-     * 상품유형코드를 생성합니다.
-     *
-     * @param requestDto 생성시 필요한 dto class.
-     * @return 생성된 객체를 반환합니다.
-     */
-    GetProductTypeStateCodeResponseDto createTypeStateCode(
-            CreateProductTypeStateCodeRequestDto requestDto);
 
     /**
      * 유형 번호로 조회합니다.

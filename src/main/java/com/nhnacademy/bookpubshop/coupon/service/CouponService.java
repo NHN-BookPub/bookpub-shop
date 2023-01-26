@@ -1,8 +1,8 @@
 package com.nhnacademy.bookpubshop.coupon.service;
 
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
-import com.nhnacademy.bookpubshop.coupon.dto.request.ModifyCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
+import java.io.IOException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -22,11 +22,11 @@ public interface CouponService {
     void createCoupon(CreateCouponRequestDto createRequestDto);
 
     /**
-     * 쿠폰 수정을 위한 메서드.
+     * 쿠폰 사용여부 수정을 위한 메서드.
      *
-     * @param modifyRequestDto 쿠폰 수정에 필요한 정보를 담은 Dto
+     * @param couponNo 수정할 쿠폰 번호
      */
-    void modifyCouponUsed(ModifyCouponRequestDto modifyRequestDto);
+    void modifyCouponUsed(Long couponNo);
 
     /**
      * 쿠폰 단건 조회를 위한 메서드.
@@ -42,5 +42,5 @@ public interface CouponService {
      * @param pageable 조회할 쿠폰 페이지 정보
      * @return 조회된 쿠폰 페이지
      */
-    Page<GetCouponResponseDto> getCoupons(Pageable pageable);
+    Page<GetCouponResponseDto> getCoupons(Pageable pageable, String searchKey, String search) throws IOException;
 }

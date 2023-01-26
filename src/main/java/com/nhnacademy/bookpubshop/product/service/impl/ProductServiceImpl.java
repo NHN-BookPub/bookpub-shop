@@ -6,7 +6,8 @@ import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
-import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.Product;
@@ -29,6 +30,7 @@ import com.nhnacademy.bookpubshop.tag.exception.TagNotFoundException;
 import com.nhnacademy.bookpubshop.tag.repository.TagRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -57,6 +59,7 @@ public class ProductServiceImpl implements ProductService {
     public GetProductDetailResponseDto getProductDetailById(Long id) {
         return productRepository.getProductDetailById(id)
                 .orElseThrow(ProductNotFoundException::new);
+
     }
 
     /**
@@ -117,8 +120,8 @@ public class ProductServiceImpl implements ProductService {
                     new ProductCategory.Pk(category.getCategoryNo(), product.getProductNo()), category, product));
         }
 
-        List<Integer> tagsNo = request.getTagsNo();
-        if (!tagsNo.isEmpty()) {
+        if (Objects.nonNull(request.getTagsNo())) {
+            List<Integer> tagsNo = request.getTagsNo();
             for (Integer tagNo : tagsNo) {
                 Tag tag = tagRepository.findById(tagNo)
                         .orElseThrow(() -> new TagNotFoundException(tagNo));
@@ -135,14 +138,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public Page<GetProductListResponseDto> getAllProducts(Pageable pageable) {
-        Page<GetProductListResponseDto> response =
-                productRepository.getAllProducts(pageable);
-
-        if (response.getContent().isEmpty() || response.getTotalElements() == 0) {
-            throw new ProductNotFoundException();
-        }
-
-        return response;
+        return productRepository.getAllProducts(pageable);
     }
 
     /**
@@ -178,7 +174,13 @@ public class ProductServiceImpl implements ProductService {
 
         List<Product> relationProducts = new ArrayList<>();
 
-        productRepository.save(new Product(
+//        for (Long relationProductNo : request.getRelationProducts()) {
+//            relationProducts.add(
+//                    productRepository.findById(relationProductNo)
+//                            .orElseThrow(ProductNotFoundException::new));
+//        }
+
+        Product save = productRepository.save(new Product(
                 product.getProductNo(),
                 productPolicy,
 
@@ -197,6 +199,7 @@ public class ProductServiceImpl implements ProductService {
                 request.getProductPriority(),
                 product.isProductDeleted(),
                 null,
+//                            request.getProductStock(),
                 request.getPublishedAt(),
                 request.isSubscribed()));
     }
@@ -211,7 +214,23 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(ProductNotFoundException::new);
 
         product.modifyProductDeleted();
+    }
 
-        productRepository.save(product);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<GetProductByTypeResponseDto> getProductsByType(Integer typeNo, Integer limit) {
+        return productRepository.findProductListByType(typeNo, limit);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<GetProductDetailResponseDto> getProductsInCart(List<Long> productsNo) {
+        return productRepository.getProductsInCart(productsNo);
     }
 }

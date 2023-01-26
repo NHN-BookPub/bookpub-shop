@@ -20,12 +20,12 @@ public interface CouponRepositoryCustom {
      * @param couponNo 쿠폰 조회를 위한 쿠폰 번호
      * @return 쿠폰 조회 Dto
      */
-    Optional<GetCouponResponseDto> getCoupon(Long couponNo);
+    Optional<GetCouponResponseDto> findByCouponNo(Long couponNo);
 
     /**
      * 쿠폰 리스트 페이지를 조회하는 메서드.
      *
      * @return 쿠폰 조회 Dto 페이지
      */
-    Page<GetCouponResponseDto> getCoupons(Pageable pageable);
+    Page<GetCouponResponseDto> findAllBy(Pageable pageable, String searchKey, String search);
 }

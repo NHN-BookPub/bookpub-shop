@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.product.dto;
+package com.nhnacademy.bookpubshop.product.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
@@ -17,38 +17,38 @@ import org.hibernate.validator.constraints.Length;
 @Getter
 @NoArgsConstructor
 public class CreateProductRequestDto {
-    @NotNull
+    @NotNull(message = "ISBN을 입력해주세요.")
     @Length(min = 10, max = 13, message = "ISBN은 10자 혹은 13자입니다.")
     private String productIsbn;
     @Length(min = 1, max = 100, message = "제목은 최대 100자입니다.")
     private String title;
-    @NotNull
+    @NotNull(message = "출판사를 입력해주세요.")
     @Length(max = 50, message = "50자를 넘을 수 없습니다.")
     private String productPublisher;
-    @NotNull
+
     private Integer pageCount;
-    @Length(min = 1, max = 2000, message = "설명은 최대 2000자입니다.")
+    @Length(max = 2000, message = "설명은 최대 2000자입니다.")
     private String productDescription;
-    @NotNull
+    @NotNull(message = "판매가를 입력해주세요.")
     private Long salePrice;
-    @NotNull
+    @NotNull(message = "정가를 입력해주세요.")
     private Long productPrice;
-    @NotNull
+
     private Integer salesRate;
-    @NotNull
+
     private Integer productPriority;
-    @NotNull
+    @NotNull(message = "상품 재고를 입력해주세요.")
     private Integer productStock;
-    @NotNull
+    @NotNull(message = "출판일시를 입력해주세요.")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime publishedAt;
-    @NotNull
+
     private boolean subscribed;
-    @NotNull
+    @NotNull(message = "상품정책 번호를 입력해주세요.")
     private Integer productPolicyNo;
-    @NotNull
+    @NotNull(message = "상품판매여부코드 번호를 입력해주세요.")
     private Integer saleCodeNo;
-    @NotNull
+    @NotNull(message = "상품유형코드 번호를 입력해주세요.")
     private Integer typeCodeNo;
     private List<Integer> authorsNo;
     private List<Integer> categoriesNo;

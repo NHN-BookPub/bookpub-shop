@@ -1,8 +1,10 @@
 package com.nhnacademy.bookpubshop.product.service;
 
-import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Service;
 /**
  * ProductRepositoru에 접근하기 위한 Service 클래스입니다.
  *
- * @author : 여운석
+ * @author : 여운석, 박경서
  * @since : 1.0
  */
 @Service
@@ -62,4 +64,21 @@ public interface ProductService {
      * @param id 상품번호입니다.
      */
     void setDeleteProduct(Long id);
+
+    /**
+     * 상품 유형 번호를 가지고 상품 리스트 조회.
+     *
+     * @param typeNo 유형 번호
+     * @param limit  제한 갯수
+     * @return 유형별 상품 리스트
+     */
+    List<GetProductByTypeResponseDto> getProductsByType(Integer typeNo, Integer limit);
+
+    /**
+     * 카트에 담긴 상품 번호를 가지고 상품들 조회.
+     *
+     * @param productsNo 카트에 담긴 상품들 번호
+     * @return 카트에 담긴 상품들 정보
+     */
+    List<GetProductDetailResponseDto> getProductsInCart(List<Long> productsNo);
 }

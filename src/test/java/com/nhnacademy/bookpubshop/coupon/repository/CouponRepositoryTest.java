@@ -135,8 +135,7 @@ class CouponRepositoryTest {
                 OrderProductState.CONFIRMED.isUsed(),
                 "주문완료되었습니다.");
 
-        bookPubTier = new BookPubTier(null, "브론즈",1);
-
+        bookPubTier = TierDummy.dummy();
         member = MemberDummy.dummy(bookPubTier);
 
         orderStateCode = new OrderStateCode(
@@ -207,6 +206,7 @@ class CouponRepositoryTest {
 
 
         file = FileDummy.dummy(inquiry, review, couponTemplate, product, customerService);
+        couponTemplate.setFile(file);
 
 
         entityManager.persist(bookPubTier);
@@ -216,6 +216,7 @@ class CouponRepositoryTest {
         entityManager.persist(productTypeStateCode);
         entityManager.persist(deliveryPricePolicy);
         entityManager.persist(packagePricePolicy);
+        entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(orderProductStateCode);
         entityManager.persist(orderStateCode);
@@ -258,45 +259,140 @@ class CouponRepositoryTest {
         Coupon persist = entityManager.persist(coupon);
 
         // when
-        Optional<GetCouponResponseDto> result = couponRepository.getCoupon(persist.getCouponNo());
+        Optional<GetCouponResponseDto> result = couponRepository.findByCouponNo(persist.getCouponNo());
 
         // then
         assertThat(result).isPresent();
         assertThat(result.get().getCouponNo()).isEqualTo(persist.getCouponNo());
-        assertThat(result.get().getMemberId()).isEqualTo(member.getMemberId());
-        assertThat(result.get().getTemplateName()).isEqualTo(couponTemplate.getTemplateName());
-        assertThat(result.get().getTemplateImage()).isEqualTo(file.getNameSaved().concat(file.getFileExtension()));
-        assertThat(result.get().isPolicyFixed()).isEqualTo(couponPolicy.isPolicyFixed());
-        assertThat(result.get().getPolicyPrice()).isEqualTo(couponPolicy.getPolicyPrice());
-        assertThat(result.get().getPolicyMinimum()).isEqualTo(couponPolicy.getPolicyMinimum());
-        assertThat(result.get().getMaxDiscount()).isEqualTo(couponPolicy.getMaxDiscount());
-        assertThat(result.get().getFinishedAt()).isEqualTo(couponTemplate.getFinishedAt());
-        assertThat(result.get().isCouponUsed()).isEqualTo(coupon.isCouponUsed());
+        assertThat(result.get().getMemberId()).isEqualTo(persist.getMember().getMemberId());
+        assertThat(result.get().getTemplateName()).isEqualTo(persist.getCouponTemplate().getTemplateName());
+        assertThat(result.get().getTemplateImage()).isEqualTo(persist.getCouponTemplate().getFile().getFilePath());
+        assertThat(result.get().isPolicyFixed()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().isPolicyFixed());
+        assertThat(result.get().getPolicyPrice()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyPrice());
+        assertThat(result.get().getPolicyMinimum()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyMinimum());
+        assertThat(result.get().getMaxDiscount()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getMaxDiscount());
+        assertThat(result.get().getFinishedAt()).isEqualTo(persist.getCouponTemplate().getFinishedAt());
+        assertThat(result.get().isCouponUsed()).isEqualTo(persist.isCouponUsed());
     }
 
     @Test
-    @DisplayName("쿠폰 리스트 페이지를 조하는 테스트")
-    void getCoupons_Test() {
+    @DisplayName("쿠폰 리스트 페이지를 조회하는 테스트_쿠폰이름으로 검색할 경우")
+    void getCoupons_Test_SearchTemplateName() {
         // given
-        entityManager.persist(coupon);
-        GetCouponResponseDto dto = new GetCouponResponseDto(1L, "memberId", "templateName", "Image", true, 1L, 10L, 100L, LocalDateTime.now(), false);
+        Coupon persist = entityManager.persist(coupon);
         Pageable pageable = Pageable.ofSize(10);
 
         // when
-        Page<GetCouponResponseDto> page = couponRepository.getCoupons(pageable);
+        Page<GetCouponResponseDto> page = couponRepository.findAllBy(pageable, "templateName", persist.getCouponTemplate().getTemplateName());
 
         // then
         assertThat(page).isNotEmpty();
-        assertThat(page.getContent().get(0).getCouponNo()).isEqualTo(coupon.getCouponNo());
-        assertThat(page.getContent().get(0).getMemberId()).isEqualTo(member.getMemberId());
-        assertThat(page.getContent().get(0).getTemplateName()).isEqualTo(couponTemplate.getTemplateName());
-        assertThat(page.getContent().get(0).getTemplateImage()).isEqualTo(file.getNameSaved().concat(file.getFileExtension()));
-        assertThat(page.getContent().get(0).isPolicyFixed()).isEqualTo(couponPolicy.isPolicyFixed());
-        assertThat(page.getContent().get(0).getPolicyPrice()).isEqualTo(couponPolicy.getPolicyPrice());
-        assertThat(page.getContent().get(0).getPolicyMinimum()).isEqualTo(couponPolicy.getPolicyMinimum());
-        assertThat(page.getContent().get(0).getMaxDiscount()).isEqualTo(couponPolicy.getMaxDiscount());
-        assertThat(page.getContent().get(0).getFinishedAt()).isEqualTo(couponTemplate.getFinishedAt());
-        assertThat(page.getContent().get(0).isCouponUsed()).isEqualTo(coupon.isCouponUsed());
+        assertThat(page.getContent().get(0).getCouponNo()).isEqualTo(persist.getCouponNo());
+        assertThat(page.getContent().get(0).getMemberId()).isEqualTo(persist.getMember().getMemberId());
+        assertThat(page.getContent().get(0).getTemplateName()).isEqualTo(persist.getCouponTemplate().getTemplateName());
+        assertThat(page.getContent().get(0).getTemplateImage()).isEqualTo(persist.getCouponTemplate().getFile().getFilePath());
+        assertThat(page.getContent().get(0).isPolicyFixed()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().isPolicyFixed());
+        assertThat(page.getContent().get(0).getPolicyPrice()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyPrice());
+        assertThat(page.getContent().get(0).getPolicyMinimum()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyMinimum());
+        assertThat(page.getContent().get(0).getMaxDiscount()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getMaxDiscount());
+        assertThat(page.getContent().get(0).getFinishedAt()).isEqualTo(persist.getCouponTemplate().getFinishedAt());
+        assertThat(page.getContent().get(0).isCouponUsed()).isEqualTo(persist.isCouponUsed());
+    }
+
+    @Test
+    @DisplayName("쿠폰 리스트 페이지를 조회하는 테스트_쿠폰 번호로 검색할 경우")
+    void getCoupons_Test_SearchCouponNo() {
+        // given
+        Coupon persist = entityManager.persist(coupon);
+        Pageable pageable = Pageable.ofSize(10);
+
+        // when
+        Page<GetCouponResponseDto> page = couponRepository.findAllBy(pageable, "couponNo", String.valueOf(persist.getCouponNo()));
+
+        // then
+        assertThat(page).isNotEmpty();
+        assertThat(page.getContent().get(0).getCouponNo()).isEqualTo(persist.getCouponNo());
+        assertThat(page.getContent().get(0).getMemberId()).isEqualTo(persist.getMember().getMemberId());
+        assertThat(page.getContent().get(0).getTemplateName()).isEqualTo(persist.getCouponTemplate().getTemplateName());
+        assertThat(page.getContent().get(0).getTemplateImage()).isEqualTo(persist.getCouponTemplate().getFile().getFilePath());
+        assertThat(page.getContent().get(0).isPolicyFixed()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().isPolicyFixed());
+        assertThat(page.getContent().get(0).getPolicyPrice()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyPrice());
+        assertThat(page.getContent().get(0).getPolicyMinimum()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyMinimum());
+        assertThat(page.getContent().get(0).getMaxDiscount()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getMaxDiscount());
+        assertThat(page.getContent().get(0).getFinishedAt()).isEqualTo(persist.getCouponTemplate().getFinishedAt());
+        assertThat(page.getContent().get(0).isCouponUsed()).isEqualTo(persist.isCouponUsed());
+    }
+
+    @Test
+    @DisplayName("쿠폰 리스트 페이지를 조회하는 테스트_멤버 아이디로 검색할 경우")
+    void getCoupons_Test_SearchMemberId() {
+        // given
+        Coupon persist = entityManager.persist(coupon);
+        Pageable pageable = Pageable.ofSize(10);
+
+        // when
+        Page<GetCouponResponseDto> page = couponRepository.findAllBy(pageable, "memberId", persist.getMember().getMemberId());
+
+        // then
+        assertThat(page).isNotEmpty();
+        assertThat(page.getContent().get(0).getCouponNo()).isEqualTo(persist.getCouponNo());
+        assertThat(page.getContent().get(0).getMemberId()).isEqualTo(persist.getMember().getMemberId());
+        assertThat(page.getContent().get(0).getTemplateName()).isEqualTo(persist.getCouponTemplate().getTemplateName());
+        assertThat(page.getContent().get(0).getTemplateImage()).isEqualTo(persist.getCouponTemplate().getFile().getFilePath());
+        assertThat(page.getContent().get(0).isPolicyFixed()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().isPolicyFixed());
+        assertThat(page.getContent().get(0).getPolicyPrice()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyPrice());
+        assertThat(page.getContent().get(0).getPolicyMinimum()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyMinimum());
+        assertThat(page.getContent().get(0).getMaxDiscount()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getMaxDiscount());
+        assertThat(page.getContent().get(0).getFinishedAt()).isEqualTo(persist.getCouponTemplate().getFinishedAt());
+        assertThat(page.getContent().get(0).isCouponUsed()).isEqualTo(persist.isCouponUsed());
+    }
+
+    @Test
+    @DisplayName("쿠폰 리스트 페이지를 조회하는 테스트_바르지 않은 검색어일 경우")
+    void getCoupons_Test_SearchWeird() {
+        // given
+        Coupon persist = entityManager.persist(coupon);
+        Pageable pageable = Pageable.ofSize(10);
+
+        // when
+        Page<GetCouponResponseDto> page = couponRepository.findAllBy(pageable, "asdf", null);
+
+        // then
+        assertThat(page).isNotEmpty();
+        assertThat(page.getContent().get(0).getCouponNo()).isEqualTo(persist.getCouponNo());
+        assertThat(page.getContent().get(0).getMemberId()).isEqualTo(persist.getMember().getMemberId());
+        assertThat(page.getContent().get(0).getTemplateName()).isEqualTo(persist.getCouponTemplate().getTemplateName());
+        assertThat(page.getContent().get(0).getTemplateImage()).isEqualTo(persist.getCouponTemplate().getFile().getFilePath());
+        assertThat(page.getContent().get(0).isPolicyFixed()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().isPolicyFixed());
+        assertThat(page.getContent().get(0).getPolicyPrice()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyPrice());
+        assertThat(page.getContent().get(0).getPolicyMinimum()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyMinimum());
+        assertThat(page.getContent().get(0).getMaxDiscount()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getMaxDiscount());
+        assertThat(page.getContent().get(0).getFinishedAt()).isEqualTo(persist.getCouponTemplate().getFinishedAt());
+        assertThat(page.getContent().get(0).isCouponUsed()).isEqualTo(persist.isCouponUsed());
+    }
+
+    @Test
+    @DisplayName("쿠폰 리스트 페이지를 조회하는 테스트_조건이 없을 경우")
+    void getCoupons_Test() {
+        // given
+        Coupon persist = entityManager.persist(coupon);
+        Pageable pageable = Pageable.ofSize(10);
+
+        // when
+        Page<GetCouponResponseDto> page = couponRepository.findAllBy(pageable, null, null);
+
+        // then
+        assertThat(page).isNotEmpty();
+        assertThat(page.getContent().get(0).getCouponNo()).isEqualTo(persist.getCouponNo());
+        assertThat(page.getContent().get(0).getMemberId()).isEqualTo(persist.getMember().getMemberId());
+        assertThat(page.getContent().get(0).getTemplateName()).isEqualTo(persist.getCouponTemplate().getTemplateName());
+        assertThat(page.getContent().get(0).getTemplateImage()).isEqualTo(persist.getCouponTemplate().getFile().getFilePath());
+        assertThat(page.getContent().get(0).isPolicyFixed()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().isPolicyFixed());
+        assertThat(page.getContent().get(0).getPolicyPrice()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyPrice());
+        assertThat(page.getContent().get(0).getPolicyMinimum()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyMinimum());
+        assertThat(page.getContent().get(0).getMaxDiscount()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getMaxDiscount());
+        assertThat(page.getContent().get(0).getFinishedAt()).isEqualTo(persist.getCouponTemplate().getFinishedAt());
+        assertThat(page.getContent().get(0).isCouponUsed()).isEqualTo(persist.isCouponUsed());
     }
 
     private Category category() {

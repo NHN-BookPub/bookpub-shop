@@ -1,0 +1,41 @@
+
+= CouponTemplate
+:toc:left
+
+== 쿠폰상태 리스트 조회
+Coupon-State-list
+
+=== 요청구조
+include::../../../../target/snippets/coupon-state-list/http-request.adoc[]
+
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/coupon-state-list/request-body.adoc[]
+
+
+=== 응답 구조
+include::../../../../target/snippets/coupon-state-list/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-state-list/response-fields.adoc[]
+
+== 쿠폰상태 단일값 조회
+Coupon-state-detail
+
+=== 요청구조
+include::../../../../target/snippets/coupon-state-detail/http-request.adoc[]
+
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/coupon-state-detail/path-parameters.adoc[]
+
+
+=== 응답 구조
+include::../../../../target/snippets/coupon-state-detail/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-state-detail/response-fields.adoc[]

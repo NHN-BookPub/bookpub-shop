@@ -1,0 +1,32 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+카테고리(Category) 등록에 관한 Api 명세입니다.
+
+== 카테고리 등록
+
+=== 요청구조
+
+include::../../../../target/snippets/category-create/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/category-create/request-fields.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/category-create/http-response.adoc[]
+
+=== 예외 상황
+
+==== 1. 카테고리 이름이 기입되지 않은 경우
+
+include::../../../../target/snippets/category-create-categoryNameFail/http-request.adoc[]
+include::../../../../target/snippets/category-create-categoryNameFail/http-response.adoc[]
+
+==== 2. 카테고리 이름 길이가 초과된 경우
+
+include::../../../../target/snippets/category-create-categoryNameFail-tooLong/http-request.adoc[]
+include::../../../../target/snippets/category-create-categoryNameFail-tooLong/http-response.adoc[]

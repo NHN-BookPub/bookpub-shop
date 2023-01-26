@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.coupon.dto.request;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,6 @@ public class CreateCouponRequestDto {
     @NotNull(message = "쿠폰템플릿 번호를 입력해주세요.")
     private Long templateNo;
 
-    @NotNull(message = "멤버 번호를 입력해주세요.")
-    private Long memberNo;
+    @NotBlank(message = "멤버 아이디를 입력해주세요.")
+    private String memberId;
 }

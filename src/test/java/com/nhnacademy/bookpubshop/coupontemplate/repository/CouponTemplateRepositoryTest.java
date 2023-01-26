@@ -100,8 +100,6 @@ class CouponTemplateRepositoryTest {
         assertThat(result.get().getCouponStateCode().getCodeNo()).isEqualTo(couponTemplate.getCouponStateCode().getCodeNo());
         assertThat(result.get().getTemplateName()).isEqualTo(couponTemplate.getTemplateName());
         assertThat(result.get().getFinishedAt()).isEqualTo(couponTemplate.getFinishedAt());
-        assertThat(result.get().getIssuedAt()).isEqualTo(couponTemplate.getIssuedAt());
-        assertThat(result.get().isTemplateOverlapped()).isEqualTo(couponTemplate.isTemplateOverlapped());
         assertThat(result.get().isTemplateBundled()).isEqualTo(couponTemplate.isTemplateBundled());
     }
 
@@ -135,8 +133,6 @@ class CouponTemplateRepositoryTest {
         assertThat(result.get().getTemplateName()).isEqualTo(save.getTemplateName());
         assertThat(result.get().getTemplateImage()).isEqualTo(saveFile.getFilePath());
         assertThat(result.get().getFinishedAt()).isEqualTo(save.getFinishedAt());
-        assertThat(result.get().getIssuedAt()).isEqualTo(save.getIssuedAt());
-        assertThat(result.get().isTemplateOverlapped()).isEqualTo(save.isTemplateOverlapped());
         assertThat(result.get().isTemplateBundled()).isEqualTo(save.isTemplateBundled());
     }
 
@@ -174,8 +170,6 @@ class CouponTemplateRepositoryTest {
         assertThat(content.get(0).getTemplateName()).isEqualTo(save.getTemplateName());
         assertThat(content.get(0).getTemplateImage()).isEqualTo(saveFile.getFilePath());
         assertThat(content.get(0).getFinishedAt()).isEqualTo(save.getFinishedAt());
-        assertThat(content.get(0).getIssuedAt()).isEqualTo(save.getIssuedAt());
-        assertThat(content.get(0).isTemplateOverlapped()).isEqualTo(save.isTemplateOverlapped());
         assertThat(content.get(0).isTemplateBundled()).isEqualTo(save.isTemplateBundled());
     }
 
@@ -203,7 +197,6 @@ class CouponTemplateRepositoryTest {
         assertThat(content).isNotEmpty();
         assertThat(content.get(0).getTemplateName()).isEqualTo(save.getTemplateName());
         assertThat(content.get(0).getTemplateImage()).isEqualTo(saveFile.getFilePath());
-        assertThat(content.get(0).getIssuedAt()).isEqualTo(save.getIssuedAt());
         assertThat(content.get(0).getFinishedAt()).isEqualTo(save.getFinishedAt());
     }
 

@@ -7,8 +7,8 @@ package com.nhnacademy.bookpubshop.address.exception;
  * @since : 1.0
  **/
 public class AddressNotFoundException extends RuntimeException {
-    private final static String message = "찾을 수 없는 주소입니다.";
+    public static final  String MESSAGE = "찾을 수 없는 주소입니다.";
     public AddressNotFoundException() {
-        super(message);
+        super(MESSAGE);
     }
 }

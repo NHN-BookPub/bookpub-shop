@@ -1,0 +1,20 @@
+= Coupon
+:toc:
+
+== 쿠폰 리스트 조회
+Coupon-List-get
+
+=== 요청구조
+include::../../../../target/snippets/couponList-get/http-request.adoc
+
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/couponList-get/request-fields.adoc
+
+=== 응답 구조
+include::../../../../target/snippets/couponList-get/http-response.adoc
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/couponList-get/response-body.adoc

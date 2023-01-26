@@ -1,22 +1,28 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
+import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.IdRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
-import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.NickRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberAuthResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberPasswordResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
+import com.nhnacademy.bookpubshop.token.util.JwtUtil;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -83,6 +90,12 @@ public class MemberController {
         return memberService.nickNameDuplicateCheck(requestDto.getNickname());
     }
 
+    @GetMapping("/auth")
+    public MemberAuthResponseDto authMemberInfo(HttpServletRequest request) {
+        String accessToken = request.getHeader(JwtUtil.AUTH_HEADER);
+
+        return memberService.authMemberInfo(accessToken);
+    }
 
 
     /**
@@ -130,7 +143,7 @@ public class MemberController {
      */
     @PutMapping("/members/{memberNo}/phone")
     public ResponseEntity<Void> memberModifyPhone(@PathVariable("memberNo") Long memberNo,
-                                                  @Valid @RequestBody ModifyMemberPhoneRequestDto requestDto){
+                                                  @Valid @RequestBody ModifyMemberPhoneRequestDto requestDto) {
         memberService.modifyMemberPhone(memberNo, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
@@ -147,7 +160,7 @@ public class MemberController {
      */
     @PutMapping("/members/{memberNo}/name")
     public ResponseEntity<Void> memberModifyName(@PathVariable("memberNo") Long memberNo,
-                                                  @Valid @RequestBody ModifyMemberNameRequestDto requestDto){
+                                                 @Valid @RequestBody ModifyMemberNameRequestDto requestDto) {
         memberService.modifyMemberName(memberNo, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
@@ -192,11 +205,12 @@ public class MemberController {
      * @return 성공시 201
      */
     @PutMapping("/members/{memberNo}")
-    public ResponseEntity<Void> memberDelete(@PathVariable("memberNo") Long memberNo){
+    public ResponseEntity<Void> memberDelete(@PathVariable("memberNo") Long memberNo) {
         memberService.deleteMember(memberNo);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
+
     /**
      * 단일 멤버에대한 차단 및 복구를 수행할 수 있습니다.
      *
@@ -248,6 +262,91 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(memberService.getTierStatistics());
+    }
+
+    /**
+     * 회원만 접근가능합니다.
+     * 회원의 패스워드를 검사하기위한 메서드입니다.
+     * 회원의 password 를 반환합니다.
+     * 성공시 200이 반환됩니다.
+     *
+     * @param memberNo 회원번호
+     * @return the response entity
+     */
+    @GetMapping("/members/{memberNo}/password-check")
+    public ResponseEntity<MemberPasswordResponseDto> memberPasswordCheck(@PathVariable("memberNo") Long memberNo){
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(memberService.getMemberPwd(memberNo));
+    }
+
+    /**
+     *  회원만 접근가능합니다.
+     *  회원의 패스워드가 수정될때 사용되는 메서드입니다.
+     *  성공시 201 이 반환됩니다.
+     *
+     * @param memberNo 회원번호
+     * @param request  수정할 회원의 비밀번호가 기입됩니다.
+     * @return the response entity
+     */
+    @PutMapping("/members/{memberNo}/password")
+    public ResponseEntity<Void> memberModifyPassword(@PathVariable("memberNo") Long memberNo,
+                                                     @RequestBody ModifyMemberPasswordRequest request) {
+        memberService.modifyMemberPassword(memberNo,request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+
+    }
+
+    /**
+     * 회원만 접근가능합니다.
+     * 회원의 기준주소지를 변경하기위한 메서드입니다.
+     * 성공시 201 이 반환됩니다.
+     *
+     * @param memberNo  회원번호가 기입됩니다.
+     * @param addressNo 회원의 주소번호가 기입됩니다.
+     * @return the response entity
+     */
+    @PutMapping("/members/{memberNo}/addresses/{addressNo}")
+    public ResponseEntity<Void> memberModifyBaseAddress(@PathVariable("memberNo") Long memberNo,
+                                                        @PathVariable("addressNo") Long addressNo){
+        memberService.modifyMemberBaseAddress(memberNo, addressNo);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 회원만 접근할수있습니다.
+     * 회원의 주소를 첨가하기위한 메서드입니다.
+     * 성공시 201 이 반환됩니다.
+     *
+     * @param memberNo   the member no
+     * @param requestDto the request dto
+     * @return the response entity
+     */
+    @PostMapping("/members/{memberNo}/addresses")
+    public ResponseEntity<Void> memberAddressAdd(@PathVariable("memberNo") Long memberNo,
+                                                 @Valid @RequestBody CreateAddressRequestDto requestDto) {
+        memberService.addMemberAddress(memberNo, requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 회원만 접근할수있습니다.
+     * 회원의 주소를 지우기위한 메서드입니다.
+     * 성공시 200 이반환됩니다.
+     *
+     * @param memberNo  the member no
+     * @param addressNo the address no
+     * @return the response entity
+     */
+    @DeleteMapping("/members/{memberNo}/addresses/{addressNo}")
+    public ResponseEntity<Void> memberAddressDelete(@PathVariable("memberNo") Long memberNo,
+                                                    @PathVariable("addressNo") Long addressNo){
+        memberService.deleteMemberAddress(memberNo, addressNo);
+        return ResponseEntity.ok()
+                .build();
     }
 
 }
