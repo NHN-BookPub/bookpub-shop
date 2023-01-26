@@ -25,6 +25,6 @@ public class MemberAddressResponseDto {
         this.addressNo = address.getAddressNo();
         this.roadAddress = address.getRoadAddress();
         this.addressDetail = address.getAddressDetail();
-        this.addressBased = address.isAddressMemberNumber();
+        this.addressBased = address.isAddressMemberBased();
     }
 }

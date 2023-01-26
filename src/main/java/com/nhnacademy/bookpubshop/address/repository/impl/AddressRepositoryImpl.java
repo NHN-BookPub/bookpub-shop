@@ -48,7 +48,7 @@ public class AddressRepositoryImpl extends QuerydslRepositorySupport
                 from(address)
                         .innerJoin(address.member, member)
                         .where(member.memberNo.eq(memberNo)
-                                .and(address.addressMemberNumber.isTrue()))
+                                .and(address.addressMemberBased.isTrue()))
                         .select(address)
                         .fetchOne()
         );
