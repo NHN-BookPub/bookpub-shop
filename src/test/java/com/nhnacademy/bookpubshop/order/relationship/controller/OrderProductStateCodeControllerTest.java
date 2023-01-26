@@ -124,6 +124,9 @@ class OrderProductStateCodeControllerTest {
                 .andDo(document("order-product-state-code-detail",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("codeNo").description("주문 상품 상태 코드 번호")
+                        ),
                         responseFields(
                                 fieldWithPath("codeNo").description("주문 상품 상태 코드 번호"),
                                 fieldWithPath("codeName").description("주문 상품 상태 코드명"),
@@ -133,7 +136,6 @@ class OrderProductStateCodeControllerTest {
 
         verify(orderProductStateCodeService, times(1)).getOrderProductStateCode(anyInt());
     }
-    //상태코드 등록 성공,실패, 상태코드 수
 
     @Test
     @DisplayName("주문 상품 상태 코드 생성 성공 테스트")
