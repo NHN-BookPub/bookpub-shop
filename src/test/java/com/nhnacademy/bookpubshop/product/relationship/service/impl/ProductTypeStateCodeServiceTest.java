@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodesException;
-import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductTypeStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductTypeStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
@@ -31,7 +30,6 @@ class ProductTypeStateCodeServiceTest {
     ProductTypeStateCodeRepository productTypeStateCodeRepository;
     ProductTypeStateCodeService productTypeStateCodeService;
     ProductTypeStateCode productTypeStateCode;
-    CreateProductTypeStateCodeRequestDto requestDto;
     GetProductTypeStateCodeResponseDto responseDto;
 
     @BeforeEach
@@ -42,30 +40,11 @@ class ProductTypeStateCodeServiceTest {
 
         productTypeStateCode = new ProductTypeStateCode(1, "test", true, "test");
 
-        requestDto = new CreateProductTypeStateCodeRequestDto();
-        ReflectionTestUtils.setField(requestDto, "codeName", "test");
-        ReflectionTestUtils.setField(requestDto, "codeUsed", true);
-        ReflectionTestUtils.setField(requestDto, "codeInfo", "test");
-
         responseDto = new GetProductTypeStateCodeResponseDto();
         ReflectionTestUtils.setField(responseDto, "codeNo", 1);
         ReflectionTestUtils.setField(responseDto, "codeName", "test");
         ReflectionTestUtils.setField(responseDto, "codeUsed", true);
         ReflectionTestUtils.setField(responseDto, "codeInfo", "test");
-    }
-
-    @Test
-    @DisplayName("상품 유형 상태 코드 생성 성공")
-    void createTypeStateCode() {
-        when(productTypeStateCodeRepository.save(any()))
-                .thenReturn(productTypeStateCode);
-
-        GetProductTypeStateCodeResponseDto result = productTypeStateCodeService.createTypeStateCode(requestDto);
-
-        assertThat(result.getCodeNo()).isEqualTo(productTypeStateCode.getCodeNo());
-        assertThat(result.getCodeName()).isEqualTo(productTypeStateCode.getCodeName());
-        assertThat(result.getCodeInfo()).isEqualTo(productTypeStateCode.getCodeInfo());
-        assertThat(result.isCodeUsed()).isEqualTo(productTypeStateCode.isCodeUsed());
     }
 
     @Test

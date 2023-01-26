@@ -5,7 +5,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
-import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductSaleStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductSaleStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 
 /**
@@ -41,7 +39,6 @@ class ProductSaleStateCodeServiceTest {
     @MockBean
     ProductSaleStateCodeRepository productSaleStateCodeRepository;
     ProductSaleStateCode productSaleStateCode;
-    CreateProductSaleStateCodeRequestDto requestDto;
     GetProductSaleStateCodeResponseDto responseDto;
 
     @BeforeEach
@@ -53,29 +50,12 @@ class ProductSaleStateCodeServiceTest {
                 "test",
                 true,
                 "test");
-        requestDto = new CreateProductSaleStateCodeRequestDto();
-        ReflectionTestUtils.setField(requestDto, "codeCategory", "test");
-        ReflectionTestUtils.setField(requestDto, "codeUsed", true);
-        ReflectionTestUtils.setField(requestDto, "codeInfo", "test");
 
         responseDto = new GetProductSaleStateCodeResponseDto(
                 productSaleStateCode.getCodeNo(),
                 productSaleStateCode.getCodeCategory(),
                 productSaleStateCode.isCodeUsed(),
                 productSaleStateCode.getCodeInfo());
-    }
-
-    @Test
-    @DisplayName("판매유형코드 생성 성공")
-    void createSaleCode() {
-        when(productSaleStateCodeRepository.save(any())).thenReturn(productSaleStateCode);
-
-        GetProductSaleStateCodeResponseDto result = productSaleStateCodeService.createSaleCode(requestDto);
-
-        assertThat(result.getCodeNo()).isEqualTo(productSaleStateCode.getCodeNo());
-        assertThat(result.getCodeCategory()).isEqualTo(productSaleStateCode.getCodeCategory());
-        assertThat(result.getCodeInfo()).isEqualTo(productSaleStateCode.getCodeInfo());
-        assertThat(result.isCodeUsed()).isEqualTo(productSaleStateCode.isCodeUsed());
     }
 
     @Test

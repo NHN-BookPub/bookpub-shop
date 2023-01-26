@@ -1,19 +1,15 @@
 package com.nhnacademy.bookpubshop.product.relationship.controller;
 
-import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductSaleStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductSaleStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductSaleStateCodeService;
 import java.util.List;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -36,7 +32,7 @@ public class ProductSaleStateCodeController {
      * @return 성공시 200과 모든 정책코드의 리스트가 반환됩니다.
      */
     @GetMapping
-    public ResponseEntity<List<GetProductSaleStateCodeResponseDto>> getAllSaleStateCode() {
+    public ResponseEntity<List<GetProductSaleStateCodeResponseDto>> productSaleStateCodeList() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productSaleStateCodeService.getAllProductSaleStateCode());
@@ -48,25 +44,10 @@ public class ProductSaleStateCodeController {
      * @return 사용중인 코드
      */
     @GetMapping("/used")
-    public ResponseEntity<List<GetProductSaleStateCodeResponseDto>> getAllSaleStateCodeUsed() {
+    public ResponseEntity<List<GetProductSaleStateCodeResponseDto>> productSaleStateCodeUsedList() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productSaleStateCodeService.getAllProductSaleStateCodeUsed());
-    }
-
-    /**
-     * 상품판매정책코드를 생성하는 api.
-     *
-     * @param requestDto 생성에 사용하는 Dto.
-     * @return 성공시 201 반환합니다.
-     */
-    @PostMapping
-    public ResponseEntity<Void> createProductSaleStateCode(
-            @Valid @RequestBody CreateProductSaleStateCodeRequestDto requestDto) {
-        productSaleStateCodeService.createSaleCode(requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON)
-                .build();
     }
 
     /**
@@ -76,7 +57,7 @@ public class ProductSaleStateCodeController {
      * @return 성공시 200, 객체를 반환합니다.
      */
     @GetMapping("/{codeNo}")
-    public ResponseEntity<GetProductSaleStateCodeResponseDto> getProductSaleStateCodeById(
+    public ResponseEntity<GetProductSaleStateCodeResponseDto> productSaleStateCodeDetails(
             @PathVariable Integer codeNo) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -92,7 +73,7 @@ public class ProductSaleStateCodeController {
      * @return 성공시 201
      */
     @PutMapping("/{codeNo}")
-    public ResponseEntity<Void> setUsedSaleCodeById(
+    public ResponseEntity<Void> productSaleStateCodeModifyUsed(
             @PathVariable Integer codeNo,
             @RequestParam boolean used) {
         productSaleStateCodeService.setUsedSaleCodeById(codeNo, used);

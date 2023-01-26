@@ -25,10 +25,8 @@ public class ModifyCategoryRequestDto {
     @Length(max = 10, message = "카테고리명의 길이가 맞지않습니다.")
     private String categoryName;
 
-    @NotNull(message = "수정할 카테고리 우선수위를 기입해주세요.")
     private Integer categoryPriority;
 
-    @NotNull(message = "수정할 카테고리 노출여부를 선택해주세요.")
     private boolean categoryDisplayed;
 
 }

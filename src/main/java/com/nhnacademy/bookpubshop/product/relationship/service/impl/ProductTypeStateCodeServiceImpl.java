@@ -2,7 +2,6 @@ package com.nhnacademy.bookpubshop.product.relationship.service.impl;
 
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodesException;
-import com.nhnacademy.bookpubshop.product.relationship.dto.CreateProductTypeStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductTypeStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
@@ -23,28 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ProductTypeStateCodeServiceImpl implements ProductTypeStateCodeService {
     private final ProductTypeStateCodeRepository productTypeStateCodeRepository;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public GetProductTypeStateCodeResponseDto createTypeStateCode(
-            CreateProductTypeStateCodeRequestDto requestDto) {
-        ProductTypeStateCode stateCode =
-                productTypeStateCodeRepository.save(
-                        new ProductTypeStateCode(
-                                null,
-                                requestDto.getCodeName(),
-                                requestDto.isCodeUsed(),
-                                requestDto.getCodeInfo()));
-
-        return new GetProductTypeStateCodeResponseDto(
-                stateCode.getCodeNo(),
-                stateCode.getCodeName(),
-                stateCode.isCodeUsed(),
-                stateCode.getCodeInfo());
-    }
 
     /**
      * {@inheritDoc}

@@ -81,7 +81,7 @@ class CouponControllerTest {
                         .param("page", mapper.writeValueAsString(pageable.getPageNumber()))
                         .param("size", mapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].couponNo").value(response.getCouponNo()))
                 .andExpect(jsonPath("$.content[0].memberId").value(response.getMemberId()))
                 .andExpect(jsonPath("$.content[0].templateName").value(response.getTemplateName()))

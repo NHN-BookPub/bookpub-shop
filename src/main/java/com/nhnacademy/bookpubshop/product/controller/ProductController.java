@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.product.controller;
 
-import com.nhnacademy.bookpubshop.product.dto.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
@@ -43,7 +43,7 @@ public class ProductController {
      * @return 모든 상품을 반환합니다.
      */
     @GetMapping
-    public ResponseEntity<PageResponse<GetProductListResponseDto>> getAllProducts(
+    public ResponseEntity<PageResponse<GetProductListResponseDto>> productList(
             Pageable pageable) {
         Page<GetProductListResponseDto> content =
                 productService.getAllProducts(pageable);
@@ -59,7 +59,7 @@ public class ProductController {
      * @return 상품상세정보가 담긴 클래스를 반환합니다. 성공시 Created 반환합니다.
      */
     @PostMapping
-    public ResponseEntity<Void> createProduct(
+    public ResponseEntity<Void> productAdd(
             @Valid @RequestBody CreateProductRequestDto request) {
         productService.createProduct(request);
 
