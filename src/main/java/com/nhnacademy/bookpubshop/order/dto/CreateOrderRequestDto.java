@@ -5,8 +5,7 @@ import com.nhnacademy.bookpubshop.state.anno.StateCode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -20,29 +19,31 @@ import org.hibernate.validator.constraints.Length;
 @Getter
 @NoArgsConstructor
 public class CreateOrderRequestDto {
-    @NotEmpty
+
+    @NotBlank(message = "상품 번호 필수 입력사항입니다.")
     private List<Long> productNos;
-    @NotEmpty
     private Map<Long, Integer> productAmounts;
-    @NotEmpty
     private Map<Long, Long> productCouponAmounts;
-    @NotEmpty
     private Map<Long, String> orderProductReasons;
     @StateCode(enumClass = OrderState.class)
     private String orderState;
-    @Length(max = 200)
+    @NotBlank(message = "구매자 명은 필수 입력사항입니다.")
+    @Length(max = 200, message = "구매자명은 최대 200글자 가능합니다.")
     private String buyerName;
-    @Length(max = 20)
+    @NotBlank(message = "구매자 번호는 필수 입력사항입니다.")
+    @Length(max = 20, message = "구매자 번호는 최대 20글자 가능합니다.")
     private String buyerNumber;
-    @Length(max = 200)
+    @NotBlank(message = "수령인은 필수 입력사항입니다.")
+    @Length(max = 200, message = "수령인 이름은 최대 200글자 가능합니다.")
     private String recipientName;
-    @Length(max = 20)
+    @NotBlank(message = "수령인 번호는 필수 입력사항입니다.")
+    @Length(max = 20, message = "수령인 번호는 최대 20글자 가능합니다.")
     private String recipientNumber;
-    @NotNull
+    @NotBlank(message = "상세주소는 필수 입력사항입니다.")
     private String addressDetail;
-    @NotNull
+    @NotBlank(message = "도로명 주소는 필수 입력사항입니다.")
     private String roadAddress;
-    @NotNull
+    @NotBlank(message = "수량 날짜는 필수 입력사항입니다.")
     private LocalDateTime receivedAt;
     private boolean packaged;
     private String orderRequest;
