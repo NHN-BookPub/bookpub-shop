@@ -1,8 +1,13 @@
 package com.nhnacademy.bookpubshop.order.controller;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,6 +49,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -52,6 +58,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.PayloadDocumentation;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -64,7 +72,9 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(OrderController.class)
 @Import(ShopAdviceController.class)
 @MockBean(JpaMetamodelMappingContext.class)
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 class OrderControllerTest {
+
     @Autowired
     MockMvc mockMvc;
     @MockBean
@@ -158,7 +168,8 @@ class OrderControllerTest {
         ReflectionTestUtils.setField(requestDto, "productAmounts", amounts);
         ReflectionTestUtils.setField(requestDto, "productCouponAmounts", couponAmount);
         ReflectionTestUtils.setField(requestDto, "orderProductReasons", orderReason);
-        ReflectionTestUtils.setField(requestDto, "orderState", order.getOrderStateCode().getCodeName());
+        ReflectionTestUtils.setField(requestDto, "orderState",
+                order.getOrderStateCode().getCodeName());
         ReflectionTestUtils.setField(requestDto, "buyerName", order.getOrderBuyer());
         ReflectionTestUtils.setField(requestDto, "buyerNumber", order.getBuyerPhone());
         ReflectionTestUtils.setField(requestDto, "recipientName", order.getOrderRecipient());
@@ -195,27 +206,50 @@ class OrderControllerTest {
                 .thenReturn(new PageResponse<>(pages));
 
         mockMvc.perform(get(url + "?page=0&size=10")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(new PageResponse<>(pages))))
-                .andExpect(status().isOk())
-                .andDo(print());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(new PageResponse<>(pages))))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.content[0].orderNo").value(
+                        pages.getContent().get(0).getOrderNo()))
+                .andExpect(jsonPath("$.content[0].orderProducts[0].productNo").value(
+                        listDto.getOrderProducts().get(0).getProductNo()))
+                .andExpect(jsonPath("$.content[0].orderProducts[0].title").value(
+                        listDto.getOrderProducts().get(0).getTitle()))
+                .andExpect(jsonPath("$.content[0].orderProducts[0].salesPrice").value(
+                        listDto.getOrderProducts().get(0).getSalesPrice()))
+                .andExpect(jsonPath("$.content[0].orderProducts[0].productAmount").value(
+                        listDto.getOrderProducts().get(0).getProductAmount()))
+                .andExpect(jsonPath("$.content[0].orderState").value(listDto.getOrderState()))
+                .andExpect(jsonPath("$.content[0].createdAt").value(listDto.getCreatedAt()))
+                .andExpect(jsonPath("$.content[0].invoiceNo").value(listDto.getInvoiceNo()))
+                .andExpect(jsonPath("$.content[0].totalAmount").value(listDto.getTotalAmount()))
+                .andDo(print())
+                .andDo(document("order-list",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("content[].orderNo").description("주문번호"),
+                                fieldWithPath("content[].orderProducts[].productNo").description(
+                                        "주문상품의 상품 주문 번호"),
+                                fieldWithPath("content[].orderProducts[].title").description(
+                                        "주문상품의 상품명"),
+                                fieldWithPath("content[].orderProducts[].salesPrice").description(
+                                        "주문상품의 상품 할인가격"),
+                                fieldWithPath(
+                                        "content[].orderProducts[].productAmount").description(
+                                        "주문상품의 상품 총량"),
+                                fieldWithPath("content[].orderState").description("주문 상태"),
+                                fieldWithPath("content[].createdAt").description("주문 일"),
+                                fieldWithPath("content[].receivedAt").description("받는 일자"),
+                                fieldWithPath("content[].invoiceNo").description("운송장 번호"),
+                                fieldWithPath("content[].totalAmount").description("주문 수량"),
+                                fieldWithPath("totalPages").description("총 페이지 수"),
+                                fieldWithPath("number").description("현재 페이지 번호"),
+                                fieldWithPath("previous").description("이전 페이지 번호"),
+                                fieldWithPath("next").description("다음 페이지 번호")
+                        )));
 
         verify(orderService, times(1)).getOrderList(pageable);
 
-        assertThat(orderService.getOrderList(pageable).getContent().get(0).getInvoiceNo())
-                .isEqualTo(listDto.getInvoiceNo());
-        assertThat(orderService.getOrderList(pageable).getContent().get(0).getOrderState())
-                .isEqualTo(listDto.getOrderState());
-        assertThat(orderService.getOrderList(pageable).getContent().get(0).getOrderProducts().get(0).getProductNo())
-                .isEqualTo(listDto.getOrderProducts().get(0).getProductNo());
-        assertThat(orderService.getOrderList(pageable).getContent().get(0).getOrderNo())
-                .isEqualTo(listDto.getOrderNo());
-        assertThat(orderService.getOrderList(pageable).getContent().get(0).getTotalAmount())
-                .isEqualTo(listDto.getTotalAmount());
-        assertThat(orderService.getOrderList(pageable).getContent().get(0).getCreatedAt())
-                .isEqualTo(listDto.getCreatedAt());
-        assertThat(orderService.getOrderList(pageable).getContent().get(0).getReceivedAt())
-                .isEqualTo(listDto.getReceivedAt());
     }
 
     @Test
@@ -224,10 +258,40 @@ class OrderControllerTest {
         doNothing().when(orderService).createOrder(requestDto, member.getMemberNo());
 
         mockMvc.perform(post(url)
-                .content(mapper.writeValueAsString(requestDto))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andDo(print());
+                        .content(mapper.writeValueAsString(requestDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("order-create",
+                                preprocessRequest(prettyPrint()),
+                                preprocessResponse(prettyPrint()),
+                                requestFields(
+                                        PayloadDocumentation.subsectionWithPath("productAmounts")
+                                                .description("상품 수량"),
+                                        PayloadDocumentation.subsectionWithPath("productCouponAmounts")
+                                                .description("상품에 대한 쿠폰 할인 금액"),
+                                        PayloadDocumentation.subsectionWithPath("orderProductReasons")
+                                                .description("사유 명"),
+                                        fieldWithPath("productNos").description("상품번호"),
+                                        fieldWithPath("productAmounts").description("상품수량"),
+                                        fieldWithPath("orderProductReasons").description("주문상품"),
+                                        fieldWithPath("orderState").description("주문 상태"),
+                                        fieldWithPath("buyerName").description("주문인"),
+                                        fieldWithPath("buyerNumber").description("주문인 번호"),
+                                        fieldWithPath("recipientName").description("수령인"),
+                                        fieldWithPath("recipientNumber").description("수령인 번호"),
+                                        fieldWithPath("addressDetail").description("상세 주소"),
+                                        fieldWithPath("roadAddress").description("도로명 주소"),
+                                        fieldWithPath("receivedAt").description("수령 날짜"),
+                                        fieldWithPath("packaged").description("포장 여부"),
+                                        fieldWithPath("orderRequest").description("요청사항"),
+                                        fieldWithPath("pointAmount").description("포안트 사용량"),
+                                        fieldWithPath("couponAmount").description("쿠폰 할인 금액"),
+                                        fieldWithPath("totalAmount").description("총 금액")
+                                )
+                        )
+
+                );
 
         verify(orderService, times(1))
                 .createOrder(any(), anyLong());
@@ -239,10 +303,16 @@ class OrderControllerTest {
     void modifyInvoiceNo() throws Exception {
         doNothing().when(orderService).modifyInvoiceNumber(order.getOrderNo(), "1231231231");
 
-        mockMvc.perform(put(url + "/{orderNo}/invoice?no=1231231231", 1)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andDo(print());
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.put(url + "/{orderNo}/invoice?no=1231231231", 1)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("invoiceNo-modify",
+                        pathParameters(
+                                parameterWithName("orderNo").description("주문 번호")
+                        )
+                ));
 
         verify(orderService, times(1))
                 .modifyInvoiceNumber(any(), anyString());
@@ -251,12 +321,15 @@ class OrderControllerTest {
     @Test
     @DisplayName("상태코드 수정 성공")
     void modifyStateCode() throws Exception {
-        doNothing().when(orderService).modifyInvoiceNumber(order.getOrderNo(), "결제완료");
+        doNothing().when(orderService).modifyStateCode("결제완료", order.getOrderNo());
 
-        mockMvc.perform(put(url + "/{orderNo}/state?code=결제완료", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(url + "/{orderNo}/state?code=결제완료", 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("state-code-modify",
+                        pathParameters(
+                                parameterWithName("orderNo").description("주문 번호"))));
 
         verify(orderService, times(1))
                 .modifyStateCode(anyString(), anyLong());
@@ -271,7 +344,30 @@ class OrderControllerTest {
         mockMvc.perform(get(url + "/member?page=0&size=10&no=" + 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("order-by-member-get",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("content[].orderNo").description("주문번호"),
+                                fieldWithPath("content[].orderProducts[].productNo").description(
+                                        "주문상품의 상품 주문 번호"),
+                                fieldWithPath("content[].orderProducts[].title").description(
+                                        "주문상품의 상품명"),
+                                fieldWithPath("content[].orderProducts[].salesPrice").description(
+                                        "주문상품의 상품 할인가격"),
+                                fieldWithPath(
+                                        "content[].orderProducts[].productAmount").description(
+                                        "주문상품의 상품 총량"),
+                                fieldWithPath("content[].orderState").description("주문 상태"),
+                                fieldWithPath("content[].createdAt").description("주문 일"),
+                                fieldWithPath("content[].receivedAt").description("받는 일자"),
+                                fieldWithPath("content[].invoiceNo").description("운송장 번호"),
+                                fieldWithPath("content[].totalAmount").description("주문 수량"),
+                                fieldWithPath("totalPages").description("총 페이지 수"),
+                                fieldWithPath("number").description("현재 페이지 번호"),
+                                fieldWithPath("previous").description("이전 페이지 번호"),
+                                fieldWithPath("next").description("다음 페이지 번호")
+                        )));
 
         verify(orderService, times(1)).getOrderListByUsers(pageable, 1L);
     }
@@ -282,8 +378,8 @@ class OrderControllerTest {
         when(orderService.getOrderDetailById(anyLong()))
                 .thenReturn(detailDto);
 
-        mockMvc.perform(get(url + "/{orderNo}", 1L)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(RestDocumentationRequestBuilders.get(url + "/{orderNo}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderState").value(order.getOrderStateCode().getCodeName()))
                 .andExpect(jsonPath("$.buyerName").value(order.getOrderBuyer()))
@@ -295,6 +391,33 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.createdAt").value(order.getCreatedAt()))
                 .andExpect(jsonPath("$.invoiceNo").value(order.getInvoiceNumber()))
                 .andExpect(jsonPath("$.packaged").value(order.isOrderPackaged()))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("order-detail",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("orderNo").description("주문번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("orderNo").description("주문번호"),
+                                fieldWithPath("orderProducts").description("주문상품"),
+                                fieldWithPath("orderState").description("결제완료"),
+                                fieldWithPath("buyerName").description("구매자"),
+                                fieldWithPath("buyerNumber").description("구매자 번호"),
+                                fieldWithPath("recipientName").description("수령인"),
+                                fieldWithPath("recipientNumber").description("수령인 번호"),
+                                fieldWithPath("addressBase").description("기본 주소"),
+                                fieldWithPath("addressDetail").description("상세 주소"),
+                                fieldWithPath("createdAt").description("주문일"),
+                                fieldWithPath("receivedAt").description("수령일"),
+                                fieldWithPath("invoiceNo").description("송장 번호"),
+                                fieldWithPath("packaged").description("포장여부"),
+                                fieldWithPath("packageAmount").description("포장비"),
+                                fieldWithPath("deliveryAmount").description("배송비"),
+                                fieldWithPath("orderRequest").description("요구사항"),
+                                fieldWithPath("pointAmount").description("포인트 사용량"),
+                                fieldWithPath("couponAmount").description("쿠폰 할인 금액"),
+                                fieldWithPath("totalAmount").description("총 금액")
+
+                        )));
     }
 }
