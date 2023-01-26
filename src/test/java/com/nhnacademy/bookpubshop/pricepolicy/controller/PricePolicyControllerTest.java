@@ -76,14 +76,14 @@ class PricePolicyControllerTest {
         mockMvc.perform(get(url)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$[0].pricePolicyNo").value(dto.getPricePolicyNo()))
+                .andExpect(jsonPath("$[0].policyNo").value(dto.getPolicyNo()))
                 .andExpect(jsonPath("$[0].policyName").value(dto.getPolicyName()))
                 .andExpect(jsonPath("$[0].policyFee").value(dto.getPolicyFee()))
                 .andDo(print())
                 .andDo(document("price-policies-get",
                         preprocessResponse(prettyPrint()),
                         responseFields(
-                                fieldWithPath("[].pricePolicyNo").description("정책 번호"),
+                                fieldWithPath("[].policyNo").description("정책 번호"),
                                 fieldWithPath("[].policyName").description("정책명"),
                                 fieldWithPath("[].policyFee").description("가격")
                         )));
@@ -150,10 +150,10 @@ class PricePolicyControllerTest {
                 .thenReturn(dto);
 
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.get(url + "/{policyNo}", dto.getPricePolicyNo())
+        mockMvc.perform(RestDocumentationRequestBuilders.get(url + "/{policyNo}", dto.getPolicyNo())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.pricePolicyNo").value(dto.getPricePolicyNo()))
+                .andExpect(jsonPath("$.policyNo").value(dto.getPolicyNo()))
                 .andExpect(jsonPath("$.policyName").value(dto.getPolicyName()))
                 .andExpect(jsonPath("$.policyFee").value(dto.getPolicyFee()))
                 .andDo(print())
@@ -161,7 +161,7 @@ class PricePolicyControllerTest {
                         preprocessResponse(prettyPrint()),
                         pathParameters(parameterWithName("policyNo").description("정책 번호")),
                         responseFields(
-                                fieldWithPath("pricePolicyNo").description("정책 번호"),
+                                fieldWithPath("policyNo").description("정책 번호"),
                                 fieldWithPath("policyName").description("정책명"),
                                 fieldWithPath("policyFee").description("가격")
                         )));

@@ -12,7 +12,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GetPricePolicyResponseDto {
-    private Integer pricePolicyNo;
+    private Integer policyNo;
     private String policyName;
     private Long policyFee;
 }

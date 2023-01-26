@@ -18,7 +18,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.data.support.PageableExecutionUtils;
 
 /**
- * 주문레포지토리에서 querydsl을 위한 클래스입니다.
+ * 주문 레포지토리에서 querydsl 사용을 위한 클래스입니다.
  *
  * @author : 여운석
  * @since : 1.0
@@ -109,8 +109,6 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                         order.orderPrice
                 ))
                 .where(order.member.memberNo.eq(memberNo))
-                .join(orderProduct).on(orderProduct.order.orderNo.eq(order.orderNo))
-                .join(product).on(orderProduct.product.productNo.eq(product.productNo))
                 .orderBy(order.createdAt.desc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset());
