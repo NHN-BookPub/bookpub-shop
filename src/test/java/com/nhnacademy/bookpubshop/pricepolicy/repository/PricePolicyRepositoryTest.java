@@ -62,7 +62,7 @@ class PricePolicyRepositoryTest {
 
         // then
         assertThat(policy).isPresent();
-        assertThat(policy.get().getPricePolicyNo()).isEqualTo(persist.getPolicyNo());
+        assertThat(policy.get().getPolicyNo()).isEqualTo(persist.getPolicyNo());
         assertThat(policy.get().getPolicyName()).isEqualTo(persist.getPolicyName());
         assertThat(policy.get().getPolicyFee()).isEqualTo(persist.getPolicyFee());
     }
@@ -78,7 +78,7 @@ class PricePolicyRepositoryTest {
 
         // then
         assertThat(policies).isNotEmpty();
-        assertThat(policies.get(0).getPricePolicyNo()).isEqualTo(persist.getPolicyNo());
+        assertThat(policies.get(0).getPolicyNo()).isEqualTo(persist.getPolicyNo());
         assertThat(policies.get(0).getPolicyName()).isEqualTo(persist.getPolicyName());
         assertThat(policies.get(0).getPolicyFee()).isEqualTo(persist.getPolicyFee());
     }
