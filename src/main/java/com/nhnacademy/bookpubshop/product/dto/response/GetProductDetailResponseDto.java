@@ -1,5 +1,8 @@
 package com.nhnacademy.bookpubshop.product.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -7,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 상품 상세페이지를 위한 Dto 입니다.
@@ -30,7 +34,8 @@ public class GetProductDetailResponseDto {
     private Integer salesRate;
     private Integer productPriority;
     private Integer productStock;
-    private LocalDateTime publishDate;
+//    @DateTimeFormat(pattern = "yyyy:MM:dd'T'HH:mm:ss")
+    private String publishDate;
     private boolean deleted;
     private boolean productSubscribed;
 
@@ -65,7 +70,7 @@ public class GetProductDetailResponseDto {
         this.salesRate = product.getSalesRate();
         this.productPriority = product.getProductPriority();
         this.productStock = product.getProductStock();
-        this.publishDate = product.getPublishDate();
+        this.publishDate = product.getPublishDate().toString();
         this.deleted = product.isProductDeleted();
         this.productSubscribed = product.isProductSubscribed();
         this.saleStateCodeCategory = product.getProductSaleStateCode().getCodeCategory();
