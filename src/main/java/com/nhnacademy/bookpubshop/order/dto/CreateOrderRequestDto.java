@@ -40,8 +40,10 @@ public class CreateOrderRequestDto {
     @Length(max = 20, message = "수령인 번호는 최대 20글자 가능합니다.")
     private String recipientNumber;
     @NotBlank(message = "상세주소는 필수 입력사항입니다.")
+    @Length(max = 100, message = "상세주소는 최대 100글자 가능합니다.")
     private String addressDetail;
     @NotBlank(message = "도로명 주소는 필수 입력사항입니다.")
+    @Length(max = 100, message = "도로명 주소는 최대100글자 가능합니다.")
     private String roadAddress;
     @NotBlank(message = "수량 날짜는 필수 입력사항입니다.")
     private LocalDateTime receivedAt;
