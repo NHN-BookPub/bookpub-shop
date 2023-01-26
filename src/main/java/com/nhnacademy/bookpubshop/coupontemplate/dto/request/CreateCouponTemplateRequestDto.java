@@ -40,14 +40,13 @@ public class CreateCouponTemplateRequestDto {
     @Length(max = 50, message = "쿠폰이름의 최대 글자는 50글자입니다.")
     private String templateName;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime finishedAt;
 
-    @DateTimeFormat
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @NotNull(message = "발급일자를 기입해주세요.")
     private LocalDateTime issuedAt;
 
-    @DateTimeFormat
-    @NotNull(message = "중복 적용여부를 기입해주세요.")
     private boolean templateOverlapped;
 
     private boolean templateBundled;
@@ -76,6 +75,9 @@ public class CreateCouponTemplateRequestDto {
                 .category(category)
                 .templateName(this.templateName)
                 .finishedAt(this.finishedAt)
+                .issuedAt(this.issuedAt)
+                .templateOverlapped(this.templateOverlapped)
+                .templateBundled(this.templateBundled)
                 .build();
     }
 }

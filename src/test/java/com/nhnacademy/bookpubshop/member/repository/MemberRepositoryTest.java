@@ -103,7 +103,7 @@ class MemberRepositoryTest {
         assertThat(result.get().getEmail()).isEqualTo(persist.getMemberEmail());
         assertThat(result.get().getNickname()).isEqualTo(persist.getMemberNickname());
         assertThat(result.get().getTierName()).isEqualTo(bookPubTier.getTierName());
-        assertThat(result.get().getAuthority()).isEqualTo(authority.getAuthorityName());
+        assertThat(result.get().getAuthorities().get(0)).isEqualTo(authority.getAuthorityName());
         assertThat(result.get().getGender()).isEqualTo(persist.getMemberGender());
         assertThat(result.get().getBirthMonth()).isEqualTo(persist.getMemberBirthMonth());
         assertThat(result.get().getBirthYear()).isEqualTo(persist.getMemberBirthYear());

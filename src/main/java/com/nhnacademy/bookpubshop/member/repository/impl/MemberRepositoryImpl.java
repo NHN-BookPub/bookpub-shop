@@ -45,24 +45,17 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
         QBookPubTier tier = QBookPubTier.bookPubTier;
         QMemberAuthority memberAuthority = QMemberAuthority.memberAuthority;
         QAuthority authority = QAuthority.authority;
-        // 권한들? 이 들어가게 되면 수정
-        return Optional.ofNullable(from(member, memberAuthority)
-                .innerJoin(member.tier, tier)
-                .innerJoin(memberAuthority.member, member)
+
+        Optional<Member> content = Optional.ofNullable(from(member)
+                .leftJoin(memberAuthority)
+                .on(member.memberNo.eq(memberAuthority.member.memberNo))
+                .leftJoin(member.tier, tier)
                 .innerJoin(memberAuthority.authority, authority)
                 .where(member.memberNo.eq(memberNo))
-                .select(Projections.constructor(MemberDetailResponseDto.class,
-                        member.memberNo,
-                        tier.tierName,
-                        member.memberNickname.as("nickname"),
-                        member.memberGender.as("gender"),
-                        member.memberBirthMonth.as("birthMonth"),
-                        member.memberBirthYear.as("birthYear"),
-                        member.memberPhone.as("phone"),
-                        member.memberEmail.as("email"),
-                        member.memberPoint.as("point"),
-                        authority.authorityName.as("authority")
-                )).fetchOne());
+                .select(member)
+                .fetchOne());
+
+        return content.map(MemberDetailResponseDto::new);
     }
 
     @Override

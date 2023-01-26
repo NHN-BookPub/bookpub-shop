@@ -27,10 +27,11 @@ public class CouponTemplateDummy {
                 category,
                 couponStateCode,
                 "test_templateName",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
+                LocalDateTime.of(1, 1, 1, 1, 1),
+                LocalDateTime.of(1, 1, 1, 1, 1),
                 false,
-                false
+                false,
+                null
         );
     }
 }
