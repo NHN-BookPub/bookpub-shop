@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.filemanager;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.file.entity.File;
+import com.nhnacademy.bookpubshop.file.exception.FileNotFoundException;
 import com.nhnacademy.bookpubshop.file.repository.FileRepository;
 import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
@@ -92,8 +93,11 @@ public class FileUtils implements FileManagement {
 
         fileRepository.delete(fileRepository.findByFilePath(path));
 
-        if (resource.getFile().exists()) {
-            resource.getFile().delete();
+        if (!resource.getFile().exists()) {
+            throw new FileNotFoundException();
+        }
+        if (!resource.getFile().delete()) {
+            throw new FileNotFoundException();
         }
     }
 

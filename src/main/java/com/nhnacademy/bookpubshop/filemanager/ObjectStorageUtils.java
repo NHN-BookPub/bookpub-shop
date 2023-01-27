@@ -91,6 +91,7 @@ public class ObjectStorageUtils implements FileManagement {
     }
 
 
+    @Override
     public List<String> loadFiles(String path) {
         // 헤더 생성
         HttpHeaders headers = new HttpHeaders();
@@ -104,7 +105,7 @@ public class ObjectStorageUtils implements FileManagement {
 
         if (response.getStatusCode() == HttpStatus.OK) {
             // String으로 받은 목록을 배열로 변환
-            return Arrays.asList(response.getBody().split("\\r?\\n"));
+            return Arrays.asList(Objects.requireNonNull(response.getBody()).split("\\r?\\n"));
         }
 
         return Collections.emptyList();
@@ -186,7 +187,7 @@ public class ObjectStorageUtils implements FileManagement {
     }
 
     @Override
-    public String loadFile(String path) throws IOException {
+    public String loadFile(String path) {
         String url = path + "?limit=1";
         // 헤더 생성
         HttpHeaders headers = new HttpHeaders();
@@ -199,11 +200,13 @@ public class ObjectStorageUtils implements FileManagement {
         ResponseEntity<String> response
                 = this.restTemplate.exchange(url, HttpMethod.GET, requestHttpEntity, String.class);
 
-        checkError(response);
+        if (response.getStatusCode().is5xxServerError() || response.getStatusCode().is4xxClientError()) {
+            throw new FileNotFoundException();
+        }
 
         if (response.getStatusCode() == HttpStatus.OK) {
             // String으로 받은 목록을 배열로 변환
-            List<String> list = Arrays.asList(response.getBody().split("\\r?\\n"));
+            List<String> list = Arrays.asList(Objects.requireNonNull(response.getBody()).split("\\r?\\n"));
             return list.get(0);
         }
         return null;
@@ -221,19 +224,5 @@ public class ObjectStorageUtils implements FileManagement {
 
         return new GetDownloadInfo(path, requestToken(),
                 file.getNameOrigin(), file.getNameSaved(), file.getFileExtension());
-    }
-
-    /**
-     * 에러 체크를 위한 메소드입니다.
-     *
-     * @param response
-     * @param <T>
-     */
-    private static <T> void checkError(ResponseEntity<T> response) {
-        HttpStatus statusCode = response.getStatusCode();
-
-        if (statusCode.is4xxClientError() || statusCode.is5xxServerError()) {
-            throw new RuntimeException();
-        }
     }
 }
