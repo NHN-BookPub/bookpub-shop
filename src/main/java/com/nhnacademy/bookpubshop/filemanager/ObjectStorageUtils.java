@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.filemanager;
 
+import com.nhnacademy.bookpubshop.config.ObjectStorageProperties;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.file.entity.File;
@@ -52,30 +53,21 @@ public class ObjectStorageUtils implements FileManagement {
 
     private String tokenId;
     private LocalDateTime expires;
-    private static final String STORAGE_URL = "https://api-storage.cloud.toast.com/v1/AUTH_fcb81f74e379456b8ca0e091d351a7af";
-    private static final String CONTAINER_NAME = "bookpub";
 
-    private static final String TENANTID = "fcb81f74e379456b8ca0e091d351a7af";
-
-    private static final String USERNAME = "hjk3530@naver.com";
-
-    private static final String PASSWORD = "bookpub";
-
-    private static final String IDENTITY = "https://api-identity.infrastructure.cloud.toast.com/v2.0";
-
+    private final ObjectStorageProperties properties;
     private static final String X_AUTH_TOKEN = "X-Auth-Token";
     private final RestTemplate restTemplate = new RestTemplate();
     private final FileRepository fileRepository;
 
     private String requestToken() {
-        String identityUrl = IDENTITY + "/tokens";
+        String identityUrl = properties.getIdentity() + "/tokens";
 
         if (Objects.isNull(tokenId)
                 || expires.minusMinutes(1).isAfter(LocalDateTime.now())) {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            TokenRequest tokenRequest = new TokenRequest(TENANTID, USERNAME, PASSWORD);
+            TokenRequest tokenRequest = new TokenRequest(properties.getTenantId(), properties.getUsername(), properties.getPassword());
 
             HttpEntity<TokenRequest> httpEntity
                     = new HttpEntity<>(tokenRequest, headers);
@@ -148,7 +140,7 @@ public class ObjectStorageUtils implements FileManagement {
         String fileExtension = originalFileName.substring(posImage);
         String nameSaved = UUID.randomUUID().toString();
 
-        String url = STORAGE_URL + "/" + CONTAINER_NAME + "/" + path + "/" + nameSaved + fileExtension;
+        String url = properties.getUrl() + "/" + properties.getContainerName() + "/" + path + "/" + nameSaved + fileExtension;
 
         InputStream inputStream = new ByteArrayInputStream(file.getBytes());
 
