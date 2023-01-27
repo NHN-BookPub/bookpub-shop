@@ -9,10 +9,10 @@ import com.nhnacademy.bookpubshop.coupon.service.CouponService;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontemplate.exception.CouponTemplateNotFoundException;
 import com.nhnacademy.bookpubshop.coupontemplate.repository.CouponTemplateRepository;
+import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
-import com.nhnacademy.bookpubshop.utils.FileUtils;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -39,7 +39,8 @@ public class CouponServiceImpl implements CouponService {
     private final CouponRepository couponRepository;
     private final MemberRepository memberRepository;
     private final CouponTemplateRepository couponTemplateRepository;
-    private final FileUtils fileUtils;
+
+    private final FileManagement fileManagement;
 
     /**
      * {@inheritDoc}
@@ -99,7 +100,7 @@ public class CouponServiceImpl implements CouponService {
         for (GetCouponResponseDto tmpDto : dtoList) {
             if (Objects.nonNull(tmpDto.getTemplateImage())) {
                 transformList.add(tmpDto.transform(
-                        fileUtils.loadFile(tmpDto.getTemplateImage()
+                        fileManagement.loadFile(tmpDto.getTemplateImage()
                         )));
             } else
                 transformList.add(tmpDto.transform(null));

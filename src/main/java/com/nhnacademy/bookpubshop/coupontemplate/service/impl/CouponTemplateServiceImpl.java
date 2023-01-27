@@ -13,8 +13,6 @@ import com.nhnacademy.bookpubshop.coupontemplate.dto.request.CreateCouponTemplat
 import com.nhnacademy.bookpubshop.coupontemplate.dto.request.ModifyCouponTemplateRequestDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetDetailCouponTemplateResponseDto;
-import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetCouponTemplateResponseDto;
-import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetDetailCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontemplate.exception.CouponTemplateNotFoundException;
 import com.nhnacademy.bookpubshop.coupontemplate.repository.CouponTemplateRepository;
@@ -22,17 +20,16 @@ import com.nhnacademy.bookpubshop.coupontemplate.service.CouponTemplateService;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
 import com.nhnacademy.bookpubshop.coupontype.exception.CouponTypeNotFoundException;
 import com.nhnacademy.bookpubshop.coupontype.repository.CouponTypeRepository;
+import com.nhnacademy.bookpubshop.filemanager.FileManagement;
+import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
-import com.nhnacademy.bookpubshop.utils.FileUtils;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @since : 1.0
  **/
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CouponTemplateServiceImpl implements CouponTemplateService {
@@ -54,47 +52,28 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final CouponStateCodeRepository couponStateCodeRepository;
-    private final FileUtils fileUtils;
+
+    private final FileManagement fileManagement;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public RestGetDetailCouponTemplateResponseDto getDetailCouponTemplate(Long templateNo) throws IOException {
+    public GetDetailCouponTemplateResponseDto getDetailCouponTemplate(Long templateNo) throws IOException {
         if (!couponTemplateRepository.existsById(templateNo)) {
             throw new CouponTemplateNotFoundException(templateNo);
         }
 
-        GetDetailCouponTemplateResponseDto detailDto =
-                couponTemplateRepository.findDetailByTemplateNo(templateNo)
-                        .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
-
-        if (Objects.nonNull(detailDto.getTemplateImage())) {
-            return detailDto.transform(fileUtils.loadFile(detailDto.getTemplateImage()));
-        }
-        return detailDto.transform(null);
+        return couponTemplateRepository.findDetailByTemplateNo(templateNo)
+                .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Page<RestGetCouponTemplateResponseDto> getCouponTemplates(Pageable pageable) throws IOException {
-        Page<GetCouponTemplateResponseDto> dto = couponTemplateRepository.findAllBy(pageable);
-
-        List<GetCouponTemplateResponseDto> dtoList = dto.getContent();
-        List<RestGetCouponTemplateResponseDto> restList = new ArrayList<>();
-
-        for (GetCouponTemplateResponseDto tmpDto : dtoList) {
-            if (Objects.nonNull(tmpDto.getTemplateImage())) {
-                restList.add(tmpDto.transform(
-                        fileUtils.loadFile(tmpDto.getTemplateImage()
-                        )));
-            } else
-                restList.add(tmpDto.transform(null));
-        }
-
-        return new PageImpl<>(restList, pageable, dto.getTotalElements());
+    public Page<GetCouponTemplateResponseDto> getCouponTemplates(Pageable pageable) throws IOException {
+        return couponTemplateRepository.findAllBy(pageable);
     }
 
     /**
@@ -113,7 +92,7 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
                 getCouponStateCode(createRequestDto.getCodeNo())
         );
 
-        couponTemplate.setFile(fileUtils.saveFile(null, couponTemplate, null, null, null, image, "coupon"));
+        couponTemplate.setFile(fileManagement.saveFile(null, couponTemplate, null, null, null, image, "coupon", "coupon_template"));
 
         couponTemplateRepository.save(couponTemplate);
     }
@@ -131,7 +110,7 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
                 .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
 
         if (Objects.nonNull(couponTemplate.getFile())) {
-            fileUtils.deleteFile(couponTemplate.getFile().getFilePath());
+            fileManagement.deleteFile(couponTemplate.getFile().getFilePath());
         }
 
         couponTemplate.modifyCouponTemplate(getCouponPolicy(modifyRequestDto.getPolicyNo()),
@@ -143,8 +122,17 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
                 modifyRequestDto.getFinishedAt(),
                 modifyRequestDto.isTemplateBundled());
 
-        couponTemplate.setFile(fileUtils.saveFile(null, couponTemplate, null, null, null, image, "coupon"));
+        couponTemplate.setFile(fileManagement.saveFile(null, couponTemplate, null, null, null, image, "coupon", null));
 
+    }
+
+    @Override
+    public GetDownloadInfo downloadCouponTemplate(Long templateNo) throws IOException {
+        GetDetailCouponTemplateResponseDto dto =
+                couponTemplateRepository.findDetailByTemplateNo(templateNo)
+                        .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
+
+        return fileManagement.downloadFileInfo(dto.getTemplateImage());
     }
 
     /**

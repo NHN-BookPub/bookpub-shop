@@ -15,8 +15,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.request.CreateCouponTemplateRequestDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.request.ModifyCouponTemplateRequestDto;
-import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetCouponTemplateResponseDto;
-import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetDetailCouponTemplateResponseDto;
+import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetCouponTemplateResponseDto;
+import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetDetailCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.service.CouponTemplateService;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import java.nio.charset.StandardCharsets;
@@ -76,7 +76,7 @@ class CouponTemplateControllerTest {
     @Test
     @DisplayName("쿠폰템플릿 상세 정보 조회 성공 테스트")
     void couponTemplateDetail_Success() throws Exception {
-        RestGetDetailCouponTemplateResponseDto dto = new RestGetDetailCouponTemplateResponseDto(1L, true, 1L, 1L, 1L, "test_typeName", "test_title", "test_categoryName", "test_target", "test_name", "test_image", LocalDateTime.now(), true);
+        GetDetailCouponTemplateResponseDto dto = new GetDetailCouponTemplateResponseDto(1L, true, 1L, 1L, 1L, "test_typeName", "test_title", "test_categoryName", "test_target", "test_name", "test_image", LocalDateTime.now(), true);
 
         when(couponTemplateService.getDetailCouponTemplate(anyLong())).thenReturn(dto);
 
@@ -126,11 +126,11 @@ class CouponTemplateControllerTest {
     @DisplayName("쿠폰템플릿 정보 리스트 조회 성공 테스트")
     void couponTemplateList_Success() throws Exception {
         // given
-        RestGetCouponTemplateResponseDto dto = new RestGetCouponTemplateResponseDto(1L, "test_name", "test_imagePath", LocalDateTime.of(1, 1, 1, 1, 1));
-        List<RestGetCouponTemplateResponseDto> list = List.of(dto);
+        GetCouponTemplateResponseDto dto = new GetCouponTemplateResponseDto(1L, "test_name", "test_imagePath", LocalDateTime.of(1, 1, 1, 1, 1));
+        List<GetCouponTemplateResponseDto> list = List.of(dto);
 
         Pageable pageable = PageRequest.of(0, 10);
-        Page<RestGetCouponTemplateResponseDto> page =
+        Page<GetCouponTemplateResponseDto> page =
                 PageableExecutionUtils.getPage(list, pageable, () -> 1L);
 
         // when
