@@ -3,7 +3,7 @@ package com.nhnacademy.bookpubshop.product.repository.impl;
 import com.nhnacademy.bookpubshop.category.entity.QCategory;
 import com.nhnacademy.bookpubshop.order.entity.QBookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
-import com.nhnacademy.bookpubshop.product.dto.GetProductListForOrderResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;

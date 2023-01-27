@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.category.service;
+package com.nhnacademy.bookpubshop.category.service.impl;
 
 import com.nhnacademy.bookpubshop.category.dto.request.CreateCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.request.ModifyCategoryRequestDto;
@@ -8,6 +8,7 @@ import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.exception.CategoryAlreadyExistsException;
 import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
+import com.nhnacademy.bookpubshop.category.service.CategoryService;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;

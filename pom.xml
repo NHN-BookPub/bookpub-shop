@@ -21,7 +21,7 @@
         </sonar.issue.ignore.multicriteria.e1.resourceKey>
         <sonar.issue.ignore.multicriteria.e2.ruleKey>java:S1068</sonar.issue.ignore.multicriteria.e2.ruleKey>
         <sonar.issue.ignore.multicriteria.e2.resourceKey>
-            **/*ResponseDto.java
+            **/*RequestDto.java
         </sonar.issue.ignore.multicriteria.e2.resourceKey>
         <sonar.java.libraries>target</sonar.java.libraries>
         <sonar.exclusions>target/generated-sources/**</sonar.exclusions>

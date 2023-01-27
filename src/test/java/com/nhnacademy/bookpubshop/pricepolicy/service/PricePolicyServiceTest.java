@@ -123,7 +123,7 @@ class PricePolicyServiceTest {
                 .thenReturn(Optional.empty());
 
         // then
-        assertThatThrownBy(() -> pricePolicyService.getPricePolicyById(anyInt()))
+        assertThatThrownBy(() -> pricePolicyService.getPricePolicyById(2))
                 .isInstanceOf(NotFoundPricePolicyException.class)
                 .hasMessageContaining(NotFoundPricePolicyException.MESSAGE);
     }
@@ -171,7 +171,7 @@ class PricePolicyServiceTest {
                 .thenReturn(Optional.empty());
 
         // then
-        assertThatThrownBy(() -> pricePolicyService.getLatestPricePolicyByName(anyString()))
+        assertThatThrownBy(() -> pricePolicyService.getLatestPricePolicyByName("aa"))
                 .isInstanceOf(NotFoundPricePolicyException.class)
                 .hasMessageContaining(NotFoundPricePolicyException.MESSAGE);
     }

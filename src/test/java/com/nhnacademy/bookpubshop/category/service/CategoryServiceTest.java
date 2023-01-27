@@ -12,6 +12,7 @@ import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.exception.CategoryAlreadyExistsException;
 import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
+import com.nhnacademy.bookpubshop.category.service.impl.CategoryServiceImpl;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;

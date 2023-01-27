@@ -176,7 +176,7 @@ class CouponTemplateServiceImplTest {
         when(couponTemplateRepository.findDetailByTemplateNo(anyLong()))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> couponTemplateService.getDetailCouponTemplate(anyLong()))
+        assertThatThrownBy(() -> couponTemplateService.getDetailCouponTemplate(1L))
                 .isInstanceOf(CouponTemplateNotFoundException.class)
                 .hasMessageContaining(CouponTemplateNotFoundException.MESSAGE);
     }

@@ -203,7 +203,7 @@ class CouponMonthServiceTest {
                 .thenReturn(Optional.empty());
 
         // then
-        assertThatThrownBy(() -> couponMonthService.deleteCouponMonth(anyLong()))
+        assertThatThrownBy(() -> couponMonthService.deleteCouponMonth(1L))
                 .isInstanceOf(CouponMonthNotFoundException.class)
                 .hasMessageContaining("없는 이달의 쿠폰번호입니다.");
     }
@@ -240,7 +240,7 @@ class CouponMonthServiceTest {
                 .thenReturn(Optional.empty());
 
         // then
-        assertThatThrownBy(() -> couponMonthService.getCouponMonth(anyLong()))
+        assertThatThrownBy(() -> couponMonthService.getCouponMonth(1L))
                 .isInstanceOf(CouponMonthNotFoundException.class)
                 .hasMessageContaining("없는 이달의 쿠폰번호입니다.");
     }

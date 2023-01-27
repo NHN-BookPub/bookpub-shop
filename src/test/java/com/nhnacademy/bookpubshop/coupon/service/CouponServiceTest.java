@@ -262,7 +262,7 @@ class CouponServiceTest {
                 .thenReturn(Optional.empty());
 
         // then
-        assertThatThrownBy(() -> couponService.getCoupon(coupon.getCouponNo()))
+        assertThatThrownBy(() -> couponService.getCoupon(1L))
                 .isInstanceOf(CouponNotFoundException.class)
                 .hasMessageContaining(CouponNotFoundException.MESSAGE);
     }
