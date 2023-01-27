@@ -1,7 +1,9 @@
 package com.nhnacademy.bookpubshop.coupon.service.impl;
 
+import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
+import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
 import com.nhnacademy.bookpubshop.coupon.exception.CouponNotFoundException;
 import com.nhnacademy.bookpubshop.coupon.repository.CouponRepository;
@@ -13,12 +15,16 @@ import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
+import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
+import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -39,6 +45,8 @@ public class CouponServiceImpl implements CouponService {
     private final CouponRepository couponRepository;
     private final MemberRepository memberRepository;
     private final CouponTemplateRepository couponTemplateRepository;
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
     private final FileManagement fileManagement;
 
@@ -107,5 +115,23 @@ public class CouponServiceImpl implements CouponService {
         }
 
         return new PageImpl<>(transformList, pageable, dto.getTotalElements());
+    }
+
+    @Override
+    public List<GetOrderCouponResponseDto> getOrderCoupons(String memberId, List<Long> productNoList) {
+        if (memberRepository.existsByMemberId(memberId))
+            throw new MemberNotFoundException(memberId);
+
+        productNoList.stream()
+                .filter(no -> productRepository.existsById(no) == false)
+                .findAny()
+                .orElseThrow(() -> new ProductNotFoundException());
+
+        for (Long no : productNoList) {
+            Optional<GetProductDetailResponseDto> tmpProduct = productRepository.getProductDetailById(no);
+            tmpProduct.get().getCategories();
+        }
+
+        return couponRepository.findByProductNo(memberId, productNoList);
     }
 }

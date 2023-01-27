@@ -2,7 +2,9 @@ package com.nhnacademy.bookpubshop.coupon.service;
 
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
+import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
 import java.io.IOException;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -43,4 +45,6 @@ public interface CouponService {
      * @return 조회된 쿠폰 페이지
      */
     Page<GetCouponResponseDto> getCoupons(Pageable pageable, String searchKey, String search) throws IOException;
+
+    List<GetOrderCouponResponseDto> getOrderCoupons(String memberId, List<Long> productNoList);
 }

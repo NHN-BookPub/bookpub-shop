@@ -1,6 +1,8 @@
 package com.nhnacademy.bookpubshop.coupon.repository;
 
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
+import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,4 +30,6 @@ public interface CouponRepositoryCustom {
      * @return 쿠폰 조회 Dto 페이지
      */
     Page<GetCouponResponseDto> findAllBy(Pageable pageable, String searchKey, String search);
+
+    List<GetOrderCouponResponseDto> findByProductNo(String memberId, List<Long> productNoList);
 }

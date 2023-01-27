@@ -1,13 +1,17 @@
 package com.nhnacademy.bookpubshop.coupon.repository.impl;
 
+import com.nhnacademy.bookpubshop.category.entity.QCategory;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
+import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
 import com.nhnacademy.bookpubshop.coupon.entity.QCoupon;
 import com.nhnacademy.bookpubshop.coupon.repository.CouponRepositoryCustom;
 import com.nhnacademy.bookpubshop.couponpolicy.entity.QCouponPolicy;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.QCouponTemplate;
+import com.nhnacademy.bookpubshop.coupontype.entity.QCouponType;
 import com.nhnacademy.bookpubshop.file.entity.QFile;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
+import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
@@ -96,6 +100,46 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                 .fetch();
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    @Override
+    public List<GetOrderCouponResponseDto> findByProductNo(String memberId, List<Long> productNoList) {
+        QProduct product = QProduct.product;
+        QCategory category = QCategory.category;
+        QCouponType couponType = QCouponType.couponType;
+
+//        List<GetOrderCouponResponseDto> result =
+//                from(coupon)
+//                        .join(coupon.couponTemplate.product, product)
+//                        .on(coupon.couponTemplate.product.productNo.eq(product.productNo))
+//                        .join(coupon.member, member)
+//                        .join(coupon.couponTemplate.couponType, couponType)
+//                        .on(coupon.couponTemplate.couponType.typeNo.eq(couponType.typeNo))
+//                        .join(coupon.couponTemplate.category, category)
+//                        .on(coupon.couponTemplate.category.in(
+//                                JPAExpressions.select(category)
+//                                                .from(product)
+//                                        .in()
+//                                        .fetch())
+//                        ))
+//                        .where(member.memberId.eq(memberId))
+//                //수정, enum타입
+//                        //.where(couponType.typeNo.in(1, 2))
+//                        .where(couponTemplate.finishedAt.before(LocalDateTime.now()))
+//                        .where(product.productNo.in(productNoList))
+//                        .select(Projections.constructor(GetOrderCouponResponseDto.class,
+//                                coupon.couponNo,
+//                                couponTemplate.templateName,
+//                                couponPolicy.policyFixed,
+//                                couponPolicy.policyPrice,
+//                                couponPolicy.policyMinimum,
+//                                couponPolicy.maxDiscount,
+//                                coupon.couponTemplate.templateBundled))
+//                        .fetch();
+
+        //return result;
+
+        return null;
     }
 
     /**

@@ -1,16 +1,11 @@
 package com.nhnacademy.bookpubshop.product.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.nhnacademy.bookpubshop.product.entity.Product;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 상품 상세페이지를 위한 Dto 입니다.
@@ -49,6 +44,7 @@ public class GetProductDetailResponseDto {
     private Integer policySaveRate;
 
     private List<String> authors = new ArrayList<>();
+    private List<Integer> categoriesNo = new ArrayList<>();
     private List<String> categories = new ArrayList<>();
     private List<String> tags = new ArrayList<>();
     private List<String> tagsColors = new ArrayList<>();
@@ -80,6 +76,9 @@ public class GetProductDetailResponseDto {
         this.policySaveRate = product.getProductPolicy().getSaveRate();
         this.authors = product.getProductAuthors().stream()
                 .map(m -> m.getAuthor().getAuthorName())
+                .collect(Collectors.toList());
+        this.categoriesNo = product.getProductCategories().stream()
+                .map(m -> m.getCategory().getCategoryNo())
                 .collect(Collectors.toList());
         this.categories = product.getProductCategories().stream()
                 .map(m -> m.getCategory().getCategoryName())

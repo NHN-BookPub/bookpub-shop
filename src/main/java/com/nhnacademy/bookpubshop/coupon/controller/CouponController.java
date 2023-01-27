@@ -2,9 +2,11 @@ package com.nhnacademy.bookpubshop.coupon.controller;
 
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
+import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.service.CouponService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.io.IOException;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -63,6 +65,16 @@ public class CouponController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(couponService.getCoupon(couponNo));
+    }
+
+    @GetMapping("/coupons/orderCoupon/{memberId}")
+    public ResponseEntity<List<GetOrderCouponResponseDto>> orderCouponList(
+            @PathVariable("memberId") String memberId,
+            @RequestParam("productNo") List<Long> productNo) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(couponService.getOrderCoupons(memberId, productNo));
+
     }
 
     /**
