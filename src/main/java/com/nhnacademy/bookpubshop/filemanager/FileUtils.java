@@ -1,15 +1,17 @@
-package com.nhnacademy.bookpubshop.utils;
+package com.nhnacademy.bookpubshop.filemanager;
 
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.file.repository.FileRepository;
+import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.review.entity.Review;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Component
 @RequiredArgsConstructor
-public class FileUtils {
+public class FileUtils implements FileManagement {
 
     @Value("${file.save.path}")
     private String basePath;
@@ -45,7 +47,8 @@ public class FileUtils {
                          Review review,
                          CustomerService customerService,
                          MultipartFile file,
-                         String fileCategory) throws IOException {
+                         String fileCategory,
+                         String path) throws IOException {
 
         if (Objects.isNull(file)) {
             return null;
@@ -107,5 +110,20 @@ public class FileUtils {
 
         byte[] bytes = Files.readAllBytes(resource.getFile().toPath());
         return Base64.encodeBase64String(bytes);
+    }
+
+    @Override
+    public List<String> loadFiles(String path) {
+        return null;
+    }
+
+    @Override
+    public String downloadFile(String path) {
+        return null;
+    }
+
+    @Override
+    public GetDownloadInfo downloadFileInfo(String path) {
+        return null;
     }
 }

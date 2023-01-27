@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.utils.exception;
+package com.nhnacademy.bookpubshop.filemanager;
 
 /**
  * 파일 관련 exception.
