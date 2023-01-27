@@ -12,7 +12,9 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Some description here.
+ * 파일을 다루기 위한 인터페이스입니다.
+ * FileUtils 구현체는 로컬 저장소,
+ * ObjectStorageUtils 구현체는 오브젝트 스토리지를 사용합니다.
  *
  * @author : 정유진
  * @since : 1.0
@@ -48,7 +50,6 @@ public interface FileManagement {
 
     List<String> loadFiles(String path);
 
-    String downloadFile(String path);
 
     /**
      * 파일 다운로드를 위한 정보를 반환하는 메서드입니다.

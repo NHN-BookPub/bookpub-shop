@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Some description here.
+ * 오브젝트 스토리지 접근을 위한 토큰 요청 정보를 담을 Dto.
  *
  * @author : 정유진
  * @since : 1.0

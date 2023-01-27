@@ -118,11 +118,6 @@ public class FileUtils implements FileManagement {
     }
 
     @Override
-    public String downloadFile(String path) {
-        return null;
-    }
-
-    @Override
     public GetDownloadInfo downloadFileInfo(String path) {
         return null;
     }

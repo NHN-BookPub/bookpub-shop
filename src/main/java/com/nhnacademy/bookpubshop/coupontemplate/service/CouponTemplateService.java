@@ -48,5 +48,12 @@ public interface CouponTemplateService {
      */
     void modifyCouponTemplate(Long templateNo, ModifyCouponTemplateRequestDto modifyRequestDto, MultipartFile image) throws IOException;
 
+    /**
+     * 파일 다운로드를 위한 메서드.
+     *
+     * @param templateNo 템플릿 번호
+     * @return 오브젝트 스토리지 접근에 필요한 정보를 담은 Dto
+     * @throws IOException the io exception
+     */
     GetDownloadInfo downloadCouponTemplate(Long templateNo) throws IOException;
 }

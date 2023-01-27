@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Some description here.
+ * 오브젝트 스토리지 사용 시에 필요한 토큰을 받아오기 위한 dto.
  *
  * @author : 정유진
  * @since : 1.0

@@ -39,7 +39,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Some description here.
+ * 오브젝트 스토리지 파일을 다루기 위한 구현체입니다.
  *
  * @author : 정유진
  * @since : 1.0
@@ -221,11 +221,6 @@ public class ObjectStorageUtils implements FileManagement {
 
         return new GetDownloadInfo(path, requestToken(),
                 file.getNameOrigin(), file.getNameSaved(), file.getFileExtension());
-    }
-
-    @Override
-    public String downloadFile(String path) {
-        return null;
     }
 
     /**
