@@ -7,7 +7,7 @@ package com.nhnacademy.bookpubshop.author.exception;
  * @since : 1.0
  **/
 public class NotFoundAuthorException extends RuntimeException {
-    private static final String MESSAGE = "저자가 없습니다.";
+    public static final String MESSAGE = "저자가 없습니다.";
 
     public NotFoundAuthorException() {
         super(MESSAGE);

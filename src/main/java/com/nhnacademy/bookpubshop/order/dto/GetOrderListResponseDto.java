@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.order.dto;
 
-import com.nhnacademy.bookpubshop.product.dto.GetProductListForOrderResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;

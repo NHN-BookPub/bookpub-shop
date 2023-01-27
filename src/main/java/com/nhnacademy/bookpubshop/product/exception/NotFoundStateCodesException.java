@@ -7,7 +7,7 @@ package com.nhnacademy.bookpubshop.product.exception;
  * @since : 1.0
  **/
 public class NotFoundStateCodesException extends RuntimeException {
-    private static final String MESSAGE = "어떤 코드도 존재하지 않습니다.";
+    public static final String MESSAGE = "어떤 코드도 존재하지 않습니다.";
 
     public NotFoundStateCodesException() {
         super(MESSAGE);

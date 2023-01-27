@@ -174,13 +174,7 @@ public class ProductServiceImpl implements ProductService {
 
         List<Product> relationProducts = new ArrayList<>();
 
-//        for (Long relationProductNo : request.getRelationProducts()) {
-//            relationProducts.add(
-//                    productRepository.findById(relationProductNo)
-//                            .orElseThrow(ProductNotFoundException::new));
-//        }
-
-        Product save = productRepository.save(new Product(
+        productRepository.save(new Product(
                 product.getProductNo(),
                 productPolicy,
 

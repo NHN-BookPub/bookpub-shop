@@ -233,19 +233,6 @@ class MemberServiceTest {
                 .hasMessageContaining(MemberNotFoundException.MESSAGE);
     }
 
-    @Disabled
-    @DisplayName("멤버 이메일 수정 관련 이메일 이미 존재")
-    @Test
-    void memberEmailAlreadyExistsTest() {
-        ReflectionTestUtils.setField(emailRequestDto, "email", "tets");
-
-        when(memberRepository.findById(anyLong()))
-                .thenReturn(Optional.of(member));
-
-        when(memberRepository.existsByMemberEmail(anyString()))
-                .thenReturn(true);
-    }
-
     @DisplayName("멤버 이메일 수정 관련 성공")
     @Test
     void memberEmailSuccessTest() {
