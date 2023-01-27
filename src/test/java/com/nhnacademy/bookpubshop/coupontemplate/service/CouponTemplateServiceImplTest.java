@@ -20,8 +20,6 @@ import com.nhnacademy.bookpubshop.coupontemplate.dto.request.CreateCouponTemplat
 import com.nhnacademy.bookpubshop.coupontemplate.dto.request.ModifyCouponTemplateRequestDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetDetailCouponTemplateResponseDto;
-import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetCouponTemplateResponseDto;
-import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetDetailCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dummy.CouponTemplateDummy;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontemplate.exception.CouponTemplateNotFoundException;
@@ -147,35 +145,29 @@ class CouponTemplateServiceImplTest {
     void restGetDetailCouponTemplateTestWithImage_Success() throws IOException {
         GetDetailCouponTemplateResponseDto dto =
                 new GetDetailCouponTemplateResponseDto(1L, true, 1L, 1L, 1L, "test_typeName", "test_title", "test_categoryName", "test_target", "test_name", "test_image", LocalDateTime.of(1, 1, 1, 1, 1), true);
-        RestGetDetailCouponTemplateResponseDto restDto =
-                new RestGetDetailCouponTemplateResponseDto(1L, true, 1L, 1L, 1L, "test_typeName", "test_title", "test_categoryName", "test_target", "test_name", "test_restImage", dto.getFinishedAt(), true);
 
         when(couponTemplateRepository.existsById(anyLong())).thenReturn(true);
 
         when(couponTemplateRepository.findDetailByTemplateNo(anyLong()))
                 .thenReturn(Optional.of(dto));
 
-        when(fileUtils.loadFile(dto.getTemplateImage()))
-                .thenReturn(restDto.getTemplateName());
-
         GetDetailCouponTemplateResponseDto result = couponTemplateService.getDetailCouponTemplate(dto.getTemplateNo());
 
-        assertThat(result.getTemplateNo()).isEqualTo(restDto.getTemplateNo());
-        assertThat(result.isPolicyFixed()).isEqualTo(restDto.isPolicyFixed());
-        assertThat(result.getPolicyPrice()).isEqualTo(restDto.getPolicyPrice());
-        assertThat(result.getPolicyMinimum()).isEqualTo(restDto.getPolicyMinimum());
-        assertThat(result.getMaxDiscount()).isEqualTo(restDto.getMaxDiscount());
-        assertThat(result.getMaxDiscount()).isEqualTo(restDto.getMaxDiscount());
-        assertThat(result.getTypeName()).isEqualTo(restDto.getTypeName());
-        assertThat(result.getCategoryName()).isEqualTo(restDto.getCategoryName());
-        assertThat(result.getCodeTarget()).isEqualTo(restDto.getCodeTarget());
-        assertThat(result.getTemplateName()).isEqualTo(restDto.getTemplateName());
-        assertThat(result.getFinishedAt()).isEqualTo(restDto.getFinishedAt());
-        assertThat(result.isTemplateBundled()).isEqualTo(restDto.isTemplateBundled());
+        assertThat(result.getTemplateNo()).isEqualTo(dto.getTemplateNo());
+        assertThat(result.isPolicyFixed()).isEqualTo(dto.isPolicyFixed());
+        assertThat(result.getPolicyPrice()).isEqualTo(dto.getPolicyPrice());
+        assertThat(result.getPolicyMinimum()).isEqualTo(dto.getPolicyMinimum());
+        assertThat(result.getMaxDiscount()).isEqualTo(dto.getMaxDiscount());
+        assertThat(result.getMaxDiscount()).isEqualTo(dto.getMaxDiscount());
+        assertThat(result.getTypeName()).isEqualTo(dto.getTypeName());
+        assertThat(result.getCategoryName()).isEqualTo(dto.getCategoryName());
+        assertThat(result.getCodeTarget()).isEqualTo(dto.getCodeTarget());
+        assertThat(result.getTemplateName()).isEqualTo(dto.getTemplateName());
+        assertThat(result.getFinishedAt()).isEqualTo(dto.getFinishedAt());
+        assertThat(result.isTemplateBundled()).isEqualTo(dto.isTemplateBundled());
 
         verify(couponTemplateRepository, times(1)).existsById(anyLong());
         verify(couponTemplateRepository, times(1)).findDetailByTemplateNo(anyLong());
-        verify(fileUtils, times(1)).loadFile(anyString());
     }
 
     @Test
@@ -196,9 +188,6 @@ class CouponTemplateServiceImplTest {
                 new GetCouponTemplateResponseDto(1L, "test_name", "test_image", LocalDateTime.now());
         GetCouponTemplateResponseDto dto_twice =
                 new GetCouponTemplateResponseDto(1L, "test_name", null, LocalDateTime.now());
-        RestGetCouponTemplateResponseDto restDto =
-                new RestGetCouponTemplateResponseDto(1L, "test_name", "1234EJD2E", dto.getFinishedAt());
-
 
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -206,15 +195,13 @@ class CouponTemplateServiceImplTest {
 
         when(couponTemplateRepository.findAllBy(pageable))
                 .thenReturn(page);
-        when(fileUtils.loadFile(dto.getTemplateImage()))
-                .thenReturn(restDto.getTemplateImage());
 
         Page<GetCouponTemplateResponseDto> result = couponTemplateService.getCouponTemplates(pageable);
         List<GetCouponTemplateResponseDto> content = result.getContent();
 
-        assertThat(content.get(0).getTemplateName()).isEqualTo(restDto.getTemplateName());
-        assertThat(content.get(0).getTemplateImage()).isEqualTo(restDto.getTemplateImage());
-        assertThat(content.get(0).getFinishedAt()).isEqualTo(restDto.getFinishedAt());
+        assertThat(content.get(0).getTemplateName()).isEqualTo(dto.getTemplateName());
+        assertThat(content.get(0).getTemplateImage()).isEqualTo(dto.getTemplateImage());
+        assertThat(content.get(0).getFinishedAt()).isEqualTo(dto.getFinishedAt());
     }
 
     @Test
