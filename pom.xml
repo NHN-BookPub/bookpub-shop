@@ -14,7 +14,7 @@
     <name>bookpub-shop</name>
     <description>bookpub-shop</description>
     <properties>
-        <sonar.issue.ignore.multicriteria>e1,e2</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3</sonar.issue.ignore.multicriteria>
         <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S6212</sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>
             **/*.java
@@ -23,6 +23,9 @@
         <sonar.issue.ignore.multicriteria.e2.resourceKey>
             **/*RequestDto.java
         </sonar.issue.ignore.multicriteria.e2.resourceKey>
+        <sonar.issue.ignore.multicriteria.e3.resourceKey>
+            **/*ResponseDto.java
+        </sonar.issue.ignore.multicriteria.e3.resourceKey>
         <sonar.java.libraries>target</sonar.java.libraries>
         <sonar.exclusions>target/generated-sources/**</sonar.exclusions>
         <sonar.exclusions>**/*Config.java</sonar.exclusions>
