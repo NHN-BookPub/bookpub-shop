@@ -23,6 +23,7 @@
         <sonar.issue.ignore.multicriteria.e2.resourceKey>
             **/*RequestDto.java
         </sonar.issue.ignore.multicriteria.e2.resourceKey>
+        <sonar.issue.ignore.multicriteria.e3.ruleKey>java:S1068</sonar.issue.ignore.multicriteria.e3.ruleKey>
         <sonar.issue.ignore.multicriteria.e3.resourceKey>
             **/*ResponseDto.java
         </sonar.issue.ignore.multicriteria.e3.resourceKey>
