@@ -1,0 +1,40 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+주문 (Order) 조회에 관한 Api 명세입니다.
+
+== 주문  단건 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/order-detail/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/order-detail/path-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/order-detail/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/order-detail/response-fields.adoc[]
+
+== 주문 리스트 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/order-list/http-request.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/order-list/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/order-list/response-fields.adoc[]
+
+

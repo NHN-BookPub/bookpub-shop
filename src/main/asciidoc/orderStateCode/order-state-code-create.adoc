@@ -1,0 +1,37 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+주문 상태 코드(OrderStateCode) 등록에 관한 Api 명세입니다.
+
+== 주문 상태 코드 등록
+
+=== 요청구조
+
+include::../../../../target/snippets/order-state-code-create/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/order-state-code-create/request-fields.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/order-state-code-create/http-response.adoc[]
+
+=== 예외 상황
+
+==== 1. 주문 상태 코드 이름이 기입되지 않은 경우
+
+include::../../../../target/snippets/order-state-code-create-codeName-notBlank-Fail/http-request.adoc[]
+include::../../../../target/snippets/order-state-code-create-codeName-notBlank-Fail/http-response.adoc[]
+
+==== 2. 주문 상태 코드 이름가 최대 길이를 초과했을 경우
+
+include::../../../../target/snippets/order-state-code-create-codeName-Length-Fail/http-request.adoc[]
+include::../../../../target/snippets/order-state-code-create-codeName-Length-Fail/http-response.adoc[]
+
+==== 3. 주문 상태 코드 정보가 최대 길이를 초과했을 경우
+
+include::../../../../target/snippets/order-state-code-create-codeInfo-Length-Fail/http-request.adoc[]
+include::../../../../target/snippets/order-state-code-create-codeInfo-Length-Fail/http-response.adoc[]
