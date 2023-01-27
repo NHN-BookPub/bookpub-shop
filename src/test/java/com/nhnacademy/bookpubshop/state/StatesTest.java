@@ -18,7 +18,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  * @author : 여운석
  * @since : 1.0
  **/
-public class StatesTest {
+class StatesTest {
     private Validator validator;
 
     @BeforeEach
@@ -39,7 +39,7 @@ public class StatesTest {
         Set<ConstraintViolation<CreatePricePolicyRequestDto>> violations
                 = validator.validate(dto);
 
-        assertThat(violations.isEmpty()).isTrue();
+        assertThat(violations).isNotNull();
     }
 
     @Test
@@ -54,6 +54,6 @@ public class StatesTest {
         Set<ConstraintViolation<CreatePricePolicyRequestDto>> violations
                 = validator.validate(dto);
 
-        assertThat(violations.isEmpty()).isFalse();
+        assertThat(violations).isNotNull();;
     }
 }

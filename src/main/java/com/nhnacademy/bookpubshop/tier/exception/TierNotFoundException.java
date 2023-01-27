@@ -8,7 +8,7 @@ package com.nhnacademy.bookpubshop.tier.exception;
  **/
 public class TierNotFoundException extends RuntimeException {
 
-    private static final String MESSAGE = "등급이 존재하지않습니다.";
+    public static final String MESSAGE = "등급이 존재하지않습니다.";
 
     public TierNotFoundException() {
         super(MESSAGE);

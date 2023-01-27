@@ -14,7 +14,7 @@ import com.nhnacademy.bookpubshop.orderstatecode.dummy.OrderStateCodeDummy;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
-import com.nhnacademy.bookpubshop.product.dto.GetProductListForOrderResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderResponseDto;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;

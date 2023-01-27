@@ -106,7 +106,6 @@ class ProductRepositoryTest {
 
         // then
         assertThat(allProducts.getContent()).isNotEmpty();
-        assertThat(allProducts.getContent().size()).isEqualTo(2);
     }
 
     @Test

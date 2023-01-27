@@ -7,7 +7,7 @@ package com.nhnacademy.bookpubshop.product.exception;
  * @since : 1.0
  **/
 public class NotFoundStateCodeException extends RuntimeException {
-    private final static String MESSAGE = "찾을 수 없습니다.";
+    public static final String MESSAGE = "찾을 수 없습니다.";
 
     public NotFoundStateCodeException() {
         super(MESSAGE);

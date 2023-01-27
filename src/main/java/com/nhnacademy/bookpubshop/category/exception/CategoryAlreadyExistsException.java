@@ -8,7 +8,7 @@ package com.nhnacademy.bookpubshop.category.exception;
  **/
 public class CategoryAlreadyExistsException extends RuntimeException {
 
-    private static final String MESSAGE = " 은 이미 존재하는 카테고리입니다.";
+    public static final String MESSAGE = " 은 이미 존재하는 카테고리입니다.";
 
     public CategoryAlreadyExistsException(String categoryName) {
         super(categoryName + MESSAGE);
