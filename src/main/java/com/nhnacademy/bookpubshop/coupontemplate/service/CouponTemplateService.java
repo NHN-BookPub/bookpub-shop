@@ -2,8 +2,9 @@ package com.nhnacademy.bookpubshop.coupontemplate.service;
 
 import com.nhnacademy.bookpubshop.coupontemplate.dto.request.CreateCouponTemplateRequestDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.request.ModifyCouponTemplateRequestDto;
-import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetCouponTemplateResponseDto;
-import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetDetailCouponTemplateResponseDto;
+import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetCouponTemplateResponseDto;
+import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetDetailCouponTemplateResponseDto;
+import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import java.io.IOException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,7 @@ public interface CouponTemplateService {
      * @param templateNo 조회할 쿠폰템플릿 번호
      * @return GetDetailCouponTemplateResponseDto 쿠폰템플릿 조회 상세정보를 담은 Dto
      */
-    RestGetDetailCouponTemplateResponseDto getDetailCouponTemplate(Long templateNo) throws IOException;
+    GetDetailCouponTemplateResponseDto getDetailCouponTemplate(Long templateNo) throws IOException;
 
     /**
      * 전체 쿠폰템플릿 조회를 위한 메서드.
@@ -30,7 +31,7 @@ public interface CouponTemplateService {
      * @param pageable 조회할 페이지 정보
      * @return 쿠폰템플릿 조회 정보를 담은 Dto 페이지
      */
-    Page<RestGetCouponTemplateResponseDto> getCouponTemplates(Pageable pageable) throws IOException;
+    Page<GetCouponTemplateResponseDto> getCouponTemplates(Pageable pageable) throws IOException;
 
     /**
      * 쿠폰템플릿 생성을 위한 메서드.
@@ -47,4 +48,5 @@ public interface CouponTemplateService {
      */
     void modifyCouponTemplate(Long templateNo, ModifyCouponTemplateRequestDto modifyRequestDto, MultipartFile image) throws IOException;
 
+    GetDownloadInfo downloadCouponTemplate(Long templateNo) throws IOException;
 }

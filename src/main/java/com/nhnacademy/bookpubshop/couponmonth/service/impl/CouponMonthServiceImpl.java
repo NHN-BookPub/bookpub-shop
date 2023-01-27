@@ -10,7 +10,7 @@ import com.nhnacademy.bookpubshop.couponmonth.service.CouponMonthService;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontemplate.exception.CouponTemplateNotFoundException;
 import com.nhnacademy.bookpubshop.coupontemplate.repository.CouponTemplateRepository;
-import com.nhnacademy.bookpubshop.utils.FileUtils;
+import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +32,8 @@ public class CouponMonthServiceImpl implements CouponMonthService {
 
     private final CouponMonthRepository couponMonthRepository;
     private final CouponTemplateRepository couponTemplateRepository;
-    private final FileUtils fileUtils;
+
+    private final FileManagement fileManagement;
 
     /**
      * {@inheritDoc}
@@ -101,7 +102,7 @@ public class CouponMonthServiceImpl implements CouponMonthService {
         for (GetCouponMonthResponseDto tmpDto : dtoList) {
             if (Objects.nonNull(tmpDto.getTemplateImage())) {
                 transformList.add(tmpDto.transform(
-                        fileUtils.loadFile(tmpDto.getTemplateImage()
+                        fileManagement.loadFile(tmpDto.getTemplateImage()
                         )));
             } else
                 transformList.add(tmpDto.transform(null));

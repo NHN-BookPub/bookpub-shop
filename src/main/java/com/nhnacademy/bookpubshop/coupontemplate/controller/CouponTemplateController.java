@@ -2,9 +2,10 @@ package com.nhnacademy.bookpubshop.coupontemplate.controller;
 
 import com.nhnacademy.bookpubshop.coupontemplate.dto.request.CreateCouponTemplateRequestDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.request.ModifyCouponTemplateRequestDto;
-import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetCouponTemplateResponseDto;
-import com.nhnacademy.bookpubshop.coupontemplate.dto.response.RestGetDetailCouponTemplateResponseDto;
+import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetCouponTemplateResponseDto;
+import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetDetailCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.service.CouponTemplateService;
+import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.io.IOException;
 import javax.validation.Valid;
@@ -42,7 +43,7 @@ public class CouponTemplateController {
      * @return 성공 경우 200, 쿠폰템플릿의 자세한 정보 응답
      */
     @GetMapping("/coupon-templates/{templateNo}")
-    public ResponseEntity<RestGetDetailCouponTemplateResponseDto> couponTemplateDetail(
+    public ResponseEntity<GetDetailCouponTemplateResponseDto> couponTemplateDetail(
             @PathVariable("templateNo") Long templateNo) throws IOException {
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -57,10 +58,10 @@ public class CouponTemplateController {
      * @return 성공 경우 200, 쿠폰템플릿의 정보 페이지 응답
      */
     @GetMapping("/coupon-templates")
-    public ResponseEntity<PageResponse<RestGetCouponTemplateResponseDto>>
+    public ResponseEntity<PageResponse<GetCouponTemplateResponseDto>>
     couponTemplateList(Pageable pageable) throws IOException {
 
-        Page<RestGetCouponTemplateResponseDto> content =
+        Page<GetCouponTemplateResponseDto> content =
                 couponTemplateService.getCouponTemplates(pageable);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -100,5 +101,15 @@ public class CouponTemplateController {
         couponTemplateService.modifyCouponTemplate(templateNo, request, image);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/coupon-templates/{templateNo}/download")
+    public ResponseEntity<GetDownloadInfo> couponTemplateDownload(
+            @PathVariable("templateNo") Long templateNo) throws IOException {
+        GetDownloadInfo info = couponTemplateService.downloadCouponTemplate(templateNo);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(info);
     }
 }
