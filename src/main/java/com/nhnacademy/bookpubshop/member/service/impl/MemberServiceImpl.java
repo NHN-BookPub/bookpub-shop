@@ -90,6 +90,12 @@ public class MemberServiceImpl implements MemberService {
                 member,
                 authority)
         );
+        member.getMemberAddress().add(Address.builder()
+                .addressMemberBased(true)
+                .roadAddress(signUpMemberRequestDto.getAddress())
+                .addressDetail(signUpMemberRequestDto.getDetailAddress())
+                .member(member)
+                .build());
 
         memberRepository.save(member);
 
