@@ -75,7 +75,7 @@ class MemberControllerTest {
 
     @BeforeEach
     void setUp() {
-        basic = new BookPubTier("basic");
+        basic = new BookPubTier("basic",1,1L);
         objectMapper = new ObjectMapper();
         signUpMemberRequestDto = new SignUpMemberRequestDto();
         signUpMemberResponseDto = new SignUpMemberResponseDto(
@@ -719,7 +719,7 @@ class MemberControllerTest {
     @SneakyThrows
     @DisplayName("회원 주소 삭제 테스트 성공")
     @Test
-    void memberAddressDeleteTest() throws Exception {
+    void memberAddressDeleteTest() {
         doNothing().when(memberService).deleteMemberAddress(anyLong(),anyLong());
 
         mvc.perform(delete("/api/members/{memberNo}/addresses/{addressNo}", 1L, 1L)

@@ -37,7 +37,11 @@ public class TierServiceImpl implements TierService {
             throw new TierAlreadyExists(createTierRequestDto.getTierName());
         }
 
-        tierRepository.save(new BookPubTier(createTierRequestDto.getTierName()));
+        tierRepository.save(BookPubTier.builder()
+                .tierName(createTierRequestDto.getTierName())
+                .tierPrice(createTierRequestDto.getTierPrice())
+                .tierValue(createTierRequestDto.getTierValue())
+                .build());
     }
 
     /**
