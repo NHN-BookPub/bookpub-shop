@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.coupontype.dummy;
 
+import static com.nhnacademy.bookpubshop.state.CouponType.COMMON;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
 
 /**
@@ -14,7 +15,7 @@ public class CouponTypeDummy {
 
         return new CouponType(
                 null,
-                "test_typeName"
+                COMMON.getName()
         );
     }
 }

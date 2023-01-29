@@ -2,9 +2,11 @@ package com.nhnacademy.bookpubshop.coupon.controller;
 
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
+import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.service.CouponService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.io.IOException;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -91,5 +93,21 @@ public class CouponController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
+    }
+
+    /**
+     * 주문에 필요한 쿠폰을 조회하는 메서드입니다.
+     *
+     * @param memberNo  멤버 번호
+     * @param productNo 상품 번호 리스트
+     * @return 사용할 수 있는 쿠폰 리스트 반환
+     */
+    @GetMapping("/coupons/members/{memberNo}/order")
+    public ResponseEntity<List<GetOrderCouponResponseDto>> orderCouponList(
+            @PathVariable("memberNo") Long memberNo,
+            @RequestParam("productNo") List<Long> productNo) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(couponService.getOrderCoupons(memberNo, productNo));
     }
 }

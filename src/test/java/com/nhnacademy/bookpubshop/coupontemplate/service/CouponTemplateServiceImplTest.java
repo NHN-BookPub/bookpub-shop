@@ -30,7 +30,7 @@ import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
 import com.nhnacademy.bookpubshop.coupontype.exception.CouponTypeNotFoundException;
 import com.nhnacademy.bookpubshop.coupontype.repository.CouponTypeRepository;
 import com.nhnacademy.bookpubshop.file.entity.File;
-import com.nhnacademy.bookpubshop.filemanager.FileUtils;
+import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
@@ -87,7 +87,7 @@ class CouponTemplateServiceImplTest {
     @MockBean
     CouponStateCodeRepository couponStateCodeRepository;
     @MockBean
-    FileUtils fileUtils;
+    FileManagement fileManagement;
 
     CouponType couponType;
     CouponPolicy couponPolicy;
@@ -222,7 +222,7 @@ class CouponTemplateServiceImplTest {
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
         MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
 
-        when(fileUtils.saveFile(any(), any(), any(), any(), any(), any(), any(), any()))
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(file);
         when(couponTypeRepository.findById(anyLong())).
                 thenReturn(Optional.of(couponType));
@@ -246,7 +246,7 @@ class CouponTemplateServiceImplTest {
         assertThat(result.getFinishedAt()).isEqualTo(createDto.getFinishedAt());
         assertThat(result.isTemplateBundled()).isEqualTo(createDto.isTemplateBundled());
 
-        verify(fileUtils, times(1)).saveFile(any(), any(), any(), any(), any(), any(), any(), any());
+        verify(fileManagement, times(1)).saveFile(any(), any(), any(), any(), any(), any(), any(), any());
         verify(couponTypeRepository, times(1)).findById(anyLong());
         verify(couponPolicyRepository, times(1)).findById(anyInt());
         verify(couponStateCodeRepository, times(1)).findById(anyInt());
@@ -395,7 +395,7 @@ class CouponTemplateServiceImplTest {
                 .thenReturn(Optional.of(category));
         when(couponStateCodeRepository.findById(anyInt()))
                 .thenReturn(Optional.of(couponStateCode));
-        when(fileUtils.saveFile(any(), any(), any(), any(), any(), any(), any(), any())).thenReturn(null);
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), any())).thenReturn(null);
 
         couponTemplateService.modifyCouponTemplate(1L, modifyRequestDto, null);
 
@@ -405,14 +405,14 @@ class CouponTemplateServiceImplTest {
         verify(productRepository, times(1)).findById(1L);
         verify(categoryRepository, times(1)).findById(1);
         verify(couponStateCodeRepository, times(1)).findById(1);
-        verify(fileUtils, times(1)).saveFile(any(), any(), any(), any(), any(), any(), any(), any());
+        verify(fileManagement, times(1)).saveFile(any(), any(), any(), any(), any(), any(), any(), any());
     }
 
     @Test
     @DisplayName("쿠폰 템플릿 수정 성공 테스트_파일 있는 경우")
     void modifyCouponTemplateWithFile_Success() throws IOException {
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
-        MultipartFile file = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+        MultipartFile file = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
         File storeFile = new File(null, null, null, null, null, null, "test_category", "test_path", "test_extention", "test_origin", "test_saved");
 
         couponTemplate.setFile(storeFile);
@@ -428,8 +428,8 @@ class CouponTemplateServiceImplTest {
                 .thenReturn(Optional.of(category));
         when(couponStateCodeRepository.findById(anyInt()))
                 .thenReturn(Optional.of(couponStateCode));
-        when(fileUtils.saveFile(any(), any(), any(), any(), any(), any(), anyString(), any())).thenReturn(storeFile);
-        doNothing().when(fileUtils).deleteFile(anyString());
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), anyString(), any())).thenReturn(storeFile);
+        doNothing().when(fileManagement).deleteFile(anyString());
 
         couponTemplateService.modifyCouponTemplate(1L, modifyRequestDto, file);
 
@@ -439,7 +439,7 @@ class CouponTemplateServiceImplTest {
         verify(productRepository, times(1)).findById(1L);
         verify(categoryRepository, times(1)).findById(1);
         verify(couponStateCodeRepository, times(1)).findById(1);
-        verify(fileUtils, times(1)).saveFile(null, couponTemplate, null, null, null, file, "coupon", null);
+        verify(fileManagement, times(1)).deleteFile(storeFile.getFilePath());
     }
 
     @Test
