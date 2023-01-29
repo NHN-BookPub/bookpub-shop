@@ -27,7 +27,7 @@ public class CouponTemplateDummy {
                 category,
                 couponStateCode,
                 "test_templateName",
-                LocalDateTime.of(1, 1, 1, 1, 1),
+                LocalDateTime.now().plusDays(7),
                 false,
                 null
         );

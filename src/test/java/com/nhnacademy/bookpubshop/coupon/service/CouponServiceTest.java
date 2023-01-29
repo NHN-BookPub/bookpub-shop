@@ -7,6 +7,7 @@ import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
+import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.dummy.CouponDummy;
 import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
 import com.nhnacademy.bookpubshop.coupon.exception.CouponNotFoundException;
@@ -26,7 +27,7 @@ import com.nhnacademy.bookpubshop.coupontype.dummy.CouponTypeDummy;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
-import com.nhnacademy.bookpubshop.filemanager.FileUtils;
+import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
@@ -39,12 +40,14 @@ import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.io.IOException;
@@ -80,7 +83,9 @@ class CouponServiceTest {
     @MockBean
     CouponTemplateRepository couponTemplateRepository;
     @MockBean
-    FileUtils fileUtils;
+    ProductRepository productRepository;
+    @MockBean
+    FileManagement fileManagement;
     ArgumentCaptor<Coupon> captor;
 
     CouponPolicy couponPolicy;
@@ -103,9 +108,11 @@ class CouponServiceTest {
     PricePolicy packagePolicy;
     OrderStateCode orderStateCode;
 
+    GetOrderCouponResponseDto orderCouponResponseDto;
+
     @BeforeEach
     void setUp() {
-        couponService = new CouponServiceImpl(couponRepository, memberRepository, couponTemplateRepository, fileUtils);
+        couponService = new CouponServiceImpl(couponRepository, memberRepository, couponTemplateRepository, productRepository);
         couponPolicy = CouponPolicyDummy.dummy();
         couponType = CouponTypeDummy.dummy();
         couponStateCode = CouponStateCodeDummy.dummy();
@@ -127,6 +134,10 @@ class CouponServiceTest {
         coupon = CouponDummy.dummy(couponTemplate, bookpubOrder, orderProduct, member);
 
         captor = ArgumentCaptor.forClass(Coupon.class);
+
+        orderCouponResponseDto = new GetOrderCouponResponseDto(
+                1L, "testName", 1L, 1, true, 1000L, 1000L, 1000L, true
+        );
     }
 
     @Test
@@ -285,6 +296,52 @@ class CouponServiceTest {
 
         verify(couponRepository, times(1))
                 .findAllBy(pageable, "", "");
+    }
+
+    @Test
+    @DisplayName("주문에 사용될 쿠폰 조회 테스트")
+    void getOrderCouponsTest_Success() {
+        // given
+        // when
+        when(memberRepository.existsById(anyLong())).thenReturn(true);
+        when(productRepository.existsById(anyLong())).thenReturn(true);
+        when(couponRepository.findByProductNo(anyLong(), anyList())).thenReturn(List.of(orderCouponResponseDto));
+
+        // then
+        couponService.getOrderCoupons(1L, List.of(1L, 2L));
+
+        verify(memberRepository, times(1)).existsById(anyLong());
+        verify(productRepository, times(2)).existsById(anyLong());
+        verify(couponRepository, times(1)).findByProductNo(anyLong(), anyList());
+    }
+
+    @Test
+    @DisplayName("주문에 사용될 쿠폰 조회 실패 테스트_없는 멤버의 쿠폰을 찾을 경우")
+    void getOrderCouponsTest_Fail_NotFoundMember() {
+        // when
+        when(memberRepository.existsById(anyLong())).thenReturn(false);
+        when(productRepository.existsById(anyLong())).thenReturn(true);
+        when(couponRepository.findByProductNo(anyLong(), anyList())).thenReturn(List.of(orderCouponResponseDto));
+
+        // then
+        assertThatThrownBy(() -> couponService.getOrderCoupons(1L, List.of(1L, 2L)))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("주문에 사용될 쿠폰 조회 실패 테스트_없는 상품을 찾을 경우")
+    void getOrderCouponsTest_Fail_NotFoundProduct() {
+
+        // when
+        when(memberRepository.existsById(anyLong())).thenReturn(true);
+        when(productRepository.existsById(anyLong())).thenReturn(false);
+        when(couponRepository.findByProductNo(anyLong(), anyList())).thenReturn(List.of(orderCouponResponseDto));
+
+        // then
+        assertThatThrownBy(() -> couponService.getOrderCoupons(1L, List.of(1L, 2L)))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
     }
 
 }

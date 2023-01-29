@@ -1,22 +1,23 @@
 package com.nhnacademy.bookpubshop.coupon.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
+import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.service.CouponService;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import java.time.LocalDateTime;
@@ -249,9 +250,51 @@ class CouponControllerTest {
         // then
         mockMvc.perform(RestDocumentationRequestBuilders.put(uri + "/{couponNo}" + "/used", 1L))
                 .andExpect(status().is2xxSuccessful())
-                .andDo(document("coupon-modify"));
+                .andDo(document("coupon-modify",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("couponNo").description("수정할 쿠폰 번호")
+                        )));
 
         then(couponService).should()
                 .modifyCouponUsed(any(Long.class));
+    }
+
+    @Test
+    @DisplayName("주문에 필요한 쿠폰리스트 조회 api 테스트")
+    void orderCouponList_Test() throws Exception {
+
+        // given
+        GetOrderCouponResponseDto orderCouponResponseDto = new GetOrderCouponResponseDto(
+                1L, "testName", 1L, 1, true, 1000L, 1000L, 1000L, true
+        );
+
+        // when
+        when(couponService.getOrderCoupons(anyLong(), anyList())).thenReturn(List.of(orderCouponResponseDto));
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.get(uri + "/order/{memberNo}", 1L)
+                        .param("productNo", String.valueOf(1L)))
+                .andExpect(status().isOk())
+                .andDo(document("couponOrderList-get",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("조회할 멤버 번호입니다.")
+                        ),
+                        requestParameters(
+                                parameterWithName("productNo").description("주문할 상품 번호 리스트입니다")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].couponNo").description("조회된 쿠폰 번호입니다."),
+                                fieldWithPath("[].templateName").description("조회된 쿠폰 이름입니다."),
+                                fieldWithPath("[].productNo").description("쿠폰이 적용될 수 있는 상품 번호입니다."),
+                                fieldWithPath("[].categoryNo").description("쿠폰이 적용될 수 있는 카테고리 번호입니다."),
+                                fieldWithPath("[].policyFixed").description("쿠폰 정책 정액여부입니다."),
+                                fieldWithPath("[].policyPrice").description("쿠폰 정책 할인가격(할인율)입니다."),
+                                fieldWithPath("[].policyMinimum").description("쿠폰 사용 시 최소주문금액입니다."),
+                                fieldWithPath("[].maxDiscount").description("쿠폰 사용 시 최대 할인 금액입니다."),
+                                fieldWithPath("[].templateBundled").description("쿠폰 묶음 여부입니다.")
+                        )));
     }
 }

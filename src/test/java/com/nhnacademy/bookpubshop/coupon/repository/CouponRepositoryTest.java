@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.coupon.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
+import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.dummy.CouponDummy;
 import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
 import com.nhnacademy.bookpubshop.couponpolicy.dummy.CouponPolicyDummy;
@@ -45,6 +46,7 @@ import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -393,6 +395,28 @@ class CouponRepositoryTest {
         assertThat(page.getContent().get(0).getMaxDiscount()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getMaxDiscount());
         assertThat(page.getContent().get(0).getFinishedAt()).isEqualTo(persist.getCouponTemplate().getFinishedAt());
         assertThat(page.getContent().get(0).isCouponUsed()).isEqualTo(persist.isCouponUsed());
+    }
+
+    @Test
+    @DisplayName("주문 시 사용 가능한 쿠폰 조회 테스트")
+    void findByProductNoTest() {
+        //given
+        Coupon memberCoupon = CouponDummy.dummy(couponTemplate, null, null, member);
+        Coupon persist = entityManager.persist(memberCoupon);
+
+        //when
+        List<GetOrderCouponResponseDto> couponList = couponRepository.findByProductNo(member.getMemberNo(), List.of(product.getProductNo()));
+
+        //then
+        assertThat(couponList.get(0).getCouponNo()).isEqualTo(persist.getCouponNo());
+        assertThat(couponList.get(0).getTemplateName()).isEqualTo(persist.getCouponTemplate().getTemplateName());
+        assertThat(couponList.get(0).getProductNo()).isEqualTo(persist.getCouponTemplate().getProduct().getProductNo());
+        assertThat(couponList.get(0).getCategoryNo()).isEqualTo(persist.getCouponTemplate().getCategory().getCategoryNo());
+        assertThat(couponList.get(0).getPolicyPrice()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyPrice());
+        assertThat(couponList.get(0).isPolicyFixed()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().isPolicyFixed());
+        assertThat(couponList.get(0).getPolicyMinimum()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getPolicyMinimum());
+        assertThat(couponList.get(0).getMaxDiscount()).isEqualTo(persist.getCouponTemplate().getCouponPolicy().getMaxDiscount());
+        assertThat(couponList.get(0).isTemplateBundled()).isEqualTo(persist.getCouponTemplate().isTemplateBundled());
     }
 
     private Category category() {
