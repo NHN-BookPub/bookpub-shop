@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Some description here.
+ * 주문에 필요한 쿠폰 정보를 담은 Dto.
  *
  * @author : 정유진
  * @since : 1.0

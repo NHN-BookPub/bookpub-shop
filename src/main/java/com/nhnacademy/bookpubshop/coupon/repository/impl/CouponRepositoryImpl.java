@@ -117,7 +117,6 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
     public List<GetOrderCouponResponseDto> findByProductNo(Long memberNo, List<Long> productNoList) {
 
         return from(coupon)
-//                        .join(coupon.member, member)
                 .join(coupon.couponTemplate, couponTemplate)
                 .leftJoin(product)
                 .on(coupon.couponTemplate.product.eq(product))

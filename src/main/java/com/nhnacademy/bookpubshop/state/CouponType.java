@@ -3,7 +3,8 @@ package com.nhnacademy.bookpubshop.state;
 import lombok.Getter;
 
 /**
- * Some description here.
+ * 쿠폰 종류 enum.
+ * 일반,중복,포인트가 있습니다.
  *
  * @author : 정유진
  * @since : 1.0
