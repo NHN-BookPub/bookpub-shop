@@ -273,7 +273,7 @@ class CouponControllerTest {
         when(couponService.getOrderCoupons(anyLong(), anyList())).thenReturn(List.of(orderCouponResponseDto));
 
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.get(uri + "/order/{memberNo}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.get(uri + "/members/{memberNo}/order", 1L)
                         .param("productNo", String.valueOf(1L)))
                 .andExpect(status().isOk())
                 .andDo(document("couponOrderList-get",
