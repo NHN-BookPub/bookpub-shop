@@ -3,10 +3,6 @@ package com.nhnacademy.bookpubshop.tier.controller;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -25,7 +21,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,15 +28,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 /**
  * TierController 테스트입니다.
@@ -78,6 +67,8 @@ class TierControllerTest {
     void tierAddFailTest() throws Exception {
         //given
         ReflectionTestUtils.setField(createTierRequestDto, "tierName", "");
+        ReflectionTestUtils.setField(createTierRequestDto, "tierValue", 1);
+        ReflectionTestUtils.setField(createTierRequestDto, "tierPrice", 1L);
         doNothing().when(tierService).addTier(createTierRequestDto);
 
         //when && then
@@ -89,8 +80,8 @@ class TierControllerTest {
                 .andExpect(jsonPath("$[0].message").value("등급의 이름을 기입하여야 합니다."))
                 .andDo(print())
             .andDo(document("tier-add-fail",
-                requestFields(
-                    fieldWithPath("tierName").description("등급명이 기입됩니다.")
+                responseFields(
+                    fieldWithPath("[].message").description("등급의 이름을 기입하여야 합니다.")
                 )
             ));
 
@@ -101,6 +92,8 @@ class TierControllerTest {
     void tierAddSuccessTest() throws Exception {
         //given
         ReflectionTestUtils.setField(createTierRequestDto, "tierName", "GOLD");
+        ReflectionTestUtils.setField(createTierRequestDto, "tierValue", 1);
+        ReflectionTestUtils.setField(createTierRequestDto, "tierPrice", 1L);
         doNothing().when(tierService).addTier(createTierRequestDto);
 
         //when && then
@@ -111,7 +104,9 @@ class TierControllerTest {
                 .andDo(print())
             .andDo(document("tier-add",
                     requestFields(
-                        fieldWithPath("tierName").description("등급명 기입")
+                        fieldWithPath("tierName").description("등급명 기입"),
+                        fieldWithPath("tierValue").description("등급 값 기입"),
+                        fieldWithPath("tierPrice").description("등급시 필요한 가격 기입")
                     )));
     }
 
@@ -166,7 +161,7 @@ class TierControllerTest {
     @Test
     void tierDetailsTest() throws Exception {
         //given
-        TierResponseDto tierResponseDto = new TierResponseDto(1, "tierResponseDto");
+        TierResponseDto tierResponseDto = new TierResponseDto(1, "tierResponseDto",1,0L);
         when(tierService.getTier(anyInt())).thenReturn(tierResponseDto);
 
         //when && then
@@ -175,12 +170,14 @@ class TierControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.tierName").value(tierResponseDto.getTierName()))
                 .andExpect(jsonPath("$.tierNo").value(tierResponseDto.getTierNo()))
+                .andExpect(jsonPath("$.tierPrice").value(tierResponseDto.getTierPrice()))
                 .andDo(print())
                     .andDo(document("get-tier",
                         pathParameters(parameterWithName("tierNo").description("Path 로 등급번호 기입")),
                         responseFields(
                             fieldWithPath("tierName").description("등급의 이름이 반환"),
-                            fieldWithPath("tierNo").description("등급 번호가 반환")
+                            fieldWithPath("tierNo").description("등급 번호가 반환"),
+                                fieldWithPath("tierPrice").description("등급시 필요한 금액이 반환")
                         )));
 
         then(tierService).should().getTier(anyInt());
@@ -190,7 +187,7 @@ class TierControllerTest {
     @Test
     void tierListTest() throws Exception {
         //given
-        TierResponseDto tierResponseDto = new TierResponseDto(1, "tierTest");
+        TierResponseDto tierResponseDto = new TierResponseDto(1, "tierTest",1,0L);
         when(tierService.getTiers())
                 .thenReturn(List.of(tierResponseDto));
 
@@ -200,11 +197,13 @@ class TierControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].tierNo").value(tierResponseDto.getTierNo()))
                 .andExpect(jsonPath("$[0].tierName").value(tierResponseDto.getTierName()))
+                .andExpect(jsonPath("$[0].tierPrice").value(tierResponseDto.getTierPrice()))
                 .andDo(print())
                 .andDo(document("get-tiers",
                     responseFields(
                         fieldWithPath("[].tierNo").description("등급 번호가 반환"),
-                        fieldWithPath("[].tierName").description("등급명이 반환")
+                        fieldWithPath("[].tierName").description("등급명이 반환"),
+                        fieldWithPath("[].tierPrice").description("등급시 필요한 금액이 반환")
                     )
                 ));
 

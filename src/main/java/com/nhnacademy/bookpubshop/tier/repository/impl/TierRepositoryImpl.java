@@ -34,7 +34,9 @@ public class TierRepositoryImpl extends QuerydslRepositorySupport
                 .select(Projections
                         .constructor(TierResponseDto.class,
                                 tier.tierNo,
-                                tier.tierName))
+                                tier.tierName,
+                                tier.tierValue,
+                                tier.tierPrice))
                 .fetchOne());
     }
 
@@ -49,7 +51,9 @@ public class TierRepositoryImpl extends QuerydslRepositorySupport
                 .select(Projections
                         .constructor(TierResponseDto.class,
                                 tier.tierNo,
-                                tier.tierName))
+                                tier.tierName,
+                                tier.tierValue,
+                                tier.tierPrice))
                 .fetchOne());
     }
 
@@ -64,7 +68,10 @@ public class TierRepositoryImpl extends QuerydslRepositorySupport
                 .select(Projections
                         .constructor(TierResponseDto.class,
                                 tier.tierNo,
-                                tier.tierName))
+                                tier.tierName,
+                                tier.tierValue,
+                                tier.tierPrice))
+                .orderBy(tier.tierValue.asc())
                 .fetch();
     }
 }

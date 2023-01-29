@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.tier.dto.request;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,4 +16,10 @@ import lombok.NoArgsConstructor;
 public class CreateTierRequestDto {
     @NotBlank(message = "등급의 이름을 기입하여야 합니다.")
     private String tierName;
+
+    @NotNull(message = "등급 값을 기입해야 합니다.")
+    private Integer tierValue;
+
+    @NotNull(message = "등급시 필요한 가격을 기입해야합니다.")
+    private Long tierPrice;
 }

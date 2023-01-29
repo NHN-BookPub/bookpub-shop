@@ -9,6 +9,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -37,13 +38,20 @@ public class BookPubTier {
     @Column(name = "tier_value")
     private Integer tierValue;
 
+    @NotNull
+    @Column(name = "tier_price")
+    private Long tierPrice;
+
     /**
      * pk를 제외한 생성자입니다.
      *
      * @param tierName 등급명
      */
-    public BookPubTier(String tierName) {
+    @Builder
+    public BookPubTier(String tierName, Integer tierValue, Long tierPrice) {
         this.tierName = tierName;
+        this.tierValue = tierValue;
+        this.tierPrice = tierPrice;
     }
 
     /**
