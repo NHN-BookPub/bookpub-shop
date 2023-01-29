@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Some description here.
+ * 회원만 접근가능하도록하는 어노테이션입니다.
  *
  * @author : 유호철
  * @since : 1.0
