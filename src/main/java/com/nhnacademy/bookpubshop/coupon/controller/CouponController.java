@@ -102,7 +102,7 @@ public class CouponController {
      * @param productNo 상품 번호 리스트
      * @return 사용할 수 있는 쿠폰 리스트 반환
      */
-    @GetMapping("/coupons/order/{memberNo}")
+    @GetMapping("/coupons/members/{memberNo}/order")
     public ResponseEntity<List<GetOrderCouponResponseDto>> orderCouponList(
             @PathVariable("memberNo") Long memberNo,
             @RequestParam("productNo") List<Long> productNo) {
