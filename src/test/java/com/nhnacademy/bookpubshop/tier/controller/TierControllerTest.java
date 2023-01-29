@@ -170,6 +170,7 @@ class TierControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.tierName").value(tierResponseDto.getTierName()))
                 .andExpect(jsonPath("$.tierNo").value(tierResponseDto.getTierNo()))
+                .andExpect(jsonPath("$.tierValue").value(tierResponseDto.getTierValue()))
                 .andExpect(jsonPath("$.tierPrice").value(tierResponseDto.getTierPrice()))
                 .andDo(print())
                     .andDo(document("get-tier",
@@ -177,6 +178,7 @@ class TierControllerTest {
                         responseFields(
                             fieldWithPath("tierName").description("등급의 이름이 반환"),
                             fieldWithPath("tierNo").description("등급 번호가 반환"),
+                            fieldWithPath("tierValue").description("등급 값이 반환"),
                                 fieldWithPath("tierPrice").description("등급시 필요한 금액이 반환")
                         )));
 
@@ -198,11 +200,13 @@ class TierControllerTest {
                 .andExpect(jsonPath("$[0].tierNo").value(tierResponseDto.getTierNo()))
                 .andExpect(jsonPath("$[0].tierName").value(tierResponseDto.getTierName()))
                 .andExpect(jsonPath("$[0].tierPrice").value(tierResponseDto.getTierPrice()))
+                .andExpect(jsonPath("$[0].tierValue").value(tierResponseDto.getTierValue()))
                 .andDo(print())
                 .andDo(document("get-tiers",
                     responseFields(
                         fieldWithPath("[].tierNo").description("등급 번호가 반환"),
                         fieldWithPath("[].tierName").description("등급명이 반환"),
+                        fieldWithPath("[].tierValue").description("등급값이 반환"),
                         fieldWithPath("[].tierPrice").description("등급시 필요한 금액이 반환")
                     )
                 ));
