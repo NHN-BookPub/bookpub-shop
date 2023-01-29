@@ -59,7 +59,7 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
      * {@inheritDoc}
      */
     @Override
-    public GetDetailCouponTemplateResponseDto getDetailCouponTemplate(Long templateNo) throws IOException {
+    public GetDetailCouponTemplateResponseDto getDetailCouponTemplate(Long templateNo) {
         if (!couponTemplateRepository.existsById(templateNo)) {
             throw new CouponTemplateNotFoundException(templateNo);
         }
@@ -72,7 +72,7 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
      * {@inheritDoc}
      */
     @Override
-    public Page<GetCouponTemplateResponseDto> getCouponTemplates(Pageable pageable) throws IOException {
+    public Page<GetCouponTemplateResponseDto> getCouponTemplates(Pageable pageable) {
         return couponTemplateRepository.findAllBy(pageable);
     }
 
@@ -122,12 +122,12 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
                 modifyRequestDto.getFinishedAt(),
                 modifyRequestDto.isTemplateBundled());
 
-        couponTemplate.setFile(fileManagement.saveFile(null, couponTemplate, null, null, null, image, "coupon", null));
+        couponTemplate.setFile(fileManagement.saveFile(null, couponTemplate, null, null, null, image, "coupon", "coupon_template"));
 
     }
 
     @Override
-    public GetDownloadInfo downloadCouponTemplate(Long templateNo) throws IOException {
+    public GetDownloadInfo downloadCouponTemplate(Long templateNo) {
         GetDetailCouponTemplateResponseDto dto =
                 couponTemplateRepository.findDetailByTemplateNo(templateNo)
                         .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));

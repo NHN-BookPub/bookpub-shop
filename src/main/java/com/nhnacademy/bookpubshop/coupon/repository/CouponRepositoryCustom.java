@@ -31,5 +31,12 @@ public interface CouponRepositoryCustom {
      */
     Page<GetCouponResponseDto> findAllBy(Pageable pageable, String searchKey, String search);
 
-    List<GetOrderCouponResponseDto> findByProductNo(String memberId, List<Long> productNoList);
+    /**
+     * 주문에 사용될 쿠폰들을 조회하는 메서드입니다.
+     *
+     * @param memberNo      멤버 번호
+     * @param productNoList 상품 번호 리스트
+     * @return 주문에 사용될 쿠폰들의 정보를 담은 Dto 리스트
+     */
+    List<GetOrderCouponResponseDto> findByProductNo(Long memberNo, List<Long> productNoList);
 }

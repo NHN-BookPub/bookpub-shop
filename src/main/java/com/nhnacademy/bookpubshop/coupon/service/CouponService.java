@@ -13,7 +13,7 @@ import org.springframework.data.domain.Pageable;
  *
  * @author : 정유진
  * @since : 1.0
- **/
+ */
 public interface CouponService {
 
     /**
@@ -46,5 +46,12 @@ public interface CouponService {
      */
     Page<GetCouponResponseDto> getCoupons(Pageable pageable, String searchKey, String search) throws IOException;
 
-    List<GetOrderCouponResponseDto> getOrderCoupons(String memberId, List<Long> productNoList);
+    /**
+     * 주문에 사용될 쿠폰 리스트 조회를 위한 메서드.
+     *
+     * @param memberNo      멤버 번호
+     * @param productNoList 상품 번호 리스트
+     * @return 쿠폰 정보를 담은 dto 리스트
+     */
+    List<GetOrderCouponResponseDto> getOrderCoupons(Long memberNo, List<Long> productNoList);
 }

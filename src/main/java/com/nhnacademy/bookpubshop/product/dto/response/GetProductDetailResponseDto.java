@@ -44,7 +44,6 @@ public class GetProductDetailResponseDto {
     private Integer policySaveRate;
 
     private List<String> authors = new ArrayList<>();
-    private List<Integer> categoriesNo = new ArrayList<>();
     private List<String> categories = new ArrayList<>();
     private List<String> tags = new ArrayList<>();
     private List<String> tagsColors = new ArrayList<>();
@@ -76,9 +75,6 @@ public class GetProductDetailResponseDto {
         this.policySaveRate = product.getProductPolicy().getSaveRate();
         this.authors = product.getProductAuthors().stream()
                 .map(m -> m.getAuthor().getAuthorName())
-                .collect(Collectors.toList());
-        this.categoriesNo = product.getProductCategories().stream()
-                .map(m -> m.getCategory().getCategoryNo())
                 .collect(Collectors.toList());
         this.categories = product.getProductCategories().stream()
                 .map(m -> m.getCategory().getCategoryName())

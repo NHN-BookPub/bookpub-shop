@@ -14,6 +14,8 @@ import lombok.Getter;
 public class GetOrderCouponResponseDto {
     private Long couponNo;
     private String templateName;
+    private Long productNo;
+    private Integer categoryNo;
     private boolean policyFixed;
     private Long policyPrice;
     private Long policyMinimum;

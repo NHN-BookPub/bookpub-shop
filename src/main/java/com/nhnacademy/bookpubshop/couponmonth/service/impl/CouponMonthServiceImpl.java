@@ -10,11 +10,8 @@ import com.nhnacademy.bookpubshop.couponmonth.service.CouponMonthService;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontemplate.exception.CouponTemplateNotFoundException;
 import com.nhnacademy.bookpubshop.coupontemplate.repository.CouponTemplateRepository;
-import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +30,7 @@ public class CouponMonthServiceImpl implements CouponMonthService {
     private final CouponMonthRepository couponMonthRepository;
     private final CouponTemplateRepository couponTemplateRepository;
 
-    private final FileManagement fileManagement;
+    //private final FileManagement fileManagement;
 
     /**
      * {@inheritDoc}
@@ -95,19 +92,21 @@ public class CouponMonthServiceImpl implements CouponMonthService {
      * @throws IOException 파일 입출력 에러
      */
     @Override
-    public List<GetCouponMonthResponseDto> getCouponMonths() throws IOException {
-        List<GetCouponMonthResponseDto> dtoList = couponMonthRepository.getCouponMonths();
-        List<GetCouponMonthResponseDto> transformList = new ArrayList<>();
+    public List<GetCouponMonthResponseDto> getCouponMonths() {
+//        List<GetCouponMonthResponseDto> dtoList = couponMonthRepository.getCouponMonths();
+//        List<GetCouponMonthResponseDto> transformList = new ArrayList<>();
+//
+//        for (GetCouponMonthResponseDto tmpDto : dtoList) {
+//            if (Objects.nonNull(tmpDto.getTemplateImage())) {
+//                transformList.add(tmpDto.transform(
+//                        fileManagement.loadFile(tmpDto.getTemplateImage()
+//                        )));
+//            } else
+//                transformList.add(tmpDto.transform(null));
+//        }
+//
+//        return transformList;
 
-        for (GetCouponMonthResponseDto tmpDto : dtoList) {
-            if (Objects.nonNull(tmpDto.getTemplateImage())) {
-                transformList.add(tmpDto.transform(
-                        fileManagement.loadFile(tmpDto.getTemplateImage()
-                        )));
-            } else
-                transformList.add(tmpDto.transform(null));
-        }
-
-        return transformList;
+        return couponMonthRepository.getCouponMonths();
     }
 }

@@ -24,24 +24,24 @@ public class GetCouponResponseDto {
     private LocalDateTime finishedAt;
     private boolean couponUsed;
 
-    /**
-     * 쿠폰 조회시 이미지를 담기 위해 변환해주는 메소드입니다.
-     *
-     * @param templateImage 이미지 byte
-     * @return 이미지를 담고 있는 dto
-     */
-    public GetCouponResponseDto transform(String templateImage) {
-        return new GetCouponResponseDto(
-                this.couponNo,
-                this.memberId,
-                this.templateName,
-                templateImage,
-                this.policyFixed,
-                this.policyPrice,
-                this.policyMinimum,
-                this.maxDiscount,
-                this.finishedAt,
-                this.couponUsed
-        );
-    }
+//    /**
+//     * 쿠폰 조회시 이미지를 담기 위해 변환해주는 메소드입니다.
+//     *
+//     * @param templateImage 이미지 byte
+//     * @return 이미지를 담고 있는 dto
+//     */
+//    public GetCouponResponseDto transform(String templateImage) {
+//        return new GetCouponResponseDto(
+//                this.couponNo,
+//                this.memberId,
+//                this.templateName,
+//                templateImage,
+//                this.policyFixed,
+//                this.policyPrice,
+//                this.policyMinimum,
+//                this.maxDiscount,
+//                this.finishedAt,
+//                this.couponUsed
+//        );
+//    }
 }

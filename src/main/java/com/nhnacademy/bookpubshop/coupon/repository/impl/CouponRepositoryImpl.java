@@ -12,9 +12,13 @@ import com.nhnacademy.bookpubshop.coupontype.entity.QCouponType;
 import com.nhnacademy.bookpubshop.file.entity.QFile;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
+import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
+import com.nhnacademy.bookpubshop.state.CouponType;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,6 +44,10 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
     QCouponPolicy couponPolicy = QCouponPolicy.couponPolicy;
     QMember member = QMember.member;
     QFile file = QFile.file;
+    QProduct product = QProduct.product;
+    QCategory category = QCategory.category;
+    QProductCategory productCategory = QProductCategory.productCategory;
+    QCouponType couponType = QCouponType.couponType;
 
     /**
      * {@inheritDoc}
@@ -102,44 +110,47 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public List<GetOrderCouponResponseDto> findByProductNo(String memberId, List<Long> productNoList) {
-        QProduct product = QProduct.product;
-        QCategory category = QCategory.category;
-        QCouponType couponType = QCouponType.couponType;
+    public List<GetOrderCouponResponseDto> findByProductNo(Long memberNo, List<Long> productNoList) {
 
-//        List<GetOrderCouponResponseDto> result =
-//                from(coupon)
-//                        .join(coupon.couponTemplate.product, product)
-//                        .on(coupon.couponTemplate.product.productNo.eq(product.productNo))
+        return from(coupon)
 //                        .join(coupon.member, member)
-//                        .join(coupon.couponTemplate.couponType, couponType)
-//                        .on(coupon.couponTemplate.couponType.typeNo.eq(couponType.typeNo))
-//                        .join(coupon.couponTemplate.category, category)
-//                        .on(coupon.couponTemplate.category.in(
-//                                JPAExpressions.select(category)
-//                                                .from(product)
-//                                        .in()
-//                                        .fetch())
-//                        ))
-//                        .where(member.memberId.eq(memberId))
-//                //수정, enum타입
-//                        //.where(couponType.typeNo.in(1, 2))
-//                        .where(couponTemplate.finishedAt.before(LocalDateTime.now()))
-//                        .where(product.productNo.in(productNoList))
-//                        .select(Projections.constructor(GetOrderCouponResponseDto.class,
-//                                coupon.couponNo,
-//                                couponTemplate.templateName,
-//                                couponPolicy.policyFixed,
-//                                couponPolicy.policyPrice,
-//                                couponPolicy.policyMinimum,
-//                                couponPolicy.maxDiscount,
-//                                coupon.couponTemplate.templateBundled))
-//                        .fetch();
-
-        //return result;
-
-        return null;
+                .join(coupon.couponTemplate, couponTemplate)
+                .leftJoin(product)
+                .on(coupon.couponTemplate.product.eq(product))
+                .join(couponType)
+                .on(coupon.couponTemplate.couponType.eq(couponType))
+                .join(couponPolicy)
+                .on(coupon.couponTemplate.couponPolicy.eq(couponPolicy))
+                .leftJoin(category)
+                .on(coupon.couponTemplate.category.eq(category))
+                .where(coupon.member.memberNo.eq(memberNo)
+                        .and(coupon.couponUsed.isFalse())
+                        .and(couponType.typeName.in(CouponType.COMMON.getName(), CouponType.DUPLICATE.getName()))
+                        .and(coupon.couponTemplate.finishedAt.coalesce(LocalDateTime.now().plusDays(1)).after(LocalDateTime.now()))
+                        .and((product.productNo.in(productNoList))
+                                .or(coupon.couponTemplate.category.categoryNo
+                                        .in(JPAExpressions.select(category.categoryNo)
+                                                .from(category)
+                                                .join(productCategory)
+                                                .on(category.categoryNo.eq(productCategory.category.categoryNo))
+                                                .where(productCategory.product.productNo.in(productNoList))))
+                        )
+                )
+                .select(Projections.constructor(GetOrderCouponResponseDto.class,
+                        coupon.couponNo,
+                        coupon.couponTemplate.templateName,
+                        coupon.couponTemplate.product.productNo,
+                        coupon.couponTemplate.category.categoryNo,
+                        couponPolicy.policyFixed,
+                        couponPolicy.policyPrice,
+                        couponPolicy.policyMinimum,
+                        couponPolicy.maxDiscount,
+                        coupon.couponTemplate.templateBundled))
+                .fetch();
     }
 
     /**
