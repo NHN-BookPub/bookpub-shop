@@ -12,6 +12,6 @@ public class AuthorDummy {
 
     public static Author dummy() {
         return new Author(null,
-                "author");
+                "author", "해리포터");
     }
 }

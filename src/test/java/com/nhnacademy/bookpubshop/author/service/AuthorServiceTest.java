@@ -3,8 +3,10 @@ package com.nhnacademy.bookpubshop.author.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
-import com.nhnacademy.bookpubshop.author.dto.CreateAuthorRequestDto;
-import com.nhnacademy.bookpubshop.author.dto.GetAuthorResponseDto;
+
+import com.nhnacademy.bookpubshop.author.dto.request.CreateAuthorRequestDto;
+import com.nhnacademy.bookpubshop.author.dto.request.ModifyAuthorRequestDto;
+import com.nhnacademy.bookpubshop.author.dto.response.GetAuthorResponseDto;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.author.exception.NotFoundAuthorException;
 import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
@@ -12,6 +14,7 @@ import com.nhnacademy.bookpubshop.author.service.impl.AuthorServiceImpl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,28 +46,45 @@ class AuthorServiceTest {
         authorRepository = Mockito.mock(AuthorRepository.class);
         authorService = new AuthorServiceImpl(authorRepository);
 
-        author = new Author(1, "남기준");
+        author = new Author(1, "남기준", "해리포터");
 
         requestDto = new CreateAuthorRequestDto();
         ReflectionTestUtils.setField(requestDto, "authorName", "남기준");
 
-        responseDto = new GetAuthorResponseDto(1, "남기준");
+        responseDto = new GetAuthorResponseDto(1, "남기준", "해리포터");
         captor = ArgumentCaptor.forClass(Author.class);
     }
 
     @Test
     @DisplayName("저자 등록 성공")
     void createAuthor() {
+
+        // when
         when(authorRepository.save(any()))
                 .thenReturn(author);
 
-        GetAuthorResponseDto result =
-                authorService.createAuthor(requestDto);
+        // then
+        authorService.createAuthor(requestDto);
 
-        assertThat(result.getAuthorNo()).isEqualTo(author.getAuthorNo());
-        assertThat(result.getAuthorName()).isEqualTo(author.getAuthorName());
+        verify(authorRepository, times(1)).save(captor.capture());
     }
 
+    @Test
+    @DisplayName("저자 수정 성공")
+    void modifyAuthor() {
+        // given
+        ModifyAuthorRequestDto modifyDto = new ModifyAuthorRequestDto();
+        ReflectionTestUtils.setField(modifyDto, "authorName", "경서바보");
+
+        // when
+        when(authorRepository.findById(anyInt())).thenReturn(Optional.ofNullable(author));
+
+        // then
+        authorService.modifyAuthorName(anyInt(), modifyDto);
+
+        verify(authorRepository, times(1)).findById(anyInt());
+
+    }
 
 
     @Test
