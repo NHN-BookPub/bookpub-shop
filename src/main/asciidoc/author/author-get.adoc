@@ -1,0 +1,30 @@
+= Book-Pub
+:toc:
+
+== API 명세
+
+저자(Author) 조회 관한 API 명세
+
+== 저자 단건 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/author-getAuthor-success/http-request.adoc[]
+
+== 응답구조
+
+include::../../../../target/snippets/author-getAuthor-success/http-response.adoc[]
+
+== 저자 전체 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/author-findAll/http-request.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/author-findAll/http-response.adoc[]
+
+=== 응답 파라미터
+
+include::../../../../target/snippets/author-getAuthor-success/response-fields.adoc[]
