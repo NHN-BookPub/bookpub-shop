@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.author.exception;
+package com.nhnacademy.bookpubshop.member.exception;
 
 /**
  * 권한을 찾을 수 없을 때 나오는 에러.
