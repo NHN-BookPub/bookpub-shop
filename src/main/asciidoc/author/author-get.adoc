@@ -21,6 +21,10 @@ include::../../../../target/snippets/author-getAuthor-success/http-response.adoc
 
 include::../../../../target/snippets/author-findAll/http-request.adoc[]
 
+=== 요청파라미터
+
+include::../../../../target/snippets/author-findAll/response-fields.adoc[]
+
 === 응답구조
 
 include::../../../../target/snippets/author-findAll/http-response.adoc[]

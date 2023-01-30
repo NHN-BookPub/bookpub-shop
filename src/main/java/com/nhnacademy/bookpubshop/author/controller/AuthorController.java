@@ -89,7 +89,7 @@ public class AuthorController {
      * @param name 저자 이름입니다.
      * @return 같은 이름의 모든 저자를 반환합니다.
      */
-    @GetMapping("/search/name")
+    @GetMapping("/search")
     public ResponseEntity<List<GetAuthorResponseDto>> getAuthorsByName(@RequestParam String name) {
         List<GetAuthorResponseDto> authors = authorService.getAuthorsByName(name);
 

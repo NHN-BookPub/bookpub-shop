@@ -77,7 +77,7 @@ class AuthorServiceTest {
         ReflectionTestUtils.setField(modifyDto, "authorName", "경서바보");
 
         // when
-        when(authorRepository.findById(anyInt())).thenReturn(Optional.ofNullable(author));
+        when(authorRepository.findById(anyInt())).thenReturn(Optional.of(author));
 
         // then
         authorService.modifyAuthorName(anyInt(), modifyDto);

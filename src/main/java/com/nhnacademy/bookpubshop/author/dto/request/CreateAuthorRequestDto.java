@@ -18,5 +18,6 @@ public class CreateAuthorRequestDto {
     @Length(max = 200, message = "저자 이름은 200자를 넘길 수 없습니다.")
     private String authorName;
 
+    @Length(max = 100, message = "대표작은 100글자를 넘을 수 없습니다.")
     private String mainBook;
 }

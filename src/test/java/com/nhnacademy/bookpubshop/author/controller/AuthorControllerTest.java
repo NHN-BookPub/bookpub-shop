@@ -314,7 +314,7 @@ class AuthorControllerTest {
         when(authorService.getAuthorsByName(responseDto.getAuthorName()))
                 .thenReturn(responses);
 
-        mockMvc.perform(get(path + "/search/name?name=" + responseDto.getAuthorName())
+        mockMvc.perform(get(path + "/search?name=" + responseDto.getAuthorName())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(responses)))
                 .andExpect(status().isOk())
