@@ -6,8 +6,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -62,13 +61,14 @@ class TierControllerTest {
         objectMapper = new ObjectMapper();
     }
 
-    @DisplayName("Validation Exception 으로 생성실패")
+    @DisplayName("Validation Exception name 으로 생성실패")
     @Test
-    void tierAddFailTest() throws Exception {
+    void tierAddFailNameTest() throws Exception {
         //given
         ReflectionTestUtils.setField(createTierRequestDto, "tierName", "");
         ReflectionTestUtils.setField(createTierRequestDto, "tierValue", 1);
         ReflectionTestUtils.setField(createTierRequestDto, "tierPrice", 1L);
+        ReflectionTestUtils.setField(createTierRequestDto, "tierPoint", 1L);
         doNothing().when(tierService).addTier(createTierRequestDto);
 
         //when && then
@@ -79,11 +79,89 @@ class TierControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("등급의 이름을 기입하여야 합니다."))
                 .andDo(print())
-            .andDo(document("tier-add-fail",
-                responseFields(
-                    fieldWithPath("[].message").description("등급의 이름을 기입하여야 합니다.")
-                )
-            ));
+                .andDo(document("tier-add-name-fail",
+                        responseFields(
+                                fieldWithPath("[].message").description("등급의 이름을 기입하여야 합니다.")
+                        )
+                ));
+
+    }
+
+    @DisplayName("Validation Exception value 으로 생성실패")
+    @Test
+    void tierAddFailTest() throws Exception {
+        //given
+        ReflectionTestUtils.setField(createTierRequestDto, "tierName", "asdf");
+        ReflectionTestUtils.setField(createTierRequestDto, "tierValue", null);
+        ReflectionTestUtils.setField(createTierRequestDto, "tierPrice", 1L);
+        ReflectionTestUtils.setField(createTierRequestDto, "tierPoint", 1L);
+        doNothing().when(tierService).addTier(createTierRequestDto);
+
+        //when && then
+        mvc.perform(post(path)
+                        .content(objectMapper.writeValueAsString(createTierRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].message").value("등급 값을 기입해야 합니다."))
+                .andDo(print())
+                .andDo(document("tier-add-value-fail",
+                        responseFields(
+                                fieldWithPath("[].message").description("등급 값을 기입해야 합니다.")
+                        )
+                ));
+
+    }
+
+    @DisplayName("Validation Exception price null 로 생성실패")
+    @Test
+    void tierAddPriceFailTest() throws Exception {
+        //given
+        ReflectionTestUtils.setField(createTierRequestDto, "tierName", "asdf");
+        ReflectionTestUtils.setField(createTierRequestDto, "tierValue", 1);
+        ReflectionTestUtils.setField(createTierRequestDto, "tierPrice", null);
+        ReflectionTestUtils.setField(createTierRequestDto, "tierPoint", 1L);
+        doNothing().when(tierService).addTier(createTierRequestDto);
+
+        //when && then
+        mvc.perform(post(path)
+                        .content(objectMapper.writeValueAsString(createTierRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].message").value("등급시 필요한 가격을 기입해야합니다."))
+                .andDo(print())
+                .andDo(document("tier-add-price-fail",
+                        responseFields(
+                                fieldWithPath("[].message").description("등급시 필요한 가격을 기입해야합니다.")
+                        )
+                ));
+
+    }
+
+    @DisplayName("Validation Exception Point null 로 생성실패")
+    @Test
+    void tierAddFailPointTest() throws Exception {
+        //given
+        ReflectionTestUtils.setField(createTierRequestDto, "tierName", "asdf");
+        ReflectionTestUtils.setField(createTierRequestDto, "tierValue", 1);
+        ReflectionTestUtils.setField(createTierRequestDto, "tierPrice", 1L);
+        ReflectionTestUtils.setField(createTierRequestDto, "tierPoint", null);
+        doNothing().when(tierService).addTier(createTierRequestDto);
+
+        //when && then
+        mvc.perform(post(path)
+                        .content(objectMapper.writeValueAsString(createTierRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].message").value("등급시 필요한 포인트량을 기입해야합니다."))
+                .andDo(print())
+                .andDo(document("tier-add-point-fail",
+                        responseFields(
+                                fieldWithPath("[].message").description("등급시 필요한 포인트량을 기입해야합니다.")
+                        )
+                ));
 
     }
 
@@ -94,6 +172,7 @@ class TierControllerTest {
         ReflectionTestUtils.setField(createTierRequestDto, "tierName", "GOLD");
         ReflectionTestUtils.setField(createTierRequestDto, "tierValue", 1);
         ReflectionTestUtils.setField(createTierRequestDto, "tierPrice", 1L);
+        ReflectionTestUtils.setField(createTierRequestDto, "tierPoint", 1L);
         doNothing().when(tierService).addTier(createTierRequestDto);
 
         //when && then
@@ -102,12 +181,13 @@ class TierControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
-            .andDo(document("tier-add",
-                    requestFields(
-                        fieldWithPath("tierName").description("등급명 기입"),
-                        fieldWithPath("tierValue").description("등급 값 기입"),
-                        fieldWithPath("tierPrice").description("등급시 필요한 가격 기입")
-                    )));
+                .andDo(document("tier-add",
+                        requestFields(
+                                fieldWithPath("tierName").description("등급명 기입"),
+                                fieldWithPath("tierValue").description("등급 값 기입"),
+                                fieldWithPath("tierPrice").description("등급시 필요한 가격 기입"),
+                                fieldWithPath("tierPoint").description("등급의 지급 포인트 반환")
+                        )));
     }
 
     @DisplayName("등급수정 validation 검증 실패 테스트")
@@ -124,15 +204,15 @@ class TierControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("등급번호는 필수값입니다."))
                 .andDo(print())
-            .andDo(document("tier-modify-fail",
-                requestFields(
-                    fieldWithPath("tierNo").description("등급번호가 기입"),
-                    fieldWithPath("tierName").description("등급명 기입")
-                ),
-                responseFields(
-                    fieldWithPath("[].message").description("등급번호는 필수값입니다.")
-                )
-            ));
+                .andDo(document("tier-modify-fail",
+                        requestFields(
+                                fieldWithPath("tierNo").description("등급번호가 기입"),
+                                fieldWithPath("tierName").description("등급명 기입")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("등급번호는 필수값입니다.")
+                        )
+                ));
     }
 
     @DisplayName("등급수정 성공테스트")
@@ -148,10 +228,10 @@ class TierControllerTest {
                         .content(objectMapper.writeValueAsString(modifyTierRequestDto)))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
-                    .andDo(document("tier-modify",
+                .andDo(document("tier-modify",
                         requestFields(
-                            fieldWithPath("tierNo").description("등급번호 기입"),
-                            fieldWithPath("tierName").description("등급명 기입")
+                                fieldWithPath("tierNo").description("등급번호 기입"),
+                                fieldWithPath("tierName").description("등급명 기입")
                         )));
 
         then(tierService).should().modifyTier(any(ModifyTierRequestDto.class));
@@ -161,7 +241,7 @@ class TierControllerTest {
     @Test
     void tierDetailsTest() throws Exception {
         //given
-        TierResponseDto tierResponseDto = new TierResponseDto(1, "tierResponseDto",1,0L);
+        TierResponseDto tierResponseDto = new TierResponseDto(1, "tierResponseDto", 1, 0L, 1000L);
         when(tierService.getTier(anyInt())).thenReturn(tierResponseDto);
 
         //when && then
@@ -172,24 +252,44 @@ class TierControllerTest {
                 .andExpect(jsonPath("$.tierNo").value(tierResponseDto.getTierNo()))
                 .andExpect(jsonPath("$.tierValue").value(tierResponseDto.getTierValue()))
                 .andExpect(jsonPath("$.tierPrice").value(tierResponseDto.getTierPrice()))
+                .andExpect(jsonPath("$.tierPoint").value(tierResponseDto.getTierPoint()))
+
                 .andDo(print())
-                    .andDo(document("get-tier",
+                .andDo(document("get-tier",
                         pathParameters(parameterWithName("tierNo").description("Path 로 등급번호 기입")),
                         responseFields(
-                            fieldWithPath("tierName").description("등급의 이름이 반환"),
-                            fieldWithPath("tierNo").description("등급 번호가 반환"),
-                            fieldWithPath("tierValue").description("등급 값이 반환"),
-                                fieldWithPath("tierPrice").description("등급시 필요한 금액이 반환")
+                                fieldWithPath("tierName").description("등급의 이름이 반환"),
+                                fieldWithPath("tierNo").description("등급 번호가 반환"),
+                                fieldWithPath("tierValue").description("등급 값이 반환"),
+                                fieldWithPath("tierPrice").description("등급시 필요한 금액이 반환"),
+                                fieldWithPath("tierPoint").description("등급의 지급 포인트 반환")
                         )));
 
         then(tierService).should().getTier(anyInt());
+    }
+
+    @DisplayName("등급명을 통한 등급 조회")
+    @Test
+    void getTierByName() throws Exception {
+        when(tierService.getTierName(anyString()))
+                .thenReturn(true);
+
+        mvc.perform(RestDocumentationRequestBuilders.get(path + "/check-tierName?tierName=hi"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("get-tier-name",
+                        requestParameters(
+                                parameterWithName("tierName").description("등급 이름이 기입")
+                        )));
+
+        then(tierService).should().getTierName("hi");
     }
 
     @DisplayName("등급에 대한 리스트 조회")
     @Test
     void tierListTest() throws Exception {
         //given
-        TierResponseDto tierResponseDto = new TierResponseDto(1, "tierTest",1,0L);
+        TierResponseDto tierResponseDto = new TierResponseDto(1, "tierTest", 1, 0L, 1000L);
         when(tierService.getTiers())
                 .thenReturn(List.of(tierResponseDto));
 
@@ -201,14 +301,16 @@ class TierControllerTest {
                 .andExpect(jsonPath("$[0].tierName").value(tierResponseDto.getTierName()))
                 .andExpect(jsonPath("$[0].tierPrice").value(tierResponseDto.getTierPrice()))
                 .andExpect(jsonPath("$[0].tierValue").value(tierResponseDto.getTierValue()))
+                .andExpect(jsonPath("$[0].tierPoint").value(tierResponseDto.getTierPoint()))
                 .andDo(print())
                 .andDo(document("get-tiers",
-                    responseFields(
-                        fieldWithPath("[].tierNo").description("등급 번호가 반환"),
-                        fieldWithPath("[].tierName").description("등급명이 반환"),
-                        fieldWithPath("[].tierValue").description("등급값이 반환"),
-                        fieldWithPath("[].tierPrice").description("등급시 필요한 금액이 반환")
-                    )
+                        responseFields(
+                                fieldWithPath("[].tierNo").description("등급 번호가 반환"),
+                                fieldWithPath("[].tierName").description("등급명이 반환"),
+                                fieldWithPath("[].tierValue").description("등급값이 반환"),
+                                fieldWithPath("[].tierPrice").description("등급시 필요한 금액이 반환"),
+                                fieldWithPath("[].tierPoint").description("등급의 지급 포인트 반환")
+                        )
                 ));
 
         then(tierService).should().getTiers();

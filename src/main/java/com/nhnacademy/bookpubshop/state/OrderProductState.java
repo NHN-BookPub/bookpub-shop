@@ -16,7 +16,8 @@ public enum OrderProductState implements States {
     REFUND("환불", true),
     WAITING_EXCHANGE("교환중", true),
     COMPLETE_EXCHANGE("교환완료", true),
-    CANCEL_EXCHANGE("교환취소", true);
+    CANCEL_EXCHANGE("교환취소", true),
+    WAITING_PURCHASE_CONFIRMATION("구매확정대기", true);
     private final String name;
     private final boolean isUsed;
 
