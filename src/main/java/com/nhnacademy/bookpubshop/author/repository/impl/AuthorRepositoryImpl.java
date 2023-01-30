@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.author.repository.impl;
 
-import com.nhnacademy.bookpubshop.author.dto.GetAuthorResponseDto;
+import com.nhnacademy.bookpubshop.author.dto.response.GetAuthorResponseDto;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.author.entity.QAuthor;
 import com.nhnacademy.bookpubshop.author.repository.AuthorRepositoryCustom;
@@ -39,7 +39,8 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport
         JPQLQuery<GetAuthorResponseDto> query = from(author)
                 .select(Projections.constructor(GetAuthorResponseDto.class,
                         author.authorNo,
-                        author.authorName))
+                        author.authorName,
+                        author.mainBook))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
@@ -62,10 +63,13 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport
                 .innerJoin(product).on(product.eq(productAuthor.product))
                 .where(product.productNo.eq(productNo))
                 .select(Projections.constructor(GetAuthorResponseDto.class,
-                        author.authorNo, author.authorName))
+                        author.authorNo, author.authorName, author.mainBook))
                 .fetch();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<GetAuthorResponseDto> getAuthorByName(String name) {
         QAuthor author = QAuthor.author;
@@ -74,8 +78,8 @@ public class AuthorRepositoryImpl extends QuerydslRepositorySupport
                 .select(Projections.constructor(
                         GetAuthorResponseDto.class,
                         author.authorNo,
-                        author.authorName
-                ))
+                        author.authorName,
+                        author.mainBook))
                 .where(author.authorName.eq(name))
                 .fetch();
     }
