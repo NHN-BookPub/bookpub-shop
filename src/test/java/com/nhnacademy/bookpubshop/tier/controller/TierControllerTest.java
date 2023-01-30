@@ -79,7 +79,7 @@ class TierControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("등급의 이름을 기입하여야 합니다."))
                 .andDo(print())
-                .andDo(document("tier-add-fail",
+                .andDo(document("tier-add-name-fail",
                         responseFields(
                                 fieldWithPath("[].message").description("등급의 이름을 기입하여야 합니다.")
                         )
@@ -105,7 +105,7 @@ class TierControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("등급 값을 기입해야 합니다."))
                 .andDo(print())
-                .andDo(document("tier-add-fail",
+                .andDo(document("tier-add-value-fail",
                         responseFields(
                                 fieldWithPath("[].message").description("등급 값을 기입해야 합니다.")
                         )
@@ -131,7 +131,7 @@ class TierControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("등급시 필요한 가격을 기입해야합니다."))
                 .andDo(print())
-                .andDo(document("tier-add-fail",
+                .andDo(document("tier-add-price-fail",
                         responseFields(
                                 fieldWithPath("[].message").description("등급시 필요한 가격을 기입해야합니다.")
                         )
@@ -157,7 +157,7 @@ class TierControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("등급시 필요한 포인트량을 기입해야합니다."))
                 .andDo(print())
-                .andDo(document("tier-add-fail",
+                .andDo(document("tier-add-point-fail",
                         responseFields(
                                 fieldWithPath("[].message").description("등급시 필요한 포인트량을 기입해야합니다.")
                         )
