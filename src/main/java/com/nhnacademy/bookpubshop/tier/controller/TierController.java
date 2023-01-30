@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -70,6 +71,19 @@ public class TierController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(tierService.getTier(tierNo));
+    }
+
+    /**
+     * 등급의 사용중인 이름을 확인하기위한 메서드입니다.
+     *
+     * @param name 등급 이름
+     * @return boolean 값이 반환됩니다.
+     */
+    @GetMapping("/check-tierName")
+    public ResponseEntity<Boolean> tierNameCheck(@RequestParam("tierName") String name){
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(tierService.getTierName(name));
     }
 
     /**
