@@ -1,0 +1,28 @@
+= Book-Pub
+:toc:
+
+== API 명세
+
+저자(Author) 등록에 관한 API 명세
+
+== 저자 등록
+
+=== 요청구조
+
+include::../../../../target/snippets/author-create-success/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::../../../../target/snippets/author-create-success/request-fields.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/author-create-success/http-response.adoc[]
+
+=== 예외사항
+
+1. 작가 이름이 null인 경우
+include::../../../../target/snippets/author-create-authorName-null-fail/http-request.adoc[]
+2. 작가 이름이 200자 넘은 경우
+include::../../../../target/snippets/author-create-authorName-over-fail/http-request.adoc[]
+

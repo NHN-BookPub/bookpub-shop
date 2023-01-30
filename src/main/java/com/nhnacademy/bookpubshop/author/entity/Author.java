@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 /**
  * 저자(author) 테이블.
  *
- * @author : 박경서
+ * @author : 박경서, 김서현
  * @since : 1.0
  **/
 @Getter
@@ -32,4 +32,17 @@ public class Author {
     @NotNull
     @Column(name = "author_name")
     private String authorName;
+
+    @Column(name = "author_main_book")
+    private String mainBook;
+
+
+    /**
+     * 저자 이름 변경하는 메서드.
+     *
+     * @param authorName 변경할 저자 이름
+     */
+    public void modifyAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
 }

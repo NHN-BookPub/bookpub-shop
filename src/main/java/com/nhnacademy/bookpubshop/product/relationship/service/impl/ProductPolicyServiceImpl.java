@@ -6,7 +6,6 @@ import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyRespo
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductPolicyRepository;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductPolicyService;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -61,20 +60,9 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public List<GetProductPolicyResponseDto> getProductPolicies() {
-        List<ProductPolicy> productPolicies = productPolicyRepository.findAll();
-        List<GetProductPolicyResponseDto> returns = new ArrayList<>();
-
-        for (ProductPolicy policy : productPolicies) {
-            returns.add(new GetProductPolicyResponseDto(
-                    policy.getPolicyNo(),
-                    policy.getPolicyMethod(),
-                    policy.isPolicySaved(),
-                    policy.getSaveRate()
-            ));
-        }
-
-        return returns;
+        return productPolicyRepository.findAllPolicies();
     }
 
     /**
