@@ -4,7 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
@@ -19,6 +24,7 @@ import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.OauthMemberCreateRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
@@ -39,7 +45,6 @@ import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -134,6 +139,44 @@ class MemberServiceTest {
         assertThat(signUpMemberRequestDto.getMemberId())
                 .isEqualTo(result.getMemberId());
     }
+
+    @Test
+    @DisplayName("oauth 멤버 생성 성공 테스트")
+    void oauthMemberCreateSuccess() {
+        when(tierRepository.findByTierName(anyString()))
+                .thenReturn(Optional.of(tier));
+        when(memberRepository.existsByMemberEmail(anyString()))
+                .thenReturn(false);
+        when(memberRepository.existsByMemberId(anyString()))
+                .thenReturn(false);
+        when(memberRepository.existsByMemberNickname(anyString()))
+                .thenReturn(false);
+        when(authorityRepository.findByAuthorityName(anyString()))
+                .thenReturn(Optional.of(AuthorityDummy.dummy()));
+
+        OauthMemberCreateRequestDto createRequestDto = new OauthMemberCreateRequestDto();
+
+        ReflectionTestUtils.setField(createRequestDto, "name", "임태원");
+        ReflectionTestUtils.setField(createRequestDto, "nickname", "taewon");
+        ReflectionTestUtils.setField(createRequestDto, "birth", "981008");
+        ReflectionTestUtils.setField(createRequestDto, "gender", "남성");
+        ReflectionTestUtils.setField(createRequestDto, "memberId", "tagkdj1@github.com");
+        ReflectionTestUtils.setField(createRequestDto, "pwd", "!@#ASDFSDAGDCGXZV@!#@!");
+        ReflectionTestUtils.setField(createRequestDto, "phone", "01043580106");
+        ReflectionTestUtils.setField(createRequestDto, "email", "tagkdj1@naver.com");
+        ReflectionTestUtils.setField(createRequestDto, "address", "광주");
+        ReflectionTestUtils.setField(createRequestDto, "detailAddress", "109동 102호");
+
+        memberService.signup(createRequestDto);
+
+        verify(memberRepository, times(1))
+                .save(captor.capture());
+
+        Member result = captor.getValue();
+        assertThat(createRequestDto.getMemberId())
+                .isEqualTo(result.getMemberId());
+    }
+
 
     @Test
     @DisplayName("멤버 생성 아이디 중복으로 인한 실패 테스트")
@@ -644,5 +687,15 @@ class MemberServiceTest {
 
         then(addressRepository).should().findByMemberExchangeAddress(1L, 1L);
         then(addressRepository).should().delete(address);
+    }
+
+    @DisplayName("oauth 멤버 확인 메소드")
+    @Test
+    void isOauthMember() {
+        when(memberRepository.existsByMemberId(anyString())).thenReturn(true);
+
+        boolean oauthMember = memberService.isOauthMember("tagkdj1@naver.com");
+
+        assertThat(oauthMember).isTrue();
     }
 }

@@ -24,11 +24,11 @@ public class SignUpMemberRequestDto extends SignupDto {
 
     @NotBlank
     @Pattern(regexp = "^[a-zA-Z\\d]{2,8}$",
-            message = "닉네임은 영어는 필수 숫자는 선택으로 2글자 이상 8글자 이하로 입력해주세요.")
+            message = "닉네임은 영어나 숫자로 2글자 이상 8글자 이하로 입력해주세요.")
     private String nickname;
 
     @NotBlank
-    @Pattern(regexp = "^.*(?=.*\\d)(?=.{6}).*$", message = "생년월일은 숫자로 6글자 입력해주세요")
+    @Pattern(regexp = "^\\d{6}$", message = "생년월일은 숫자로 6글자 입력해주세요")
     private String birth;
 
     @NotBlank
@@ -49,7 +49,7 @@ public class SignUpMemberRequestDto extends SignupDto {
     private String detailAddress;
     @NotBlank
     @Pattern(regexp = "^[a-z0-9_-]{5,20}$",
-            message = "아이디는 영어와 숫자를 섞어 5글자에서 20글자로 입력해주세요.")
+            message = "아이디는 영어나 숫자로 5글자에서 20글자로 입력해주세요.")
     private String memberId;
     @NotBlank
     private String pwd;

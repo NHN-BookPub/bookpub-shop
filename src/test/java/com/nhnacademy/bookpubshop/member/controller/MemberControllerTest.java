@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
@@ -18,6 +19,7 @@ import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequest
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.NickRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.OauthMemberCreateRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
@@ -66,20 +68,31 @@ class MemberControllerTest {
     private MemberService memberService;
 
     String path = "/api/signup";
+    String oauthPath = "/api/oauth/signup";
 
     BookPubTier basic;
 
     SignUpMemberRequestDto signUpMemberRequestDto;
+    OauthMemberCreateRequestDto oauthMemberCreateRequestDto;
 
     SignUpMemberResponseDto signUpMemberResponseDto;
+    SignUpMemberResponseDto oauthSignUpMemberResponseDto;
 
     @BeforeEach
     void setUp() {
-        basic = new BookPubTier("basic",1,1L);
+        basic = new BookPubTier("basic", 1, 1L);
         objectMapper = new ObjectMapper();
         signUpMemberRequestDto = new SignUpMemberRequestDto();
+        oauthMemberCreateRequestDto = new OauthMemberCreateRequestDto();
+
         signUpMemberResponseDto = new SignUpMemberResponseDto(
                 "tagkdj1",
+                "taewon",
+                "tagkdj1@naver.com",
+                "basic"
+        );
+        oauthSignUpMemberResponseDto = new SignUpMemberResponseDto(
+                "tagkdj1@github.com",
                 "taewon",
                 "tagkdj1@naver.com",
                 "basic"
@@ -143,7 +156,7 @@ class MemberControllerTest {
     @DisplayName("닉네임 validation 에러로 인한 실패")
     void memberCreateFailedBecauseNicknameValidation() throws Exception {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "name", "임태원");
-        ReflectionTestUtils.setField(signUpMemberRequestDto, "nickname", "123123");
+        ReflectionTestUtils.setField(signUpMemberRequestDto, "nickname", "abc123Abc12");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "birth", "981008");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "gender", "남성");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "memberId", "tagkdj1");
@@ -161,7 +174,7 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].message").value("닉네임은 영어는 필수 숫자는 선택으로 2글자 이상 8글자 이하로 입력해주세요."))
+                .andExpect(jsonPath("$[0].message").value("닉네임은 영어나 숫자로 2글자 이상 8글자 이하로 입력해주세요."))
                 .andDo(print());
     }
 
@@ -224,7 +237,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "nickname", "taewon");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "birth", "981008");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "gender", "남성");
-        ReflectionTestUtils.setField(signUpMemberRequestDto, "memberId", "tagkdj");
+        ReflectionTestUtils.setField(signUpMemberRequestDto, "memberId", "tagk");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "pwd", "!@#ASDFSDAGDCGXZV@!#@!");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "phone", "01043580106");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "email", "tagkdj1@naver.com");
@@ -239,7 +252,7 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].message").value("아이디는 영어와 숫자를 섞어 5글자에서 20글자로 입력해주세요."))
+                .andExpect(jsonPath("$[0].message").value("아이디는 영어나 숫자로 5글자에서 20글자로 입력해주세요."))
                 .andDo(print());
     }
 
@@ -666,12 +679,12 @@ class MemberControllerTest {
 
     @DisplayName("회원 주소 등록 테스트 address- validation 실패")
     @Test
-    void memberAddressCreateFailTest() throws Exception{
+    void memberAddressCreateFailTest() throws Exception {
 
         doNothing().when(memberService).addMemberAddress(anyLong(), any(CreateAddressRequestDto.class));
 
         CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
-        ReflectionTestUtils.setField(createAddressRequestDto,"addressDetail","asdf");
+        ReflectionTestUtils.setField(createAddressRequestDto, "addressDetail", "asdf");
 
         mvc.perform(post("/api/members/{memberNo}/addresses", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -683,12 +696,12 @@ class MemberControllerTest {
 
     @DisplayName("회원 주소 등록 테스트 addressdetail- validation 실패")
     @Test
-    void memberAddressCreateFail2Test() throws Exception{
+    void memberAddressCreateFail2Test() throws Exception {
 
         doNothing().when(memberService).addMemberAddress(anyLong(), any(CreateAddressRequestDto.class));
 
         CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
-        ReflectionTestUtils.setField(createAddressRequestDto,"address","aaaa");
+        ReflectionTestUtils.setField(createAddressRequestDto, "address", "aaaa");
 
         mvc.perform(post("/api/members/{memberNo}/addresses", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -700,13 +713,13 @@ class MemberControllerTest {
 
     @DisplayName("회원 주소 등록 테스트 성공")
     @Test
-    void memberAddressCreateSuccessTest() throws Exception{
+    void memberAddressCreateSuccessTest() throws Exception {
 
         doNothing().when(memberService).addMemberAddress(anyLong(), any(CreateAddressRequestDto.class));
 
         CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
-        ReflectionTestUtils.setField(createAddressRequestDto,"address","aaaa");
-        ReflectionTestUtils.setField(createAddressRequestDto,"addressDetail","aaaa");
+        ReflectionTestUtils.setField(createAddressRequestDto, "address", "aaaa");
+        ReflectionTestUtils.setField(createAddressRequestDto, "addressDetail", "aaaa");
 
         mvc.perform(post("/api/members/{memberNo}/addresses", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -720,7 +733,7 @@ class MemberControllerTest {
     @DisplayName("회원 주소 삭제 테스트 성공")
     @Test
     void memberAddressDeleteTest() {
-        doNothing().when(memberService).deleteMemberAddress(anyLong(),anyLong());
+        doNothing().when(memberService).deleteMemberAddress(anyLong(), anyLong());
 
         mvc.perform(delete("/api/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -728,5 +741,156 @@ class MemberControllerTest {
                 .andDo(print());
 
         then(memberService).should().deleteMemberAddress(1L, 1L);
+    }
+
+
+    @Test
+    @DisplayName("oauth 멤버 생성완료")
+    void oauthMemberCreateSuccess() throws Exception {
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "name", "임태원");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "nickname", "taewon");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "birth", "981008");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "gender", "남성");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "memberId", "tagkdj1@github.com");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "pwd", "github");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "phone", "01043580106");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "email", "tagkdj1@naver.com");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "address", "광주");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "detailAddress", "109동 102호");
+
+        when(memberService.signup(any())).thenReturn(oauthSignUpMemberResponseDto);
+
+        mvc.perform(post(oauthPath)
+                        .content(objectMapper.writeValueAsString(oauthMemberCreateRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andDo(print())
+                .andExpect(jsonPath("$.memberId").value("tagkdj1@github.com"))
+                .andExpect(jsonPath("$.memberNickname").value("taewon"))
+                .andExpect(jsonPath("$.memberEmail").value("tagkdj1@naver.com"))
+                .andExpect(jsonPath("$.tierName").value("basic"));
+    }
+
+    @Test
+    @DisplayName("oauth 이름 validation 에러로 인한 실패")
+    void oauthMemberCreateFailedBecauseNameValidation() throws Exception {
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "name", "임");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "nickname", "taewon");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "birth", "981008");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "gender", "남성");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "memberId", "tagkdj1@github.com");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "pwd", "github");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "phone", "01043580106");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "email", "tagkdj1@naver.com");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "address", "광주");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "detailAddress", "109동 102호");
+
+        when(memberService.signup(any())).thenReturn(oauthSignUpMemberResponseDto);
+        //when && then
+        mvc.perform(post(oauthPath)
+                        .content(objectMapper.writeValueAsString(oauthMemberCreateRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].message").value("이름은 한글 또는 영어 2글자 이상 200글자 이하로 입력해주세요."))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("oauth 닉네임 validation 에러로 인한 실패")
+    void oauthMemberCreateFailedBecauseNicknameValidation() throws Exception {
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "name", "임태원");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "nickname", "Abc1123Azxz");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "birth", "981008");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "gender", "남성");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "memberId", "tagkdj1@github.com");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "pwd", "github");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "phone", "01043580106");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "email", "tagkdj1@naver.com");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "address", "광주");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "detailAddress", "109동 102호");
+
+        when(memberService.signup(any())).thenReturn(oauthSignUpMemberResponseDto);
+        //when && then
+        mvc.perform(post(oauthPath)
+                        .content(objectMapper.writeValueAsString(oauthMemberCreateRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].message").value("닉네임은 영어나 숫자로 2글자 이상 8글자 이하로 입력해주세요."))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("oauth 성별 validation 에러로 인한 실패")
+    void oauthMemberCreateFailedBecauseGenderValidation() throws Exception {
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "name", "임태원");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "nickname", "taewon");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "birth", "981008");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "gender", "마법의 성");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "memberId", "tagkdj1@github.com");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "pwd", "github");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "phone", "01043580106");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "email", "tagkdj1@naver.com");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "address", "광주");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "detailAddress", "109동 102호");
+
+        when(memberService.signup(any())).thenReturn(oauthSignUpMemberResponseDto);
+        //when && then
+        mvc.perform(post(oauthPath)
+                        .content(objectMapper.writeValueAsString(oauthMemberCreateRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].message").value("성별의 길이는 2글자로 입력해주세요"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("oauth 생일 validation 에러로 인한 실패")
+    void oauthMemberCreateFailedBecauseBirthValidation() throws Exception {
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "name", "임태원");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "nickname", "taewon");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "birth", "19981008");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "gender", "남성");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "memberId", "tagkdj1@github.com");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "pwd", "github");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "phone", "01043580106");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "email", "tagkdj1@naver.com");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "address", "광주");
+        ReflectionTestUtils.setField(oauthMemberCreateRequestDto, "detailAddress", "109동 102호");
+
+        when(memberService.signup(any())).thenReturn(oauthSignUpMemberResponseDto);
+
+        //when && then
+        mvc.perform(post(oauthPath)
+                        .content(objectMapper.writeValueAsString(oauthMemberCreateRequestDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].message").value("생년월일은 숫자로 6글자 입력해주세요"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("oauth로 로그인 한 유저의 정보가 자사 db에 있는지 확인해 성공하는 테스트")
+    void oauthMemberExistBookpubDb() throws Exception {
+        when(memberService.isOauthMember(anyString())).thenReturn(true);
+
+        mvc.perform(get("/api/oauth/{email}","tagkdj1@kakao.com"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    @DisplayName("oauth로 로그인 한 유저의 정보가 자사 db에 있는지 확인해 실패하는 테스트")
+    void oauthMemberNotExistBookpubDb() throws Exception {
+        when(memberService.isOauthMember(anyString())).thenReturn(false);
+
+        mvc.perform(get("/api/oauth/{email}","tagkdj1@kakao.com"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("false"));
     }
 }
