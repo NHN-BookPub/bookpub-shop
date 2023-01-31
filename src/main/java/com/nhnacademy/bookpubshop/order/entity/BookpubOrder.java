@@ -26,7 +26,7 @@ public class BookpubOrder extends BaseCreateTimeEntity {
     private Long orderNo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_number")
     private Member member;
 
     @NotNull
