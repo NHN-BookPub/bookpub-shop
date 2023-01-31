@@ -3,7 +3,6 @@ package com.nhnacademy.bookpubshop.author.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
-
 import com.nhnacademy.bookpubshop.author.dto.request.CreateAuthorRequestDto;
 import com.nhnacademy.bookpubshop.author.dto.request.ModifyAuthorRequestDto;
 import com.nhnacademy.bookpubshop.author.dto.response.GetAuthorResponseDto;
@@ -80,7 +79,7 @@ class AuthorServiceTest {
         when(authorRepository.findById(anyInt())).thenReturn(Optional.of(author));
 
         // then
-        authorService.modifyAuthorName(anyInt(), modifyDto);
+        authorService.modifyAuthor(anyInt(), modifyDto);
 
         verify(authorRepository, times(1)).findById(anyInt());
 

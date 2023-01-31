@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.author.dto.request.CreateAuthorRequestDto;
 import com.nhnacademy.bookpubshop.author.dto.request.ModifyAuthorRequestDto;
@@ -123,7 +122,7 @@ class AuthorControllerTest {
                 ));
 
         verify(authorService, times(0))
-                .modifyAuthorName(anyInt(), any(ModifyAuthorRequestDto.class));
+                .modifyAuthor(anyInt(), any(ModifyAuthorRequestDto.class));
 
     }
 
@@ -162,7 +161,7 @@ class AuthorControllerTest {
                 ));
 
         verify(authorService, times(0))
-                .modifyAuthorName(anyInt(), any(ModifyAuthorRequestDto.class));
+                .modifyAuthor(anyInt(), any(ModifyAuthorRequestDto.class));
 
     }
 
@@ -171,11 +170,12 @@ class AuthorControllerTest {
     void modifyAuthorTest() throws Exception {
         ModifyAuthorRequestDto dto = new ModifyAuthorRequestDto();
         ReflectionTestUtils.setField(dto, "authorName", "변경이름");
+        ReflectionTestUtils.setField(dto, "mainBook", "변경할 대표작");
 
         ArgumentCaptor<ModifyAuthorRequestDto> captor =
                 ArgumentCaptor.forClass(ModifyAuthorRequestDto.class);
 
-        doNothing().when(authorService).modifyAuthorName(1, dto);
+        doNothing().when(authorService).modifyAuthor(1, dto);
 
         mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{authorNo}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -187,12 +187,13 @@ class AuthorControllerTest {
                         pathParameters(
                                 parameterWithName("authorNo").description("저자 번호")),
                         requestFields(
-                                fieldWithPath("authorName").description("저자 이름")
+                                fieldWithPath("authorName").description("저자 이름"),
+                                fieldWithPath("mainBook").description("대표작")
                         )
                 ));
 
         verify(authorService, times(1))
-                .modifyAuthorName(anyInt(), any(ModifyAuthorRequestDto.class));
+                .modifyAuthor(anyInt(), any(ModifyAuthorRequestDto.class));
     }
 
     @Test
@@ -200,8 +201,9 @@ class AuthorControllerTest {
     void modifyAuthorNameIsNullFailTest() throws Exception {
         ModifyAuthorRequestDto dto = new ModifyAuthorRequestDto();
         ReflectionTestUtils.setField(dto, "authorName", "");
+        ReflectionTestUtils.setField(dto, "mainBook", "대표작");
 
-        doNothing().when(authorService).modifyAuthorName(1, dto);
+        doNothing().when(authorService).modifyAuthor(1, dto);
 
         mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{authorNo}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -214,7 +216,8 @@ class AuthorControllerTest {
                         pathParameters(
                                 parameterWithName("authorNo").description("저자 번호")),
                         requestFields(
-                                fieldWithPath("authorName").description("저자 이름")
+                                fieldWithPath("authorName").description("저자 이름"),
+                                fieldWithPath("mainBook").description("대표작")
                         ),
                         responseFields(
                                 fieldWithPath("[].message").description("저자 이름은 필수 항목입니다.")
@@ -222,7 +225,7 @@ class AuthorControllerTest {
                 ));
 
         verify(authorService, times(0))
-                .modifyAuthorName(anyInt(), any(ModifyAuthorRequestDto.class));
+                .modifyAuthor(anyInt(), any(ModifyAuthorRequestDto.class));
 
     }
 
@@ -238,8 +241,9 @@ class AuthorControllerTest {
         }
 
         ReflectionTestUtils.setField(dto, "authorName", String.valueOf(sb));
+        ReflectionTestUtils.setField(dto, "mainBook", "대표작");
 
-        doNothing().when(authorService).modifyAuthorName(1, dto);
+        doNothing().when(authorService).modifyAuthor(1, dto);
 
         mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{authorNo}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -252,7 +256,8 @@ class AuthorControllerTest {
                         pathParameters(
                                 parameterWithName("authorNo").description("저자 번호")),
                         requestFields(
-                                fieldWithPath("authorName").description("저자 이름")
+                                fieldWithPath("authorName").description("저자 이름"),
+                                fieldWithPath("mainBook").description("대표작")
                         ),
                         responseFields(
                                 fieldWithPath("[].message").description("저자 이름은 200자를 넘길 수 없습니다.")
@@ -260,7 +265,47 @@ class AuthorControllerTest {
                 ));
 
         verify(authorService, times(0))
-                .modifyAuthorName(anyInt(), any(ModifyAuthorRequestDto.class));
+                .modifyAuthor(anyInt(), any(ModifyAuthorRequestDto.class));
+
+    }
+
+    @Test
+    @DisplayName("저자 수정 Validation Exception 대표책 수정 이름 길이 초과")
+    void modifyAuthorMainBookTooLongFailTest() throws Exception {
+        ModifyAuthorRequestDto dto = new ModifyAuthorRequestDto();
+
+        StringBuilder sb = new StringBuilder();
+        String mainBook = "대표책대표책";
+        for (int i = 0; i < 20; i++) {
+            sb.append(mainBook);
+        }
+
+        ReflectionTestUtils.setField(dto, "authorName", "저자");
+        ReflectionTestUtils.setField(dto, "mainBook", String.valueOf(sb));
+
+        doNothing().when(authorService).modifyAuthor(1, dto);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{authorNo}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andDo(print())
+                .andDo(document("author-modify-mainBook-over-fail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("authorNo").description("저자 번호")),
+                        requestFields(
+                                fieldWithPath("authorName").description("저자 이름"),
+                                fieldWithPath("mainBook").description("대표작")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("대표작은 100글자를 넘을 수 없습니다.")
+                        )
+                ));
+
+        verify(authorService, times(0))
+                .modifyAuthor(anyInt(), any(ModifyAuthorRequestDto.class));
 
     }
 
@@ -271,7 +316,8 @@ class AuthorControllerTest {
         responses.add(responseDto);
 
         Pageable pageable = PageRequest.of(0, 10);
-        Page<GetAuthorResponseDto> page = PageableExecutionUtils.getPage(responses, pageable, () -> 1L);
+        Page<GetAuthorResponseDto> page = PageableExecutionUtils.getPage(responses, pageable,
+                () -> 1L);
 
         when(authorService.getAuthorsByPage(pageable))
                 .thenReturn(page);
