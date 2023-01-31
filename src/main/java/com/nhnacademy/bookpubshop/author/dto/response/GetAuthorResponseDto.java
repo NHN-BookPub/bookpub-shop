@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.author.dto;
+package com.nhnacademy.bookpubshop.author.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,4 +14,5 @@ import lombok.Getter;
 public class GetAuthorResponseDto {
     private Integer authorNo;
     private String authorName;
+    private String mainBook;
 }

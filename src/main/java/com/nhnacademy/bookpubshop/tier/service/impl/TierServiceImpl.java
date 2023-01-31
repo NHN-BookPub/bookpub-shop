@@ -41,6 +41,7 @@ public class TierServiceImpl implements TierService {
                 .tierName(createTierRequestDto.getTierName())
                 .tierPrice(createTierRequestDto.getTierPrice())
                 .tierValue(createTierRequestDto.getTierValue())
+                .tierPoint(createTierRequestDto.getTierPoint())
                 .build());
     }
 
@@ -77,5 +78,13 @@ public class TierServiceImpl implements TierService {
     @Override
     public List<TierResponseDto> getTiers() {
         return tierRepository.findTiers();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean getTierName(String name) {
+        return tierRepository.existsByTierName(name);
     }
 }

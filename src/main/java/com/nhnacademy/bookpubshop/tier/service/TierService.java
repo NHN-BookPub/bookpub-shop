@@ -43,4 +43,12 @@ public interface TierService {
      * @return 전체 등급이 반환된다.
      */
     List<TierResponseDto> getTiers();
+
+    /**
+     * 이름으로 등급의 값이 있는지 확인하기위해 쓰입니다.
+     *
+     * @param name 등급명
+     * @return 등급여부
+     */
+    Boolean getTierName(String name);
 }

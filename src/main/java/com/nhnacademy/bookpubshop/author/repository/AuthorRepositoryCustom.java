@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.author.repository;
 
-import com.nhnacademy.bookpubshop.author.dto.GetAuthorResponseDto;
+import com.nhnacademy.bookpubshop.author.dto.response.GetAuthorResponseDto;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

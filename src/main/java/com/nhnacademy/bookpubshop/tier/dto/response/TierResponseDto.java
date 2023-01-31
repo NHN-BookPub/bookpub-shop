@@ -20,4 +20,7 @@ public class TierResponseDto {
     private Integer tierValue;
 
     private Long tierPrice;
+
+    private Long tierPoint;
+
 }

@@ -185,6 +185,17 @@ class TierServiceTest {
                 .findTier(anyInt());
     }
 
+    @DisplayName("등급 존재여부 확인 테스트")
+    @Test
+    void getTierByName() {
+        when(tierRepository.existsByTierName(anyString()))
+                .thenReturn(true);
+
+        Boolean aa = tierService.getTierName("aa");
+        assertThat(aa).isTrue();
+    }
+
+    @DisplayName("등급 전체리스트 조회 테스트")
     @Test
     void getTiersTest() {
         //given && when
