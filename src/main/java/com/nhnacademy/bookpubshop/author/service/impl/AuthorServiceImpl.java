@@ -34,6 +34,9 @@ public class AuthorServiceImpl implements AuthorService {
         authorRepository.save(new Author(null, author.getAuthorName(), author.getMainBook()));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public void modifyAuthor(Integer authorNo, ModifyAuthorRequestDto dto) {

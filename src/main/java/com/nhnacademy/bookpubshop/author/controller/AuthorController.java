@@ -50,7 +50,7 @@ public class AuthorController {
     }
 
     /**
-     * 저자 이름을 변경하는 컨트롤러.
+     * 저자 정보를 변경하는 컨트롤러.
      *
      * @param authorNo 저자 번호
      * @param dto      modify DTO
