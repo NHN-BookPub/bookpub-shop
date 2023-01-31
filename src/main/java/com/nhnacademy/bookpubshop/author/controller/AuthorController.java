@@ -50,21 +50,22 @@ public class AuthorController {
     }
 
     /**
-     * 저자 이름을 변경하는 컨트롤러.
+     * 저자 정보를 변경하는 컨트롤러.
      *
      * @param authorNo 저자 번호
      * @param dto      modify DTO
      * @return 200
      */
     @PutMapping("/{authorNo}")
-    public ResponseEntity<Void> modifyAuthorName(@PathVariable("authorNo") Integer authorNo,
-                                                 @Valid @RequestBody ModifyAuthorRequestDto dto) {
-        authorService.modifyAuthorName(authorNo, dto);
+    public ResponseEntity<Void> modifyAuthor(@PathVariable("authorNo") Integer authorNo,
+            @Valid @RequestBody ModifyAuthorRequestDto dto) {
+        authorService.modifyAuthor(authorNo, dto);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON).build();
     }
+
 
     /**
      * 모든 저자를 page에 따라 반환하는 메서드입니다.

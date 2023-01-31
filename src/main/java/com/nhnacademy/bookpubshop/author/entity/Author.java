@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.author.entity;
 
+import com.nhnacademy.bookpubshop.author.dto.request.ModifyAuthorRequestDto;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "author")
 public class Author {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "author_number")
@@ -38,11 +40,12 @@ public class Author {
 
 
     /**
-     * 저자 이름 변경하는 메서드.
+     * 저자 정보를 수정하는 메소드.
      *
-     * @param authorName 변경할 저자 이름
+     * @param dto 저자 수정 DTO.
      */
-    public void modifyAuthorName(String authorName) {
-        this.authorName = authorName;
+    public void modifyAuthorInfo(ModifyAuthorRequestDto dto) {
+        this.authorName = dto.getAuthorName();
+        this.mainBook = dto.getMainBook();
     }
 }

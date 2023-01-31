@@ -27,7 +27,7 @@ public interface AuthorService {
      * @param authorNo 저자 번호
      * @param dto      수정할 저자
      */
-    void modifyAuthorName(Integer authorNo, ModifyAuthorRequestDto dto);
+    void modifyAuthor(Integer authorNo, ModifyAuthorRequestDto dto);
 
     /**
      * 모든 저자를 반환하는 메서드입니다.
