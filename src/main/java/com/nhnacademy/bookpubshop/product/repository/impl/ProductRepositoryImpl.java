@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.product.repository.impl;
 import com.nhnacademy.bookpubshop.category.entity.QCategory;
 import com.nhnacademy.bookpubshop.order.entity.QBookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
+import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProductStateCode;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
@@ -38,6 +39,8 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
     private final EntityManager entityManager;
     QProduct product = QProduct.product;
     QOrderProduct orderProduct = QOrderProduct.orderProduct;
+    QOrderProductStateCode orderProductStateCode = QOrderProductStateCode.orderProductStateCode;
+    QBookpubOrder order = QBookpubOrder.bookpubOrder;
 
 
     public ProductRepositoryImpl(EntityManager entityManager) {
@@ -164,17 +167,17 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
 
     @Override
     public List<GetProductListForOrderResponseDto> getProductListByOrderNo(Long orderNo) {
-        QBookpubOrder order = QBookpubOrder.bookpubOrder;
-
         return from(orderProduct)
-                .leftJoin(orderProduct.product, product)
-                .leftJoin(orderProduct.order, order)
                 .select(Projections.constructor(
                         GetProductListForOrderResponseDto.class,
                         product.productNo,
                         product.title,
                         product.salesPrice,
-                        orderProduct.productAmount))
+                        orderProduct.productAmount,
+                        orderProductStateCode.codeName))
+                .innerJoin(orderProduct.product, product)
+                .innerJoin(orderProduct.orderProductStateCode, orderProductStateCode)
+                .innerJoin(orderProduct.order, order)
                 .where(order.orderNo.eq(orderNo))
                 .fetch();
     }
