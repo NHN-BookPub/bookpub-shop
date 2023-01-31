@@ -197,10 +197,19 @@ public class Member extends BaseCreateTimeEntity {
         this.memberPwd = password;
     }
 
+    /**
+     * 멤버 권한을 추가하기 위한 메소드 입니다.
+     *
+     * @param memberAuthority 멤버권한.
+     */
     public void addMemberAuthority(MemberAuthority memberAuthority) {
         this.memberAuthorities.add(memberAuthority);
     }
 
+
+    /**
+     * oauth멤버 컬럼을 true로 수정합니다.
+     */
     public void oauthMember() {
         this.socialJoined = true;
     }

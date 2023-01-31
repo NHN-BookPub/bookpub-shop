@@ -350,7 +350,11 @@ public class MemberServiceImpl implements MemberService {
         addressRepository.delete(address);
     }
 
-
+    /**
+     * 아이디, 닉네임 중복체크 메소드입니다.
+     *
+     * @param member 회원가입하려는 멤버.
+     */
     private void duplicateCheck(SignupDto member) {
         if (memberRepository.existsByMemberNickname(member.getNickname())) {
             throw new NicknameAlreadyExistsException(member.getNickname());

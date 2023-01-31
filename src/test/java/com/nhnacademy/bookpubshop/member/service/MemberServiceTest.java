@@ -697,5 +697,8 @@ class MemberServiceTest {
         boolean oauthMember = memberService.isOauthMember("tagkdj1@naver.com");
 
         assertThat(oauthMember).isTrue();
+
+        verify(memberRepository, times(1))
+                .existsByMemberId("tagkdj1@naver.com");
     }
 }
