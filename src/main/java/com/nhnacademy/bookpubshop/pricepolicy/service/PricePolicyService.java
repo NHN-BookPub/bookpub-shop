@@ -30,10 +30,10 @@ public interface PricePolicyService {
     /**
      * 가격정책을 번호로 조회합니다.
      *
-     * @param pricePolicyNo 정책번호입니다.
+     * @param pricePolicyName 정책이름입니다.
      * @return 정책을 반환합니다.
      */
-    GetPricePolicyResponseDto getPricePolicyById(Integer pricePolicyNo);
+    List<GetPricePolicyResponseDto> getPricePoliciesByName(String pricePolicyName);
 
     /**
      * 모든 가격정책을 반환합니다.
