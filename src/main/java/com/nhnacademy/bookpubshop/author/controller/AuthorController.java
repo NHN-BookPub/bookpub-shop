@@ -57,8 +57,8 @@ public class AuthorController {
      * @return 200
      */
     @PutMapping("/{authorNo}")
-    public ResponseEntity<Void> modifyAuthorName(@PathVariable("authorNo") Integer authorNo,
-                                                 @Valid @RequestBody ModifyAuthorRequestDto dto) {
+    public ResponseEntity<Void> modifyAuthor(@PathVariable("authorNo") Integer authorNo,
+            @Valid @RequestBody ModifyAuthorRequestDto dto) {
         authorService.modifyAuthor(authorNo, dto);
 
         return ResponseEntity
