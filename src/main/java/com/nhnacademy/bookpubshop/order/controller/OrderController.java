@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.order.controller;
 
 import com.nhnacademy.bookpubshop.order.dto.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.service.OrderService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
@@ -31,7 +32,7 @@ public class OrderController {
      * @return 200, 모든 주문 반환.
      */
     @GetMapping
-    public ResponseEntity<PageResponse<GetOrderListResponseDto>> getOrders(Pageable pageable) {
+    public ResponseEntity<PageResponse<GetOrderListForAdminResponseDto>> getOrders(Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(orderService.getOrderList(pageable));
@@ -84,7 +85,6 @@ public class OrderController {
      * 멤버 번호로 멤버의 모든 주문을 반환합니다.
      *
      * @param pageable 페이징을 위해 받습니다.
-     * @param no 멤버 번호입니다.
      * @return 200, 멤버의 모든 주문 반환.
      */
     @GetMapping("/member")
