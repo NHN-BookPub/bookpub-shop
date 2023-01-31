@@ -102,6 +102,9 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
         return PageableExecutionUtils.getPage(query.fetch(), pageable, count::fetchOne);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<GetOrderListResponseDto> getOrdersListByUser(Pageable pageable, Long memberNo) {
         JPQLQuery<GetOrderListResponseDto> query = from(order)

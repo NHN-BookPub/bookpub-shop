@@ -165,6 +165,9 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<GetProductListForOrderResponseDto> getProductListByOrderNo(Long orderNo) {
         return from(orderProduct)
