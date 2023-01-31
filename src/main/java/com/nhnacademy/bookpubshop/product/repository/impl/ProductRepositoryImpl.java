@@ -1,17 +1,24 @@
 package com.nhnacademy.bookpubshop.product.repository.impl;
 
+import com.nhnacademy.bookpubshop.author.entity.QAuthor;
 import com.nhnacademy.bookpubshop.category.entity.QCategory;
 import com.nhnacademy.bookpubshop.order.entity.QBookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProductStateCode;
-import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
+import com.nhnacademy.bookpubshop.product.relationship.entity.QProductAuthor;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
+import com.nhnacademy.bookpubshop.product.relationship.entity.QProductSaleStateCode;
+import com.nhnacademy.bookpubshop.product.relationship.entity.QProductTag;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepositoryCustom;
+import com.nhnacademy.bookpubshop.state.ProductSaleState;
+import com.nhnacademy.bookpubshop.tag.entity.QTag;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -33,7 +40,6 @@ import org.springframework.data.support.PageableExecutionUtils;
  * @author : 여운석, 박경서
  * @since : 1.0
  **/
-
 public class ProductRepositoryImpl extends QuerydslRepositorySupport
         implements ProductRepositoryCustom {
     private final EntityManager entityManager;
@@ -41,6 +47,13 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
     QOrderProduct orderProduct = QOrderProduct.orderProduct;
     QOrderProductStateCode orderProductStateCode = QOrderProductStateCode.orderProductStateCode;
     QBookpubOrder order = QBookpubOrder.bookpubOrder;
+    QProductCategory productCategory = QProductCategory.productCategory;
+    QCategory category = QCategory.category;
+    QTag tag = QTag.tag;
+    QProductTag productTag = QProductTag.productTag;
+    QAuthor author = QAuthor.author;
+    QProductAuthor productAuthor = QProductAuthor.productAuthor;
+    QProductSaleStateCode productSaleStateCode = QProductSaleStateCode.productSaleStateCode;
 
 
     public ProductRepositoryImpl(EntityManager entityManager) {
@@ -130,9 +143,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
     @Override
     public List<GetProductByTypeResponseDto> findProductListByType(Integer typeNo, Integer limit) {
 
-        QProductCategory productCategory = QProductCategory.productCategory;
-        QCategory category = QCategory.category;
-
         List<GetProductByTypeResponseDto> result = from(product)
                 .leftJoin(productCategory)
                 .on(productCategory.product.productNo.eq(product.productNo))
@@ -199,5 +209,57 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         product.salesPrice))
                 .where(product.productNo.in(productsNo))
                 .fetch();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo, Pageable pageable) {
+
+        List<GetProductByCategoryResponseDto> content =
+                from(product)
+                        .leftJoin(productSaleStateCode)
+                        .on(product.productSaleStateCode.codeNo.eq(productSaleStateCode.codeNo))
+                        .leftJoin(productCategory)
+                        .on(productCategory.product.productNo.eq(product.productNo))
+                        .select(Projections.fields(GetProductByCategoryResponseDto.class,
+                                product.productNo,
+                                product.title,
+                                product.salesPrice,
+                                product.salesRate))
+                        .orderBy(product.productPriority.asc())
+                        .where(product.productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
+                        .where(productCategory.category.categoryNo.eq(categoryNo))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
+
+        for (GetProductByCategoryResponseDto getProductByCategoryResponseDto : content) {
+            getProductByCategoryResponseDto.setCategories(
+                    from(category)
+                            .leftJoin(productCategory)
+                            .on(productCategory.category.categoryNo.eq(category.categoryNo))
+                            .select(category.categoryName)
+                            .where(productCategory.product.productNo.eq(getProductByCategoryResponseDto.getProductNo())).fetch());
+
+            getProductByCategoryResponseDto.setAuthors(
+                    from(author)
+                            .innerJoin(productAuthor)
+                            .on(productAuthor.author.authorNo.eq(author.authorNo))
+                            .select(author.authorName)
+                            .where(productAuthor.product.productNo.eq(getProductByCategoryResponseDto.getProductNo())).fetch());
+        }
+
+        JPQLQuery<Long> count = from(product)
+                .leftJoin(product.productCategories)
+                .leftJoin(product.productAuthors)
+                .leftJoin(product.productTags)
+                .leftJoin(product.productSaleStateCode)
+                .select(product.count())
+                .where(category.categoryNo.eq(categoryNo))
+                .where(product.productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()));
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 }

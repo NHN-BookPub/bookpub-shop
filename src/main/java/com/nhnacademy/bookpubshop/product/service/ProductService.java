@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.product.service;
 
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
@@ -81,4 +82,13 @@ public interface ProductService {
      * @return 카트에 담긴 상품들 정보
      */
     List<GetProductDetailResponseDto> getProductsInCart(List<Long> productsNo);
+
+    /**
+     * 카테고리별 상품들 조회.
+     *
+     * @param categoryNo 카테고리번호
+     * @param pageable   페이징정보
+     * @return 카텍리별 상품들
+     */
+    Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo, Pageable pageable);
 }
