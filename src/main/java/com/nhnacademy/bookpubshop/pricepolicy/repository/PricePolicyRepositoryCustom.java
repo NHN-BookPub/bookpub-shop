@@ -17,10 +17,10 @@ public interface PricePolicyRepositoryCustom {
     /**
      * 정책번호로 조회합니다.
      *
-     * @param policyNo 정책번호.
+     * @param policyName 정책이름.
      * @return 단건 정책을 반환합니다.
      */
-    Optional<GetPricePolicyResponseDto> findPolicyByNo(Integer policyNo);
+    List<GetPricePolicyResponseDto> getPricePolicyByName(String policyName);
 
     /**
      * 모든 정책들을 반환합니다.

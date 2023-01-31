@@ -27,16 +27,18 @@ public class PricePolicyRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public Optional<GetPricePolicyResponseDto> findPolicyByNo(Integer policyNo) {
-        return Optional.of(from(pricePolicy)
+    public List<GetPricePolicyResponseDto> getPricePolicyByName(String policyName) {
+        return from(pricePolicy)
                 .select(Projections.constructor(
                         GetPricePolicyResponseDto.class,
                         pricePolicy.policyNo,
                         pricePolicy.policyName,
-                        pricePolicy.policyFee
+                        pricePolicy.policyFee,
+                        pricePolicy.createdAt
                 ))
-                .where(pricePolicy.policyNo.eq(policyNo))
-                .fetchOne());
+                .where(pricePolicy.policyName.eq(policyName))
+                        .orderBy(pricePolicy.createdAt.desc())
+                .fetch();
     }
 
     /**
@@ -49,8 +51,10 @@ public class PricePolicyRepositoryImpl extends QuerydslRepositorySupport
                         GetPricePolicyResponseDto.class,
                         pricePolicy.policyNo,
                         pricePolicy.policyName,
-                        pricePolicy.policyFee
+                        pricePolicy.policyFee,
+                        pricePolicy.createdAt
                 ))
+                .orderBy(pricePolicy.createdAt.desc())
                 .fetch();
     }
 

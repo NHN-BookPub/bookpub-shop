@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
@@ -194,7 +195,7 @@ class OrderRepositoryTest {
 
         Pageable pageable = PageRequest.of(0,10);
 
-        Page<GetOrderListResponseDto> result = orderRepository.getOrdersList(pageable);
+        Page<GetOrderListForAdminResponseDto> result = orderRepository.getOrdersList(pageable);
 
         assertThat(result.getContent().get(0).getOrderNo())
                 .isEqualTo(persist.getOrderNo());
@@ -208,17 +209,6 @@ class OrderRepositoryTest {
                 .isEqualTo(persist.getCreatedAt());
         assertThat(result.getContent().get(0).getReceivedAt())
                 .isEqualTo(persist.getReceivedAt());
-
-        List<GetProductListForOrderResponseDto> response = productRepository.getProductListByOrderNo(persist.getOrderNo());
-
-        assertThat(response.get(0).getProductNo())
-                .isEqualTo(product.getProductNo());
-        assertThat(response.get(0).getTitle())
-                .isEqualTo(product.getTitle());
-        assertThat(response.get(0).getProductAmount())
-                .isEqualTo(orderProduct.getProductAmount());
-        assertThat(response.get(0).getSalesPrice())
-                .isEqualTo(product.getSalesPrice());
     }
 
     @Test

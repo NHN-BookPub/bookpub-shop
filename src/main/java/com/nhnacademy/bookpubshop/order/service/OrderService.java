@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.order.service;
 
 import com.nhnacademy.bookpubshop.order.dto.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.state.anno.StateCode;
@@ -55,7 +56,7 @@ public interface OrderService {
      * @param pageable 페이징.
      * @return 모든 주문 반환.
      */
-    PageResponse<GetOrderListResponseDto> getOrderList(Pageable pageable);
+    PageResponse<GetOrderListForAdminResponseDto> getOrderList(Pageable pageable);
 
     /**
      * 멤버의 모든 주문을 반환합니다.

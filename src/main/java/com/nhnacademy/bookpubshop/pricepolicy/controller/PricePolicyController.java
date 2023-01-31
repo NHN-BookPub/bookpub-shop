@@ -4,6 +4,7 @@ import com.nhnacademy.bookpubshop.pricepolicy.dto.CreatePricePolicyRequestDto;
 import com.nhnacademy.bookpubshop.pricepolicy.dto.GetPricePolicyResponseDto;
 import com.nhnacademy.bookpubshop.pricepolicy.service.PricePolicyService;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -41,7 +42,7 @@ public class PricePolicyController {
      * @return 201 반환.
      */
     @PostMapping
-    public ResponseEntity<Void> createPolicy(CreatePricePolicyRequestDto request) {
+    public ResponseEntity<Void> createPolicy(@Valid @RequestBody CreatePricePolicyRequestDto request) {
         pricePolicyService.createPricePolicy(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
@@ -65,14 +66,14 @@ public class PricePolicyController {
     /**
      * 정책번호로 조회합니다.
      *
-     * @param policyNo 정책번호.
-     * @return 200, 단건 정책 반환.
+     * @param policyName 정책명.
+     * @return 200, 정책리스트.
      */
-    @GetMapping("/{policyNo}")
-    public ResponseEntity<GetPricePolicyResponseDto> getPolicyByNo(
-            @PathVariable Integer policyNo) {
+    @GetMapping("/{policyName}")
+    public ResponseEntity<List<GetPricePolicyResponseDto>> getPoliciesByName(
+            @PathVariable String policyName) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(pricePolicyService.getPricePolicyById(policyNo));
+                .body(pricePolicyService.getPricePoliciesByName(policyName));
     }
 }

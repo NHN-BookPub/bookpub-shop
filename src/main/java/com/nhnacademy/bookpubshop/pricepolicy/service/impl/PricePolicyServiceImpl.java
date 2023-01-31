@@ -52,9 +52,8 @@ public class PricePolicyServiceImpl implements PricePolicyService {
      */
     @Override
     @Transactional(readOnly = true)
-    public GetPricePolicyResponseDto getPricePolicyById(Integer pricePolicyNo) {
-        return pricePolicyRepository.findPolicyByNo(pricePolicyNo)
-                        .orElseThrow(NotFoundPricePolicyException::new);
+    public List<GetPricePolicyResponseDto> getPricePoliciesByName(String pricePolicyName) {
+        return pricePolicyRepository.getPricePolicyByName(pricePolicyName);
     }
 
     /**

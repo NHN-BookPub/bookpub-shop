@@ -10,6 +10,7 @@ import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.order.dto.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
@@ -150,7 +151,8 @@ class OrderServiceTest {
                 order.getOrderPrice());
 
         productListDto = new GetProductListForOrderResponseDto(1L,
-                product.getTitle(), product.getSalesPrice(), orderProduct.getProductAmount());
+                product.getTitle(), product.getSalesPrice(),
+                orderProduct.getProductAmount(), orderProductStateCode.getCodeName());
 
         productList.add(productListDto);
 
@@ -374,29 +376,43 @@ class OrderServiceTest {
     @Test
     @DisplayName("전체 주문 조회 성공")
     void getOrderList() {
-        List<GetOrderListResponseDto> orders = new ArrayList<>();
-        listResponse.addOrderProducts(List.of(productListDto));
-        orders.add(listResponse);
+        List<GetOrderListForAdminResponseDto> orders = new ArrayList<>();
+
+        GetOrderListForAdminResponseDto adminResponseDto = new GetOrderListForAdminResponseDto(
+                order.getOrderNo(),
+                order.getMember().getMemberId(),
+                order.getCreatedAt(),
+                order.getInvoiceNumber(),
+                order.getOrderStateCode().getCodeName(),
+                order.getOrderPrice(),
+                order.getReceivedAt());
+
+        orders.add(adminResponseDto);
 
         Pageable pageable = Pageable.ofSize(10);
-        Page<GetOrderListResponseDto> pages = PageableExecutionUtils.getPage(orders, pageable, orders::size);
+        Page<GetOrderListForAdminResponseDto> pages = PageableExecutionUtils.getPage(orders, pageable, orders::size);
 
         when(productRepository.getProductListByOrderNo(order.getOrderNo()))
                 .thenReturn(List.of(productListDto));
         when(orderRepository.getOrdersList(pageable))
                 .thenReturn(pages);
 
-        assertThat(pages.getContent().get(0).getOrderProducts().get(0).getProductNo()).isEqualTo(productListDto.getProductNo());
-        assertThat(pages.getContent().get(0).getOrderProducts().get(0).getProductAmount()).isEqualTo(productListDto.getProductAmount());
-        assertThat(pages.getContent().get(0).getOrderProducts().get(0).getSalesPrice()).isEqualTo(productListDto.getSalesPrice());
-        assertThat(pages.getContent().get(0).getOrderProducts().get(0).getTitle()).isEqualTo(productListDto.getTitle());
 
-        assertThat(pages.getContent().get(0).getOrderNo()).isEqualTo(order.getOrderNo());
-        assertThat(pages.getContent().get(0).getOrderState()).isEqualTo(order.getOrderStateCode().getCodeName());
-        assertThat(pages.getContent().get(0).getTotalAmount()).isEqualTo(order.getOrderPrice());
-        assertThat(pages.getContent().get(0).getReceivedAt()).isEqualTo(order.getReceivedAt());
-        assertThat(pages.getContent().get(0).getCreatedAt()).isEqualTo(order.getCreatedAt());
-        assertThat(pages.getContent().get(0).getInvoiceNo()).isEqualTo(order.getInvoiceNumber());
+
+        assertThat(orderService.getOrderList(pageable).getContent()
+                .get(0).getMemberId()).isEqualTo(order.getMember().getMemberId());
+        assertThat(orderService.getOrderList(pageable).getContent()
+                .get(0).getOrderNo()).isEqualTo(order.getOrderNo());
+        assertThat(orderService.getOrderList(pageable).getContent()
+                .get(0).getOrderState()).isEqualTo(order.getOrderStateCode().getCodeName());
+        assertThat(orderService.getOrderList(pageable).getContent()
+                .get(0).getTotalAmount()).isEqualTo(order.getOrderPrice());
+        assertThat(orderService.getOrderList(pageable).getContent()
+                .get(0).getReceivedAt()).isEqualTo(order.getReceivedAt());
+        assertThat(orderService.getOrderList(pageable).getContent()
+                .get(0).getCreatedAt()).isEqualTo(order.getCreatedAt());
+        assertThat(orderService.getOrderList(pageable).getContent()
+                .get(0).getInvoiceNo()).isEqualTo(order.getInvoiceNumber());
     }
 
     @Test
@@ -414,16 +430,26 @@ class OrderServiceTest {
         when(orderRepository.getOrdersListByUser(pageable, member.getMemberNo()))
                 .thenReturn(pages);
 
-        assertThat(pages.getContent().get(0).getOrderProducts().get(0).getProductNo()).isEqualTo(productListDto.getProductNo());
-        assertThat(pages.getContent().get(0).getOrderProducts().get(0).getProductAmount()).isEqualTo(productListDto.getProductAmount());
-        assertThat(pages.getContent().get(0).getOrderProducts().get(0).getSalesPrice()).isEqualTo(productListDto.getSalesPrice());
-        assertThat(pages.getContent().get(0).getOrderProducts().get(0).getTitle()).isEqualTo(productListDto.getTitle());
+        assertThat(orderService.getOrderListByUsers(pageable, member.getMemberNo())
+                .getContent().get(0).getOrderProducts().get(0).getProductNo()).isEqualTo(productListDto.getProductNo());
+        assertThat(orderService.getOrderListByUsers(pageable, member.getMemberNo())
+                .getContent().get(0).getOrderProducts().get(0).getProductAmount()).isEqualTo(productListDto.getProductAmount());
+        assertThat(orderService.getOrderListByUsers(pageable, member.getMemberNo())
+                .getContent().get(0).getOrderProducts().get(0).getSalesPrice()).isEqualTo(productListDto.getSalesPrice());
+        assertThat(orderService.getOrderListByUsers(pageable, member.getMemberNo())
+                .getContent().get(0).getOrderProducts().get(0).getTitle()).isEqualTo(productListDto.getTitle());
 
-        assertThat(pages.getContent().get(0).getOrderNo()).isEqualTo(order.getOrderNo());
-        assertThat(pages.getContent().get(0).getOrderState()).isEqualTo(order.getOrderStateCode().getCodeName());
-        assertThat(pages.getContent().get(0).getTotalAmount()).isEqualTo(order.getOrderPrice());
-        assertThat(pages.getContent().get(0).getReceivedAt()).isEqualTo(order.getReceivedAt());
-        assertThat(pages.getContent().get(0).getCreatedAt()).isEqualTo(order.getCreatedAt());
-        assertThat(pages.getContent().get(0).getInvoiceNo()).isEqualTo(order.getInvoiceNumber());
+        assertThat(orderService.getOrderListByUsers(pageable, member.getMemberNo())
+                .getContent().get(0).getOrderNo()).isEqualTo(order.getOrderNo());
+        assertThat(orderService.getOrderListByUsers(pageable, member.getMemberNo())
+                .getContent().get(0).getOrderState()).isEqualTo(order.getOrderStateCode().getCodeName());
+        assertThat(orderService.getOrderListByUsers(pageable, member.getMemberNo())
+                .getContent().get(0).getTotalAmount()).isEqualTo(order.getOrderPrice());
+        assertThat(orderService.getOrderListByUsers(pageable, member.getMemberNo())
+                .getContent().get(0).getReceivedAt()).isEqualTo(order.getReceivedAt());
+        assertThat(orderService.getOrderListByUsers(pageable, member.getMemberNo())
+                .getContent().get(0).getCreatedAt()).isEqualTo(order.getCreatedAt());
+        assertThat(orderService.getOrderListByUsers(pageable, member.getMemberNo())
+                .getContent().get(0).getInvoiceNo()).isEqualTo(order.getInvoiceNumber());
     }
 }
