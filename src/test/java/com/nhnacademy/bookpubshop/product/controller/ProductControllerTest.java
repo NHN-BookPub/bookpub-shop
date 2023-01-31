@@ -590,7 +590,8 @@ class ProductControllerTest {
                                 fieldWithPath("authors[]").description("상품(도서) 저자 리스트"),
                                 fieldWithPath("categories[]").description("상품 카테고리 리스트"),
                                 fieldWithPath("tags[]").description("상품 태그 리스트"),
-                                fieldWithPath("tagsColors[]").description("태그 색 리스트")
+                                fieldWithPath("tagsColors[]").description("태그 색 리스트"),
+                                fieldWithPath("categoriesNo[]").description("상품 카테고리 번호 리스트")
                         )));
 
     }
@@ -814,9 +815,10 @@ class ProductControllerTest {
                                 fieldWithPath("[].policySaved").description("상품의 포인트 적립 여부"),
                                 fieldWithPath("[].policySaveRate").description("상품 포인트 적립률"),
                                 fieldWithPath("[].authors[]").description("상품(도서) 저자 리스트"),
-                                fieldWithPath("[].categories[]").description("상품 카테고리 리스트"),
+                                fieldWithPath("[].categories[]").description("상품 카테고리 이름 리스트"),
                                 fieldWithPath("[].tags[]").description("상품 태그 리스트"),
-                                fieldWithPath("[].tagsColors[]").description("태그 색 리스트")
+                                fieldWithPath("[].tagsColors[]").description("태그 색 리스트"),
+                                fieldWithPath("[].categoriesNo[]").description("상품 카테고리 번호 리스트")
                         )));
     }
 
