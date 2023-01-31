@@ -5,6 +5,7 @@ import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.order.dto.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.exception.OrderNotFoundException;
@@ -171,13 +172,9 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<GetOrderListResponseDto> getOrderList(Pageable pageable) {
-        Page<GetOrderListResponseDto> returns =
+    public PageResponse<GetOrderListForAdminResponseDto> getOrderList(Pageable pageable) {
+        Page<GetOrderListForAdminResponseDto> returns =
                 orderRepository.getOrdersList(pageable);
-
-        for(GetOrderListResponseDto response : returns.getContent()) {
-            response.addOrderProducts(productRepository.getProductListByOrderNo(response.getOrderNo()));
-        }
 
         return new PageResponse<>(returns);
     }
