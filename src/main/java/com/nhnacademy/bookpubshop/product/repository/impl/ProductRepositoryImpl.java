@@ -17,6 +17,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductTag;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepositoryCustom;
+import com.nhnacademy.bookpubshop.state.ProductSaleState;
 import com.nhnacademy.bookpubshop.tag.entity.QTag;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
@@ -27,7 +28,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -40,7 +40,6 @@ import org.springframework.data.support.PageableExecutionUtils;
  * @author : 여운석, 박경서
  * @since : 1.0
  **/
-@Slf4j
 public class ProductRepositoryImpl extends QuerydslRepositorySupport
         implements ProductRepositoryCustom {
     private final EntityManager entityManager;
@@ -230,7 +229,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                                 product.salesPrice,
                                 product.salesRate))
                         .orderBy(product.productPriority.asc())
-                        .where(product.productSaleStateCode.codeNo.eq(1))
+                        .where(product.productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
                         .where(productCategory.category.categoryNo.eq(categoryNo))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
@@ -259,7 +258,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .leftJoin(product.productSaleStateCode)
                 .select(product.count())
                 .where(category.categoryNo.eq(categoryNo))
-                .where(product.productSaleStateCode.codeInfo.eq(String.valueOf(1)));
+                .where(product.productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()));
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
