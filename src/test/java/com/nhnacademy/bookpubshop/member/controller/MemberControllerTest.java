@@ -4,6 +4,10 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -38,6 +42,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -45,6 +50,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -57,6 +63,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(MemberController.class)
 @Import(ShopAdviceController.class)
 @MockBean(JpaMetamodelMappingContext.class)
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 class MemberControllerTest {
 
     @Autowired
@@ -123,7 +130,26 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.memberId").value("tagkdj1"))
                 .andExpect(jsonPath("$.memberNickname").value("taewon"))
                 .andExpect(jsonPath("$.memberEmail").value("tagkdj1@naver.com"))
-                .andExpect(jsonPath("$.tierName").value("basic"));
+                .andExpect(jsonPath("$.tierName").value("basic"))
+                .andDo(document("member-create-success",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("birth").description("생년월일"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("pwd").description("비밀번호"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("detailAddress").description("상세주소")),
+                        responseFields(
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("memberNickname").description("닉네임"),
+                                fieldWithPath("memberEmail").description("이메일"),
+                                fieldWithPath("tierName").description("회원등급")
+                                )));
     }
 
     @Test
@@ -149,7 +175,22 @@ class MemberControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("이름은 한글 또는 영어 2글자 이상 200글자 이하로 입력해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-create-memberName-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("birth").description("생년월일"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("pwd").description("비밀번호"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("detailAddress").description("상세주소")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @Test
@@ -175,7 +216,22 @@ class MemberControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("닉네임은 영어나 숫자로 2글자 이상 8글자 이하로 입력해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-create-memberNickname-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("birth").description("생년월일"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("pwd").description("비밀번호"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("detailAddress").description("상세주소")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @Test
@@ -201,7 +257,22 @@ class MemberControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("성별의 길이는 2글자로 입력해주세요"))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-create-gender-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("birth").description("생년월일"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("pwd").description("비밀번호"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("detailAddress").description("상세주소")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @Test
@@ -227,7 +298,22 @@ class MemberControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("생년월일은 숫자로 6글자 입력해주세요"))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-create-birthDate-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("birth").description("생년월일"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("pwd").description("비밀번호"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("detailAddress").description("상세주소")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @Test
@@ -253,7 +339,22 @@ class MemberControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("아이디는 영어나 숫자로 5글자에서 20글자로 입력해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-create-memberId-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("birth").description("생년월일"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("pwd").description("비밀번호"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("detailAddress").description("상세주소")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @Test
@@ -279,7 +380,22 @@ class MemberControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("전화번호는 숫자 11글자로 입력해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-create-phoneNumber-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("birth").description("생년월일"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("pwd").description("비밀번호"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("detailAddress").description("상세주소")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @Test
@@ -296,8 +412,13 @@ class MemberControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("닉네임은 null 이 될수없습니다."))
-                .andDo(print());
-
+                .andDo(print())
+                .andDo(document("member-modify-memberNickname-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("nickname").description("닉네임")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @Test
@@ -315,7 +436,13 @@ class MemberControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("닉네임은 영어는 필수 숫자는 선택으로 2글자 이상 8글자 이하로 입력해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-modify-memberNickname-expression-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("nickname").description("닉네임")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @Test
@@ -332,7 +459,11 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-modify-nickname-success",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("nickname").description("닉네임"))));
 
         then(memberService).should().modifyMemberNickName(anyLong(), any());
     }
@@ -350,8 +481,13 @@ class MemberControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("이메일 형식으로 입력해야합니다."))
-                .andDo(print());
-
+                .andDo(print())
+                .andDo(document("member-modify-email-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("email").description("닉네임")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @Test
@@ -367,7 +503,11 @@ class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-modify-email-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("email").description("닉네임"))));
 
         then(memberService).should().modifyMemberEmail(anyLong(), any());
     }
@@ -379,7 +519,7 @@ class MemberControllerTest {
         when(memberService.getMemberDetails(1L))
                 .thenReturn(dto);
 
-        mvc.perform(get("/api/members/{memberNo}", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.get("/api/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.memberNo").value(objectMapper.writeValueAsString(dto.getMemberNo())))
@@ -393,7 +533,25 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.point").value(objectMapper.writeValueAsString(dto.getPoint())))
                 .andExpect(jsonPath("$.authorities").value(dto.getAuthorities()))
                 .andExpect(status().is2xxSuccessful())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-getMember-success",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        responseFields(
+                                fieldWithPath("memberNo").description("회원 번호"),
+                                fieldWithPath("memberName").description("이름"),
+                                fieldWithPath("tierName").description("회원 등급"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("birthMonth").description("생월"),
+                                fieldWithPath("birthYear").description("생년"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("point").description("포인트"),
+                                fieldWithPath("authorities").description("인증"),
+                                fieldWithPath("addresses").description("주소")
+                                )));
 
         then(memberService)
                 .should().getMemberDetails(anyLong());
@@ -431,7 +589,31 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.content[0].social").value(content.get(0).isSocial()))
                 .andExpect(jsonPath("$.content[0].deleted").value(content.get(0).isDeleted()))
                 .andExpect(jsonPath("$.content[0].blocked").value(content.get(0).isBlocked()))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-list-success",
+                        preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("page").description("페이지 번호"),
+                                parameterWithName("size").description("페이지 사이즈")),
+                        responseFields(
+                                fieldWithPath("content[].memberNo").description("회원 번호"),
+                                fieldWithPath("content[].tier").description("회원 등급"),
+                                fieldWithPath("content[].memberId").description("아이디"),
+                                fieldWithPath("content[].nickname").description("닉네임"),
+                                fieldWithPath("content[].name").description("이름"),
+                                fieldWithPath("content[].gender").description("성별"),
+                                fieldWithPath("content[].birthYear").description("생년"),
+                                fieldWithPath("content[].birthMonth").description("생월"),
+                                fieldWithPath("content[].email").description("이메일"),
+                                fieldWithPath("content[].point").description("포인트"),
+                                fieldWithPath("content[].social").description("소셜여부"),
+                                fieldWithPath("content[].deleted").description("탈퇴여부"),
+                                fieldWithPath("content[].blocked").description("차단여부"),
+                                fieldWithPath("totalPages").description("총 페이지 수"),
+                                fieldWithPath("number").description("현재 페이지 번호"),
+                                fieldWithPath("previous").description("이전 이동 가능 여부"),
+                                fieldWithPath("next").description("다음 이동 가능 여부")
+                        )));
 
         then(memberService)
                 .should()
@@ -444,10 +626,15 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .blockMember(1L);
 
-        mvc.perform(put("/api/admin/members/{memberNo}", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/api/admin/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-block-success",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호"))
+                        ));
     }
 
     @Test
@@ -464,7 +651,15 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.currentMemberCnt").value(dto.getCurrentMemberCnt()))
                 .andExpect(jsonPath("$.deleteMemberCnt").value(dto.getDeleteMemberCnt()))
                 .andExpect(jsonPath("$.blockMemberCnt").value(dto.getBlockMemberCnt()))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-statistics-success",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("memberCnt").description("총 회원 수"),
+                                fieldWithPath("currentMemberCnt").description("현재 회원 수"),
+                                fieldWithPath("deleteMemberCnt").description("탈퇴 회원 수"),
+                                fieldWithPath("blockMemberCnt").description("차단 회원 수")
+                                )));
 
         then(memberService)
                 .should().getMemberStatistics();
@@ -483,7 +678,14 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$[0].tierName").value(dto.getTierName()))
                 .andExpect(jsonPath("$[0].tierValue").value(objectMapper.writeValueAsString(dto.getTierValue())))
                 .andExpect(jsonPath("$[0].tierCnt").value(objectMapper.writeValueAsString(dto.getTierCnt())))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-statistics-success-byTier",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].tierName").description("등급명"),
+                                fieldWithPath("[].tierValue").description("등급 가격"),
+                                fieldWithPath("[].tierCnt").description("등급 카운트")
+                        )));
 
         then(memberService)
                 .should().getTierStatistics();
@@ -507,7 +709,15 @@ class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.memberId").value(loginDummy.getMemberId()))
                 .andExpect(jsonPath("$.memberPwd").value(loginDummy.getMemberPwd()))
-                .andExpect(jsonPath("$.memberNo").value(loginDummy.getMemberNo()));
+                .andExpect(jsonPath("$.memberNo").value(loginDummy.getMemberNo()))
+                .andDo(document("member-login-Member-success",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("memberPwd").description("비밀번호"),
+                                fieldWithPath("memberNo").description("회원 번호"),
+                                fieldWithPath("authorities").description("추가 인증 사항")
+                        )));
     }
 
     @Test
@@ -553,12 +763,20 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberPhone(anyLong(), any());
 
-        mvc.perform(put("/api/members/{memberNo}/phone", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/phone", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("빈값은 들어갈수없습니다."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-modify-phone-null-fail",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        requestFields(
+                                fieldWithPath("phone").description("전화번호")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @DisplayName("휴대전화 양식이 맞지않을경우")
@@ -569,12 +787,20 @@ class MemberControllerTest {
 
         doNothing().when(memberService)
                 .modifyMemberPhone(anyLong(), any());
-        mvc.perform(put("/api/members/{memberNo}/phone", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/phone", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("전화번호는 숫자 11글자로 입력해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-modify-phone-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        requestFields(
+                                fieldWithPath("phone").description("전화번호")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @DisplayName("휴대전화 변경 성공")
@@ -585,11 +811,17 @@ class MemberControllerTest {
 
         doNothing().when(memberService)
                 .modifyMemberPhone(anyLong(), any());
-        mvc.perform(put("/api/members/{memberNo}/phone", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/phone", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-modify-phone-success",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        requestFields(
+                                fieldWithPath("phone").description("전화번호"))));
     }
 
     @DisplayName("회원 이름 변경 실패 null")
@@ -600,11 +832,20 @@ class MemberControllerTest {
 
         doNothing().when(memberService)
                 .modifyMemberName(anyLong(), any());
-        mvc.perform(put("/api/members/{memberNo}/name", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/name", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$[0].message").value("이름은 한글 또는 영어 2글자 이상 200글자 이하로 입력해주세요."));
+                .andExpect(jsonPath("$[0].message")
+                        .value("이름은 한글 또는 영어 2글자 이상 200글자 이하로 입력해주세요."))
+                .andDo(document("member-modify-name-null-fail",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        requestFields(
+                                fieldWithPath("name").description("이름")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @DisplayName("회원 이름 변경 성공")
@@ -615,10 +856,16 @@ class MemberControllerTest {
 
         doNothing().when(memberService)
                 .modifyMemberName(anyLong(), any());
-        mvc.perform(put("/api/members/{memberNo}/name", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/name", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().is2xxSuccessful())
+                .andDo(document("member-modify-name-success",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        requestFields(
+                                fieldWithPath("name").description("이름"))));
     }
 
     @DisplayName("회원 탈퇴 성공")
@@ -628,9 +875,13 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .deleteMember(anyLong());
 
-        mvc.perform(put("/api/members/{memberNo}", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is2xxSuccessful());
+                .andExpect(status().is2xxSuccessful())
+                .andDo(document("member-delete-success",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호"))));
     }
 
     @DisplayName("패스워드 값 확인")
@@ -640,10 +891,17 @@ class MemberControllerTest {
         when(memberService.getMemberPwd(anyLong()))
                 .thenReturn(dto);
 
-        mvc.perform(get("/api/members/{memberNo}/password-check", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.get("/api/members/{memberNo}/password-check", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.password").value(dto.getPassword()));
+                .andExpect(jsonPath("$.password").value(dto.getPassword()))
+                .andDo(document("password-check",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        responseFields(
+                                fieldWithPath("password").description("비밀번호"))));
     }
 
     @DisplayName("패스워드 변경 Success ")
@@ -655,11 +913,18 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberPassword(anyLong(), any(ModifyMemberPasswordRequest.class));
 
-        mvc.perform(put("/api/members/{memberNo}/password", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/password", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("password-modify-success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        requestFields(
+                                fieldWithPath("password").description("비밀번호"))));
     }
 
     @DisplayName("회원 기준주소지 변경 Success")
@@ -669,10 +934,17 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberBaseAddress(anyLong(), anyLong());
 
-        mvc.perform(put("/api/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("baseAddress-modify-success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호"),
+                                parameterWithName("addressNo").description("주소 번호"))));
+
 
         then(memberService).should().modifyMemberBaseAddress(1L, 1L);
     }
@@ -686,12 +958,19 @@ class MemberControllerTest {
         CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
         ReflectionTestUtils.setField(createAddressRequestDto, "addressDetail", "asdf");
 
-        mvc.perform(post("/api/members/{memberNo}/addresses", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.post("/api/members/{memberNo}/addresses", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createAddressRequestDto)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("주소값은 비어있을 수 없습니다."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("address-create-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @DisplayName("회원 주소 등록 테스트 addressdetail- validation 실패")
@@ -703,12 +982,23 @@ class MemberControllerTest {
         CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
         ReflectionTestUtils.setField(createAddressRequestDto, "address", "aaaa");
 
-        mvc.perform(post("/api/members/{memberNo}/addresses", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.post("/api/members/{memberNo}/addresses", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createAddressRequestDto)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$[0].message").value("상세주소는 비어있을 수 없습니다."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("address-create-valid-detail-fail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        requestFields(
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("addressDetail").description("상세주소")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @DisplayName("회원 주소 등록 테스트 성공")
@@ -721,11 +1011,20 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(createAddressRequestDto, "address", "aaaa");
         ReflectionTestUtils.setField(createAddressRequestDto, "addressDetail", "aaaa");
 
-        mvc.perform(post("/api/members/{memberNo}/addresses", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.post("/api/members/{memberNo}/addresses", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createAddressRequestDto)))
                 .andExpect(status().is2xxSuccessful())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("address-create-success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        requestFields(
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("addressDetail").description("상세주소")
+                        )));
 
     }
 
@@ -735,10 +1034,16 @@ class MemberControllerTest {
     void memberAddressDeleteTest() {
         doNothing().when(memberService).deleteMemberAddress(anyLong(), anyLong());
 
-        mvc.perform(delete("/api/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
+        mvc.perform(RestDocumentationRequestBuilders.delete("/api/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("address-delete-success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호"),
+                                parameterWithName("addressNo").description("주소 번호"))));
 
         then(memberService).should().deleteMemberAddress(1L, 1L);
     }
@@ -768,7 +1073,26 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.memberId").value("tagkdj1@github.com"))
                 .andExpect(jsonPath("$.memberNickname").value("taewon"))
                 .andExpect(jsonPath("$.memberEmail").value("tagkdj1@naver.com"))
-                .andExpect(jsonPath("$.tierName").value("basic"));
+                .andExpect(jsonPath("$.tierName").value("basic"))
+                .andDo(document("member-oauth-create-success",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("birth").description("생년월일"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("pwd").description("비밀번호"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("detailAddress").description("상세주소")),
+                        responseFields(
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("memberNickname").description("닉네임"),
+                                fieldWithPath("memberEmail").description("이메일"),
+                                fieldWithPath("tierName").description("회원등급")
+                        )));
     }
 
     @Test
@@ -793,7 +1117,22 @@ class MemberControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("이름은 한글 또는 영어 2글자 이상 200글자 이하로 입력해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-oauth-create-name-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("birth").description("생년월일"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("pwd").description("비밀번호"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("detailAddress").description("상세주소")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @Test
@@ -818,7 +1157,22 @@ class MemberControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("닉네임은 영어나 숫자로 2글자 이상 8글자 이하로 입력해주세요."))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-oauth-create-nickname-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("birth").description("생년월일"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("pwd").description("비밀번호"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("detailAddress").description("상세주소")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @Test
@@ -843,7 +1197,22 @@ class MemberControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("성별의 길이는 2글자로 입력해주세요"))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-oauth-create-gender-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("birth").description("생년월일"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("pwd").description("비밀번호"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("detailAddress").description("상세주소")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @Test
@@ -869,7 +1238,22 @@ class MemberControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].message").value("생년월일은 숫자로 6글자 입력해주세요"))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("member-oauth-create-birth-valid-fail",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").description("이름"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("birth").description("생년월일"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("memberId").description("아이디"),
+                                fieldWithPath("pwd").description("비밀번호"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("address").description("기준주소"),
+                                fieldWithPath("detailAddress").description("상세주소")),
+                        responseFields(
+                                fieldWithPath("[].message").description("실패 사유"))));
     }
 
     @Test
