@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.pricepolicy.dto;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,4 +16,5 @@ public class GetPricePolicyResponseDto {
     private Integer policyNo;
     private String policyName;
     private Long policyFee;
+    private LocalDateTime createdAt;
 }
