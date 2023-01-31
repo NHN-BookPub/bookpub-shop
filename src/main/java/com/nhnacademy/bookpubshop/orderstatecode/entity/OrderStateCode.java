@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "order_state_code")
 public class OrderStateCode {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_state_code_number")
