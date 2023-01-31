@@ -80,7 +80,7 @@ class MemberControllerTest {
 
     @BeforeEach
     void setUp() {
-        basic = new BookPubTier("basic", 1, 1L);
+        basic = new BookPubTier("basic",1,1L,100L);
         objectMapper = new ObjectMapper();
         signUpMemberRequestDto = new SignUpMemberRequestDto();
         oauthMemberCreateRequestDto = new OauthMemberCreateRequestDto();

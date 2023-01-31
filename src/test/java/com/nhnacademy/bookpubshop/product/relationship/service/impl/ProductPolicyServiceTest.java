@@ -148,17 +148,18 @@ class ProductPolicyServiceTest {
     @DisplayName("전체 상품정책 조회 성공")
     void getProductPolicies() {
         // given
-        List<ProductPolicy> returns = List.of(productPolicy);
+        GetProductPolicyResponseDto dto = new GetProductPolicyResponseDto(1, "method", false, 10);
+        List<GetProductPolicyResponseDto> returns = List.of(dto);
 
         // when
-        when(productPolicyRepository.findAll())
+        when(productPolicyRepository.findAllPolicies())
                 .thenReturn(returns);
 
         // then
         productPolicyService.getProductPolicies();
 
         verify(productPolicyRepository, times(1))
-                .findAll();
+                .findAllPolicies();
     }
 
 }

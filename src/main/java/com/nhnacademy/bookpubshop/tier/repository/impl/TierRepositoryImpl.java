@@ -36,7 +36,8 @@ public class TierRepositoryImpl extends QuerydslRepositorySupport
                                 tier.tierNo,
                                 tier.tierName,
                                 tier.tierValue,
-                                tier.tierPrice))
+                                tier.tierPrice,
+                                tier.tierPoint))
                 .fetchOne());
     }
 
@@ -53,7 +54,8 @@ public class TierRepositoryImpl extends QuerydslRepositorySupport
                                 tier.tierNo,
                                 tier.tierName,
                                 tier.tierValue,
-                                tier.tierPrice))
+                                tier.tierPrice,
+                                tier.tierPoint))
                 .fetchOne());
     }
 
@@ -70,7 +72,8 @@ public class TierRepositoryImpl extends QuerydslRepositorySupport
                                 tier.tierNo,
                                 tier.tierName,
                                 tier.tierValue,
-                                tier.tierPrice))
+                                tier.tierPrice,
+                                tier.tierPoint))
                 .orderBy(tier.tierValue.asc())
                 .fetch();
     }

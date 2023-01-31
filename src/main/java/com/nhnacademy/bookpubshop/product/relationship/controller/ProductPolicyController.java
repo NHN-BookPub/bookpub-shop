@@ -64,7 +64,7 @@ public class ProductPolicyController {
      *
      * @return 모든 상품 정책 리스트를 반환합니다.
      */
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<GetProductPolicyResponseDto>> getProductPolicies() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

@@ -9,5 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author : 박경서
  * @since : 1.0
  **/
-public interface ProductPolicyRepository extends JpaRepository<ProductPolicy, Integer> {
+public interface ProductPolicyRepository
+        extends JpaRepository<ProductPolicy, Integer>, ProductPolicyRepositoryCustom {
 }

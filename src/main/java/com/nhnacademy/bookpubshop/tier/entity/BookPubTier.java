@@ -42,16 +42,21 @@ public class BookPubTier {
     @Column(name = "tier_price")
     private Long tierPrice;
 
+    @NotNull
+    @Column(name = "tier_point")
+    private Long tierPoint;
+
     /**
      * pk를 제외한 생성자입니다.
      *
      * @param tierName 등급명
      */
     @Builder
-    public BookPubTier(String tierName, Integer tierValue, Long tierPrice) {
+    public BookPubTier(String tierName, Integer tierValue, Long tierPrice, Long tierPoint) {
         this.tierName = tierName;
         this.tierValue = tierValue;
         this.tierPrice = tierPrice;
+        this.tierPoint = tierPoint;
     }
 
     /**

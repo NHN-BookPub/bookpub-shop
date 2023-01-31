@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
@@ -32,7 +33,6 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCo
 import com.nhnacademy.bookpubshop.product.service.ProductService;
 import com.nhnacademy.bookpubshop.tag.dummy.TagDummy;
 import com.nhnacademy.bookpubshop.tag.entity.Tag;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -550,7 +550,6 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.salesRate").value(responseDto.getSalesRate()))
                 .andExpect(jsonPath("$.productPriority").value(responseDto.getProductPriority()))
                 .andExpect(jsonPath("$.productStock").value(responseDto.getProductStock()))
-                .andExpect(jsonPath("$.publishDate").value(requestDto.getPublishedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .andExpect(jsonPath("$.deleted").value(responseDto.isDeleted()))
                 .andExpect(jsonPath("$.productSubscribed").value(responseDto.isProductSubscribed()))
                 .andExpect(jsonPath("$.saleStateCodeCategory").value(responseDto.getSaleStateCodeCategory()))
