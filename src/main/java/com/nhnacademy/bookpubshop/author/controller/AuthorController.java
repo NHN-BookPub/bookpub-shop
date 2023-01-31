@@ -59,12 +59,13 @@ public class AuthorController {
     @PutMapping("/{authorNo}")
     public ResponseEntity<Void> modifyAuthorName(@PathVariable("authorNo") Integer authorNo,
                                                  @Valid @RequestBody ModifyAuthorRequestDto dto) {
-        authorService.modifyAuthorName(authorNo, dto);
+        authorService.modifyAuthor(authorNo, dto);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON).build();
     }
+
 
     /**
      * 모든 저자를 page에 따라 반환하는 메서드입니다.

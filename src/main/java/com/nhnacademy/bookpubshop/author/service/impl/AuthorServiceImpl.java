@@ -36,11 +36,11 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public void modifyAuthorName(Integer authorNo, ModifyAuthorRequestDto dto) {
+    public void modifyAuthor(Integer authorNo, ModifyAuthorRequestDto dto) {
         Author author = authorRepository.findById(authorNo)
                 .orElseThrow(NotFoundAuthorException::new);
 
-        author.modifyAuthorName(dto.getAuthorName());
+        author.modifyAuthorInfo(dto);
     }
 
     /**
