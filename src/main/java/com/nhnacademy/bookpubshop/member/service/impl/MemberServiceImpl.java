@@ -13,7 +13,8 @@ import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
-import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.OauthMemberCreateRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.SignupDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberAuthResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
@@ -74,7 +75,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public SignUpMemberResponseDto signup(SignUpMemberRequestDto signUpMemberRequestDto) {
+    public SignUpMemberResponseDto signup(SignupDto signUpMemberRequestDto) {
         BookPubTier tier = tierRepository.findByTierName(TIER_NAME)
                 .orElseThrow(TierNotFoundException::new);
 
@@ -96,6 +97,10 @@ public class MemberServiceImpl implements MemberService {
                 .addressDetail(signUpMemberRequestDto.getDetailAddress())
                 .member(member)
                 .build());
+
+        if (signUpMemberRequestDto instanceof OauthMemberCreateRequestDto) {
+            member.oauthMember();
+        }
 
         memberRepository.save(member);
 
@@ -241,6 +246,14 @@ public class MemberServiceImpl implements MemberService {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public boolean isOauthMember(String email) {
+        return memberRepository.existsByMemberId(email);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     @Override
     public void modifyMemberName(Long memberNo, ModifyMemberNameRequestDto dto) {
@@ -337,8 +350,12 @@ public class MemberServiceImpl implements MemberService {
         addressRepository.delete(address);
     }
 
-
-    private void duplicateCheck(SignUpMemberRequestDto member) {
+    /**
+     * 아이디, 닉네임 중복체크 메소드입니다.
+     *
+     * @param member 회원가입하려는 멤버.
+     */
+    private void duplicateCheck(SignupDto member) {
         if (memberRepository.existsByMemberNickname(member.getNickname())) {
             throw new NicknameAlreadyExistsException(member.getNickname());
         }

@@ -1,12 +1,12 @@
 package com.nhnacademy.bookpubshop.member.service;
 
 import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
-import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
-import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.SignupDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberAuthResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
@@ -33,7 +33,7 @@ public interface MemberService {
      * @param signUpMemberRequestDto 회원가입시 필요한 회원정보가 기입됩니다.
      * @return signUpMemberResponseDto
      */
-    SignUpMemberResponseDto signup(SignUpMemberRequestDto signUpMemberRequestDto);
+    SignUpMemberResponseDto signup(SignupDto signUpMemberRequestDto);
 
     /**
      * 회원 정보중 닉네임의 수정을 위해 필요한 메서드입니다.
@@ -179,8 +179,17 @@ public interface MemberService {
 
     /**
      * 회원 정보를 가져오는 메서드 입니다.
+     *
      * @param accessToken 인증 accessToken.
      * @return 인증된 회원정보.
      */
     MemberAuthResponseDto authMemberInfo(String accessToken);
+
+    /**
+     * oauth로 가입한 회원의 정보를 가져오는 메소드 입니다.
+     *
+     * @param email front에서 넘겨준 체크하고싶은 정보.
+     * @return 회원인지 아닌지.
+     */
+    boolean isOauthMember(String email);
 }

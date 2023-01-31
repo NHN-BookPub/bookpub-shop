@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 /**
- * member 정보 response DTO개체.
+ * oauth member Request DTO개체.
  *
  * @author : 임태원
  * @since : 1.0
  **/
 @Getter
 @NoArgsConstructor
-public class SignUpMemberRequestDto extends SignupDto {
+public class OauthMemberCreateRequestDto extends SignupDto{
     @NotBlank
     @Pattern(regexp = "^.*(?=.*[가-힣a-z])(?=.{2,200}).*$",
             message = "이름은 한글 또는 영어 2글자 이상 200글자 이하로 입력해주세요.")
@@ -47,11 +47,7 @@ public class SignUpMemberRequestDto extends SignupDto {
     private String address;
     @NotBlank
     private String detailAddress;
-    @NotBlank
-    @Pattern(regexp = "^[a-z0-9_-]{5,20}$",
-            message = "아이디는 영어나 숫자로 5글자에서 20글자로 입력해주세요.")
     private String memberId;
-    @NotBlank
     private String pwd;
 
     /**
@@ -63,5 +59,4 @@ public class SignUpMemberRequestDto extends SignupDto {
     public Member createMember(BookPubTier tier) {
         return getMember(tier, birth, memberId, email, gender, name, nickname, phone, pwd);
     }
-
 }

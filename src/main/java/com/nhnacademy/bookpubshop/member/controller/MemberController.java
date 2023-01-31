@@ -3,12 +3,13 @@ package com.nhnacademy.bookpubshop.member.controller;
 import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.IdRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
-import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberEmailRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNameRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberNicknameRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPasswordRequest;
 import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.NickRequestDto;
+import com.nhnacademy.bookpubshop.member.dto.request.OauthMemberCreateRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberAuthResponseDto;
@@ -69,6 +70,22 @@ public class MemberController {
     }
 
     /**
+     * 회원정보를 받고 저장하는 메소드.
+     *
+     * @param memberDto 회원정보가 입력.
+     * @return 회원정보 저장성공 or 실패정보가 담긴 엔티티 반환.
+     */
+    @PostMapping("/oauth/signup")
+    public ResponseEntity<SignUpMemberResponseDto> signup(
+            @Valid @RequestBody OauthMemberCreateRequestDto memberDto) {
+        SignUpMemberResponseDto memberInfo = memberService.signup(memberDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(memberInfo);
+    }
+
+    /**
      * id 중복체크 요청을 받아 검사하는 메소드.
      *
      * @param requestDto front에서 요청한 id.
@@ -90,6 +107,12 @@ public class MemberController {
         return memberService.nickNameDuplicateCheck(requestDto.getNickname());
     }
 
+    /**
+     * 자사 회원의 accessToken을 가져와 사용자의 정보 요청하는 메소드.
+     *
+     * @param request request.
+     * @return 인증된 사용자의 정보.
+     */
     @GetMapping("/auth")
     public MemberAuthResponseDto authMemberInfo(HttpServletRequest request) {
         String accessToken = request.getHeader(JwtUtil.AUTH_HEADER);
@@ -274,16 +297,16 @@ public class MemberController {
      * @return the response entity
      */
     @GetMapping("/members/{memberNo}/password-check")
-    public ResponseEntity<MemberPasswordResponseDto> memberPasswordCheck(@PathVariable("memberNo") Long memberNo){
+    public ResponseEntity<MemberPasswordResponseDto> memberPasswordCheck(@PathVariable("memberNo") Long memberNo) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(memberService.getMemberPwd(memberNo));
     }
 
     /**
-     *  회원만 접근가능합니다.
-     *  회원의 패스워드가 수정될때 사용되는 메서드입니다.
-     *  성공시 201 이 반환됩니다.
+     * 회원만 접근가능합니다.
+     * 회원의 패스워드가 수정될때 사용되는 메서드입니다.
+     * 성공시 201 이 반환됩니다.
      *
      * @param memberNo 회원번호
      * @param request  수정할 회원의 비밀번호가 기입됩니다.
@@ -292,7 +315,7 @@ public class MemberController {
     @PutMapping("/members/{memberNo}/password")
     public ResponseEntity<Void> memberModifyPassword(@PathVariable("memberNo") Long memberNo,
                                                      @RequestBody ModifyMemberPasswordRequest request) {
-        memberService.modifyMemberPassword(memberNo,request);
+        memberService.modifyMemberPassword(memberNo, request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
 
@@ -309,7 +332,7 @@ public class MemberController {
      */
     @PutMapping("/members/{memberNo}/addresses/{addressNo}")
     public ResponseEntity<Void> memberModifyBaseAddress(@PathVariable("memberNo") Long memberNo,
-                                                        @PathVariable("addressNo") Long addressNo){
+                                                        @PathVariable("addressNo") Long addressNo) {
         memberService.modifyMemberBaseAddress(memberNo, addressNo);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
@@ -343,10 +366,26 @@ public class MemberController {
      */
     @DeleteMapping("/members/{memberNo}/addresses/{addressNo}")
     public ResponseEntity<Void> memberAddressDelete(@PathVariable("memberNo") Long memberNo,
-                                                    @PathVariable("addressNo") Long addressNo){
+                                                    @PathVariable("addressNo") Long addressNo) {
         memberService.deleteMemberAddress(memberNo, addressNo);
         return ResponseEntity.ok()
                 .build();
     }
+
+    /**
+     * oauth로 로그인 시도한 사람이 북펍의 db에 있는지 없는지 확인하는 메소드 입니다.
+     *
+     * @param email front에서 요청한 확인하고자 하는 정보.
+     * @return 맞는지 아닌지.
+     */
+    @GetMapping("/oauth/{email}")
+    public ResponseEntity<Boolean> oauthMemberCheck(@PathVariable String email) {
+        boolean oauthMember = memberService.isOauthMember(email);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(oauthMember);
+    }
+
 
 }
