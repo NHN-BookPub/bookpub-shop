@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.product.controller;
 
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
@@ -140,8 +141,9 @@ public class ProductController {
      * @return 상품 유형별 리스트
      */
     @GetMapping("/types/{typeNo}")
-    public ResponseEntity<List<GetProductByTypeResponseDto>> getProductsByType(@PathVariable Integer typeNo,
-                                                                               @RequestParam(name = "limit") Integer limit) {
+    public ResponseEntity<List<GetProductByTypeResponseDto>>
+    getProductsByType(@PathVariable Integer typeNo,
+                      @RequestParam(name = "limit") Integer limit) {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -160,5 +162,23 @@ public class ProductController {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productService.getProductsInCart(productsNo));
+    }
+
+    /**
+     * 상품의 카테고리 번호를 통해 상품들 조회.
+     *
+     * @param categoryNo 카테고리 번호
+     * @param pageable   페이징 정보
+     * @return 페이징 정보를 담은 상품들
+     */
+    @GetMapping("/product/categories/{categoryNo}")
+    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
+    getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
+        Page<GetProductByCategoryResponseDto> content =
+                productService.getProductsByCategory(categoryNo, pageable);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PageResponse<>(content));
     }
 }
