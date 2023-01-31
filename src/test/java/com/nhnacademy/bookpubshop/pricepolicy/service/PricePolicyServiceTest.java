@@ -11,6 +11,7 @@ import com.nhnacademy.bookpubshop.pricepolicy.exception.NotFoundPricePolicyExcep
 import com.nhnacademy.bookpubshop.pricepolicy.repository.PricePolicyRepository;
 import com.nhnacademy.bookpubshop.pricepolicy.service.impl.PricePolicyServiceImpl;
 import com.nhnacademy.bookpubshop.state.PricePolicyState;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -33,8 +33,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 @ExtendWith(SpringExtension.class)
 @Import(PricePolicyServiceImpl.class)
 class PricePolicyServiceTest {
-
-    @Autowired
     PricePolicyService pricePolicyService;
 
     @MockBean
@@ -45,6 +43,7 @@ class PricePolicyServiceTest {
     @BeforeEach
     void setUp() {
         captor = ArgumentCaptor.forClass(PricePolicy.class);
+        pricePolicyService = new PricePolicyServiceImpl(pricePolicyRepository);
     }
 
     @Test
@@ -98,41 +97,26 @@ class PricePolicyServiceTest {
     }
 
     @Test
-    @DisplayName("가격정책 단건 조회 서비스 성공 테스트")
+    @DisplayName("가격정책 리스트 조회 서비스 성공 테스트")
     void getPricePolicy_Success_Test() {
         // given
-        GetPricePolicyResponseDto dto = new GetPricePolicyResponseDto(1, "배송비", 3000L);
+        GetPricePolicyResponseDto dto = new GetPricePolicyResponseDto(1, "배송비", 3000L, LocalDateTime.now());
 
         // when
-        when(pricePolicyRepository.findPolicyByNo(anyInt()))
-                .thenReturn(Optional.of(dto));
+        when(pricePolicyRepository.getPricePolicyByName(anyString()))
+                .thenReturn(List.of(dto));
 
         // then
-        pricePolicyService.getPricePolicyById(anyInt());
+        pricePolicyService.getPricePoliciesByName(anyString());
         verify(pricePolicyRepository, times(1))
-                .findPolicyByNo(anyInt());
-    }
-
-    @Test
-    @DisplayName("가격정책 단건 조회 서비스 실패 테스트")
-    void getPricePolicy_Fail_Test() {
-        // given
-
-        // when
-        when(pricePolicyRepository.findPolicyByNo(anyInt()))
-                .thenReturn(Optional.empty());
-
-        // then
-        assertThatThrownBy(() -> pricePolicyService.getPricePolicyById(2))
-                .isInstanceOf(NotFoundPricePolicyException.class)
-                .hasMessageContaining(NotFoundPricePolicyException.MESSAGE);
+                .getPricePolicyByName(anyString());
     }
 
     @Test
     @DisplayName("가격정책 전체 조회 서비스 테스트")
     void getPricePolicies_Test() {
         // given
-        GetPricePolicyResponseDto dto = new GetPricePolicyResponseDto(1, "배송비", 3000L);
+        GetPricePolicyResponseDto dto = new GetPricePolicyResponseDto(1, "배송비", 3000L, LocalDateTime.now());
         List<GetPricePolicyResponseDto> list = List.of(dto);
 
         // when

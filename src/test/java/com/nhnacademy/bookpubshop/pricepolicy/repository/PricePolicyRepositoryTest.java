@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.pricepolicy.dto.GetPricePolicyResponseDto;
 import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,19 +53,19 @@ class PricePolicyRepositoryTest {
     }
 
     @Test
-    @DisplayName("정책 단건 반환 태스트")
+    @DisplayName("정책 리스 반환 태스트")
     void findPolicy() {
         // given
         PricePolicy persist = entityManager.persist(pricePolicy);
 
         // when
-        Optional<GetPricePolicyResponseDto> policy = pricePolicyRepository.findPolicyByNo(persist.getPolicyNo());
+        List<GetPricePolicyResponseDto> policy =
+                pricePolicyRepository.getPricePolicyByName(persist.getPolicyName());
 
         // then
-        assertThat(policy).isPresent();
-        assertThat(policy.get().getPolicyNo()).isEqualTo(persist.getPolicyNo());
-        assertThat(policy.get().getPolicyName()).isEqualTo(persist.getPolicyName());
-        assertThat(policy.get().getPolicyFee()).isEqualTo(persist.getPolicyFee());
+        assertThat(policy.get(0).getPolicyNo()).isEqualTo(persist.getPolicyNo());
+        assertThat(policy.get(0).getPolicyName()).isEqualTo(persist.getPolicyName());
+        assertThat(policy.get(0).getPolicyFee()).isEqualTo(persist.getPolicyFee());
     }
 
     @Test
@@ -81,6 +82,7 @@ class PricePolicyRepositoryTest {
         assertThat(policies.get(0).getPolicyNo()).isEqualTo(persist.getPolicyNo());
         assertThat(policies.get(0).getPolicyName()).isEqualTo(persist.getPolicyName());
         assertThat(policies.get(0).getPolicyFee()).isEqualTo(persist.getPolicyFee());
+        assertThat(policies.get(0).getCreatedAt()).isBefore(LocalDateTime.now());
     }
 
     @Test

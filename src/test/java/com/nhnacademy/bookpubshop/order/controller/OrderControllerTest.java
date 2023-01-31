@@ -17,6 +17,7 @@ import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dto.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
@@ -91,6 +92,7 @@ class OrderControllerTest {
     GetOrderDetailResponseDto detailDto;
     GetOrderListResponseDto listDto;
     GetProductListForOrderResponseDto productDto;
+    GetOrderListForAdminResponseDto adminListDto;
     List<GetProductListForOrderResponseDto> products = new ArrayList<>();
     ProductPolicy productPolicy;
     ProductTypeStateCode productTypeStateCode;
@@ -98,8 +100,10 @@ class OrderControllerTest {
     OrderProduct orderProduct;
     OrderProductStateCode orderProductStateCode;
     List<GetOrderListResponseDto> orders = new ArrayList<>();
+    List<GetOrderListForAdminResponseDto> adminOrders = new ArrayList<>();
     Pageable pageable;
     Page<GetOrderListResponseDto> pages;
+    Page<GetOrderListForAdminResponseDto> adminPages;
     String url = "/api/orders";
 
 
@@ -153,7 +157,7 @@ class OrderControllerTest {
                 3, 1000L, 30000L, "reason");
 
         productDto = new GetProductListForOrderResponseDto(1L,
-                product.getTitle(), product.getSalesPrice(), orderProduct.getProductAmount());
+                product.getTitle(), product.getSalesPrice(), orderProduct.getProductAmount(), orderProductStateCode.getCodeName());
 
         products.add(productDto);
 
@@ -197,34 +201,45 @@ class OrderControllerTest {
         pageable = PageRequest.of(0, 10);
 
         pages = PageableExecutionUtils.getPage(orders, pageable, orders::size);
+
+        adminListDto = new GetOrderListForAdminResponseDto(
+                order.getOrderNo(),
+                order.getMember().getMemberId(),
+                order.getCreatedAt(),
+                order.getInvoiceNumber(),
+                order.getOrderStateCode().getCodeName(),
+                order.getOrderPrice(),
+                order.getReceivedAt()
+        );
+
+        adminOrders.add(adminListDto);
+
+        adminPages = PageableExecutionUtils.getPage(adminOrders, pageable, adminOrders::size);
     }
 
     @Test
     @DisplayName("전체 주문 조회 성공")
     void getOrders() throws Exception {
+
         when(orderService.getOrderList(pageable))
-                .thenReturn(new PageResponse<>(pages));
+                .thenReturn(new PageResponse<>(adminPages));
 
         mockMvc.perform(get(url)
                         .param("page", mapper.writeValueAsString(pageable.getPageNumber()))
                         .param("size", mapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(new PageResponse<>(pages))))
+                        .content(mapper.writeValueAsString(new PageResponse<>(adminPages))))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.content[0].orderNo").value(
-                        pages.getContent().get(0).getOrderNo()))
-                .andExpect(jsonPath("$.content[0].orderProducts[0].productNo").value(
-                        listDto.getOrderProducts().get(0).getProductNo()))
-                .andExpect(jsonPath("$.content[0].orderProducts[0].title").value(
-                        listDto.getOrderProducts().get(0).getTitle()))
-                .andExpect(jsonPath("$.content[0].orderProducts[0].salesPrice").value(
-                        listDto.getOrderProducts().get(0).getSalesPrice()))
-                .andExpect(jsonPath("$.content[0].orderProducts[0].productAmount").value(
-                        listDto.getOrderProducts().get(0).getProductAmount()))
-                .andExpect(jsonPath("$.content[0].orderState").value(listDto.getOrderState()))
-                .andExpect(jsonPath("$.content[0].createdAt").value(listDto.getCreatedAt()))
-                .andExpect(jsonPath("$.content[0].invoiceNo").value(listDto.getInvoiceNo()))
-                .andExpect(jsonPath("$.content[0].totalAmount").value(listDto.getTotalAmount()))
+                .andExpect(jsonPath("$.content[0].orderNo")
+                        .value(adminListDto.getOrderNo()))
+                .andExpect(jsonPath("$.content[0].memberId")
+                        .value(adminListDto.getMemberId()))
+                .andExpect(jsonPath("$.content[0].orderState")
+                        .value(adminListDto.getOrderState()))
+                .andExpect(jsonPath("$.content[0].invoiceNo")
+                        .value(adminListDto.getInvoiceNo()))
+                .andExpect(jsonPath("$.content[0].totalAmount").
+                        value(adminListDto.getTotalAmount()))
                 .andDo(print())
                 .andDo(document("order-list",
                         preprocessResponse(prettyPrint()),
@@ -234,15 +249,7 @@ class OrderControllerTest {
                         ),
                         responseFields(
                                 fieldWithPath("content[].orderNo").description("주문번호"),
-                                fieldWithPath("content[].orderProducts[].productNo").description(
-                                        "주문상품의 상품 주문 번호"),
-                                fieldWithPath("content[].orderProducts[].title").description(
-                                        "주문상품의 상품명"),
-                                fieldWithPath("content[].orderProducts[].salesPrice").description(
-                                        "주문상품의 상품 할인가격"),
-                                fieldWithPath(
-                                        "content[].orderProducts[].productAmount").description(
-                                        "주문상품의 상품 총량"),
+                                fieldWithPath("content[].memberId").description("회원 아이디"),
                                 fieldWithPath("content[].orderState").description("주문 상태"),
                                 fieldWithPath("content[].createdAt").description("주문 일"),
                                 fieldWithPath("content[].receivedAt").description("받는 일자"),
@@ -372,6 +379,9 @@ class OrderControllerTest {
                                 fieldWithPath(
                                         "content[].orderProducts[].productAmount").description(
                                         "주문상품의 상품 총량"),
+                                fieldWithPath(
+                                        "content[].orderProducts[].stateCode").description(
+                                        "주문상품의 상태 코드"),
                                 fieldWithPath("content[].orderState").description("주문 상태"),
                                 fieldWithPath("content[].createdAt").description("주문 일"),
                                 fieldWithPath("content[].receivedAt").description("받는 일자"),
