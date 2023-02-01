@@ -888,26 +888,4 @@ class ProductControllerTest {
         verify(productService, times(1)).getProductsByCategory(4, pageable);
     }
 
-//            .andDo(document("get-products",
-//                   preprocessResponse(prettyPrint()),
-//    requestParameters(
-//            parameterWithName("page").description("조회할 페이지 번호"),
-//    parameterWithName("size").description("페이지 사이즈")
-//                        ),
-//    responseFields(
-//            fieldWithPath("totalPages").description("총 페이지 개수"),
-//    fieldWithPath("number").description("현재 페이지 번호"),
-//    fieldWithPath("previous").description("이전 페이지 존재 여부"),
-//    fieldWithPath("next").description("다음 페이지 존재 여부"),
-//    fieldWithPath("content[].productNo").description("상품 번호"),
-//    fieldWithPath("content[].title").description("상품 제목"),
-//    fieldWithPath("content[].productStock").description("상품 재고수량"),
-//    fieldWithPath("content[].salesPrice").description("상품 판매가"),
-//    fieldWithPath("content[].saleRate").description("상품의 할인율"),
-//    fieldWithPath("content[].productPrice").description("상품 정가"),
-//    fieldWithPath("content[].deleted").description("상품 삭제여부")
-//                        )));
-//
-//    verify(productService, times(1)).getAllProducts(pageable);
-
 }
