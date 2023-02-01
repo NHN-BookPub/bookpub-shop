@@ -39,4 +39,20 @@ public interface CouponRepositoryCustom {
      * @return 주문에 사용될 쿠폰들의 정보를 담은 Dto 리스트
      */
     List<GetOrderCouponResponseDto> findByProductNo(Long memberNo, List<Long> productNoList);
+
+    /**
+     * 멤버 사용가능한 쿠폰 리스트 조회를 위한 메서드.
+     *
+     * @param memberNo 멤버 번호
+     * @return 쿠폰 정보를 담은 DTO 리스트
+     */
+    Page<GetCouponResponseDto> findPositiveCouponByMemberNo(Pageable pageable, Long memberNo);
+
+    /**
+     * 멤버 사용 불가능한 쿠폰 리스트 조회를 위한 메서드.
+     *
+     * @param memberNo 멤버 번호
+     * @return 쿠폰 정보를 담은 DTO 리스트
+     */
+    Page<GetCouponResponseDto> findNegativeCouponByMemberNo(Pageable pageable, Long memberNo);
 }
