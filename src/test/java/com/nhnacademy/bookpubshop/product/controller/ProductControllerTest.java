@@ -19,6 +19,7 @@ import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
@@ -696,7 +697,7 @@ class ProductControllerTest {
         doNothing().when(productService)
                 .setDeleteProduct(product.getProductNo());
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(url + "/deleted/{productNo}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete(url + "/{productNo}", 1L)
                         .param("deleted", "false")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -821,5 +822,92 @@ class ProductControllerTest {
                                 fieldWithPath("[].categoriesNo[]").description("상품 카테고리 번호 리스트")
                         )));
     }
+
+    @Test
+    @DisplayName("카테고리별 상품 조회 API 테스트")
+    void getProductsByCategory() throws Exception {
+        // given
+        GetProductByCategoryResponseDto dto = new GetProductByCategoryResponseDto();
+        ReflectionTestUtils.setField(dto, "productNo", 1L);
+        ReflectionTestUtils.setField(dto, "title", "제목");
+        ReflectionTestUtils.setField(dto, "salesPrice", 1000L);
+        ReflectionTestUtils.setField(dto, "salesRate", 10);
+        ReflectionTestUtils.setField(dto, "categories", List.of("요리도서"));
+        ReflectionTestUtils.setField(dto, "authors", List.of("저자 1"));
+
+        List<GetProductByCategoryResponseDto> response = List.of(dto);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<GetProductByCategoryResponseDto> page =
+                PageableExecutionUtils.getPage(response, pageable, () -> 1L);
+
+        // when
+        when(productService.getProductsByCategory(4, pageable))
+                .thenReturn(page);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.get(url + "-categories/{categoryNo}", 4)
+                        .param("page", mapper.writeValueAsString(pageable.getPageNumber()))
+                        .param("size", mapper.writeValueAsString(pageable.getPageSize()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.content").isNotEmpty())
+                .andExpect(jsonPath("$.content[0].productNo").value(dto.getProductNo()))
+                .andExpect(jsonPath("$.content[0].title").value(dto.getTitle()))
+                .andExpect(jsonPath("$.content[0].salesPrice").value(dto.getSalesPrice()))
+                .andExpect(jsonPath("$.content[0].salesRate").value(dto.getSalesRate()))
+                .andExpect(jsonPath("$.content[0].productNo").value(dto.getProductNo()))
+                .andDo(print())
+                .andDo(document("product-get-category",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+
+                        requestParameters(
+                                parameterWithName("page").description("조회할 페이지 번호"),
+                                parameterWithName("size").description("페이지 사이즈")
+                        ),
+
+                        responseFields(
+                                fieldWithPath("totalPages").description("총 페이지 개수"),
+                                fieldWithPath("number").description("현재 페이지 번호"),
+                                fieldWithPath("previous").description("이전 페이지 존재 여부"),
+                                fieldWithPath("next").description("다음 페이지 존재 여부"),
+                                fieldWithPath("content[].productNo").description("상품 번호"),
+                                fieldWithPath("content[].title").description("상품 제목"),
+                                fieldWithPath("content[].salesPrice").description("판매가격"),
+                                fieldWithPath("content[].salesRate").description("할인율"),
+                                fieldWithPath("content[].title").description("상품 제목"),
+                                fieldWithPath("content[].categories").description("카테고리"),
+                                fieldWithPath("content[].authors").description("저자")
+
+                        )
+
+                ));
+
+
+        verify(productService, times(1)).getProductsByCategory(4, pageable);
+    }
+
+//            .andDo(document("get-products",
+//                   preprocessResponse(prettyPrint()),
+//    requestParameters(
+//            parameterWithName("page").description("조회할 페이지 번호"),
+//    parameterWithName("size").description("페이지 사이즈")
+//                        ),
+//    responseFields(
+//            fieldWithPath("totalPages").description("총 페이지 개수"),
+//    fieldWithPath("number").description("현재 페이지 번호"),
+//    fieldWithPath("previous").description("이전 페이지 존재 여부"),
+//    fieldWithPath("next").description("다음 페이지 존재 여부"),
+//    fieldWithPath("content[].productNo").description("상품 번호"),
+//    fieldWithPath("content[].title").description("상품 제목"),
+//    fieldWithPath("content[].productStock").description("상품 재고수량"),
+//    fieldWithPath("content[].salesPrice").description("상품 판매가"),
+//    fieldWithPath("content[].saleRate").description("상품의 할인율"),
+//    fieldWithPath("content[].productPrice").description("상품 정가"),
+//    fieldWithPath("content[].deleted").description("상품 삭제여부")
+//                        )));
+//
+//    verify(productService, times(1)).getAllProducts(pageable);
 
 }
