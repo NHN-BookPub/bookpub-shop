@@ -43,6 +43,7 @@ public interface CouponRepositoryCustom {
     /**
      * 멤버 사용가능한 쿠폰 리스트 조회를 위한 메서드.
      *
+     * @param pageable 페이지
      * @param memberNo 멤버 번호
      * @return 쿠폰 정보를 담은 DTO 리스트
      */
@@ -51,6 +52,7 @@ public interface CouponRepositoryCustom {
     /**
      * 멤버 사용 불가능한 쿠폰 리스트 조회를 위한 메서드.
      *
+     * @param pageable 페이지
      * @param memberNo 멤버 번호
      * @return 쿠폰 정보를 담은 DTO 리스트
      */

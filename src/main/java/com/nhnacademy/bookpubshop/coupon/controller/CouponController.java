@@ -116,6 +116,7 @@ public class CouponController {
      * 마이페이지에서 사용가능한 쿠폰을 조회하는 메소드입니다.
      *
      * @param memberNo 멤버번호
+     * @param pageable 페이지
      * @return 사용할 수 있는 쿠폰 리스트 반환
      */
     @GetMapping("/coupons/members/{memberNo}/positive")
@@ -130,6 +131,7 @@ public class CouponController {
      * 마이페이지에서 사용불가능한 쿠폰을 조회하는 메소드입니다.
      *
      * @param memberNo 멤버번호
+     * @param pageable 페이지
      * @return 사용불가능한 쿠폰 리스트 반환
      */
     @GetMapping("/coupons/members/{memberNo}/negative")
