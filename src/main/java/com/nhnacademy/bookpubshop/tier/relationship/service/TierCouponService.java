@@ -29,7 +29,7 @@ public interface TierCouponService {
     void createTierCoupon(CreateTierCouponRequestDto request);
 
     /**
-     * 등급 쿠폰 삭ㅈ를 위한 메서드.
+     * 등급 쿠폰 삭제를 위한 메서드.
      *
      * @param templateNo 쿠폰 템플릿 번호.
      * @param tierNo     쿠폰 번호.
