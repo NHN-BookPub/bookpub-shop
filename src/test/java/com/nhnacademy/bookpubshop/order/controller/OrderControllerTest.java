@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
+import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dto.CreateOrderRequestDto;
@@ -37,6 +38,7 @@ import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCod
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
@@ -153,11 +155,34 @@ class OrderControllerTest {
 
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
+        product.setProductFiles(List.of(
+                FileDummy.dummy(
+                        null,
+                        null,
+                        null,
+                        product,
+                        null,
+                        FileCategory.PRODUCT_THUMBNAIL),
+                FileDummy.dummy(
+                        null,
+                        null,
+                        null,
+                        product,
+                        null,
+                        FileCategory.PRODUCT_DETAIL),
+                FileDummy.dummy(
+                        null,
+                        null,
+                        null,
+                        product,
+                        null,
+                        FileCategory.PRODUCT_EBOOK)));
+
         new OrderProduct(null, product, order, orderProductStateCode,
                 3, 1000L, 30000L, "reason");
 
         productDto = new GetProductListForOrderResponseDto(1L,
-                product.getTitle(), product.getSalesPrice(), orderProduct.getProductAmount(), orderProductStateCode.getCodeName());
+                product.getTitle(), product.getFiles().get(0).getFilePath(), product.getSalesPrice(), orderProduct.getProductAmount(), orderProductStateCode.getCodeName());
 
         products.add(productDto);
 
@@ -382,6 +407,9 @@ class OrderControllerTest {
                                 fieldWithPath(
                                         "content[].orderProducts[].stateCode").description(
                                         "주문상품의 상태 코드"),
+                                fieldWithPath(
+                                        "content[].orderProducts[].thumbnail").description(
+                                                "주문상품의 썸네일이미지"),
                                 fieldWithPath("content[].orderState").description("주문 상태"),
                                 fieldWithPath("content[].createdAt").description("주문 일"),
                                 fieldWithPath("content[].receivedAt").description("받는 일자"),
