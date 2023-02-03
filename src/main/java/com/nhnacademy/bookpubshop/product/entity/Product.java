@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.product.entity;
 
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
+import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductAuthor;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductCategory;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
@@ -12,17 +13,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -125,6 +116,14 @@ public class Product extends BaseCreateTimeEntity {
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private final Set<ProductTag> productTags = new HashSet<>();
 
+    @OneToMany(mappedBy = "product",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<File> files = new ArrayList<>();
+
+    public void setProductFiles(List<File> files) {
+        this.files = files;
+    }
     public void modifyProductDeleted() {
         this.productDeleted = !this.productDeleted;
     }
