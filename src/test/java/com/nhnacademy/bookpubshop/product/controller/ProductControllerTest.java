@@ -1124,10 +1124,9 @@ class ProductControllerTest {
                                 fieldWithPath("content[].salesRate").description("할인율"),
                                 fieldWithPath("content[].title").description("상품 제목"),
                                 fieldWithPath("content[].categories").description("카테고리"),
-                                fieldWithPath("content[].authors").description("저자")
-
+                                fieldWithPath("content[].authors").description("저자"),
+                                fieldWithPath("content[].thumbnail").description("상품 썸네일")
                         )
-
                 ));
 
 
