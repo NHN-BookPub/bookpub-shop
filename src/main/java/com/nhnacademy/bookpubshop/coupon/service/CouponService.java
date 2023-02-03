@@ -54,8 +54,7 @@ public interface CouponService {
      * @param productNoList 상품 번호 리스트
      * @return 쿠폰 정보를 담은 dto 리스트
      */
-    List<GetOrderCouponResponseDto> getOrderCoupons(Long memberNo, List<Long> productNoList);
-
+    List<GetOrderCouponResponseDto> getOrderCoupons(Long memberNo, Long productNoList);
 
     /**
      * 멤버 사용가능한 쿠폰 리스트 조회를 위한 메서드.

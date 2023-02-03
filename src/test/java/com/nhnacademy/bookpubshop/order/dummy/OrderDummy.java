@@ -37,4 +37,28 @@ public class OrderDummy {
 
     }
 
+    public static BookpubOrder dummy2(Member member, PricePolicy pricePolicy, PricePolicy packagePricePolicy, OrderStateCode orderStateCode){
+        return new BookpubOrder(
+                1L,
+                member,
+                pricePolicy,
+                packagePricePolicy,
+                orderStateCode,
+                "test_recipient",
+                "test_recipient_phone",
+                "test_buyer",
+                "test_buyer_phone",
+                LocalDateTime.now(),
+                null,
+                10000L,
+                100L,
+                true,
+                null,
+                1000L,
+                "IT",
+                "광주 동구 조선대길"
+        );
+
+    }
+
 }

@@ -183,7 +183,19 @@ public class Product extends BaseCreateTimeEntity {
         this.productSubscribed = productSubscribed;
     }
 
+    /**
+     * 상품 매입 시 상품 수량을 올려주는 메소드.
+     *
+     * @param amount 매입수량.
+     */
     public void plusStock(Integer amount) {
         this.productStock += amount;
+    }
+
+    /**
+     * 주문 시 상품의 수량을 1개 빼주는 메소드.
+     */
+    public void minusStock() {
+        this.productStock -= 1;
     }
 }

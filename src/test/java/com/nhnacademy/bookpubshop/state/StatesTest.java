@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.state;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import com.nhnacademy.bookpubshop.pricepolicy.dto.CreatePricePolicyRequestDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.request.CreatePricePolicyRequestDto;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;

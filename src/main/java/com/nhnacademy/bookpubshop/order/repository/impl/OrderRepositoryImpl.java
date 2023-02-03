@@ -2,9 +2,9 @@ package com.nhnacademy.bookpubshop.order.repository.impl;
 
 import static com.querydsl.jpa.JPAExpressions.select;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListForAdminResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.entity.QBookpubOrder;
 import com.nhnacademy.bookpubshop.order.repository.OrderRepositoryCustom;

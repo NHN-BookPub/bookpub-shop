@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.pricepolicy.dto;
+package com.nhnacademy.bookpubshop.pricepolicy.dto.request;
 
 import com.nhnacademy.bookpubshop.state.PricePolicyState;
 import com.nhnacademy.bookpubshop.state.anno.StateCode;

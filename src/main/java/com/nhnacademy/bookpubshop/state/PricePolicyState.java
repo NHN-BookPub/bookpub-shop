@@ -12,7 +12,7 @@ import lombok.Getter;
 public enum PricePolicyState implements States{
     SHIPPING("배송비"),
     PACKAGING("포장비");
-    String name;
+    private final String name;
     PricePolicyState(String name) {
         this.name = name;
     }

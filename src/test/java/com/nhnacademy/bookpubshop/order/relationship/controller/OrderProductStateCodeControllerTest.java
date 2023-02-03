@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.order.relationship.controller;
 
-import static com.nhnacademy.bookpubshop.state.OrderProductState.COMPLETE;
+import static com.nhnacademy.bookpubshop.state.OrderProductState.COMPLETE_PAYMENT;
 import static com.nhnacademy.bookpubshop.state.OrderState.COMPLETE_DELIVERY;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -63,7 +63,7 @@ class OrderProductStateCodeControllerTest {
         mapper = new ObjectMapper();
         createOrderProductStateCodeRequestDto = new CreateOrderProductStateCodeRequestDto();
         getOrderProductStateCodeResponseDto = new GetOrderProductStateCodeResponseDto(null,
-                COMPLETE.getName(), COMPLETE.isUsed(), "test_info");
+                COMPLETE_PAYMENT.getName(), COMPLETE_PAYMENT.isUsed(), "test_info");
 
     }
 
@@ -143,9 +143,9 @@ class OrderProductStateCodeControllerTest {
 
         //given
         ReflectionTestUtils.setField(createOrderProductStateCodeRequestDto, "codeName",
-                COMPLETE.getName());
+                COMPLETE_PAYMENT.getName());
         ReflectionTestUtils.setField(createOrderProductStateCodeRequestDto, "codeUsed",
-                COMPLETE.isUsed());
+                COMPLETE_PAYMENT.isUsed());
         ReflectionTestUtils.setField(createOrderProductStateCodeRequestDto, "codeInfo",
                 "test_info");
 
@@ -180,7 +180,7 @@ class OrderProductStateCodeControllerTest {
         //given
         ReflectionTestUtils.setField(createOrderProductStateCodeRequestDto, "codeName", "    ");
         ReflectionTestUtils.setField(createOrderProductStateCodeRequestDto, "codeUsed",
-                COMPLETE.isUsed());
+                COMPLETE_PAYMENT.isUsed());
         ReflectionTestUtils.setField(createOrderProductStateCodeRequestDto, "codeInfo",
                 "test_info");
 
@@ -261,9 +261,9 @@ class OrderProductStateCodeControllerTest {
     void createOrderProductStateCodeInfoLengthValidationFailTest() throws Exception {
         //given
         ReflectionTestUtils.setField(createOrderProductStateCodeRequestDto, "codeName",
-                COMPLETE.getName());
+                COMPLETE_PAYMENT.getName());
         ReflectionTestUtils.setField(createOrderProductStateCodeRequestDto, "codeUsed",
-                COMPLETE.isUsed());
+                COMPLETE_PAYMENT.isUsed());
         ReflectionTestUtils.setField(createOrderProductStateCodeRequestDto, "codeInfo",
                 "안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요안녕하세요");
 

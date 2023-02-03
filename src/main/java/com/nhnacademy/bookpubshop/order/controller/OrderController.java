@@ -1,17 +1,25 @@
 package com.nhnacademy.bookpubshop.order.controller;
 
-import com.nhnacademy.bookpubshop.order.dto.CreateOrderRequestDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListForAdminResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.service.OrderService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 주문 컨트롤러 입니다.
@@ -40,22 +48,23 @@ public class OrderController {
 
     /**
      * 주문을 등록합니다.
+     *
      * @param request 등록을 위한 Dto객체를 받습니다.
      * @return 201 반환.
      */
     @PostMapping
-    public ResponseEntity<Void> createOrder(@RequestBody CreateOrderRequestDto request) {
-        orderService.createOrder(request, 142L);
-
+    public ResponseEntity<Long> createOrder(@Valid @RequestBody CreateOrderRequestDto request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .build();
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(orderService.createOrder(request));
+
     }
 
     /**
      * 송장번호만 수정합니다.
      *
      * @param orderNo 주문번호입니다.
-     * @param no 수정할 송장번호.
+     * @param no      수정할 송장번호.
      * @return 201 반환.
      */
     @PutMapping("/{orderNo}/invoice")
@@ -70,12 +79,11 @@ public class OrderController {
      * 상태코드만 수정합니다.
      *
      * @param orderNo 주문번호.
-     * @param code 코드명.
+     * @param code    코드명.
      * @return 201 반환.
      */
     @PutMapping("/{orderNo}/state")
-    public ResponseEntity<Void> modifyStateCode(@PathVariable Long orderNo,
-                                                @RequestParam String code) {
+    public ResponseEntity<Void> modifyStateCode(@PathVariable Long orderNo, @RequestParam String code) {
         orderService.modifyStateCode(code, orderNo);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();

@@ -5,9 +5,9 @@ import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListForAdminResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.exception.OrderNotFoundException;
@@ -107,7 +107,7 @@ class OrderRepositoryTest {
 
         orderProductStateCode = new OrderProductStateCode(
                 null,
-                OrderProductState.COMPLETE.getName(),
+                OrderProductState.COMPLETE_PAYMENT.getName(),
                 true,
                 "info");
         orderProductStateCode = entityManager.persist(orderProductStateCode);
