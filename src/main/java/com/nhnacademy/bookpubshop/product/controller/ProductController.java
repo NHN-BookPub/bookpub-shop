@@ -29,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/products")
+@RequestMapping("/api")
 public class ProductController {
     private final ProductService productService;
 
@@ -40,7 +40,7 @@ public class ProductController {
      * @param pageable pageable 객체를 받습니다.
      * @return 모든 상품을 반환합니다.
      */
-    @GetMapping
+    @GetMapping("/products")
     public ResponseEntity<PageResponse<GetProductListResponseDto>> productList(
             Pageable pageable) {
         Page<GetProductListResponseDto> content =
@@ -56,7 +56,7 @@ public class ProductController {
      * @param requestDto 상품을 생성하기 위한 Dto 클래스.
      * @return 상품상세정보가 담긴 클래스를 반환합니다. 성공시 Created 반환합니다.
      */
-    @PostMapping
+    @PostMapping("/products")
     public ResponseEntity<Void> productAdd(
             @Valid @RequestPart CreateProductRequestDto requestDto,
             @RequestPart(required = false) MultipartFile thumbnail,
@@ -87,7 +87,7 @@ public class ProductController {
      * @param productNo 상품 번호를 파라미터로 받습니다.
      * @return 상품 정보를 반환합니다.
      */
-    @GetMapping("/{productNo}")
+    @GetMapping("/products/{productNo}")
     public ResponseEntity<GetProductDetailResponseDto> getProductDetailById(
             @PathVariable Long productNo) {
         return ResponseEntity.ok()
@@ -103,7 +103,7 @@ public class ProductController {
      * @param pageable 페이징을 위한 객체입니다.
      * @return 상품리스트가 담겨있습니다.
      */
-    @GetMapping("/search")
+    @GetMapping("/products/search")
     public ResponseEntity<PageResponse<GetProductListResponseDto>> getProductLikeTitle(
             @RequestParam String title, Pageable pageable) {
         Page<GetProductListResponseDto> content =
@@ -120,7 +120,7 @@ public class ProductController {
      * @param request   수정할 내용의 상품 Dto입니다.
      * @return 성공시 201을 반환합니다.
      */
-    @PutMapping("/{productNo}")
+    @PutMapping("/products/{productNo}")
     public ResponseEntity<Void> modifyProduct(
             @PathVariable(name = "productNo") Long productNo,
             @Valid @RequestBody CreateProductRequestDto request) {
@@ -133,13 +133,13 @@ public class ProductController {
     /**
      * 상품 삭제 여부만을 수정합니다.
      *
-     * @param id 상품 번호입니다.
+     * @param productNo 상품 번호입니다.
      * @return 성공시 201을 반환합니다.
      */
-    @PutMapping("/deleted/{id}")
+    @DeleteMapping("/products/{productNo}")
     public ResponseEntity<Void> setDeletedProduct(
-            @PathVariable Long id) {
-        productService.setDeleteProduct(id);
+            @PathVariable Long productNo) {
+        productService.setDeleteProduct(productNo);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
                 .build();
@@ -152,7 +152,7 @@ public class ProductController {
      * @param limit  제한 갯수
      * @return 상품 유형별 리스트
      */
-    @GetMapping("/types/{typeNo}")
+    @GetMapping("/products/types/{typeNo}")
     public ResponseEntity<List<GetProductByTypeResponseDto>>
     getProductsByType(@PathVariable Integer typeNo,
                       @RequestParam(name = "limit") Integer limit) {
@@ -168,7 +168,7 @@ public class ProductController {
      * @param productsNo 카트에 담긴 상품들 번호
      * @return 카트에 담긴 상품들 정보
      */
-    @GetMapping("/cart")
+    @GetMapping("/products/cart")
     public ResponseEntity<List<GetProductDetailResponseDto>> getProductInCart(
             @RequestParam(name = "productNo") List<Long> productsNo) {
         return ResponseEntity.ok()
@@ -183,7 +183,7 @@ public class ProductController {
      * @param pageable   페이징 정보
      * @return 페이징 정보를 담은 상품들
      */
-    @GetMapping("/product/categories/{categoryNo}")
+    @GetMapping("/products-categories/{categoryNo}")
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
     getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
         Page<GetProductByCategoryResponseDto> content =

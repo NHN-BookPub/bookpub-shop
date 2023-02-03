@@ -10,5 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since : 1.0
  **/
 
-public interface TierCouponRepository extends JpaRepository<TierCoupon, TierCoupon.Pk> {
+public interface TierCouponRepository extends JpaRepository<TierCoupon, TierCoupon.Pk>,
+        TierCouponRepositoryCustom {
+
 }

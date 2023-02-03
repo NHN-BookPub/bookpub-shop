@@ -7,6 +7,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
+
 import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
@@ -16,6 +17,7 @@ import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
@@ -542,5 +544,30 @@ class ProductServiceTest {
         // then
         verify(productRepository, times(1))
                 .getProductsInCart(List.of(dto.getProductNo()));
+    }
+
+    @Test
+    @DisplayName("카테고리별 상품 조회 테스트")
+    void getProductsByCategory() {
+        // given
+        GetProductByCategoryResponseDto dto = new GetProductByCategoryResponseDto();
+        ReflectionTestUtils.setField(dto, "productNo", 1L);
+        ReflectionTestUtils.setField(dto, "title", "제목");
+        ReflectionTestUtils.setField(dto, "salesPrice", 1000L);
+        ReflectionTestUtils.setField(dto, "categories", List.of("요리도서"));
+        ReflectionTestUtils.setField(dto, "authors", List.of("저자 1"));
+
+        List<GetProductByCategoryResponseDto> response = List.of(dto);
+        Pageable pageable = Pageable.ofSize(5);
+
+        // when
+        Page<GetProductByCategoryResponseDto> page =
+                PageableExecutionUtils.getPage(response, pageable, () -> 1L);
+
+        // then
+        productService.getProductsByCategory(1, pageable);
+
+        verify(productRepository, times(1))
+                .getProductsByCategory(1, pageable);
     }
 }

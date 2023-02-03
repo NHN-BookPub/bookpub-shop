@@ -91,3 +91,22 @@ include::../../../../target/snippets/get-cartProducts/http-response.adoc[]
 ==== 응답 파라미터들
 
 include::../../../../target/snippets/get-cartProducts/response-fields.adoc[]
+
+== 상품의 카테고리 번호를 통한 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/product-get-category/http-request.adoc[]
+
+=== 요청 파라미터들
+
+include::../../../../target/snippets/product-get-category/request-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/product-get-category/http-response.adoc[]
+
+=== 응답 파라미터들
+
+include::../../../../target/snippets/product-get-category/response-fields.adoc[]
+
