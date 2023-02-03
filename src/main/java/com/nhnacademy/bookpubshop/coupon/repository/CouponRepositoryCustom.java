@@ -38,5 +38,5 @@ public interface CouponRepositoryCustom {
      * @param productNoList 상품 번호 리스트
      * @return 주문에 사용될 쿠폰들의 정보를 담은 Dto 리스트
      */
-    List<GetOrderCouponResponseDto> findByProductNo(Long memberNo, List<Long> productNoList);
+    List<GetOrderCouponResponseDto> findByProductNo(Long memberNo, Long productNoList);
 }

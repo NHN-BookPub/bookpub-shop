@@ -114,7 +114,7 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public List<GetOrderCouponResponseDto> findByProductNo(Long memberNo, List<Long> productNoList) {
+    public List<GetOrderCouponResponseDto> findByProductNo(Long memberNo, Long productNo) {
 
         return from(coupon)
                 .join(coupon.couponTemplate, couponTemplate)
@@ -130,13 +130,13 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                         .and(coupon.couponUsed.isFalse())
                         .and(couponType.typeName.in(CouponType.COMMON.getName(), CouponType.DUPLICATE.getName()))
                         .and(coupon.couponTemplate.finishedAt.coalesce(LocalDateTime.now().plusDays(1)).after(LocalDateTime.now()))
-                        .and((product.productNo.in(productNoList))
+                        .and((product.productNo.eq(productNo))
                                 .or(coupon.couponTemplate.category.categoryNo
                                         .in(JPAExpressions.select(category.categoryNo)
                                                 .from(category)
                                                 .join(productCategory)
                                                 .on(category.categoryNo.eq(productCategory.category.categoryNo))
-                                                .where(productCategory.product.productNo.in(productNoList))))
+                                                .where(productCategory.product.productNo.eq(productNo))))
                         )
                 )
                 .select(Projections.constructor(GetOrderCouponResponseDto.class,

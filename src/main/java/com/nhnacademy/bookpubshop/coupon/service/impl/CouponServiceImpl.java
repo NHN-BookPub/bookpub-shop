@@ -123,15 +123,15 @@ public class CouponServiceImpl implements CouponService {
      * @throws ProductNotFoundException 상품이 없을 때 나오는 에러
      */
     @Override
-    public List<GetOrderCouponResponseDto> getOrderCoupons(Long memberNo, List<Long> productNoList) {
+    public List<GetOrderCouponResponseDto> getOrderCoupons(Long memberNo, Long productNo) {
         if (!memberRepository.existsById(memberNo))
             throw new MemberNotFoundException();
 
-        for (Long productNo : productNoList) {
-            if (!productRepository.existsById(productNo))
-                throw new ProductNotFoundException();
-        }
 
-        return couponRepository.findByProductNo(memberNo, productNoList);
+        if (!productRepository.existsById(productNo))
+            throw new ProductNotFoundException();
+
+
+        return couponRepository.findByProductNo(memberNo, productNo);
     }
 }

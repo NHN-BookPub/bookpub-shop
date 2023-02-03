@@ -305,14 +305,14 @@ class CouponServiceTest {
         // when
         when(memberRepository.existsById(anyLong())).thenReturn(true);
         when(productRepository.existsById(anyLong())).thenReturn(true);
-        when(couponRepository.findByProductNo(anyLong(), anyList())).thenReturn(List.of(orderCouponResponseDto));
+        when(couponRepository.findByProductNo(anyLong(), anyLong())).thenReturn(List.of(orderCouponResponseDto));
 
         // then
-        couponService.getOrderCoupons(1L, List.of(1L, 2L));
+        couponService.getOrderCoupons(1L, 1L);
 
         verify(memberRepository, times(1)).existsById(anyLong());
-        verify(productRepository, times(2)).existsById(anyLong());
-        verify(couponRepository, times(1)).findByProductNo(anyLong(), anyList());
+        verify(productRepository, times(1)).existsById(anyLong());
+        verify(couponRepository, times(1)).findByProductNo(anyLong(), anyLong());
     }
 
     @Test
@@ -321,10 +321,10 @@ class CouponServiceTest {
         // when
         when(memberRepository.existsById(anyLong())).thenReturn(false);
         when(productRepository.existsById(anyLong())).thenReturn(true);
-        when(couponRepository.findByProductNo(anyLong(), anyList())).thenReturn(List.of(orderCouponResponseDto));
+        when(couponRepository.findByProductNo(anyLong(), anyLong())).thenReturn(List.of(orderCouponResponseDto));
 
         // then
-        assertThatThrownBy(() -> couponService.getOrderCoupons(1L, List.of(1L, 2L)))
+        assertThatThrownBy(() -> couponService.getOrderCoupons(1L, 1L))
                 .isInstanceOf(MemberNotFoundException.class)
                 .hasMessageContaining(MemberNotFoundException.MESSAGE);
     }
@@ -336,10 +336,10 @@ class CouponServiceTest {
         // when
         when(memberRepository.existsById(anyLong())).thenReturn(true);
         when(productRepository.existsById(anyLong())).thenReturn(false);
-        when(couponRepository.findByProductNo(anyLong(), anyList())).thenReturn(List.of(orderCouponResponseDto));
+        when(couponRepository.findByProductNo(anyLong(), anyLong())).thenReturn(List.of(orderCouponResponseDto));
 
         // then
-        assertThatThrownBy(() -> couponService.getOrderCoupons(1L, List.of(1L, 2L)))
+        assertThatThrownBy(() -> couponService.getOrderCoupons(1L, 1L))
                 .isInstanceOf(ProductNotFoundException.class)
                 .hasMessageContaining(ProductNotFoundException.MESSAGE);
     }
