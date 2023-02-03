@@ -6,6 +6,8 @@ import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
+import com.nhnacademy.bookpubshop.file.entity.File;
+import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
@@ -26,17 +28,18 @@ import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleSta
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
+import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.tag.entity.Tag;
 import com.nhnacademy.bookpubshop.tag.exception.TagNotFoundException;
 import com.nhnacademy.bookpubshop.tag.repository.TagRepository;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.io.IOException;
+import java.util.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 상품 서비스의 구현체입니다.
@@ -51,6 +54,7 @@ public class ProductServiceImpl implements ProductService {
     private final AuthorRepository authorRepository;
     private final CategoryRepository categoryRepository;
     private final TagRepository tagRepository;
+    private final FileManagement fileManagement;
 
     /**
      * {@inheritDoc}
@@ -68,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional
-    public void createProduct(CreateProductRequestDto request) {
+    public void createProduct(CreateProductRequestDto request, Map<String, MultipartFile> fileMap) throws IOException {
         ProductPolicy productPolicy = productPolicyRepository
                 .findById(request.getProductPolicyNo())
                 .orElseThrow(NotFoundProductPolicyException::new);
@@ -129,6 +133,22 @@ public class ProductServiceImpl implements ProductService {
 
                 product.getProductTags().add(new ProductTag(
                         new ProductTag.Pk(tag.getTagNo(), product.getProductNo()), tag, product));
+            }
+        }
+
+        List<File> images = product.getFiles();
+
+        for (FileCategory category : FileCategory.values()) {
+            if(fileMap.get(category.getCategory()) != null) {
+                images.add(fileManagement.saveFile(
+                        null,
+                        null,
+                        product,
+                        null,
+                        null,
+                        fileMap.get(category.getCategory()),
+                        category.getCategory(),
+                        category.getPath()));
             }
         }
     }
