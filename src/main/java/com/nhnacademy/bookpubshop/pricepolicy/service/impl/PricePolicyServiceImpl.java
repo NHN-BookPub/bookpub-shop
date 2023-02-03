@@ -1,7 +1,8 @@
 package com.nhnacademy.bookpubshop.pricepolicy.service.impl;
 
-import com.nhnacademy.bookpubshop.pricepolicy.dto.CreatePricePolicyRequestDto;
-import com.nhnacademy.bookpubshop.pricepolicy.dto.GetPricePolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.request.CreatePricePolicyRequestDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetOrderPolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetPricePolicyResponseDto;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.pricepolicy.exception.NotFoundPricePolicyException;
 import com.nhnacademy.bookpubshop.pricepolicy.repository.PricePolicyRepository;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
  **/
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PricePolicyServiceImpl implements PricePolicyService {
     private final PricePolicyRepository pricePolicyRepository;
 
@@ -51,7 +53,6 @@ public class PricePolicyServiceImpl implements PricePolicyService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(readOnly = true)
     public List<GetPricePolicyResponseDto> getPricePoliciesByName(String pricePolicyName) {
         return pricePolicyRepository.getPricePolicyByName(pricePolicyName);
     }
@@ -60,7 +61,6 @@ public class PricePolicyServiceImpl implements PricePolicyService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(readOnly = true)
     public List<GetPricePolicyResponseDto> getPricePolicies() {
         return pricePolicyRepository.findAllPolicies();
     }
@@ -69,9 +69,15 @@ public class PricePolicyServiceImpl implements PricePolicyService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(readOnly = true)
     public PricePolicy getLatestPricePolicyByName(String name) {
         return pricePolicyRepository.getLatestPricePolicyByName(name)
                 .orElseThrow(NotFoundPricePolicyException::new);
     }
+
+    @Override
+    public List<GetOrderPolicyResponseDto> getOrderRequestPolicy() {
+        return pricePolicyRepository.getShipAndPackagePolicy();
+    }
+
+
 }
