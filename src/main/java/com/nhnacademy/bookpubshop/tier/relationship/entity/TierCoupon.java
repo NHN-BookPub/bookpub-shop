@@ -6,6 +6,7 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -33,13 +34,13 @@ public class TierCoupon {
     private Pk pk;
 
     @MapsId(value = "couponTemplateNo")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "coupon_template_number")
     @NotNull
     private CouponTemplate couponTemplate;
 
     @MapsId(value = "tierNo")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tier_number")
     @NotNull
     private BookPubTier bookPubTier;

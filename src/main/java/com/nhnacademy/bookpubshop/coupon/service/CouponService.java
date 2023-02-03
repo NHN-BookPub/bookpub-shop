@@ -44,7 +44,8 @@ public interface CouponService {
      * @param pageable 조회할 쿠폰 페이지 정보
      * @return 조회된 쿠폰 페이지
      */
-    Page<GetCouponResponseDto> getCoupons(Pageable pageable, String searchKey, String search) throws IOException;
+    Page<GetCouponResponseDto> getCoupons(Pageable pageable, String searchKey, String search)
+            throws IOException;
 
     /**
      * 주문에 사용될 쿠폰 리스트 조회를 위한 메서드.
@@ -54,4 +55,22 @@ public interface CouponService {
      * @return 쿠폰 정보를 담은 dto 리스트
      */
     List<GetOrderCouponResponseDto> getOrderCoupons(Long memberNo, Long productNoList);
+
+    /**
+     * 멤버 사용가능한 쿠폰 리스트 조회를 위한 메서드.
+     *
+     * @param pageable 페이지
+     * @param memberNo 멤버 번호
+     * @return 쿠폰 정보를 담은 DTO 리스트
+     */
+    Page<GetCouponResponseDto> getPositiveCouponList(Pageable pageable, Long memberNo);
+
+    /**
+     * 멤버 사용 불가능한 쿠폰 리스트 조회를 위한 메서드.
+     *
+     * @param pageable 페이지
+     * @param memberNo 멤버 번호.
+     * @return 쿠폰 정보를 담은 DTO 리스트
+     */
+    Page<GetCouponResponseDto> getNegativeCouponList(Pageable pageable, Long memberNo);
 }

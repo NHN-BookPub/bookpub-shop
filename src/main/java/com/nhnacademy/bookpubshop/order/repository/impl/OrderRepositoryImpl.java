@@ -7,11 +7,9 @@ import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminRespons
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.entity.QBookpubOrder;
-import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
 import com.nhnacademy.bookpubshop.order.repository.OrderRepositoryCustom;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.QOrderStateCode;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.QPricePolicy;
-import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import java.util.Optional;
@@ -29,8 +27,6 @@ import org.springframework.data.support.PageableExecutionUtils;
 public class OrderRepositoryImpl extends QuerydslRepositorySupport
         implements OrderRepositoryCustom {
     QBookpubOrder order = QBookpubOrder.bookpubOrder;
-    QProduct product = QProduct.product;
-    QOrderProduct orderProduct = QOrderProduct.orderProduct;
     QOrderStateCode orderStateCode = QOrderStateCode.orderStateCode;
     QPricePolicy packagingPricePolicy = QPricePolicy.pricePolicy;
     QPricePolicy deliveryPricePolicy = QPricePolicy.pricePolicy;
@@ -93,7 +89,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                 ))
                 .innerJoin(order.member, member)
                 .innerJoin(order.orderStateCode, orderStateCode)
-                .orderBy(order.createdAt.desc())
+                .orderBy(order.orderNo.desc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset());
 

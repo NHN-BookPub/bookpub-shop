@@ -1,8 +1,9 @@
 package com.nhnacademy.bookpubshop.product.repository;
 
-import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import java.util.List;
 import java.util.Optional;
@@ -67,4 +68,13 @@ public interface ProductRepositoryCustom {
      * @return 카트에 담긴 상품들 정보
      */
     List<GetProductDetailResponseDto> getProductsInCart(List<Long> productsNo);
+
+    /**
+     * 카테고리별 상품들 조회.
+     *
+     * @param categoryNo 카테고리 번호
+     * @param pageable   페이징 정보
+     * @return 페이징을 담은 상품들
+     */
+    Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo, Pageable pageable);
 }

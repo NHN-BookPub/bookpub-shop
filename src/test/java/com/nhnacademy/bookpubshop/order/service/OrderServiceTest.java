@@ -24,6 +24,7 @@ import com.nhnacademy.bookpubshop.couponstatecode.entity.CouponStateCode;
 import com.nhnacademy.bookpubshop.coupontemplate.dummy.CouponTemplateDummy;
 import com.nhnacademy.bookpubshop.coupontype.dummy.CouponTypeDummy;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
+import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
@@ -59,6 +60,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
+import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
@@ -173,6 +175,30 @@ class OrderServiceTest {
                 productSaleStateCode,
                 null,
                 Collections.EMPTY_LIST);
+
+        product.setProductFiles(List.of(
+                FileDummy.dummy(
+                        null,
+                        null,
+                        null,
+                        product,
+                        null,
+                        FileCategory.PRODUCT_THUMBNAIL),
+                FileDummy.dummy(
+                        null,
+                        null,
+                        null,
+                        product,
+                        null,
+                        FileCategory.PRODUCT_DETAIL),
+                FileDummy.dummy(
+                        null,
+                        null,
+                        null,
+                        product,
+                        null,
+                        FileCategory.PRODUCT_EBOOK)));
+
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
                 3, 1000L, 30000L, "reason");
 
@@ -197,7 +223,7 @@ class OrderServiceTest {
                 order.getOrderPrice());
 
         productListDto = new GetProductListForOrderResponseDto(1L,
-                product.getTitle(), product.getSalesPrice(),
+                product.getTitle(), product.getFiles().get(0).getFilePath(), product.getSalesPrice(),
                 orderProduct.getProductAmount(), orderProductStateCode.getCodeName());
 
         productList.add(productListDto);

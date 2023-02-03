@@ -1,6 +1,8 @@
 package com.nhnacademy.bookpubshop.order.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
+import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
@@ -25,6 +27,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
+import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
@@ -69,6 +72,7 @@ class OrderRepositoryTest {
     ProductTypeStateCode productTypeStateCode;
     OrderProduct orderProduct;
     OrderProductStateCode orderProductStateCode;
+    File file;
 
 
     @BeforeEach
@@ -162,6 +166,10 @@ class OrderRepositoryTest {
                 orderRepository.getOrderDetailById(persist.getOrderNo())
                         .orElseThrow(OrderNotFoundException::new);
 
+        file = entityManager.persist(
+                FileDummy.dummy(null, null,
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+
         assertThat(result.getOrderNo()).isEqualTo(persist.getOrderNo());
         assertThat(result.getOrderState()).isEqualTo(persist.getOrderStateCode().getCodeName());
         assertThat(result.getAddressDetail()).isEqualTo(persist.getAddressDetail());
@@ -217,6 +225,10 @@ class OrderRepositoryTest {
         BookpubOrder persist = order;
 
         Pageable pageable = PageRequest.of(0,10);
+
+        file = entityManager.persist(
+                FileDummy.dummy(null, null,
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
 
         Page<GetOrderListResponseDto> result = orderRepository.getOrdersListByUser(pageable, member.getMemberNo());
 

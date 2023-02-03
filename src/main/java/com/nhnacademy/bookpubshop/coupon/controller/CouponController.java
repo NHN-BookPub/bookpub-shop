@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class CouponController {
+
     private final CouponService couponService;
 
     /**
@@ -109,5 +110,35 @@ public class CouponController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(couponService.getOrderCoupons(memberNo, productNo));
+    }
+
+    /**
+     * 마이페이지에서 사용가능한 쿠폰을 조회하는 메소드입니다.
+     *
+     * @param memberNo 멤버번호
+     * @param pageable 페이지
+     * @return 사용할 수 있는 쿠폰 리스트 반환
+     */
+    @GetMapping("/coupons/members/{memberNo}/positive")
+    public ResponseEntity<PageResponse<GetCouponResponseDto>> memberPositiveCouponList(
+            @PathVariable("memberNo") Long memberNo, Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PageResponse<>(couponService.getPositiveCouponList(pageable, memberNo)));
+    }
+
+    /**
+     * 마이페이지에서 사용불가능한 쿠폰을 조회하는 메소드입니다.
+     *
+     * @param memberNo 멤버번호
+     * @param pageable 페이지
+     * @return 사용불가능한 쿠폰 리스트 반환
+     */
+    @GetMapping("/coupons/members/{memberNo}/negative")
+    public ResponseEntity<PageResponse<GetCouponResponseDto>> memberNegativeCouponList(
+            @PathVariable("memberNo") Long memberNo, Pageable pageable) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PageResponse<>(couponService.getNegativeCouponList(pageable, memberNo)));
     }
 }
