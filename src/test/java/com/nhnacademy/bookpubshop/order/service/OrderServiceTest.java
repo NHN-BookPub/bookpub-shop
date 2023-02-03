@@ -2,16 +2,35 @@ package com.nhnacademy.bookpubshop.order.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.nhnacademy.bookpubshop.address.repository.AddressRepository;
+import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
+import com.nhnacademy.bookpubshop.category.entity.Category;
+import com.nhnacademy.bookpubshop.coupon.dummy.CouponDummy;
+import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
+import com.nhnacademy.bookpubshop.coupon.exception.NotFoundCouponException;
+import com.nhnacademy.bookpubshop.coupon.repository.CouponRepository;
+import com.nhnacademy.bookpubshop.couponpolicy.dummy.CouponPolicyDummy;
+import com.nhnacademy.bookpubshop.couponpolicy.entity.CouponPolicy;
+import com.nhnacademy.bookpubshop.couponstatecode.dummy.CouponStateCodeDummy;
+import com.nhnacademy.bookpubshop.couponstatecode.entity.CouponStateCode;
+import com.nhnacademy.bookpubshop.coupontemplate.dummy.CouponTemplateDummy;
+import com.nhnacademy.bookpubshop.coupontype.dummy.CouponTypeDummy;
+import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
-import com.nhnacademy.bookpubshop.order.dto.CreateOrderRequestDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListForAdminResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.exception.OrderNotFoundException;
@@ -26,6 +45,7 @@ import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.orderstatecode.repository.OrderStateCodeRepository;
 import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
+import com.nhnacademy.bookpubshop.pricepolicy.exception.NotFoundPricePolicyException;
 import com.nhnacademy.bookpubshop.pricepolicy.repository.PricePolicyRepository;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderResponseDto;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
@@ -42,7 +62,13 @@ import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,24 +94,31 @@ class OrderServiceTest {
     OrderProductRepository orderProductRepository;
     ProductRepository productRepository;
     OrderProductStateCodeRepository orderProductStateCodeRepository;
+    CouponRepository couponRepository;
 
     Member member;
     BookPubTier bookPubTier;
-    PricePolicy pricePolicy;
+    PricePolicy deliveryPricePolicy;
     PricePolicy packagePricePolicy;
     Product product;
     BookpubOrder order;
     OrderProduct orderProduct;
     OrderStateCode orderStateCode;
     ProductPolicy productPolicy;
+    Coupon coupon;
     ProductTypeStateCode productTypeStateCode;
     ProductSaleStateCode productSaleStateCode;
     OrderProductStateCode orderProductStateCode;
     GetOrderDetailResponseDto detailDto;
     GetProductListForOrderResponseDto productListDto;
     List<GetProductListForOrderResponseDto> productList = new ArrayList<>();
-    CreateOrderRequestDto request;
+    CreateOrderRequestDto requestDto;
     GetOrderListResponseDto listResponse;
+    Map<Long, Long> amounts;
+    Map<Long, Long> couponAmount;
+    Map<Long, Integer> productCount;
+    Map<Long, Long> productSaleAmount;
+
 
     @BeforeEach
     void setUp() {
@@ -97,6 +130,8 @@ class OrderServiceTest {
         orderProductRepository = Mockito.mock(OrderProductRepository.class);
         productRepository = Mockito.mock(ProductRepository.class);
         orderProductStateCodeRepository = Mockito.mock(OrderProductStateCodeRepository.class);
+        couponRepository = Mockito.mock(CouponRepository.class);
+
 
         orderService = new OrderServiceImpl(
                 orderRepository,
@@ -105,21 +140,32 @@ class OrderServiceTest {
                 orderStateCodeRepository,
                 orderProductRepository,
                 productRepository,
-                orderProductStateCodeRepository);
+                orderProductStateCodeRepository,
+                couponRepository
+        );
 
         bookPubTier = TierDummy.dummy();
         member = MemberDummy.dummy(bookPubTier);
         ReflectionTestUtils.setField(member, "memberNo", 1L);
-        pricePolicy = PricePolicyDummy.dummy();
+        deliveryPricePolicy = PricePolicyDummy.dummy();
         packagePricePolicy = PricePolicyDummy.dummy();
         orderStateCode = OrderStateCodeDummy.dummy();
         productPolicy = ProductPolicyDummy.dummy();
         productTypeStateCode = ProductTypeStateCodeDummy.dummy();
         productSaleStateCode = ProductSaleStateCodeDummy.dummy();
-        order = OrderDummy.dummy(member,pricePolicy,packagePricePolicy,orderStateCode);
+        order = OrderDummy.dummy2(member, deliveryPricePolicy, packagePricePolicy, orderStateCode);
+        CouponPolicy policy = CouponPolicyDummy.dummy();
+        CouponType type = CouponTypeDummy.dummy();
+        Category category = CategoryDummy.dummy();
+        CouponStateCode state = CouponStateCodeDummy.dummy();
+        coupon = CouponDummy.dummy(
+                CouponTemplateDummy.dummy(policy, type, product, category, state),
+                order,
+                orderProduct,
+                member);
         orderProductStateCode = new OrderProductStateCode(
                 null,
-                OrderProductState.COMPLETE.getName(),
+                OrderProductState.COMPLETE_PAYMENT.getName(),
                 true,
                 "info");
         product = ProductDummy.dummy(productPolicy,
@@ -157,7 +203,7 @@ class OrderServiceTest {
         productList.add(productListDto);
 
         detailDto.addProducts(productList);
-        request = new CreateOrderRequestDto();
+        requestDto = new CreateOrderRequestDto();
 
         listResponse = new GetOrderListResponseDto(
                 order.getOrderNo(),
@@ -167,6 +213,37 @@ class OrderServiceTest {
                 order.getInvoiceNumber(),
                 order.getOrderPrice()
         );
+
+        amounts = new HashMap<>();
+        couponAmount = new HashMap<>();
+        productCount = new HashMap<>();
+        productSaleAmount = new HashMap<>();
+
+        amounts.put(1L, 3L);
+        couponAmount.put(1L, 2000L);
+        productCount.put(1L, 1);
+        productSaleAmount.put(1L, 2000L);
+
+        ReflectionTestUtils.setField(requestDto, "productNos", List.of(1L));
+        ReflectionTestUtils.setField(requestDto, "productAmount", amounts);
+        ReflectionTestUtils.setField(requestDto, "productCoupon", couponAmount);
+        ReflectionTestUtils.setField(requestDto, "buyerName", order.getOrderBuyer());
+        ReflectionTestUtils.setField(requestDto, "buyerNumber", order.getBuyerPhone());
+        ReflectionTestUtils.setField(requestDto, "recipientName", order.getOrderRecipient());
+        ReflectionTestUtils.setField(requestDto, "recipientNumber", order.getRecipientPhone());
+        ReflectionTestUtils.setField(requestDto, "addressDetail", order.getAddressDetail());
+        ReflectionTestUtils.setField(requestDto, "roadAddress", order.getRoadAddress());
+        ReflectionTestUtils.setField(requestDto, "receivedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(requestDto, "packaged", order.isOrderPackaged());
+        ReflectionTestUtils.setField(requestDto, "orderRequest", order.getOrderRequest());
+        ReflectionTestUtils.setField(requestDto, "pointAmount", order.getPointAmount());
+        ReflectionTestUtils.setField(requestDto, "couponAmount", order.getCouponDiscount());
+        ReflectionTestUtils.setField(requestDto, "productCount", productCount);
+        ReflectionTestUtils.setField(requestDto, "productSaleAmount", productSaleAmount);
+        ReflectionTestUtils.setField(requestDto, "memberNo", 1L);
+        ReflectionTestUtils.setField(requestDto, "deliveryFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "packingFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "savePoint", 100L);
     }
 
     @Test
@@ -225,9 +302,9 @@ class OrderServiceTest {
     void createOrder() {
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
-        when(pricePolicyRepository.getLatestPricePolicyByName(anyString()))
-                .thenReturn(Optional.of(pricePolicy));
-        when(pricePolicyRepository.getLatestPricePolicyByName(anyString()))
+        when(pricePolicyRepository.getPricePolicyById(anyInt()))
+                .thenReturn(Optional.of(deliveryPricePolicy));
+        when(pricePolicyRepository.getPricePolicyById(anyInt()))
                 .thenReturn(Optional.of(packagePricePolicy));
         when(orderStateCodeRepository.findByCodeName(anyString()))
                 .thenReturn(Optional.of(orderStateCode));
@@ -235,32 +312,14 @@ class OrderServiceTest {
                 .thenReturn(Optional.of(orderProductStateCode));
         when(productRepository.findById(anyLong()))
                 .thenReturn(Optional.of(product));
+        when(couponRepository.findById(anyLong()))
+                .thenReturn(Optional.of(coupon));
+        when(orderRepository.save(any()))
+                .thenReturn(order);
 
-        Map<Long, Integer> amounts = new HashMap<>();
-        amounts.put(1L, 3);
-        Map<Long, Long> couponAmount = new HashMap<>();
-        couponAmount.put(1L, 2000L);
-        Map<Long, String> orderReason = new HashMap<>();
-        orderReason.put(1L, "test");
+        Long orderNo = orderService.createOrder(requestDto);
 
-        ReflectionTestUtils.setField(request, "productNos", List.of(1L));
-        ReflectionTestUtils.setField(request, "productAmounts", amounts);
-        ReflectionTestUtils.setField(request, "productCouponAmounts", couponAmount);
-        ReflectionTestUtils.setField(request, "orderProductReasons", orderReason);
-        ReflectionTestUtils.setField(request, "orderState", order.getOrderStateCode().getCodeName());
-        ReflectionTestUtils.setField(request, "buyerName", order.getOrderBuyer());
-        ReflectionTestUtils.setField(request, "buyerNumber", order.getBuyerPhone());
-        ReflectionTestUtils.setField(request, "recipientName", order.getOrderRecipient());
-        ReflectionTestUtils.setField(request, "recipientNumber", order.getRecipientPhone());
-        ReflectionTestUtils.setField(request, "addressDetail", order.getAddressDetail());
-        ReflectionTestUtils.setField(request, "roadAddress", order.getRoadAddress());
-        ReflectionTestUtils.setField(request, "receivedAt", order.getReceivedAt());
-        ReflectionTestUtils.setField(request, "packaged", order.isOrderPackaged());
-        ReflectionTestUtils.setField(request, "orderRequest", order.getOrderRequest());
-        ReflectionTestUtils.setField(request, "pointAmount", order.getPointAmount());
-        ReflectionTestUtils.setField(request, "couponAmount", order.getCouponDiscount());
-
-        orderService.createOrder(request, 1L);
+        assertThat(orderNo).isEqualTo(1L);
 
         verify(orderRepository, times(1))
                 .save(any());
@@ -273,9 +332,9 @@ class OrderServiceTest {
     void createOrderFailed() {
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
-        when(pricePolicyRepository.getLatestPricePolicyByName(anyString()))
-                .thenReturn(Optional.of(pricePolicy));
-        when(pricePolicyRepository.getLatestPricePolicyByName(anyString()))
+        when(pricePolicyRepository.getPricePolicyById(anyInt()))
+                .thenReturn(Optional.of(deliveryPricePolicy));
+        when(pricePolicyRepository.getPricePolicyById(anyInt()))
                 .thenReturn(Optional.of(packagePricePolicy));
         when(orderStateCodeRepository.findByCodeName(anyString()))
                 .thenReturn(Optional.of(orderStateCode));
@@ -283,33 +342,210 @@ class OrderServiceTest {
                 .thenReturn(Optional.of(orderProductStateCode));
         when(productRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
+        when(couponRepository.findById(anyLong()))
+                .thenReturn(Optional.of(coupon));
+        when(orderRepository.save(any()))
+                .thenReturn(order);
 
-        Map<Long, Integer> amounts = new HashMap<>();
-        amounts.put(1L, 3);
-        Map<Long, Long> couponAmount = new HashMap<>();
-        couponAmount.put(1L, 2000L);
-        Map<Long, String> orderReason = new HashMap<>();
-        orderReason.put(1L, "test");
+        ReflectionTestUtils.setField(requestDto, "productNos", List.of(1L));
+        ReflectionTestUtils.setField(requestDto, "productAmount", amounts);
+        ReflectionTestUtils.setField(requestDto, "productCoupon", couponAmount);
+        ReflectionTestUtils.setField(requestDto, "buyerName", order.getOrderBuyer());
+        ReflectionTestUtils.setField(requestDto, "buyerNumber", order.getBuyerPhone());
+        ReflectionTestUtils.setField(requestDto, "recipientName", order.getOrderRecipient());
+        ReflectionTestUtils.setField(requestDto, "recipientNumber", order.getRecipientPhone());
+        ReflectionTestUtils.setField(requestDto, "addressDetail", order.getAddressDetail());
+        ReflectionTestUtils.setField(requestDto, "roadAddress", order.getRoadAddress());
+        ReflectionTestUtils.setField(requestDto, "receivedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(requestDto, "packaged", order.isOrderPackaged());
+        ReflectionTestUtils.setField(requestDto, "orderRequest", order.getOrderRequest());
+        ReflectionTestUtils.setField(requestDto, "pointAmount", order.getPointAmount());
+        ReflectionTestUtils.setField(requestDto, "couponAmount", order.getCouponDiscount());
+        ReflectionTestUtils.setField(requestDto, "productCount", productCount);
+        ReflectionTestUtils.setField(requestDto, "productSaleAmount", productSaleAmount);
+        ReflectionTestUtils.setField(requestDto, "memberNo", 1L);
+        ReflectionTestUtils.setField(requestDto, "deliveryFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "packingFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "savePoint", 100L);
 
-        ReflectionTestUtils.setField(request, "productNos", List.of(1L));
-        ReflectionTestUtils.setField(request, "productAmounts", amounts);
-        ReflectionTestUtils.setField(request, "productCouponAmounts", couponAmount);
-        ReflectionTestUtils.setField(request, "orderProductReasons", orderReason);
-        ReflectionTestUtils.setField(request, "orderState", order.getOrderStateCode().getCodeName());
-        ReflectionTestUtils.setField(request, "buyerName", order.getOrderBuyer());
-        ReflectionTestUtils.setField(request, "buyerNumber", order.getBuyerPhone());
-        ReflectionTestUtils.setField(request, "recipientName", order.getOrderRecipient());
-        ReflectionTestUtils.setField(request, "recipientNumber", order.getRecipientPhone());
-        ReflectionTestUtils.setField(request, "addressDetail", order.getAddressDetail());
-        ReflectionTestUtils.setField(request, "roadAddress", order.getRoadAddress());
-        ReflectionTestUtils.setField(request, "receivedAt", order.getReceivedAt());
-        ReflectionTestUtils.setField(request, "packaged", order.isOrderPackaged());
-        ReflectionTestUtils.setField(request, "orderRequest", order.getOrderRequest());
-        ReflectionTestUtils.setField(request, "pointAmount", order.getPointAmount());
-        ReflectionTestUtils.setField(request, "couponAmount", order.getCouponDiscount());
-
-        assertThatThrownBy(() -> orderService.createOrder(request, 1L))
+        assertThatThrownBy(() -> orderService.createOrder(requestDto))
                 .isInstanceOf(ProductNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("주문 등록 실패(배송,포장 정책 번호가 잘못 입력됨)")
+    void createOrderFailed_pricePolicy() {
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+        when(pricePolicyRepository.getPricePolicyById(anyInt()))
+                .thenReturn(Optional.empty());
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderStateCode));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(couponRepository.findById(anyLong()))
+                .thenReturn(Optional.of(coupon));
+        when(orderRepository.save(any()))
+                .thenReturn(order);
+
+        ReflectionTestUtils.setField(requestDto, "productNos", List.of(1L));
+        ReflectionTestUtils.setField(requestDto, "productAmount", amounts);
+        ReflectionTestUtils.setField(requestDto, "productCoupon", couponAmount);
+        ReflectionTestUtils.setField(requestDto, "buyerName", order.getOrderBuyer());
+        ReflectionTestUtils.setField(requestDto, "buyerNumber", order.getBuyerPhone());
+        ReflectionTestUtils.setField(requestDto, "recipientName", order.getOrderRecipient());
+        ReflectionTestUtils.setField(requestDto, "recipientNumber", order.getRecipientPhone());
+        ReflectionTestUtils.setField(requestDto, "addressDetail", order.getAddressDetail());
+        ReflectionTestUtils.setField(requestDto, "roadAddress", order.getRoadAddress());
+        ReflectionTestUtils.setField(requestDto, "receivedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(requestDto, "packaged", order.isOrderPackaged());
+        ReflectionTestUtils.setField(requestDto, "orderRequest", order.getOrderRequest());
+        ReflectionTestUtils.setField(requestDto, "pointAmount", order.getPointAmount());
+        ReflectionTestUtils.setField(requestDto, "couponAmount", order.getCouponDiscount());
+        ReflectionTestUtils.setField(requestDto, "productCount", productCount);
+        ReflectionTestUtils.setField(requestDto, "productSaleAmount", productSaleAmount);
+        ReflectionTestUtils.setField(requestDto, "memberNo", 1L);
+        ReflectionTestUtils.setField(requestDto, "deliveryFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "packingFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "savePoint", 100L);
+
+        assertThatThrownBy(() -> orderService.createOrder(requestDto))
+                .isInstanceOf(NotFoundPricePolicyException.class)
+                .hasMessage(NotFoundPricePolicyException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("주문 등록 실패(주문코드 번호가 잘못 입력됨)")
+    void createOrderFailed_orderState() {
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+        when(pricePolicyRepository.getPricePolicyById(anyInt()))
+                .thenReturn(Optional.of(packagePricePolicy));
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.empty());
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(couponRepository.findById(anyLong()))
+                .thenReturn(Optional.of(coupon));
+        when(orderRepository.save(any()))
+                .thenReturn(order);
+
+        ReflectionTestUtils.setField(requestDto, "productNos", List.of(1L));
+        ReflectionTestUtils.setField(requestDto, "productAmount", amounts);
+        ReflectionTestUtils.setField(requestDto, "productCoupon", couponAmount);
+        ReflectionTestUtils.setField(requestDto, "buyerName", order.getOrderBuyer());
+        ReflectionTestUtils.setField(requestDto, "buyerNumber", order.getBuyerPhone());
+        ReflectionTestUtils.setField(requestDto, "recipientName", order.getOrderRecipient());
+        ReflectionTestUtils.setField(requestDto, "recipientNumber", order.getRecipientPhone());
+        ReflectionTestUtils.setField(requestDto, "addressDetail", order.getAddressDetail());
+        ReflectionTestUtils.setField(requestDto, "roadAddress", order.getRoadAddress());
+        ReflectionTestUtils.setField(requestDto, "receivedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(requestDto, "packaged", order.isOrderPackaged());
+        ReflectionTestUtils.setField(requestDto, "orderRequest", order.getOrderRequest());
+        ReflectionTestUtils.setField(requestDto, "pointAmount", order.getPointAmount());
+        ReflectionTestUtils.setField(requestDto, "couponAmount", order.getCouponDiscount());
+        ReflectionTestUtils.setField(requestDto, "productCount", productCount);
+        ReflectionTestUtils.setField(requestDto, "productSaleAmount", productSaleAmount);
+        ReflectionTestUtils.setField(requestDto, "memberNo", 1L);
+        ReflectionTestUtils.setField(requestDto, "deliveryFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "packingFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "savePoint", 100L);
+
+        assertThatThrownBy(() -> orderService.createOrder(requestDto))
+                .isInstanceOf(NotFoundStateCodeException.class)
+                .hasMessage(NotFoundStateCodeException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("주문 등록 실패(주문상품코드 번호가 잘못 입력됨)")
+    void createOrderFailed_orderProductState() {
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+        when(pricePolicyRepository.getPricePolicyById(anyInt()))
+                .thenReturn(Optional.of(packagePricePolicy));
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderStateCode));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.empty());
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(couponRepository.findById(anyLong()))
+                .thenReturn(Optional.of(coupon));
+        when(orderRepository.save(any()))
+                .thenReturn(order);
+
+        ReflectionTestUtils.setField(requestDto, "productNos", List.of(1L));
+        ReflectionTestUtils.setField(requestDto, "productAmount", amounts);
+        ReflectionTestUtils.setField(requestDto, "productCoupon", couponAmount);
+        ReflectionTestUtils.setField(requestDto, "buyerName", order.getOrderBuyer());
+        ReflectionTestUtils.setField(requestDto, "buyerNumber", order.getBuyerPhone());
+        ReflectionTestUtils.setField(requestDto, "recipientName", order.getOrderRecipient());
+        ReflectionTestUtils.setField(requestDto, "recipientNumber", order.getRecipientPhone());
+        ReflectionTestUtils.setField(requestDto, "addressDetail", order.getAddressDetail());
+        ReflectionTestUtils.setField(requestDto, "roadAddress", order.getRoadAddress());
+        ReflectionTestUtils.setField(requestDto, "receivedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(requestDto, "packaged", order.isOrderPackaged());
+        ReflectionTestUtils.setField(requestDto, "orderRequest", order.getOrderRequest());
+        ReflectionTestUtils.setField(requestDto, "pointAmount", order.getPointAmount());
+        ReflectionTestUtils.setField(requestDto, "couponAmount", order.getCouponDiscount());
+        ReflectionTestUtils.setField(requestDto, "productCount", productCount);
+        ReflectionTestUtils.setField(requestDto, "productSaleAmount", productSaleAmount);
+        ReflectionTestUtils.setField(requestDto, "memberNo", 1L);
+        ReflectionTestUtils.setField(requestDto, "deliveryFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "packingFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "savePoint", 100L);
+
+        assertThatThrownBy(() -> orderService.createOrder(requestDto))
+                .isInstanceOf(NotFoundStateCodeException.class)
+                .hasMessage(NotFoundStateCodeException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("주문 등록 실패(쿠폰 번호가 잘못 입력됨)")
+    void createOrderFailed_coupon() {
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+        when(pricePolicyRepository.getPricePolicyById(anyInt()))
+                .thenReturn(Optional.of(packagePricePolicy));
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderStateCode));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(couponRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+        when(orderRepository.save(any()))
+                .thenReturn(order);
+
+        ReflectionTestUtils.setField(requestDto, "productNos", List.of(1L));
+        ReflectionTestUtils.setField(requestDto, "productAmount", amounts);
+        ReflectionTestUtils.setField(requestDto, "productCoupon", couponAmount);
+        ReflectionTestUtils.setField(requestDto, "buyerName", order.getOrderBuyer());
+        ReflectionTestUtils.setField(requestDto, "buyerNumber", order.getBuyerPhone());
+        ReflectionTestUtils.setField(requestDto, "recipientName", order.getOrderRecipient());
+        ReflectionTestUtils.setField(requestDto, "recipientNumber", order.getRecipientPhone());
+        ReflectionTestUtils.setField(requestDto, "addressDetail", order.getAddressDetail());
+        ReflectionTestUtils.setField(requestDto, "roadAddress", order.getRoadAddress());
+        ReflectionTestUtils.setField(requestDto, "receivedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(requestDto, "packaged", order.isOrderPackaged());
+        ReflectionTestUtils.setField(requestDto, "orderRequest", order.getOrderRequest());
+        ReflectionTestUtils.setField(requestDto, "pointAmount", order.getPointAmount());
+        ReflectionTestUtils.setField(requestDto, "couponAmount", order.getCouponDiscount());
+        ReflectionTestUtils.setField(requestDto, "productCount", productCount);
+        ReflectionTestUtils.setField(requestDto, "productSaleAmount", productSaleAmount);
+        ReflectionTestUtils.setField(requestDto, "memberNo", 1L);
+        ReflectionTestUtils.setField(requestDto, "deliveryFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "packingFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "savePoint", 100L);
+
+        assertThatThrownBy(() -> orderService.createOrder(requestDto))
+                .isInstanceOf(NotFoundCouponException.class)
+                .hasMessageContaining(NotFoundCouponException.MESSAGE);
     }
 
     @Test
@@ -372,7 +608,6 @@ class OrderServiceTest {
     }
 
 
-
     @Test
     @DisplayName("전체 주문 조회 성공")
     void getOrderList() {
@@ -396,7 +631,6 @@ class OrderServiceTest {
                 .thenReturn(List.of(productListDto));
         when(orderRepository.getOrdersList(pageable))
                 .thenReturn(pages);
-
 
 
         assertThat(orderService.getOrderList(pageable).getContent()

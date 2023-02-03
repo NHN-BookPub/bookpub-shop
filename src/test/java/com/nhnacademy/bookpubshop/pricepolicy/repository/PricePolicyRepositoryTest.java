@@ -2,7 +2,8 @@ package com.nhnacademy.bookpubshop.pricepolicy.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.nhnacademy.bookpubshop.pricepolicy.dto.GetPricePolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetOrderPolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetPricePolicyResponseDto;
 import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import java.time.LocalDateTime;
@@ -35,7 +36,6 @@ class PricePolicyRepositoryTest {
     @BeforeEach
     void setUp() {
         pricePolicy = PricePolicyDummy.dummy();
-
     }
 
     @Test
@@ -101,4 +101,25 @@ class PricePolicyRepositoryTest {
         assertThat(latestPricePolicyByName.get().getPolicyFee()).isEqualTo(persist.getPolicyFee());
     }
 
+    @Test
+    @DisplayName("주문에 필요한 배송비, 포장비 정책 조회 테스트")
+    void getOrderRequiredPricePolicy_Test() throws Exception {
+        PricePolicy pack = new PricePolicy(null, "포장비", 2000L);
+        PricePolicy ship = new PricePolicy(null, "배송비", 3000L);
+        // given
+        PricePolicy savePack = entityManager.persist(pack);
+        PricePolicy saveShip = entityManager.persist(ship);
+
+        // when
+        List<GetOrderPolicyResponseDto> shipAndPackagePolicy = pricePolicyRepository.getShipAndPackagePolicy();
+
+        // then
+        assertThat(shipAndPackagePolicy).isNotEmpty();
+        assertThat(shipAndPackagePolicy.get(0).getPolicyName()).isEqualTo(savePack.getPolicyName());
+        assertThat(shipAndPackagePolicy.get(0).getPolicyNo()).isEqualTo(savePack.getPolicyNo());
+        assertThat(shipAndPackagePolicy.get(0).getPolicyFee()).isEqualTo(savePack.getPolicyFee());
+        assertThat(shipAndPackagePolicy.get(1).getPolicyName()).isEqualTo(saveShip.getPolicyName());
+        assertThat(shipAndPackagePolicy.get(1).getPolicyNo()).isEqualTo(saveShip.getPolicyNo());
+        assertThat(shipAndPackagePolicy.get(1).getPolicyFee()).isEqualTo(saveShip.getPolicyFee());
+    }
 }

@@ -3,8 +3,9 @@ package com.nhnacademy.bookpubshop.pricepolicy.service;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-import com.nhnacademy.bookpubshop.pricepolicy.dto.CreatePricePolicyRequestDto;
-import com.nhnacademy.bookpubshop.pricepolicy.dto.GetPricePolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.request.CreatePricePolicyRequestDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetOrderPolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetPricePolicyResponseDto;
 import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.pricepolicy.exception.NotFoundPricePolicyException;
@@ -159,4 +160,19 @@ class PricePolicyServiceTest {
                 .isInstanceOf(NotFoundPricePolicyException.class)
                 .hasMessageContaining(NotFoundPricePolicyException.MESSAGE);
     }
+
+    @Test
+    @DisplayName("주문에 필요한 배송비, 포장비 정책 조회 테스트")
+    void getOrderRequiredPricePolicy_Test() throws Exception {
+        GetOrderPolicyResponseDto pack = new GetOrderPolicyResponseDto(1, "포장비", 2000L);
+        GetOrderPolicyResponseDto ship = new GetOrderPolicyResponseDto(2, "배송비", 3000L);
+
+        when(pricePolicyRepository.getShipAndPackagePolicy())
+                .thenReturn(List.of(pack,ship));
+
+        pricePolicyService.getOrderRequestPolicy();
+        verify(pricePolicyRepository, times(1))
+                .getShipAndPackagePolicy();
+    }
+
 }
