@@ -103,7 +103,7 @@ class PricePolicyRepositoryTest {
 
     @Test
     @DisplayName("주문에 필요한 배송비, 포장비 정책 조회 테스트")
-    void getOrderRequiredPricePolicy_Test() throws Exception {
+    void getOrderRequiredPricePolicy_Test() {
         PricePolicy pack = new PricePolicy(null, "포장비", 2000L);
         PricePolicy ship = new PricePolicy(null, "배송비", 3000L);
         // given
@@ -121,5 +121,21 @@ class PricePolicyRepositoryTest {
         assertThat(shipAndPackagePolicy.get(1).getPolicyName()).isEqualTo(saveShip.getPolicyName());
         assertThat(shipAndPackagePolicy.get(1).getPolicyNo()).isEqualTo(saveShip.getPolicyNo());
         assertThat(shipAndPackagePolicy.get(1).getPolicyFee()).isEqualTo(saveShip.getPolicyFee());
+    }
+
+    @Test
+    @DisplayName("주문 등록하기전 정책 검증을 위한 테스트")
+    void getPricePolicyById() {
+        // given
+        PricePolicy persist = entityManager.persist(pricePolicy);
+
+        // when
+        Optional<PricePolicy> latestPricePolicyByName = pricePolicyRepository.getPricePolicyById(persist.getPolicyNo());
+
+        // then
+        assertThat(latestPricePolicyByName).isPresent();
+        assertThat(latestPricePolicyByName.get().getPolicyName()).isEqualTo(persist.getPolicyName());
+        assertThat(latestPricePolicyByName.get().getPolicyNo()).isEqualTo(persist.getPolicyNo());
+        assertThat(latestPricePolicyByName.get().getPolicyFee()).isEqualTo(persist.getPolicyFee());
     }
 }
