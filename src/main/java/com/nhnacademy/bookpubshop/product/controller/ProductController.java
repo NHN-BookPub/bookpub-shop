@@ -7,7 +7,10 @@ import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseD
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,15 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 상품을 다루는 컨트롤러입니다.
@@ -57,17 +53,32 @@ public class ProductController {
     /**
      * 상품을 생성합니다.
      *
-     * @param request 상품을 생성하기 위한 Dto 클래스.
+     * @param requestDto 상품을 생성하기 위한 Dto 클래스.
      * @return 상품상세정보가 담긴 클래스를 반환합니다. 성공시 Created 반환합니다.
      */
     @PostMapping("/products")
     public ResponseEntity<Void> productAdd(
-            @Valid @RequestBody CreateProductRequestDto request) {
-        productService.createProduct(request);
+            @Valid @RequestPart CreateProductRequestDto requestDto,
+            @RequestPart(required = false) MultipartFile thumbnail,
+            @RequestPart(required = false) MultipartFile detail,
+            @RequestPart(required = false) MultipartFile ebook)
+            throws IOException {
+
+        Map<String, MultipartFile> files = new HashMap<>();
+        if (thumbnail != null) {
+            files.put("thumbnail", thumbnail);
+        }
+        if(detail != null) {
+            files.put("detail", detail);
+        }
+        if(ebook != null) {
+            files.put("ebook", ebook);
+        }
+
+        productService.createProduct(requestDto, files);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(null);
+                .build();
     }
 
     /**

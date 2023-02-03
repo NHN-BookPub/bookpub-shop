@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class GetProductByCategoryResponseDto {
     private Long productNo;
     private String title;
+    private String thumbnail;
     private Long salesPrice;
     private Integer salesRate;
     private List<String> categories = new ArrayList<>();

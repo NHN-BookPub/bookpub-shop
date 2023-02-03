@@ -5,10 +5,13 @@ import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryRespo
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * ProductRepositoru에 접근하기 위한 Service 클래스입니다.
@@ -31,7 +34,7 @@ public interface ProductService {
      *
      * @param request 상품 생성시 필요한 dto.
      */
-    void createProduct(CreateProductRequestDto request);
+    void createProduct(CreateProductRequestDto request, Map<String, MultipartFile> fileMap) throws IOException;
 
     /**
      * 모든 상품을 페이징 처리하여 조회합니다. 등록기준 asc 입니다.

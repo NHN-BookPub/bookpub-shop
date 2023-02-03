@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,7 +12,9 @@ import org.springframework.context.annotation.Configuration;
  **/
 @Configuration
 @ConfigurationProperties(prefix = "storage")
+@RequiredArgsConstructor
 public class ObjectStorageProperties {
+    private final KeyConfig keyConfig;
     private String url;
     private String username;
     private String containerName;
@@ -24,7 +27,8 @@ public class ObjectStorageProperties {
     }
 
     public void setUrl(String url) {
-        this.url = url;
+
+        this.url = keyConfig.keyStore(url);
     }
 
     public String getUsername() {
@@ -32,7 +36,8 @@ public class ObjectStorageProperties {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+
+        this.username = keyConfig.keyStore(username);
     }
 
     public String getContainerName() {
@@ -40,7 +45,8 @@ public class ObjectStorageProperties {
     }
 
     public void setContainerName(String containerName) {
-        this.containerName = containerName;
+
+        this.containerName = keyConfig.keyStore(containerName);
     }
 
     public String getTenantId() {
@@ -48,7 +54,8 @@ public class ObjectStorageProperties {
     }
 
     public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
+
+        this.tenantId = keyConfig.keyStore(tenantId);
     }
 
     public String getPassword() {
@@ -56,7 +63,8 @@ public class ObjectStorageProperties {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+
+        this.password = keyConfig.keyStore(password);
     }
 
     public String getIdentity() {
@@ -64,6 +72,6 @@ public class ObjectStorageProperties {
     }
 
     public void setIdentity(String identity) {
-        this.identity = identity;
+        this.identity = keyConfig.keyStore(identity);
     }
 }
