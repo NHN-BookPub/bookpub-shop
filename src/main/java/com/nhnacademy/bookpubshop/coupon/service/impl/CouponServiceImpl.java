@@ -18,7 +18,6 @@ import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @since : 1.0
  **/
 @Service
-@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CouponServiceImpl implements CouponService {
@@ -40,7 +38,6 @@ public class CouponServiceImpl implements CouponService {
     private final MemberRepository memberRepository;
     private final CouponTemplateRepository couponTemplateRepository;
     private final ProductRepository productRepository;
-    //private final FileManagement fileManagement;
 
     /**
      * {@inheritDoc}
@@ -162,5 +159,36 @@ public class CouponServiceImpl implements CouponService {
         }
 
         return couponRepository.findNegativeCouponByMemberNo(pageable, memberNo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean existsCouponsByMemberNo(Long memberNo, List<Long> tierCoupons) {
+        return couponRepository.existsTierCouponsByMemberNo(memberNo, tierCoupons);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void issueTierCouponsByMemberNo(Long memberNo, List<Long> tierCoupons) {
+
+        for (Long couponNo : tierCoupons) {
+            CouponTemplate couponTemplate = couponTemplateRepository.findById(
+                    couponNo).orElseThrow(() -> new CouponTemplateNotFoundException(couponNo));
+
+            Member member = memberRepository.findById(memberNo)
+                    .orElseThrow(MemberNotFoundException::new);
+
+            Coupon coupon = Coupon.builder()
+                    .couponTemplate(couponTemplate)
+                    .member(member)
+                    .build();
+            couponRepository.save(coupon);
+        }
+
     }
 }

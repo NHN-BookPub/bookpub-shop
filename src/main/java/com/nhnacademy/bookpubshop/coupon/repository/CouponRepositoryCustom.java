@@ -50,6 +50,15 @@ public interface CouponRepositoryCustom {
     Page<GetCouponResponseDto> findNegativeCouponByMemberNo(Pageable pageable, Long memberNo);
 
     /**
+     * 멤버의 등급쿠폰 발급 유무를 확인하는 메서드입니다.
+     *
+     * @param memberNo    멤버 번호
+     * @param tierCoupons 등급 쿠폰 리스트
+     * @return 발급 유무
+     */
+    boolean existsTierCouponsByMemberNo(Long memberNo, List<Long> tierCoupons);
+
+    /**
      * 주문에 사용될 쿠폰들을 조회하는 메서드입니다.
      *
      * @param memberNo      멤버 번호

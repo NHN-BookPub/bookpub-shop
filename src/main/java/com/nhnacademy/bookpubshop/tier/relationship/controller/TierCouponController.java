@@ -4,6 +4,7 @@ import com.nhnacademy.bookpubshop.tier.relationship.dto.request.CreateTierCoupon
 import com.nhnacademy.bookpubshop.tier.relationship.dto.response.GetTierCouponResponseDto;
 import com.nhnacademy.bookpubshop.tier.relationship.service.impl.TierCouponServiceImpl;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,6 +76,20 @@ public class TierCouponController {
 
         return ResponseEntity.ok()
                 .build();
+    }
+
+    /**
+     * 등급별 쿠폰을 조회하는 메서드입니다.
+     *
+     * @param tierNo 등급 번호
+     * @return 등급쿠폰 리스트
+     */
+    @GetMapping("/{tierNo}")
+    public ResponseEntity<List<Long>> getTierCouponListByTierNo(@PathVariable Integer tierNo) {
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(tierCouponService.getTierCouponsByTierNo(tierNo));
     }
 
 }
