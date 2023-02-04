@@ -19,7 +19,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -40,7 +48,7 @@ public class ProductController {
      * @param pageable pageable 객체를 받습니다.
      * @return 모든 상품을 반환합니다.
      */
-    @GetMapping("/token/products")
+    @GetMapping("/api/products")
     @AdminAuth
     public ResponseEntity<PageResponse<GetProductListResponseDto>> productList(
             Pageable pageable) {
@@ -70,10 +78,10 @@ public class ProductController {
         if (thumbnail != null) {
             files.put("thumbnail", thumbnail);
         }
-        if(detail != null) {
+        if (detail != null) {
             files.put("detail", detail);
         }
-        if(ebook != null) {
+        if (ebook != null) {
             files.put("ebook", ebook);
         }
 

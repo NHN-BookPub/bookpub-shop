@@ -113,7 +113,8 @@ public class MemberController {
      * @param request request.
      * @return 인증된 사용자의 정보.
      */
-    @GetMapping("/api/auth")
+    @GetMapping("/token/auth")
+    @MemberAuth
     public MemberAuthResponseDto authMemberInfo(HttpServletRequest request) {
         String accessToken = request.getHeader(JwtUtil.AUTH_HEADER);
 

@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.coupon.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
@@ -124,7 +125,8 @@ class CouponRepositoryTest {
                 null,
                 1000L,
                 "IT",
-                "광주 동구 조선대길"
+                "광주 동구 조선대길",
+                "asdkjasl"
         );
 
         productPolicy = ProductPolicyDummy.dummy();
@@ -167,7 +169,8 @@ class CouponRepositoryTest {
                 null,
                 1000L,
                 "IT",
-                "광주 동구 조선대길"
+                "광주 동구 조선대길",
+                "askdjkjvhvz"
         );
 
         couponStateCode = CouponStateCodeDummy.dummy();
