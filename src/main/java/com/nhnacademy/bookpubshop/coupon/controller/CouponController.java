@@ -141,4 +141,39 @@ public class CouponController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new PageResponse<>(couponService.getNegativeCouponList(pageable, memberNo)));
     }
+
+    /**
+     * 멤버의 등급쿠폰 발급 유무를 확인하는 메서드입니다.
+     *
+     * @param memberNo    멤버 번호
+     * @param tierCoupons 등급 쿠폰 리스트
+     * @return 발급 유무
+     */
+    @GetMapping("/coupons/{memberNo}/tier-coupons")
+    public ResponseEntity<Boolean> existsCouponListByMemberNo(@PathVariable Long memberNo,
+            @RequestParam List<Long> tierCoupons) {
+
+        boolean check = couponService.existsCouponsByMemberNo(memberNo, tierCoupons);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(check);
+    }
+
+    /**
+     * 멤버에게 등급 쿠폰을 발급하는 메서드입니다.
+     *
+     * @param memberNo    멤버 번호
+     * @param tierCoupons 등급 쿠폰 리스트
+     * @return 발급 결과
+     */
+    @PostMapping("/coupons/{memberNo}/tier-coupons")
+    public ResponseEntity<Void> issueTierCoupons(@PathVariable Long memberNo,
+            @RequestParam List<Long> tierCoupons) {
+        couponService.issueTierCouponsByMemberNo(memberNo, tierCoupons);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .build();
+
+    }
 }

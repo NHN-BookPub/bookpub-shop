@@ -234,6 +234,20 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean existsTierCouponsByMemberNo(Long memberNo, List<Long> tierCoupons) {
+        List<Long> couponList = from(coupon)
+                .select(coupon.couponNo)
+                .where(coupon.member.memberNo.eq(memberNo)
+                        .and(coupon.couponTemplate.templateNo.in(tierCoupons))).fetch();
+
+        return !couponList.isEmpty();
+    }
+
+
+    /**
      * 검색 조건에 따라 쿼리문을 다르게 주기위한 메소드.
      *
      * @param searchKey 검색 조건
