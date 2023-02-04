@@ -85,7 +85,6 @@ class ReviewRepositoryTest {
         assertThat(findReview.get().getProduct().getProductSaleStateCode().getCodeInfo()).isEqualTo(persist.getProduct().getProductSaleStateCode().getCodeInfo());
         assertThat(findReview.get().getReviewPolicy().getPolicyNo()).isEqualTo(reviewPolicy.getPolicyNo());
         assertThat(findReview.get().getReviewContent()).isEqualTo(persist.getReviewContent());
-        assertThat(findReview.get().getImagePath()).isEqualTo(persist.getImagePath());
         assertThat(findReview.get().getCreatedAt()).isAfter(now);
     }
 }

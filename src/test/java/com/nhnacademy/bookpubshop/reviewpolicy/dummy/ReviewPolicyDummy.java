@@ -14,7 +14,8 @@ public class ReviewPolicyDummy {
     public static ReviewPolicy dummy() {
         return new ReviewPolicy(
                 null,
-                100L
+                100L,
+                true
         );
     }
 }

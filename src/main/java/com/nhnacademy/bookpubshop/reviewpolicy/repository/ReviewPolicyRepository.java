@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author : 임태원
  * @since : 1.0
  **/
-public interface ReviewPolicyRepository extends JpaRepository<ReviewPolicy, Integer> {
-
+public interface ReviewPolicyRepository extends JpaRepository<ReviewPolicy, Integer>, ReviewPolicyRepositoryCustom {
+    ReviewPolicy findByPolicyUsedIsTrue();
 }

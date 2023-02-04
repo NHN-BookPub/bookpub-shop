@@ -1,7 +1,7 @@
-package com.nhnacademy.bookpubshop.reviewpolicy.exception;
+package com.nhnacademy.bookpubshop.review.exception;
 
 /**
- * 리뷰를 찾을 수 없을 때 나는 exception.
+ * Some description here.
  *
  * @author : 정유진
  * @since : 1.0
