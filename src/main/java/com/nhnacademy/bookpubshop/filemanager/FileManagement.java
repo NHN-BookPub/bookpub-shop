@@ -8,7 +8,6 @@ import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.review.entity.Review;
 import java.io.IOException;
-import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -47,9 +46,6 @@ public interface FileManagement {
      * @throws IOException the io exception
      */
     String loadFile(String path) throws IOException;
-
-    List<String> loadFiles(String path);
-
 
     /**
      * 파일 다운로드를 위한 정보를 반환하는 메서드입니다.

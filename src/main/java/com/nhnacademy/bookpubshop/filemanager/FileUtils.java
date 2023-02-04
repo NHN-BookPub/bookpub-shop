@@ -12,7 +12,6 @@ import com.nhnacademy.bookpubshop.review.entity.Review;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -114,11 +113,6 @@ public class FileUtils implements FileManagement {
 
         byte[] bytes = Files.readAllBytes(resource.getFile().toPath());
         return Base64.encodeBase64String(bytes);
-    }
-
-    @Override
-    public List<String> loadFiles(String path) {
-        return null;
     }
 
     @Override
