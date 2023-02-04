@@ -5,9 +5,20 @@ import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import java.time.LocalDateTime;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * 주문(order) 테이블.
@@ -43,6 +54,10 @@ public class BookpubOrder extends BaseCreateTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_state_code_number")
     private OrderStateCode orderStateCode;
+
+    @NotNull
+    @Column(name = "order_id")
+    private String orderId;
 
     @NotNull
     @Column(name = "order_recipient")
@@ -110,7 +125,8 @@ public class BookpubOrder extends BaseCreateTimeEntity {
                         String orderRequest,
                         Long couponDiscount,
                         String addressDetail,
-                        String roadAddress) {
+                        String roadAddress,
+                        String orderId) {
         this.orderNo = orderNo;
         this.member = member;
         this.deliveryPricePolicy = deliveryPricePolicy;
@@ -129,6 +145,7 @@ public class BookpubOrder extends BaseCreateTimeEntity {
         this.couponDiscount = couponDiscount;
         this.addressDetail = addressDetail;
         this.roadAddress = roadAddress;
+        this.orderId = orderId;
     }
 
     public void modifyInvoiceNo(String invoiceNumber) {

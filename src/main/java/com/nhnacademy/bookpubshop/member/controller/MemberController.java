@@ -1,5 +1,7 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
+import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.IdRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.LoginMemberRequestDto;
@@ -37,7 +39,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -49,7 +50,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class MemberController {
     private final MemberService memberService;
 
@@ -59,7 +59,7 @@ public class MemberController {
      * @param memberDto 회원정보가 입력.
      * @return 회원정보 저장성공 or 실패정보가 담긴 엔티티 반환.
      */
-    @PostMapping("/signup")
+    @PostMapping("/api/signup")
     public ResponseEntity<SignUpMemberResponseDto> signup(
             @Valid @RequestBody SignUpMemberRequestDto memberDto) {
         SignUpMemberResponseDto memberInfo = memberService.signup(memberDto);
@@ -75,7 +75,7 @@ public class MemberController {
      * @param memberDto 회원정보가 입력.
      * @return 회원정보 저장성공 or 실패정보가 담긴 엔티티 반환.
      */
-    @PostMapping("/oauth/signup")
+    @PostMapping("/api/oauth/signup")
     public ResponseEntity<SignUpMemberResponseDto> signup(
             @Valid @RequestBody OauthMemberCreateRequestDto memberDto) {
         SignUpMemberResponseDto memberInfo = memberService.signup(memberDto);
@@ -91,7 +91,7 @@ public class MemberController {
      * @param requestDto front에서 요청한 id.
      * @return 중복이면 true, 아니면 false
      */
-    @PostMapping("/signup/idCheck")
+    @PostMapping("/api/signup/idCheck")
     public boolean idDuplicateCheck(@RequestBody IdRequestDto requestDto) {
         return memberService.idDuplicateCheck(requestDto.getId());
     }
@@ -102,7 +102,7 @@ public class MemberController {
      * @param requestDto front에서 요청한 nickname.
      * @return 중복이면 true, 아니면 false
      */
-    @PostMapping("/signup/nickCheck")
+    @PostMapping("/api/signup/nickCheck")
     public boolean nickDuplicateCheck(@RequestBody NickRequestDto requestDto) {
         return memberService.nickNameDuplicateCheck(requestDto.getNickname());
     }
@@ -113,7 +113,8 @@ public class MemberController {
      * @param request request.
      * @return 인증된 사용자의 정보.
      */
-    @GetMapping("/auth")
+    @GetMapping("/token/auth")
+    @MemberAuth
     public MemberAuthResponseDto authMemberInfo(HttpServletRequest request) {
         String accessToken = request.getHeader(JwtUtil.AUTH_HEADER);
 
@@ -129,7 +130,8 @@ public class MemberController {
      * @param requestDto 수정할 닉네임이 기입.
      * @return response entity
      */
-    @PutMapping("/members/{memberNo}/nickName")
+    @PutMapping("/token/members/{memberNo}/nickName")
+    @MemberAuth
     public ResponseEntity<Void> memberModifyNickname(
             @PathVariable("memberNo") Long memberNo,
             @Valid @RequestBody ModifyMemberNicknameRequestDto requestDto) {
@@ -146,7 +148,8 @@ public class MemberController {
      * @param requestDto 수정할 이메일이 기입.
      * @return response entity
      */
-    @PutMapping("/members/{memberNo}/email")
+    @PutMapping("/token/members/{memberNo}/email")
+    @MemberAuth
     public ResponseEntity<Void> memberModifyEmail(
             @PathVariable("memberNo") Long memberNo,
             @Valid @RequestBody ModifyMemberEmailRequestDto requestDto) {
@@ -164,7 +167,8 @@ public class MemberController {
      * @param requestDto 휴대전화번호가 기입됩니다.
      * @return the response entity
      */
-    @PutMapping("/members/{memberNo}/phone")
+    @PutMapping("/token/members/{memberNo}/phone")
+    @MemberAuth
     public ResponseEntity<Void> memberModifyPhone(@PathVariable("memberNo") Long memberNo,
                                                   @Valid @RequestBody ModifyMemberPhoneRequestDto requestDto) {
         memberService.modifyMemberPhone(memberNo, requestDto);
@@ -181,7 +185,8 @@ public class MemberController {
      * @param requestDto 휴대전화번호가 기입됩니다.
      * @return the response entity
      */
-    @PutMapping("/members/{memberNo}/name")
+    @PutMapping("/token/members/{memberNo}/name")
+    @MemberAuth
     public ResponseEntity<Void> memberModifyName(@PathVariable("memberNo") Long memberNo,
                                                  @Valid @RequestBody ModifyMemberNameRequestDto requestDto) {
         memberService.modifyMemberName(memberNo, requestDto);
@@ -196,7 +201,8 @@ public class MemberController {
      * @param memberNo 멤버 번호가 기입.
      * @return response entity
      */
-    @GetMapping("/members/{memberNo}")
+    @GetMapping("/token/members/{memberNo}")
+    @AdminAuth
     public ResponseEntity<MemberDetailResponseDto> memberDetails(
             @PathVariable("memberNo") Long memberNo) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -211,7 +217,8 @@ public class MemberController {
      * @param pageable 페이징 정보.
      * @return response entity
      */
-    @GetMapping("/admin/members")
+    @GetMapping("/token/admin/members")
+    @AdminAuth
     public ResponseEntity<PageResponse<MemberResponseDto>> memberList(Pageable pageable) {
         Page<MemberResponseDto> members = memberService.getMembers(pageable);
         return ResponseEntity.status(HttpStatus.OK)
@@ -227,7 +234,8 @@ public class MemberController {
      * @param memberNo 회원식별할수있는 번호.
      * @return 성공시 201
      */
-    @PutMapping("/members/{memberNo}")
+    @PutMapping("/token/members/{memberNo}")
+    @MemberAuth
     public ResponseEntity<Void> memberDelete(@PathVariable("memberNo") Long memberNo) {
         memberService.deleteMember(memberNo);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -240,14 +248,15 @@ public class MemberController {
      * @param memberNo 멤버 정보가 기입.
      * @return response entity
      */
-    @PutMapping("/admin/members/{memberNo}")
+    @PutMapping("/token/admin/members/{memberNo}")
+    @AdminAuth
     public ResponseEntity<Void> memberBlock(@PathVariable("memberNo") Long memberNo) {
         memberService.blockMember(memberNo);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public ResponseEntity<LoginMemberResponseDto> memberLogin(
             @RequestBody LoginMemberRequestDto loginMemberRequestDto) {
         String memberId = loginMemberRequestDto.getMemberId();
@@ -266,7 +275,8 @@ public class MemberController {
      *
      * @return the response entity
      */
-    @GetMapping("/admin/members/statistics")
+    @GetMapping("/token/admin/members/statistics")
+    @AdminAuth
     public ResponseEntity<MemberStatisticsResponseDto> memberStatistics() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -280,7 +290,8 @@ public class MemberController {
      *
      * @return the response entity
      */
-    @GetMapping("/admin/tier/statistics")
+    @GetMapping("/token/admin/tier/statistics")
+    @AdminAuth
     public ResponseEntity<List<MemberTierStatisticsResponseDto>> memberTierStatistics() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -296,7 +307,8 @@ public class MemberController {
      * @param memberNo 회원번호
      * @return the response entity
      */
-    @GetMapping("/members/{memberNo}/password-check")
+    @GetMapping("/token/members/{memberNo}/password-check")
+    @MemberAuth
     public ResponseEntity<MemberPasswordResponseDto> memberPasswordCheck(@PathVariable("memberNo") Long memberNo) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -312,7 +324,8 @@ public class MemberController {
      * @param request  수정할 회원의 비밀번호가 기입됩니다.
      * @return the response entity
      */
-    @PutMapping("/members/{memberNo}/password")
+    @PutMapping("/token/members/{memberNo}/password")
+    @MemberAuth
     public ResponseEntity<Void> memberModifyPassword(@PathVariable("memberNo") Long memberNo,
                                                      @RequestBody ModifyMemberPasswordRequest request) {
         memberService.modifyMemberPassword(memberNo, request);
@@ -330,7 +343,8 @@ public class MemberController {
      * @param addressNo 회원의 주소번호가 기입됩니다.
      * @return the response entity
      */
-    @PutMapping("/members/{memberNo}/addresses/{addressNo}")
+    @PutMapping("/token/members/{memberNo}/addresses/{addressNo}")
+    @MemberAuth
     public ResponseEntity<Void> memberModifyBaseAddress(@PathVariable("memberNo") Long memberNo,
                                                         @PathVariable("addressNo") Long addressNo) {
         memberService.modifyMemberBaseAddress(memberNo, addressNo);
@@ -347,7 +361,8 @@ public class MemberController {
      * @param requestDto the request dto
      * @return the response entity
      */
-    @PostMapping("/members/{memberNo}/addresses")
+    @PostMapping("/token/members/{memberNo}/addresses")
+    @MemberAuth
     public ResponseEntity<Void> memberAddressAdd(@PathVariable("memberNo") Long memberNo,
                                                  @Valid @RequestBody CreateAddressRequestDto requestDto) {
         memberService.addMemberAddress(memberNo, requestDto);
@@ -364,7 +379,8 @@ public class MemberController {
      * @param addressNo the address no
      * @return the response entity
      */
-    @DeleteMapping("/members/{memberNo}/addresses/{addressNo}")
+    @DeleteMapping("/token/members/{memberNo}/addresses/{addressNo}")
+    @MemberAuth
     public ResponseEntity<Void> memberAddressDelete(@PathVariable("memberNo") Long memberNo,
                                                     @PathVariable("addressNo") Long addressNo) {
         memberService.deleteMemberAddress(memberNo, addressNo);
@@ -378,7 +394,7 @@ public class MemberController {
      * @param email front에서 요청한 확인하고자 하는 정보.
      * @return 맞는지 아닌지.
      */
-    @GetMapping("/oauth/{email}")
+    @GetMapping("/api/oauth/{email}")
     public ResponseEntity<Boolean> oauthMemberCheck(@PathVariable String email) {
         boolean oauthMember = memberService.isOauthMember(email);
 

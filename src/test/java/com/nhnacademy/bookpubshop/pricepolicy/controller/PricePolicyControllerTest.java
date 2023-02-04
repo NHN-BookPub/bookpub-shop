@@ -56,6 +56,7 @@ class PricePolicyControllerTest {
 
     ObjectMapper objectMapper;
     String url = "/api/state/pricepolicies";
+    String tokenUrl = "/token/state/pricepolicies";
     LocalDateTime localDateTime;
 
     @BeforeEach
@@ -76,7 +77,7 @@ class PricePolicyControllerTest {
                 .thenReturn(list);
 
         // then
-        mockMvc.perform(get(url)
+        mockMvc.perform(get(tokenUrl)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$[0].policyNo").value(dto.getPolicyNo()))
@@ -106,7 +107,7 @@ class PricePolicyControllerTest {
                 .createPricePolicy(dto);
 
         // then
-        mockMvc.perform(post(url)
+        mockMvc.perform(post(tokenUrl)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -130,7 +131,7 @@ class PricePolicyControllerTest {
                 .modifyPricePolicyFee(1, fee);
 
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.put(url + "/{policyNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(tokenUrl + "/{policyNo}", 1)
                         .param("fee", String.valueOf(fee))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())

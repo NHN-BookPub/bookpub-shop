@@ -108,6 +108,7 @@ class OrderControllerTest {
     Page<GetOrderListResponseDto> pages;
     Page<GetOrderListForAdminResponseDto> adminPages;
     String url = "/api/orders";
+    String tokenUrl="/token/orders";
 
 
     @BeforeEach
@@ -257,7 +258,7 @@ class OrderControllerTest {
         when(orderService.getOrderList(pageable))
                 .thenReturn(new PageResponse<>(adminPages));
 
-        mockMvc.perform(get(url)
+        mockMvc.perform(get(tokenUrl)
                         .param("page", mapper.writeValueAsString(pageable.getPageNumber()))
                         .param("size", mapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -401,7 +402,7 @@ class OrderControllerTest {
         when(orderService.getOrderListByUsers(any(), anyLong()))
                 .thenReturn(new PageResponse<>(pages));
 
-        mockMvc.perform(get(url + "/member?page=0&size=10&no=" + 1)
+        mockMvc.perform(get(tokenUrl + "/member?page=0&size=10&no=" + 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -445,7 +446,7 @@ class OrderControllerTest {
         when(orderService.getOrderDetailById(anyLong()))
                 .thenReturn(detailDto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get(url + "/{orderNo}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.get(tokenUrl + "/{orderNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderState").value(order.getOrderStateCode().getCodeName()))

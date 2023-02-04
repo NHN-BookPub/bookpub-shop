@@ -32,6 +32,8 @@ import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.state.anno.StateCode;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -76,8 +78,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public Long createOrder(CreateOrderRequestDto request) {
-        Member member = memberRepository.findById(request.getMemberNo())
-                .orElseThrow(MemberNotFoundException::new);
+        Member member = null;
+        if (Objects.nonNull(request.getMemberNo())) {
+            member = memberRepository.findById(request.getMemberNo())
+                    .orElseThrow(MemberNotFoundException::new);
+        }
 
         PricePolicy deliveryPolicy =
                 pricePolicyRepository.getPricePolicyById(request.getDeliveryFeePolicyNo())
@@ -91,6 +96,8 @@ public class OrderServiceImpl implements OrderService {
         OrderStateCode orderStateCode =
                 orderStateCodeRepository.findByCodeName(OrderState.WAITING_PAYMENT.getName())
                         .orElseThrow(NotFoundStateCodeException::new);
+
+        String orderId = UUID.randomUUID().toString().replace("-", "");
 
         BookpubOrder order = orderRepository.save(BookpubOrder.builder()
                 .member(member)
@@ -109,10 +116,14 @@ public class OrderServiceImpl implements OrderService {
                 .orderPackaged(request.isPackaged())
                 .orderRequest(request.getOrderRequest())
                 .couponDiscount(request.getCouponAmount())
+                .orderId(orderId)
                 .build());
 
         createOrderProduct(request, order, request.getProductCoupon());
-        updateMemberPoint(member.getMemberNo(), request.getSavePoint(), request.getPointAmount());
+
+        if (Objects.nonNull(member)) {
+            updateMemberPoint(member.getMemberNo(), request.getSavePoint(), request.getPointAmount());
+        }
 
         return order.getOrderNo();
     }
