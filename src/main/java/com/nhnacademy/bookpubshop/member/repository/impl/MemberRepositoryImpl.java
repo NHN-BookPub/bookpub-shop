@@ -196,12 +196,30 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                 .where(member.memberNo.eq(Long.valueOf(memberNo)))
                 .fetch());
 
-        IdPwdMemberDto responseMember = findMember.orElseThrow(() -> new MemberNotFoundException(memberNo));
-        List<String> authorities = memberAuthorities.orElseThrow(MemberAuthoritiesNotFoundException::new);
+        IdPwdMemberDto responseMember = findMember.orElseThrow(
+                () -> new MemberNotFoundException(memberNo));
+        List<String> authorities = memberAuthorities.orElseThrow(
+                MemberAuthoritiesNotFoundException::new);
 
         return new MemberAuthResponseDto(
                 responseMember.getMemberNo(),
                 responseMember.getMemberPwd(),
                 authorities);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Integer findTierNoByMemberNo(Long memberNo) {
+        QMember member = QMember.member;
+        QBookPubTier tier = QBookPubTier.bookPubTier;
+
+        return from(member)
+                .join(member.tier, tier)
+                .where(member.memberNo.eq(memberNo))
+                .select(tier.tierNo)
+                .fetchOne();
+
     }
 }

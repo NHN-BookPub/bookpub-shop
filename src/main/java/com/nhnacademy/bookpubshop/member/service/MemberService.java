@@ -192,4 +192,13 @@ public interface MemberService {
      * @return 회원인지 아닌지.
      */
     boolean isOauthMember(String email);
+
+    /**
+     * 멤버 번호로 등급을 조회하는 메서드입니다.
+     *
+     * @param memberNo 멤버 번호
+     * @return 등급 번호
+     */
+    Integer getTierByMemberNo(Long memberNo);
+
 }

@@ -65,4 +65,12 @@ public interface MemberCustomRepository {
      * @return 프론트 서버에 저장 될 정보.
      */
     MemberAuthResponseDto findByAuthMemberInfo(String memberNo);
+
+    /**
+     * 멤버번호로 등급을 조회하는 메소드.
+     *
+     * @param memberNo 멤버 번호
+     * @return 등급 번호
+     */
+    Integer findTierNoByMemberNo(Long memberNo);
 }
