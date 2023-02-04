@@ -13,6 +13,7 @@ import com.nhnacademy.bookpubshop.file.entity.QFile;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
+import com.nhnacademy.bookpubshop.state.CouponState;
 import com.nhnacademy.bookpubshop.state.CouponType;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -137,6 +138,7 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                                                 .join(productCategory)
                                                 .on(category.categoryNo.eq(productCategory.category.categoryNo))
                                                 .where(productCategory.product.productNo.eq(productNo))))
+                                .or(coupon.couponTemplate.couponStateCode.codeTarget.eq(CouponState.COUPON_ALL.getName()))
                         )
                 )
                 .select(Projections.constructor(GetOrderCouponResponseDto.class,
