@@ -4,7 +4,7 @@ import com.nhnacademy.bookpubshop.delivery.dto.request.CreateDeliveryRequestDto;
 import com.nhnacademy.bookpubshop.delivery.dto.response.CreateDeliveryResponseDto;
 
 /**
- * Some description here.
+ * 배송서버로 통신하기위한 adaptor 입니다.
  *
  * @author : 유호철
  * @since : 1.0

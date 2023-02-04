@@ -29,7 +29,9 @@ public class DeliveryAdaptorImpl implements DeliveryAdaptor {
     private String url;
     private final RestTemplate restTemplate;
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CreateDeliveryResponseDto createDelivery(CreateDeliveryRequestDto dto) {
 
