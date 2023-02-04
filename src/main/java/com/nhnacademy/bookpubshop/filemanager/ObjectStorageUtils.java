@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.filemanager;
 
+import com.nhnacademy.bookpubshop.config.KeyConfig;
 import com.nhnacademy.bookpubshop.config.ObjectStorageProperties;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
@@ -16,9 +17,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +26,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequest;
@@ -58,6 +55,7 @@ public class ObjectStorageUtils implements FileManagement {
     private static final String X_AUTH_TOKEN = "X-Auth-Token";
     private final RestTemplate restTemplate = new RestTemplate();
     private final FileRepository fileRepository;
+    private final KeyConfig keyConfig;
 
     private String requestToken() {
         String identityUrl = properties.getIdentity() + "/tokens";
@@ -80,27 +78,6 @@ public class ObjectStorageUtils implements FileManagement {
         }
 
         return tokenId;
-    }
-
-
-    @Override
-    public List<String> loadFiles(String path) {
-        // 헤더 생성
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(X_AUTH_TOKEN, requestToken());
-
-        HttpEntity<String> requestHttpEntity = new HttpEntity<>(null, headers);
-
-        // API 호출
-        ResponseEntity<String> response
-                = this.restTemplate.exchange(path, HttpMethod.GET, requestHttpEntity, String.class);
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            // String으로 받은 목록을 배열로 변환
-            return Arrays.asList(Objects.requireNonNull(response.getBody()).split("\\r?\\n"));
-        }
-
-        return Collections.emptyList();
     }
 
     @Override
@@ -181,28 +158,7 @@ public class ObjectStorageUtils implements FileManagement {
 
     @Override
     public String loadFile(String path) {
-        String url = path + "?limit=1";
-        // 헤더 생성
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(X_AUTH_TOKEN, requestToken());
-        headers.setAccept(List.of(MediaType.MULTIPART_FORM_DATA));
-
-        HttpEntity<String> requestHttpEntity = new HttpEntity<>(null, headers);
-
-        // API 호출
-        ResponseEntity<String> response
-                = this.restTemplate.exchange(url, HttpMethod.GET, requestHttpEntity, String.class);
-
-        if (response.getStatusCode().is5xxServerError() || response.getStatusCode().is4xxClientError()) {
-            throw new FileNotFoundException();
-        }
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            // String으로 받은 목록을 배열로 변환
-            List<String> list = Arrays.asList(Objects.requireNonNull(response.getBody()).split("\\r?\\n"));
-            return list.get(0);
-        }
-        return null;
+        return path;
     }
 
 
