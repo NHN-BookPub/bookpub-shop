@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.tier.relationship.repository;
 
 import com.nhnacademy.bookpubshop.tier.relationship.dto.response.GetTierCouponResponseDto;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -22,4 +23,11 @@ public interface TierCouponRepositoryCustom {
      */
     Page<GetTierCouponResponseDto> findAllBy(Pageable pageable);
 
+    /**
+     * 등급번호로 쿠폰 템플릿 번호를 조회하는 메서드.
+     *
+     * @param tierNo 등급 번호
+     * @return 템플릿 번호 리스트
+     */
+    List<Long> findAllByTierNo(Integer tierNo);
 }
