@@ -86,6 +86,7 @@ class ProductControllerTest {
     ProductTypeStateCode typeStateCode;
     ProductSaleStateCode saleStateCode;
     String url = "/api/products";
+    String tokenUrl = "/token/products";
     Author author;
     Category category;
     Tag tag;
@@ -210,7 +211,7 @@ class ProductControllerTest {
         when(productService.getAllProducts(pageable))
                 .thenReturn(page);
 
-        mockMvc.perform(get(url)
+        mockMvc.perform(get(tokenUrl)
                         .param("page", mapper.writeValueAsString(pageable.getPageNumber()))
                         .param("size", mapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -263,7 +264,7 @@ class ProductControllerTest {
                         .getBytes(StandardCharsets.UTF_8));
 
         doNothing().when(productService).createProduct(requestDto, files);
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -297,7 +298,7 @@ class ProductControllerTest {
 
         doNothing().when(productService).createProduct(requestDto, files);
 
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -334,7 +335,7 @@ class ProductControllerTest {
 
         doNothing().when(productService).createProduct(requestDto, files);
 
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -372,7 +373,7 @@ class ProductControllerTest {
 
         doNothing().when(productService).createProduct(requestDto, files);
 
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -409,7 +410,7 @@ class ProductControllerTest {
 
         doNothing().when(productService).createProduct(requestDto, files);
 
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -447,7 +448,7 @@ class ProductControllerTest {
 
         doNothing().when(productService).createProduct(requestDto, files);
 
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -486,7 +487,7 @@ class ProductControllerTest {
 
         doNothing().when(productService).createProduct(requestDto, files);
 
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -523,7 +524,7 @@ class ProductControllerTest {
 
         doNothing().when(productService).createProduct(requestDto, files);
 
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -560,7 +561,7 @@ class ProductControllerTest {
 
         doNothing().when(productService).createProduct(requestDto, files);
 
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -597,7 +598,7 @@ class ProductControllerTest {
 
         doNothing().when(productService).createProduct(requestDto, files);
 
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -634,7 +635,7 @@ class ProductControllerTest {
 
         doNothing().when(productService).createProduct(requestDto, files);
 
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -671,7 +672,7 @@ class ProductControllerTest {
 
         doNothing().when(productService).createProduct(requestDto, files);
 
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -708,7 +709,7 @@ class ProductControllerTest {
 
         doNothing().when(productService).createProduct(requestDto, files);
 
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -745,7 +746,7 @@ class ProductControllerTest {
 
         doNothing().when(productService).createProduct(requestDto, files);
 
-        mockMvc.perform(multipart(url)
+        mockMvc.perform(multipart(tokenUrl)
                         .file(thumbnail)
                         .file(detail)
                         .file(ebook)
@@ -897,7 +898,7 @@ class ProductControllerTest {
                 .when(productService)
                 .modifyProduct(requestDto, 1L);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(url + "/{productNo}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(tokenUrl + "/{productNo}", 1L)
                         .content(mapper.writeValueAsString(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -939,7 +940,7 @@ class ProductControllerTest {
         doNothing().when(productService)
                 .setDeleteProduct(product.getProductNo());
 
-        mockMvc.perform(RestDocumentationRequestBuilders.delete(url + "/{productNo}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete(tokenUrl + "/{productNo}", 1L)
                         .param("deleted", "false")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())

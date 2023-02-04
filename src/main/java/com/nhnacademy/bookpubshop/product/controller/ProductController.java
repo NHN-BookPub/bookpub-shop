@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.product.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
@@ -29,7 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
 public class ProductController {
     private final ProductService productService;
 
@@ -40,7 +40,8 @@ public class ProductController {
      * @param pageable pageable 객체를 받습니다.
      * @return 모든 상품을 반환합니다.
      */
-    @GetMapping("/products")
+    @GetMapping("/token/products")
+    @AdminAuth
     public ResponseEntity<PageResponse<GetProductListResponseDto>> productList(
             Pageable pageable) {
         Page<GetProductListResponseDto> content =
@@ -56,7 +57,8 @@ public class ProductController {
      * @param requestDto 상품을 생성하기 위한 Dto 클래스.
      * @return 상품상세정보가 담긴 클래스를 반환합니다. 성공시 Created 반환합니다.
      */
-    @PostMapping("/products")
+    @PostMapping("/token/products")
+    @AdminAuth
     public ResponseEntity<Void> productAdd(
             @Valid @RequestPart CreateProductRequestDto requestDto,
             @RequestPart(required = false) MultipartFile thumbnail,
@@ -87,7 +89,7 @@ public class ProductController {
      * @param productNo 상품 번호를 파라미터로 받습니다.
      * @return 상품 정보를 반환합니다.
      */
-    @GetMapping("/products/{productNo}")
+    @GetMapping("/api/products/{productNo}")
     public ResponseEntity<GetProductDetailResponseDto> getProductDetailById(
             @PathVariable Long productNo) {
         return ResponseEntity.ok()
@@ -103,7 +105,7 @@ public class ProductController {
      * @param pageable 페이징을 위한 객체입니다.
      * @return 상품리스트가 담겨있습니다.
      */
-    @GetMapping("/products/search")
+    @GetMapping("/api/products/search")
     public ResponseEntity<PageResponse<GetProductListResponseDto>> getProductLikeTitle(
             @RequestParam String title, Pageable pageable) {
         Page<GetProductListResponseDto> content =
@@ -120,7 +122,8 @@ public class ProductController {
      * @param request   수정할 내용의 상품 Dto입니다.
      * @return 성공시 201을 반환합니다.
      */
-    @PutMapping("/products/{productNo}")
+    @PutMapping("/token/products/{productNo}")
+    @AdminAuth
     public ResponseEntity<Void> modifyProduct(
             @PathVariable(name = "productNo") Long productNo,
             @Valid @RequestBody CreateProductRequestDto request) {
@@ -136,7 +139,8 @@ public class ProductController {
      * @param productNo 상품 번호입니다.
      * @return 성공시 201을 반환합니다.
      */
-    @DeleteMapping("/products/{productNo}")
+    @DeleteMapping("/token/products/{productNo}")
+    @AdminAuth
     public ResponseEntity<Void> setDeletedProduct(
             @PathVariable Long productNo) {
         productService.setDeleteProduct(productNo);
@@ -152,7 +156,7 @@ public class ProductController {
      * @param limit  제한 갯수
      * @return 상품 유형별 리스트
      */
-    @GetMapping("/products/types/{typeNo}")
+    @GetMapping("/api/products/types/{typeNo}")
     public ResponseEntity<List<GetProductByTypeResponseDto>>
     getProductsByType(@PathVariable Integer typeNo,
                       @RequestParam(name = "limit") Integer limit) {
@@ -168,7 +172,7 @@ public class ProductController {
      * @param productsNo 카트에 담긴 상품들 번호
      * @return 카트에 담긴 상품들 정보
      */
-    @GetMapping("/products/cart")
+    @GetMapping("/api/products/cart")
     public ResponseEntity<List<GetProductDetailResponseDto>> getProductInCart(
             @RequestParam(name = "productNo") List<Long> productsNo) {
         return ResponseEntity.ok()
@@ -183,7 +187,7 @@ public class ProductController {
      * @param pageable   페이징 정보
      * @return 페이징 정보를 담은 상품들
      */
-    @GetMapping("/products-categories/{categoryNo}")
+    @GetMapping("/api/products-categories/{categoryNo}")
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
     getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
         Page<GetProductByCategoryResponseDto> content =

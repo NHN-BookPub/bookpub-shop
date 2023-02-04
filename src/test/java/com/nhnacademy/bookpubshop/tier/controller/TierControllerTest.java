@@ -50,6 +50,7 @@ class TierControllerTest {
     TierService tierService;
 
     String path = "/api/tiers";
+    String tokenPath = "/token/tiers";
     CreateTierRequestDto createTierRequestDto;
 
     ModifyTierRequestDto modifyTierRequestDto;
@@ -72,7 +73,7 @@ class TierControllerTest {
         doNothing().when(tierService).addTier(createTierRequestDto);
 
         //when && then
-        mvc.perform(post(path)
+        mvc.perform(post(tokenPath)
                         .content(objectMapper.writeValueAsString(createTierRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -98,7 +99,7 @@ class TierControllerTest {
         doNothing().when(tierService).addTier(createTierRequestDto);
 
         //when && then
-        mvc.perform(post(path)
+        mvc.perform(post(tokenPath)
                         .content(objectMapper.writeValueAsString(createTierRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -124,7 +125,7 @@ class TierControllerTest {
         doNothing().when(tierService).addTier(createTierRequestDto);
 
         //when && then
-        mvc.perform(post(path)
+        mvc.perform(post(tokenPath)
                         .content(objectMapper.writeValueAsString(createTierRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -150,7 +151,7 @@ class TierControllerTest {
         doNothing().when(tierService).addTier(createTierRequestDto);
 
         //when && then
-        mvc.perform(post(path)
+        mvc.perform(post(tokenPath)
                         .content(objectMapper.writeValueAsString(createTierRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -176,7 +177,7 @@ class TierControllerTest {
         doNothing().when(tierService).addTier(createTierRequestDto);
 
         //when && then
-        mvc.perform(post(path)
+        mvc.perform(post(tokenPath)
                         .content(objectMapper.writeValueAsString(createTierRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -198,7 +199,7 @@ class TierControllerTest {
         doNothing().when(tierService).modifyTier(modifyTierRequestDto);
 
         //when && then
-        mvc.perform(put(path)
+        mvc.perform(put(tokenPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(modifyTierRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -223,7 +224,7 @@ class TierControllerTest {
         ReflectionTestUtils.setField(modifyTierRequestDto, "tierName", "GOLD");
         doNothing().when(tierService).modifyTier(modifyTierRequestDto);
 
-        mvc.perform(put(path)
+        mvc.perform(put(tokenPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(modifyTierRequestDto)))
                 .andExpect(status().is2xxSuccessful())
@@ -294,7 +295,7 @@ class TierControllerTest {
                 .thenReturn(List.of(tierResponseDto));
 
         //when && then
-        mvc.perform(get(path)
+        mvc.perform(get(tokenPath)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].tierNo").value(tierResponseDto.getTierNo()))

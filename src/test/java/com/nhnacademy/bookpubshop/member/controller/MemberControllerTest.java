@@ -407,7 +407,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberNickName(anyLong(), any());
 
-        mvc.perform(put("/api/members/{memberNo}/nickName", 1L)
+        mvc.perform(put("/token/members/{memberNo}/nickName", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -431,7 +431,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberNickName(anyLong(), any());
 
-        mvc.perform(put("/api/members/{memberNo}/nickName", 1L)
+        mvc.perform(put("/token/members/{memberNo}/nickName", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -455,7 +455,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberNickName(1L, dto);
 
-        mvc.perform(put("/api/members/{memberNo}/nickName", 1L)
+        mvc.perform(put("/token/members/{memberNo}/nickName", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
@@ -476,7 +476,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberEmail(anyLong(), any());
 
-        mvc.perform(put("/api/members/{memberNo}/email", 1L)
+        mvc.perform(put("/token/members/{memberNo}/email", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -499,7 +499,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberEmail(1L, dto);
 
-        mvc.perform(put("/api/members/{memberNo}/email", 1L)
+        mvc.perform(put("/token/members/{memberNo}/email", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
@@ -519,7 +519,7 @@ class MemberControllerTest {
         when(memberService.getMemberDetails(1L))
                 .thenReturn(dto);
 
-        mvc.perform(RestDocumentationRequestBuilders.get("/api/members/{memberNo}", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.get("/token/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.memberNo").value(objectMapper.writeValueAsString(dto.getMemberNo())))
@@ -571,7 +571,7 @@ class MemberControllerTest {
         when(memberService.getMembers(request))
                 .thenReturn(page);
 
-        mvc.perform(get("/api/admin/members")
+        mvc.perform(get("/token/admin/members")
                         .param("page", objectMapper.writeValueAsString(request.getPageNumber()))
                         .param("size", objectMapper.writeValueAsString(request.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -626,7 +626,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .blockMember(1L);
 
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/admin/members/{memberNo}", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/admin/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
@@ -644,7 +644,7 @@ class MemberControllerTest {
         when(memberService.getMemberStatistics())
                 .thenReturn(dto);
 
-        mvc.perform(get("/api/admin/members/statistics")
+        mvc.perform(get("/token/admin/members/statistics")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.memberCnt").value(dto.getMemberCnt()))
@@ -673,7 +673,7 @@ class MemberControllerTest {
         when(memberService.getTierStatistics())
                 .thenReturn(List.of(dto));
 
-        mvc.perform(get("/api/admin/tier/statistics")
+        mvc.perform(get("/token/admin/tier/statistics")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].tierName").value(dto.getTierName()))
                 .andExpect(jsonPath("$[0].tierValue").value(objectMapper.writeValueAsString(dto.getTierValue())))
@@ -763,7 +763,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberPhone(anyLong(), any());
 
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/phone", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/phone", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -787,7 +787,7 @@ class MemberControllerTest {
 
         doNothing().when(memberService)
                 .modifyMemberPhone(anyLong(), any());
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/phone", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/phone", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -811,7 +811,7 @@ class MemberControllerTest {
 
         doNothing().when(memberService)
                 .modifyMemberPhone(anyLong(), any());
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/phone", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/phone", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
@@ -832,7 +832,7 @@ class MemberControllerTest {
 
         doNothing().when(memberService)
                 .modifyMemberName(anyLong(), any());
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/name", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/name", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -856,7 +856,7 @@ class MemberControllerTest {
 
         doNothing().when(memberService)
                 .modifyMemberName(anyLong(), any());
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/name", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/name", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
@@ -875,7 +875,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .deleteMember(anyLong());
 
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(document("member-delete-success",
@@ -891,7 +891,7 @@ class MemberControllerTest {
         when(memberService.getMemberPwd(anyLong()))
                 .thenReturn(dto);
 
-        mvc.perform(RestDocumentationRequestBuilders.get("/api/members/{memberNo}/password-check", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.get("/token/members/{memberNo}/password-check", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.password").value(dto.getPassword()))
@@ -913,7 +913,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberPassword(anyLong(), any(ModifyMemberPasswordRequest.class));
 
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/password", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/password", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
@@ -934,7 +934,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberBaseAddress(anyLong(), anyLong());
 
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
@@ -958,7 +958,7 @@ class MemberControllerTest {
         CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
         ReflectionTestUtils.setField(createAddressRequestDto, "addressDetail", "asdf");
 
-        mvc.perform(RestDocumentationRequestBuilders.post("/api/members/{memberNo}/addresses", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.post("/token/members/{memberNo}/addresses", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createAddressRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -982,7 +982,7 @@ class MemberControllerTest {
         CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
         ReflectionTestUtils.setField(createAddressRequestDto, "address", "aaaa");
 
-        mvc.perform(RestDocumentationRequestBuilders.post("/api/members/{memberNo}/addresses", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.post("/token/members/{memberNo}/addresses", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createAddressRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -1011,7 +1011,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(createAddressRequestDto, "address", "aaaa");
         ReflectionTestUtils.setField(createAddressRequestDto, "addressDetail", "aaaa");
 
-        mvc.perform(RestDocumentationRequestBuilders.post("/api/members/{memberNo}/addresses", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.post("/token/members/{memberNo}/addresses", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createAddressRequestDto)))
                 .andExpect(status().is2xxSuccessful())
@@ -1034,7 +1034,7 @@ class MemberControllerTest {
     void memberAddressDeleteTest() {
         doNothing().when(memberService).deleteMemberAddress(anyLong(), anyLong());
 
-        mvc.perform(RestDocumentationRequestBuilders.delete("/api/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
+        mvc.perform(RestDocumentationRequestBuilders.delete("/token/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())

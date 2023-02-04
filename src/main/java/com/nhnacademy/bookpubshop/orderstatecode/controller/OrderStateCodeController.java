@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.orderstatecode.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.orderstatecode.dto.CreateOrderStateCodeRequestDto;
 import com.nhnacademy.bookpubshop.orderstatecode.dto.GetOrderStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.orderstatecode.service.OrderStateCodeService;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @since : 1.0
  **/
 @RestController
-@RequestMapping("/api/state/orderstates")
 @RequiredArgsConstructor
 public class OrderStateCodeController {
     private final OrderStateCodeService orderStateCodeService;
@@ -34,7 +34,7 @@ public class OrderStateCodeController {
      *
      * @return 200, 전체 주문상태코드.
      */
-    @GetMapping
+    @GetMapping("/api/state/orderstates")
     public ResponseEntity<List<GetOrderStateCodeResponseDto>> getOrderStateCodes() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -47,7 +47,7 @@ public class OrderStateCodeController {
      * @param codeNo 코드 번호입니다.
      * @return 200, 단일 상태코드를 반환합니다.
      */
-    @GetMapping("/{codeNo}")
+    @GetMapping("/api/state/orderstates/{codeNo}")
     public ResponseEntity<GetOrderStateCodeResponseDto> getOrderStateCodeByNo(
             @PathVariable Integer codeNo
     ) {
@@ -62,7 +62,8 @@ public class OrderStateCodeController {
      * @param request Dto.
      * @return 201 반환.
      */
-    @PostMapping
+    @PostMapping("/token/state/orderstates")
+    @AdminAuth
     public ResponseEntity<Void> createOrderStateCode(
             @RequestBody @Valid CreateOrderStateCodeRequestDto request) {
         orderStateCodeService.createPricePolicy(request);
@@ -76,7 +77,8 @@ public class OrderStateCodeController {
      * @param codeNo 코드번호입니다.
      * @return 201 반환.
      */
-    @PutMapping("/{codeNo}")
+    @PutMapping("/api/state/orderstates/{codeNo}")
+    @AdminAuth
     public ResponseEntity<Void> modifyCodeUsed(
             @PathVariable Integer codeNo
     ) {

@@ -1,5 +1,7 @@
 package com.nhnacademy.bookpubshop.order.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
+import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/orders")
 public class OrderController {
     private final OrderService orderService;
 
@@ -39,7 +39,8 @@ public class OrderController {
      * @param pageable 페이징을 위해 받습니다.
      * @return 200, 모든 주문 반환.
      */
-    @GetMapping
+    @GetMapping("/token/orders")
+    @AdminAuth
     public ResponseEntity<PageResponse<GetOrderListForAdminResponseDto>> getOrders(Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -52,7 +53,7 @@ public class OrderController {
      * @param request 등록을 위한 Dto객체를 받습니다.
      * @return 201 반환.
      */
-    @PostMapping
+    @PostMapping("/api/orders")
     public ResponseEntity<Long> createOrder(@Valid @RequestBody CreateOrderRequestDto request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -67,7 +68,7 @@ public class OrderController {
      * @param no      수정할 송장번호.
      * @return 201 반환.
      */
-    @PutMapping("/{orderNo}/invoice")
+    @PutMapping("/api/orders/{orderNo}/invoice")
     public ResponseEntity<Void> modifyInvoiceNo(@PathVariable Long orderNo,
                                                 @RequestParam String no) {
         orderService.modifyInvoiceNumber(orderNo, no);
@@ -82,7 +83,7 @@ public class OrderController {
      * @param code    코드명.
      * @return 201 반환.
      */
-    @PutMapping("/{orderNo}/state")
+    @PutMapping("/api/orders/{orderNo}/state")
     public ResponseEntity<Void> modifyStateCode(@PathVariable Long orderNo, @RequestParam String code) {
         orderService.modifyStateCode(code, orderNo);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -95,7 +96,8 @@ public class OrderController {
      * @param pageable 페이징을 위해 받습니다.
      * @return 200, 멤버의 모든 주문 반환.
      */
-    @GetMapping("/member")
+    @GetMapping("/token/orders/member")
+    @MemberAuth
     public ResponseEntity<PageResponse<GetOrderListResponseDto>> getOrdersByMember(
             Pageable pageable, @RequestParam Long no) {
 
@@ -110,7 +112,8 @@ public class OrderController {
      * @param orderNo 주문번호입니다.
      * @return 200, 주문상세정보 Dto를 반환합니다.
      */
-    @GetMapping("/{orderNo}")
+    @GetMapping("/token/orders/{orderNo}")
+    @MemberAuth
     public ResponseEntity<GetOrderDetailResponseDto> getOrderDetailByOrderNo(
             @PathVariable Long orderNo) {
         return ResponseEntity.status(HttpStatus.OK)
