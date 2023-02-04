@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CouponServiceImpl implements CouponService {
+
     private final CouponRepository couponRepository;
     private final MemberRepository memberRepository;
     private final CouponTemplateRepository couponTemplateRepository;
@@ -56,7 +57,8 @@ public class CouponServiceImpl implements CouponService {
         CouponTemplate couponTemplate =
                 couponTemplateRepository.findById(createRequestDto.getTemplateNo())
                         .orElseThrow(() ->
-                                new CouponTemplateNotFoundException(createRequestDto.getTemplateNo()));
+                                new CouponTemplateNotFoundException(
+                                        createRequestDto.getTemplateNo()));
 
         couponRepository.save(Coupon.builder()
                 .couponTemplate(couponTemplate)
@@ -96,9 +98,11 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
-    public Page<GetCouponResponseDto> getCoupons(Pageable pageable, String searchKey, String search) throws IOException {
+    public Page<GetCouponResponseDto> getCoupons(Pageable pageable, String searchKey, String search)
+            throws IOException {
 
-//        Page<GetCouponResponseDto> dto = couponRepository.findAllBy(pageable, searchKey, URLDecoder.decode(search, StandardCharsets.UTF_8));
+//        Page<GetCouponResponseDto> dto =
+//        couponRepository.findAllBy(pageable, searchKey, URLDecoder.decode(search, StandardCharsets.UTF_8));
 //
 //        List<GetCouponResponseDto> dtoList = dto.getContent();
 //        List<GetCouponResponseDto> transformList = new ArrayList<>();
@@ -123,15 +127,40 @@ public class CouponServiceImpl implements CouponService {
      * @throws ProductNotFoundException 상품이 없을 때 나오는 에러
      */
     @Override
-    public List<GetOrderCouponResponseDto> getOrderCoupons(Long memberNo, List<Long> productNoList) {
-        if (!memberRepository.existsById(memberNo))
+    public List<GetOrderCouponResponseDto> getOrderCoupons(Long memberNo, Long productNo) {
+        if (!memberRepository.existsById(memberNo)) {
             throw new MemberNotFoundException();
-
-        for (Long productNo : productNoList) {
-            if (!productRepository.existsById(productNo))
-                throw new ProductNotFoundException();
         }
 
-        return couponRepository.findByProductNo(memberNo, productNoList);
+        if (!productRepository.existsById(productNo)) {
+            throw new ProductNotFoundException();
+        }
+
+
+        return couponRepository.findByProductNo(memberNo, productNo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetCouponResponseDto> getPositiveCouponList(Pageable pageable, Long memberNo) {
+        if (!memberRepository.existsById(memberNo)) {
+            throw new MemberNotFoundException();
+        }
+
+        return couponRepository.findPositiveCouponByMemberNo(pageable, memberNo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetCouponResponseDto> getNegativeCouponList(Pageable pageable, Long memberNo) {
+        if (!memberRepository.existsById(memberNo)) {
+            throw new MemberNotFoundException();
+        }
+
+        return couponRepository.findNegativeCouponByMemberNo(pageable, memberNo);
     }
 }

@@ -3,7 +3,7 @@ package com.nhnacademy.bookpubshop.author.repository;
 import static com.nhnacademy.bookpubshop.state.ProductTypeState.BEST_SELLER;
 import static com.nhnacademy.bookpubshop.state.ProductTypeState.NEW;
 import static org.assertj.core.api.Assertions.assertThat;
-import com.nhnacademy.bookpubshop.author.dto.GetAuthorResponseDto;
+import com.nhnacademy.bookpubshop.author.dto.response.GetAuthorResponseDto;
 import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.product.entity.Product;
@@ -56,6 +56,7 @@ class AuthorRepositoryTest {
         assertThat(author).isPresent();
         assertThat(author.get().getAuthorNo()).isEqualTo(persist.getAuthorNo());
         assertThat(author.get().getAuthorName()).isEqualTo(persist.getAuthorName());
+        assertThat(author.get().getMainBook()).isEqualTo(persist.getMainBook());
     }
 
 
@@ -64,7 +65,7 @@ class AuthorRepositoryTest {
     void getAuthorsByPageTest() {
         Author persist = entityManager.persist(author);
 
-        GetAuthorResponseDto responseDto = new GetAuthorResponseDto(1, "사람");
+        GetAuthorResponseDto responseDto = new GetAuthorResponseDto(1, "사람", "해리포터");
 
         List<GetAuthorResponseDto> responses = new ArrayList<>();
         responses.add(responseDto);

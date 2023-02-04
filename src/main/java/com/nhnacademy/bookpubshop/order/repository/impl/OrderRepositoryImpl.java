@@ -1,14 +1,15 @@
 package com.nhnacademy.bookpubshop.order.repository.impl;
 
 import static com.querydsl.jpa.JPAExpressions.select;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.member.entity.QMember;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.entity.QBookpubOrder;
-import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
 import com.nhnacademy.bookpubshop.order.repository.OrderRepositoryCustom;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.QOrderStateCode;
-import com.nhnacademy.bookpubshop.product.entity.QProduct;
+import com.nhnacademy.bookpubshop.pricepolicy.entity.QPricePolicy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import java.util.Optional;
@@ -26,9 +27,10 @@ import org.springframework.data.support.PageableExecutionUtils;
 public class OrderRepositoryImpl extends QuerydslRepositorySupport
         implements OrderRepositoryCustom {
     QBookpubOrder order = QBookpubOrder.bookpubOrder;
-    QProduct product = QProduct.product;
-    QOrderProduct orderProduct = QOrderProduct.orderProduct;
     QOrderStateCode orderStateCode = QOrderStateCode.orderStateCode;
+    QPricePolicy packagingPricePolicy = QPricePolicy.pricePolicy;
+    QPricePolicy deliveryPricePolicy = QPricePolicy.pricePolicy;
+    QMember member = QMember.member;
 
     public OrderRepositoryImpl() {
         super(BookpubOrder.class);
@@ -55,16 +57,16 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                                 order.receivedAt,
                                 order.invoiceNumber,
                                 order.orderPackaged,
-                                order.packagingPricePolicy.policyFee,
-                                order.deliveryPricePolicy.policyFee,
+                                packagingPricePolicy.policyFee,
+                                deliveryPricePolicy.policyFee,
                                 order.orderRequest,
                                 order.pointAmount,
                                 order.couponDiscount,
                                 order.orderPrice
                         ))
-                        .join(orderProduct).on(orderProduct.order.orderNo.eq(order.orderNo))
-                        .join(product).on(orderProduct.product.productNo.eq(product.productNo))
-                        .join(orderStateCode).on(orderStateCode.codeNo.eq(order.orderStateCode.codeNo))
+                        .innerJoin(order.orderStateCode, orderStateCode)
+                        .innerJoin(order.deliveryPricePolicy, packagingPricePolicy)
+                        .innerJoin(order.packagingPricePolicy, deliveryPricePolicy)
                         .where(order.orderNo.eq(orderNo))
                         .fetchOne());
     }
@@ -73,21 +75,21 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public Page<GetOrderListResponseDto> getOrdersList(Pageable pageable) {
-        JPQLQuery<GetOrderListResponseDto> query =
-                from(order)
+    public Page<GetOrderListForAdminResponseDto> getOrdersList(Pageable pageable) {
+        JPQLQuery<GetOrderListForAdminResponseDto> query = from(order)
                 .select(Projections.constructor(
-                        GetOrderListResponseDto.class,
+                        GetOrderListForAdminResponseDto.class,
                         order.orderNo,
-                        order.orderStateCode.codeName,
+                        member.memberId,
                         order.createdAt,
-                        order.receivedAt,
                         order.invoiceNumber,
-                        order.orderPrice
+                        orderStateCode.codeName,
+                        order.orderPrice,
+                        order.receivedAt
                 ))
-                .join(orderProduct).on(orderProduct.order.orderNo.eq(order.orderNo))
-                .join(product).on(orderProduct.product.productNo.eq(product.productNo))
-                .orderBy(order.createdAt.desc())
+                .innerJoin(order.member, member)
+                .innerJoin(order.orderStateCode, orderStateCode)
+                .orderBy(order.orderNo.desc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset());
 
@@ -96,24 +98,32 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
         return PageableExecutionUtils.getPage(query.fetch(), pageable, count::fetchOne);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<GetOrderListResponseDto> getOrdersListByUser(Pageable pageable, Long memberNo) {
         JPQLQuery<GetOrderListResponseDto> query = from(order)
                 .select(Projections.constructor(
                         GetOrderListResponseDto.class,
                         order.orderNo,
-                        order.orderStateCode.codeName,
+                        orderStateCode.codeName,
                         order.createdAt,
                         order.receivedAt,
                         order.invoiceNumber,
                         order.orderPrice
                 ))
+                .innerJoin(order.orderStateCode, orderStateCode)
                 .where(order.member.memberNo.eq(memberNo))
                 .orderBy(order.createdAt.desc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset());
 
-        JPQLQuery<Long> count = select(order.count()).from(order).where(order.member.memberNo.eq(memberNo));
+        JPQLQuery<Long> count =
+                select(order.orderNo.count())
+                .from(order)
+                .innerJoin(order.member, member)
+                .where(member.memberNo.eq(memberNo));
 
         return PageableExecutionUtils.getPage(query.fetch(), pageable, count::fetchOne);
     }

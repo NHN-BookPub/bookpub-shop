@@ -1,7 +1,8 @@
 package com.nhnacademy.bookpubshop.author.service.impl;
 
-import com.nhnacademy.bookpubshop.author.dto.CreateAuthorRequestDto;
-import com.nhnacademy.bookpubshop.author.dto.GetAuthorResponseDto;
+import com.nhnacademy.bookpubshop.author.dto.request.CreateAuthorRequestDto;
+import com.nhnacademy.bookpubshop.author.dto.request.ModifyAuthorRequestDto;
+import com.nhnacademy.bookpubshop.author.dto.response.GetAuthorResponseDto;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.author.exception.NotFoundAuthorException;
 import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
@@ -29,11 +30,20 @@ public class AuthorServiceImpl implements AuthorService {
      */
     @Override
     @Transactional
-    public GetAuthorResponseDto createAuthor(CreateAuthorRequestDto author) {
-        Author created = authorRepository.save(
-                new Author(null, author.getAuthorName()));
+    public void createAuthor(CreateAuthorRequestDto author) {
+        authorRepository.save(new Author(null, author.getAuthorName(), author.getMainBook()));
+    }
 
-        return new GetAuthorResponseDto(created.getAuthorNo(), created.getAuthorName());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void modifyAuthor(Integer authorNo, ModifyAuthorRequestDto dto) {
+        Author author = authorRepository.findById(authorNo)
+                .orElseThrow(NotFoundAuthorException::new);
+
+        author.modifyAuthorInfo(dto);
     }
 
     /**

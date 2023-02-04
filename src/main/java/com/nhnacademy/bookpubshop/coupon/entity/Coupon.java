@@ -83,4 +83,16 @@ public class Coupon {
         this.orderProduct = null;
         this.usedAt = null;
     }
+
+    public void modifyOrder(BookpubOrder order) {
+        this.order = order;
+    }
+
+    public void modifyOrderProduct(OrderProduct orderProduct) {
+        this.orderProduct = orderProduct;
+    }
+
+    public void couponUsed() {
+        this.couponUsed = true;
+    }
 }

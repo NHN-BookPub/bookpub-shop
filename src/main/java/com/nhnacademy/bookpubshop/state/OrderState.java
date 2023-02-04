@@ -11,19 +11,21 @@ import lombok.Getter;
  **/
 @Getter
 public enum OrderState implements States {
-    WAITING_PAYMENT("결제대기", true),
-    COMPLETE_PAYMENT("결제완료", true),
-    CANCEL_PAYMENT("결제취소", true),
-    WAITING_DELIVERY("배송중", true),
-    COMPLETE_DELIVERY("배송완료", true),
-    CANCEL_DELIVERY("배송취소", true);
+    WAITING_PAYMENT("결제대기", true, "주문서 작성"),
+    COMPLETE_PAYMENT("결제완료", true, "금액 지불"),
+    CANCEL_PAYMENT("결제취소", true, "결제 취소"),
+    WAITING_DELIVERY("배송중", true, "상품 배송"),
+    COMPLETE_DELIVERY("배송완료", true, "상품 배송 완료"),
+    CANCEL_DELIVERY("배송취소", true, "상품 배송 취소");
 
 
     private final String name;
     private final boolean isUsed;
+    private final String reason;
 
-    OrderState(String name, boolean isUsed) {
+    OrderState(String name, boolean isUsed, String reason) {
         this.name = name;
         this.isUsed = isUsed;
+        this.reason = reason;
     }
 }

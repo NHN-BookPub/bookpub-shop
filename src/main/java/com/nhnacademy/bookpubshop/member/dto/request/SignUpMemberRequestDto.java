@@ -16,19 +16,19 @@ import org.hibernate.validator.constraints.Length;
  **/
 @Getter
 @NoArgsConstructor
-public class SignUpMemberRequestDto {
+public class SignUpMemberRequestDto extends SignupDto {
     @NotBlank
     @Pattern(regexp = "^.*(?=.*[가-힣a-z])(?=.{2,200}).*$",
             message = "이름은 한글 또는 영어 2글자 이상 200글자 이하로 입력해주세요.")
     private String name;
 
     @NotBlank
-    @Pattern(regexp = "^.*(?=.*[a-z])(?=.*[a-z\\d])(?=.{2,8}).*$",
-            message = "닉네임은 영어는 필수 숫자는 선택으로 2글자 이상 8글자 이하로 입력해주세요.")
+    @Pattern(regexp = "^[a-zA-Z\\d]{2,8}$",
+            message = "닉네임은 영어나 숫자로 2글자 이상 8글자 이하로 입력해주세요.")
     private String nickname;
 
     @NotBlank
-    @Length(min = 6, max = 6, message = "생년월일은 숫자로 6글자 입력해주세요")
+    @Pattern(regexp = "^\\d{6}$", message = "생년월일은 숫자로 6글자 입력해주세요")
     private String birth;
 
     @NotBlank
@@ -36,25 +36,23 @@ public class SignUpMemberRequestDto {
     private String gender;
 
     @NotBlank
-    @Pattern(regexp = "^.*(?=.*[a-z])(?=.*\\d)(?=.{5,20}).*$",
-            message = "아이디는 영어와 숫자를 섞어 5글자에서 20글자로 입력해주세요.")
-    private String memberId;
-
-    @NotBlank
-    private String pwd;
-
-    @NotBlank
-    @Length(min = 11, max = 11, message = "전화번호는 숫자 11글자로 입력해주세요.")
+    @Pattern(regexp = "^.*(?=.*\\d)(?=.{11}).*$", message = "전화번호는 숫자 11글자로 입력해주세요.")
     private String phone;
 
     @NotBlank
+    @Pattern(regexp = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$")
     private String email;
 
     @NotBlank
     private String address;
-
     @NotBlank
     private String detailAddress;
+    @NotBlank
+    @Pattern(regexp = "^[a-z0-9_-]{5,20}$",
+            message = "아이디는 영어나 숫자로 5글자에서 20글자로 입력해주세요.")
+    private String memberId;
+    @NotBlank
+    private String pwd;
 
     /**
      * 멤버 엔티티 생성 메소드.
@@ -63,20 +61,7 @@ public class SignUpMemberRequestDto {
      * @return Member entity 생성 후 반환
      */
     public Member createMember(BookPubTier tier) {
-        Integer memberYear = Integer.parseInt(birth.substring(0, 2));
-        Integer memberMonthDay = Integer.parseInt(birth.substring(2));
-
-        return Member.builder()
-                .tier(tier)
-                .memberId(memberId)
-                .memberEmail(email)
-                .memberGender(gender)
-                .memberName(name)
-                .memberNickname(nickname)
-                .memberPhone(phone)
-                .memberPwd(pwd)
-                .memberBirthMonth(memberMonthDay)
-                .memberBirthYear(memberYear)
-                .build();
+        return getMember(tier, birth, memberId, email, gender, name, nickname, phone, pwd);
     }
+
 }

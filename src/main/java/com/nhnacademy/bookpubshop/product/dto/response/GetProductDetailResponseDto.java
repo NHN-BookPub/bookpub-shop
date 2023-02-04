@@ -1,6 +1,8 @@
 package com.nhnacademy.bookpubshop.product.dto.response;
 
+import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.state.FileCategory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +23,9 @@ public class GetProductDetailResponseDto {
     private Long productNo;
     private String productIsbn;
     private String title;
+    private String thumbnail;
+    private String detail;
+    private String ebook;
     private String productPublisher;
     private Integer pageCount;
     private String productDescription;
@@ -33,7 +38,6 @@ public class GetProductDetailResponseDto {
     private String publishDate;
     private boolean deleted;
     private boolean productSubscribed;
-
     private String saleStateCodeCategory;
     private String typeStateCodeName;
 
@@ -44,6 +48,7 @@ public class GetProductDetailResponseDto {
     private Integer policySaveRate;
 
     private List<String> authors = new ArrayList<>();
+    private List<Integer> categoriesNo = new ArrayList<>();
     private List<String> categories = new ArrayList<>();
     private List<String> tags = new ArrayList<>();
     private List<String> tagsColors = new ArrayList<>();
@@ -76,6 +81,9 @@ public class GetProductDetailResponseDto {
         this.authors = product.getProductAuthors().stream()
                 .map(m -> m.getAuthor().getAuthorName())
                 .collect(Collectors.toList());
+        this.categoriesNo = product.getProductCategories().stream()
+                .map(m -> m.getCategory().getCategoryNo())
+                .collect(Collectors.toList());
         this.categories = product.getProductCategories().stream()
                 .map(m -> m.getCategory().getCategoryName())
                 .collect(Collectors.toList());
@@ -85,5 +93,52 @@ public class GetProductDetailResponseDto {
         this.tagsColors = product.getProductTags().stream()
                 .map(m -> m.getTag().getColorCode())
                 .collect(Collectors.toList());
+        
+        if (!product.getFiles().isEmpty()) {
+            inputFiles(product);
+        }
+    }
+
+    /**
+     * 상품에 연관된 파일들을 dto로 담습니다.(리스트의 크기만큼 반복합니다.)
+     *
+     * @param product 상품입니다.
+     */
+    private void inputFiles(Product product) {
+        for (int index = 0; index < product.getFiles().size(); index ++) {
+            inputFilesCheckCategory(product, index);
+        }
+    }
+
+    /**
+     * 상품에 연관된 파일들을 dto로 담습니다.(유형을 확인하여 담아줍니다.)
+     *
+     * @param product 상품
+     * @param index 리스트 인덱스
+     */
+    private void inputFilesCheckCategory(Product product, int index) {
+        if (getFile(product, index).getFileCategory()
+                .equals(FileCategory.PRODUCT_THUMBNAIL.getCategory())) {
+            this.thumbnail = getFile(product, index).getFilePath();
+        }
+        else if (getFile(product, index).getFileCategory()
+                .equals(FileCategory.PRODUCT_DETAIL.getCategory())) {
+            this.detail = getFile(product, index).getFilePath();
+        }
+        else if (getFile(product, index).getFileCategory()
+                .equals(FileCategory.PRODUCT_EBOOK.getCategory())) {
+            this.ebook = getFile(product, index).getFilePath();
+        }
+    }
+
+    /**
+     * 상품의 파일 리스트에서 원하는 인덱스의 파일을 반환해줍니다.
+     *
+     * @param product 상품
+     * @param index 인덱스
+     * @return 파일
+     */
+    private File getFile(Product product, int index) {
+        return product.getFiles().get(index);
     }
 }

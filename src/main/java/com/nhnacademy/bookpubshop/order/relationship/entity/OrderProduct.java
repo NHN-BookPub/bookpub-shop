@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * 주문상품(order_product_state_code) 테이블.
+ * 주문상품(order_product) 테이블.
  *
  * @author : 박경서
  * @since : 1.0

@@ -32,11 +32,29 @@ public interface CouponRepositoryCustom {
     Page<GetCouponResponseDto> findAllBy(Pageable pageable, String searchKey, String search);
 
     /**
+     * 멤버 사용가능한 쿠폰 리스트 조회를 위한 메서드.
+     *
+     * @param pageable 페이지
+     * @param memberNo 멤버 번호
+     * @return 쿠폰 정보를 담은 DTO 리스트
+     */
+    Page<GetCouponResponseDto> findPositiveCouponByMemberNo(Pageable pageable, Long memberNo);
+
+    /**
+     * 멤버 사용 불가능한 쿠폰 리스트 조회를 위한 메서드.
+     *
+     * @param pageable 페이지
+     * @param memberNo 멤버 번호
+     * @return 쿠폰 정보를 담은 DTO 리스트
+     */
+    Page<GetCouponResponseDto> findNegativeCouponByMemberNo(Pageable pageable, Long memberNo);
+
+    /**
      * 주문에 사용될 쿠폰들을 조회하는 메서드입니다.
      *
      * @param memberNo      멤버 번호
      * @param productNoList 상품 번호 리스트
      * @return 주문에 사용될 쿠폰들의 정보를 담은 Dto 리스트
      */
-    List<GetOrderCouponResponseDto> findByProductNo(Long memberNo, List<Long> productNoList);
+    List<GetOrderCouponResponseDto> findByProductNo(Long memberNo, Long productNoList);
 }

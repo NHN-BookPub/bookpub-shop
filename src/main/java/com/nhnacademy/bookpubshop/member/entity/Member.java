@@ -156,11 +156,11 @@ public class Member extends BaseCreateTimeEntity {
     }
 
     /**
-     *  회원의 이름을 수정할때 쓰이는 메서드입니다.
+     * 회원의 이름을 수정할때 쓰이는 메서드입니다.
      *
      * @param name 회원의 이름이 기입됩니다.
      */
-    public void modifyName(String name){
+    public void modifyName(String name) {
         this.memberName = name;
     }
 
@@ -169,9 +169,10 @@ public class Member extends BaseCreateTimeEntity {
      *
      * @param memberPhone 회원의 휴대폰 정보 기입.
      */
-    public void modifyPhone(String memberPhone){
+    public void modifyPhone(String memberPhone) {
         this.memberPhone = memberPhone;
     }
+
     /**
      * 회원이 탈퇴했을경우 사용되는 메서드입니다.
      */
@@ -195,9 +196,26 @@ public class Member extends BaseCreateTimeEntity {
     public void modifyPassword(String password) {
         this.memberPwd = password;
     }
+
+    /**
+     * 멤버 권한을 추가하기 위한 메소드 입니다.
+     *
+     * @param memberAuthority 멤버권한.
+     */
     public void addMemberAuthority(MemberAuthority memberAuthority) {
         this.memberAuthorities.add(memberAuthority);
     }
 
 
+    /**
+     * oauth멤버 컬럼을 true로 수정합니다.
+     */
+    public void oauthMember() {
+        this.socialJoined = true;
+    }
+
+    public void saveMemberPoint(Long savePoint, Long usePoint) {
+        this.memberPoint += savePoint;
+        this.memberPoint -= usePoint;
+    }
 }

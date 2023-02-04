@@ -6,6 +6,9 @@ import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
+import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
+import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
@@ -20,6 +23,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTag;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.tag.dummy.TagDummy;
 import com.nhnacademy.bookpubshop.tag.entity.Tag;
 import java.time.LocalDateTime;
@@ -33,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 /**
@@ -53,6 +58,8 @@ class ProductRepositoryTest {
     ProductPolicy productPolicy;
     ProductTypeStateCode productTypeStateCode;
     ProductSaleStateCode productSaleStateCode;
+    File file;
+
 
     @BeforeEach
     void setUp() {
@@ -66,13 +73,18 @@ class ProductRepositoryTest {
 
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
         entityManager.persist(product.getRelationProduct().get(0));
-
     }
 
     @Test
     @DisplayName("상품 save 테스트")
     void productSaveTest() {
         LocalDateTime now = LocalDateTime.now();
+
+        file = entityManager.persist(
+                FileDummy.dummy(null, null,
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+
+        product.setProductFiles(List.of(file));
 
         Product persist = entityManager.persist(product);
 
@@ -92,6 +104,12 @@ class ProductRepositoryTest {
         assertThat(product.get().getSalesPrice()).isEqualTo(persist.getSalesPrice());
         assertThat(product.get().getPageCount()).isEqualTo(persist.getPageCount());
         assertThat(product.get().getCreatedAt()).isAfter(now);
+        assertThat(persist.getFiles().get(0).getFileNo()).isEqualTo(file.getFileNo());
+        assertThat(persist.getFiles().get(0).getFilePath()).isEqualTo(file.getFilePath());
+        assertThat(persist.getFiles().get(0).getFileExtension()).isEqualTo(file.getFileExtension());
+        assertThat(persist.getFiles().get(0).getFileCategory()).isEqualTo(file.getFileCategory());
+        assertThat(persist.getFiles().get(0).getNameOrigin()).isEqualTo(file.getNameOrigin());
+        assertThat(persist.getFiles().get(0).getNameSaved()).isEqualTo(file.getNameSaved());
     }
 
     @Test
@@ -100,6 +118,10 @@ class ProductRepositoryTest {
         // given
         Product persist = entityManager.persist(product);
         Pageable pageable = Pageable.ofSize(10);
+
+        file = entityManager.persist(
+                FileDummy.dummy(null, null,
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
 
         // when
         Page<GetProductListResponseDto> allProducts = productRepository.getAllProducts(pageable);
@@ -114,6 +136,10 @@ class ProductRepositoryTest {
         // given
         Product persist = entityManager.persist(product);
         Pageable pageable = Pageable.ofSize(10);
+
+        file = entityManager.persist(
+                FileDummy.dummy(null, null,
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
 
         // when
         Page<GetProductListResponseDto> likeTitle = productRepository.getProductListLikeTitle(persist.getTitle(), pageable);
@@ -147,6 +173,10 @@ class ProductRepositoryTest {
                 new ProductTag(new ProductTag.Pk(tag.getTagNo(), product.getProductNo()), tag, product));
         Product save = productRepository.save(product);
 
+        file = entityManager.persist(
+                FileDummy.dummy(null, null,
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+
         // when
         Optional<GetProductDetailResponseDto> result = productRepository.getProductDetailById(save.getProductNo());
 
@@ -178,6 +208,10 @@ class ProductRepositoryTest {
 
         Category category = CategoryDummy.dummy();
         entityManager.persist(category);
+
+        file = entityManager.persist(
+                FileDummy.dummy(null, null,
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
 
         persist.getProductCategories().add(
                 new ProductCategory(
@@ -221,6 +255,10 @@ class ProductRepositoryTest {
                 new ProductTag(new ProductTag.Pk(tag.getTagNo(), product.getProductNo()), tag, product));
         entityManager.persist(product);
 
+        file = entityManager.persist(
+                FileDummy.dummy(null, null,
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+
         // when
         List<GetProductDetailResponseDto> productsInCart = productRepository.getProductsInCart(List.of(persist.getProductNo()));
 
@@ -231,5 +269,46 @@ class ProductRepositoryTest {
         assertThat(productsInCart.get(0).getProductPublisher()).isEqualTo(persist.getProductPublisher());
         assertThat(productsInCart.get(0).getProductPrice()).isEqualTo(persist.getProductPrice());
         assertThat(productsInCart.get(0).getSalesPrice()).isEqualTo(persist.getSalesPrice());
+    }
+
+    @Test
+    @DisplayName("카테고리별 상품 조회 테스트")
+    void getProductsByCategory() {
+        // given
+        Product persist = entityManager.persist(product);
+        Author author = AuthorDummy.dummy();
+        entityManager.persist(author);
+
+        persist.getProductAuthors().add(
+                new ProductAuthor(
+                        new ProductAuthor.Pk(author.getAuthorNo(), product.getProductNo()), author, product));
+
+        Category category = CategoryDummy.dummy();
+        entityManager.persist(category);
+
+        persist.getProductCategories().add(
+                new ProductCategory(
+                        new ProductCategory.Pk(category.getCategoryNo(), product.getProductNo()), category, product));
+
+        Tag tag = TagDummy.dummy();
+        entityManager.persist(tag);
+        persist.getProductTags().add(
+                new ProductTag(new ProductTag.Pk(tag.getTagNo(), product.getProductNo()), tag, product));
+        entityManager.persist(product);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        // when
+        Page<GetProductByCategoryResponseDto> result = productRepository.getProductsByCategory(category.getCategoryNo(), pageable);
+
+        // then
+        List<GetProductByCategoryResponseDto> content = result.getContent();
+        assertThat(content).isNotEmpty();
+        assertThat(content.get(0).getProductNo()).isEqualTo(persist.getProductNo());
+        assertThat(content.get(0).getTitle()).isEqualTo(persist.getTitle());
+        assertThat(content.get(0).getSalesPrice()).isEqualTo(persist.getSalesPrice());
+        assertThat(content.get(0).getSalesRate()).isEqualTo(persist.getSalesRate());
+        assertThat(content.get(0).getCategories()).isEqualTo(List.of(category.getCategoryName()));
+        assertThat(content.get(0).getAuthors()).isEqualTo(List.of(author.getAuthorName()));
     }
 }

@@ -1,14 +1,23 @@
 package com.nhnacademy.bookpubshop.pricepolicy.controller;
 
-import com.nhnacademy.bookpubshop.pricepolicy.dto.CreatePricePolicyRequestDto;
-import com.nhnacademy.bookpubshop.pricepolicy.dto.GetPricePolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.request.CreatePricePolicyRequestDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetOrderPolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetPricePolicyResponseDto;
 import com.nhnacademy.bookpubshop.pricepolicy.service.PricePolicyService;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 가격정책 컨트롤러입니다.
@@ -41,7 +50,7 @@ public class PricePolicyController {
      * @return 201 반환.
      */
     @PostMapping
-    public ResponseEntity<Void> createPolicy(CreatePricePolicyRequestDto request) {
+    public ResponseEntity<Void> createPolicy(@Valid @RequestBody CreatePricePolicyRequestDto request) {
         pricePolicyService.createPricePolicy(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
@@ -51,7 +60,7 @@ public class PricePolicyController {
      * 정책의 가격을 수정합니다.
      *
      * @param policyNo 정책번호.
-     * @param fee 수정할 가격.
+     * @param fee      수정할 가격.
      * @return 201 반환.
      */
     @PutMapping("/{policyNo}")
@@ -65,14 +74,22 @@ public class PricePolicyController {
     /**
      * 정책번호로 조회합니다.
      *
-     * @param policyNo 정책번호.
-     * @return 200, 단건 정책 반환.
+     * @param policyName 정책명.
+     * @return 200, 정책리스트.
      */
-    @GetMapping("/{policyNo}")
-    public ResponseEntity<GetPricePolicyResponseDto> getPolicyByNo(
-            @PathVariable Integer policyNo) {
+    @GetMapping("/{policyName}")
+    public ResponseEntity<List<GetPricePolicyResponseDto>> getPoliciesByName(
+            @PathVariable String policyName) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(pricePolicyService.getPricePolicyById(policyNo));
+                .body(pricePolicyService.getPricePoliciesByName(policyName));
     }
+
+    @GetMapping("/order")
+    public ResponseEntity<List<GetOrderPolicyResponseDto>> getShipAndPackPolicy() {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(pricePolicyService.getOrderRequestPolicy());
+    }
+
 }

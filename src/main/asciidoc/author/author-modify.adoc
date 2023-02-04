@@ -1,0 +1,33 @@
+= Book-Pub
+:toc:
+
+== API 명세
+
+저자(Author) 수정 관한 API 명세
+
+== 저자 수정
+
+=== 요청구조
+
+include::../../../../target/snippets/author-modify/http-request.adoc[]
+
+=== 요청 파라미터
+
+include::../../../../target/snippets/author-modify/request-fields.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/author-modify/http-response.adoc[]
+
+=== 예외사항
+
+==== 1. 작가 이름이 null인 경우
+include::../../../../target/snippets/author-modify-authorName-null-fail/http-request.adoc[]
+
+==== 2. 작가 이름이 200자 넘은 경우
+
+include::../../../../target/snippets/author-modify-authorName-over-fail/http-request.adoc[]
+
+==== 3. 대표작이 100자 넘은 경우
+
+include::../../../../target/snippets/author-modify-mainBook-over-fail/http-request.adoc[]

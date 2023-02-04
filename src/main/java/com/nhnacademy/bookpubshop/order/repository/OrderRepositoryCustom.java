@@ -1,7 +1,8 @@
 package com.nhnacademy.bookpubshop.order.repository;
 
-import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +30,7 @@ public interface OrderRepositoryCustom {
      * @param pageable 페이징을 위해 받습니다.
      * @return 모든 주문을 반환.
      */
-    Page<GetOrderListResponseDto> getOrdersList(Pageable pageable);
+    Page<GetOrderListForAdminResponseDto> getOrdersList(Pageable pageable);
 
     /**
      * 멤버의 모든 주문을 반환합니다.

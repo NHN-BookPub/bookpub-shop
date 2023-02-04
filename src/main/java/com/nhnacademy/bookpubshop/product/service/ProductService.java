@@ -1,13 +1,17 @@
 package com.nhnacademy.bookpubshop.product.service;
 
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * ProductRepositoru에 접근하기 위한 Service 클래스입니다.
@@ -30,7 +34,7 @@ public interface ProductService {
      *
      * @param request 상품 생성시 필요한 dto.
      */
-    void createProduct(CreateProductRequestDto request);
+    void createProduct(CreateProductRequestDto request, Map<String, MultipartFile> fileMap) throws IOException;
 
     /**
      * 모든 상품을 페이징 처리하여 조회합니다. 등록기준 asc 입니다.
@@ -81,4 +85,13 @@ public interface ProductService {
      * @return 카트에 담긴 상품들 정보
      */
     List<GetProductDetailResponseDto> getProductsInCart(List<Long> productsNo);
+
+    /**
+     * 카테고리별 상품들 조회.
+     *
+     * @param categoryNo 카테고리번호
+     * @param pageable   페이징정보
+     * @return 카텍리별 상품들
+     */
+    Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo, Pageable pageable);
 }

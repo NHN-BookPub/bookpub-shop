@@ -1,7 +1,8 @@
 package com.nhnacademy.bookpubshop.pricepolicy.service;
 
-import com.nhnacademy.bookpubshop.pricepolicy.dto.CreatePricePolicyRequestDto;
-import com.nhnacademy.bookpubshop.pricepolicy.dto.GetPricePolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.request.CreatePricePolicyRequestDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetOrderPolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetPricePolicyResponseDto;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import java.util.List;
 
@@ -30,10 +31,10 @@ public interface PricePolicyService {
     /**
      * 가격정책을 번호로 조회합니다.
      *
-     * @param pricePolicyNo 정책번호입니다.
+     * @param pricePolicyName 정책이름입니다.
      * @return 정책을 반환합니다.
      */
-    GetPricePolicyResponseDto getPricePolicyById(Integer pricePolicyNo);
+    List<GetPricePolicyResponseDto> getPricePoliciesByName(String pricePolicyName);
 
     /**
      * 모든 가격정책을 반환합니다.
@@ -49,4 +50,11 @@ public interface PricePolicyService {
      * @return 단건 반환.
      */
     PricePolicy getLatestPricePolicyByName(String name);
+
+    /**
+     * 주문서에 필요한 배송비, 포장비 정책을 가져오는 메소드입니다..
+     *
+     * @return 배송비, 포장비 정책.
+     */
+    List<GetOrderPolicyResponseDto> getOrderRequestPolicy();
 }

@@ -1,11 +1,15 @@
 package com.nhnacademy.bookpubshop.order.service.impl;
 
+import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
+import com.nhnacademy.bookpubshop.coupon.exception.NotFoundCouponException;
+import com.nhnacademy.bookpubshop.coupon.repository.CouponRepository;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
-import com.nhnacademy.bookpubshop.order.dto.CreateOrderRequestDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.exception.OrderNotFoundException;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
@@ -25,9 +29,9 @@ import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.state.OrderState;
-import com.nhnacademy.bookpubshop.state.PricePolicyState;
 import com.nhnacademy.bookpubshop.state.anno.StateCode;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,6 +54,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderProductRepository orderProductRepository;
     private final ProductRepository productRepository;
     private final OrderProductStateCodeRepository orderProductStateCodeRepository;
+    private final CouponRepository couponRepository;
 
     /**
      * {@inheritDoc}
@@ -70,17 +75,18 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     @Transactional
-    public void createOrder(CreateOrderRequestDto request, Long memberNo) {
-        Member member = memberRepository.findById(memberNo)
+    public Long createOrder(CreateOrderRequestDto request) {
+        Member member = memberRepository.findById(request.getMemberNo())
                 .orElseThrow(MemberNotFoundException::new);
 
-        PricePolicy deliveryPolicy = pricePolicyRepository
-                .getLatestPricePolicyByName(PricePolicyState.SHIPPING.getName())
-                .orElseThrow(NotFoundPricePolicyException::new);
+        PricePolicy deliveryPolicy =
+                pricePolicyRepository.getPricePolicyById(request.getDeliveryFeePolicyNo())
+                        .orElseThrow(NotFoundPricePolicyException::new);
 
-        PricePolicy packagingPricePolicy = pricePolicyRepository
-                .getLatestPricePolicyByName(PricePolicyState.PACKAGING.getName())
-                .orElseThrow(NotFoundPricePolicyException::new);
+        PricePolicy packagingPricePolicy =
+                pricePolicyRepository.getPricePolicyById(request.getPackingFeePolicyNo())
+                        .orElseThrow(NotFoundPricePolicyException::new);
+
 
         OrderStateCode orderStateCode =
                 orderStateCodeRepository.findByCodeName(OrderState.WAITING_PAYMENT.getName())
@@ -105,34 +111,82 @@ public class OrderServiceImpl implements OrderService {
                 .couponDiscount(request.getCouponAmount())
                 .build());
 
-        createOrderProduct(request, order);
+        createOrderProduct(request, order, request.getProductCoupon());
+        updateMemberPoint(member.getMemberNo(), request.getSavePoint(), request.getPointAmount());
+
+        return order.getOrderNo();
     }
 
     /**
      * {@inheritDoc}
      */
-    private void createOrderProduct(CreateOrderRequestDto request, BookpubOrder order) {
+    @Override
+    public void createOrderProduct(CreateOrderRequestDto request,
+                                   BookpubOrder order,
+                                   Map<Long, Long> productCoupon) {
         OrderProductStateCode orderProductStateCode =
                 orderProductStateCodeRepository
-                        .findByCodeName(OrderProductState.COMPLETE.getName())
+                        .findByCodeName(OrderProductState.WAITING_PAYMENT.getName())
                         .orElseThrow(NotFoundStateCodeException::new);
 
         for (Long productNo : request.getProductNos()) {
             Product product = productRepository.findById(productNo)
                     .orElseThrow(ProductNotFoundException::new);
 
-            orderProductRepository.save(
+            OrderProduct orderProduct = orderProductRepository.save(
                     OrderProduct.builder()
-                    .product(product)
-                    .order(order)
-                    .orderProductStateCode(orderProductStateCode)
-                    .productAmount(request.getProductAmounts().get(productNo))
-                    .couponAmount(request.getProductCouponAmounts().get(productNo))
-                    .productPrice(product.getSalesPrice() * request.getProductAmounts()
-                            .get(productNo))
-                    .reasonName(request.getOrderProductReasons().get(productNo))
-                    .build());
+                            .product(product)
+                            .order(order)
+                            .orderProductStateCode(orderProductStateCode)
+                            .productAmount(request.getProductCount().get(productNo))
+                            .couponAmount(request.getProductSaleAmount().get(productNo))
+                            .productPrice(request.getProductSaleAmount().get(productNo))
+                            .reasonName(OrderState.WAITING_PAYMENT.getReason())
+                            .build());
+
+            updateCoupon(order, orderProduct, productCoupon.get(productNo));
+            updateProductInventory(productNo);
         }
+    }
+
+    /**
+     * 쿠폰의 상태를 변경시키는 메소드 입니다.
+     *
+     * @param order        주문
+     * @param orderProduct 주문상품
+     * @param couponNo     사용한 쿠폰
+     */
+    public void updateCoupon(BookpubOrder order, OrderProduct orderProduct, Long couponNo) {
+        Coupon coupon = couponRepository.findById(couponNo)
+                .orElseThrow(() -> new NotFoundCouponException(couponNo));
+        coupon.modifyOrder(order);
+        coupon.modifyOrderProduct(orderProduct);
+        coupon.couponUsed();
+    }
+
+    /**
+     * 회원의 상태를 변경시키는 메소드 입니다.
+     *
+     * @param memberNo  회원번호.
+     * @param savePoint 적립될 포인트.
+     * @param usePoint  사용한 포인트.
+     */
+    public void updateMemberPoint(Long memberNo, Long savePoint, Long usePoint) {
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+        member.saveMemberPoint(savePoint, usePoint);
+    }
+
+    /**
+     * 상품의 상태를 변경시키는 메소드 입니다.
+     *
+     * @param productNo 상품번호.
+     */
+    public void updateProductInventory(Long productNo) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+
+        product.minusStock();
     }
 
     /**
@@ -145,7 +199,6 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(OrderNotFoundException::new);
 
         order.modifyInvoiceNo(invoiceNo);
-
         orderRepository.save(order);
     }
 
@@ -171,13 +224,9 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<GetOrderListResponseDto> getOrderList(Pageable pageable) {
-        Page<GetOrderListResponseDto> returns =
+    public PageResponse<GetOrderListForAdminResponseDto> getOrderList(Pageable pageable) {
+        Page<GetOrderListForAdminResponseDto> returns =
                 orderRepository.getOrdersList(pageable);
-
-        for(GetOrderListResponseDto response : returns.getContent()) {
-            response.addOrderProducts(productRepository.getProductListByOrderNo(response.getOrderNo()));
-        }
 
         return new PageResponse<>(returns);
     }
@@ -192,7 +241,7 @@ public class OrderServiceImpl implements OrderService {
         Page<GetOrderListResponseDto> returns =
                 orderRepository.getOrdersListByUser(pageable, memberNo);
 
-        for(GetOrderListResponseDto response : returns.getContent()) {
+        for (GetOrderListResponseDto response : returns.getContent()) {
             response.addOrderProducts(productRepository.getProductListByOrderNo(response.getOrderNo()));
         }
 

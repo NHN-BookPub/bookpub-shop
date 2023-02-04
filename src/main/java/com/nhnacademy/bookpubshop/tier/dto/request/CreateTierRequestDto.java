@@ -22,4 +22,7 @@ public class CreateTierRequestDto {
 
     @NotNull(message = "등급시 필요한 가격을 기입해야합니다.")
     private Long tierPrice;
+
+    @NotNull(message = "등급시 필요한 포인트량을 기입해야합니다.")
+    private Long tierPoint;
 }

@@ -13,6 +13,7 @@ import com.nhnacademy.bookpubshop.file.entity.QFile;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
+import com.nhnacademy.bookpubshop.state.CouponState;
 import com.nhnacademy.bookpubshop.state.CouponType;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -114,7 +115,7 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public List<GetOrderCouponResponseDto> findByProductNo(Long memberNo, List<Long> productNoList) {
+    public List<GetOrderCouponResponseDto> findByProductNo(Long memberNo, Long productNo) {
 
         return from(coupon)
                 .join(coupon.couponTemplate, couponTemplate)
@@ -130,13 +131,14 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                         .and(coupon.couponUsed.isFalse())
                         .and(couponType.typeName.in(CouponType.COMMON.getName(), CouponType.DUPLICATE.getName()))
                         .and(coupon.couponTemplate.finishedAt.coalesce(LocalDateTime.now().plusDays(1)).after(LocalDateTime.now()))
-                        .and((product.productNo.in(productNoList))
+                        .and((product.productNo.eq(productNo))
                                 .or(coupon.couponTemplate.category.categoryNo
                                         .in(JPAExpressions.select(category.categoryNo)
                                                 .from(category)
                                                 .join(productCategory)
                                                 .on(category.categoryNo.eq(productCategory.category.categoryNo))
-                                                .where(productCategory.product.productNo.in(productNoList))))
+                                                .where(productCategory.product.productNo.eq(productNo))))
+                                .or(coupon.couponTemplate.couponStateCode.codeTarget.eq(CouponState.COUPON_ALL.getName()))
                         )
                 )
                 .select(Projections.constructor(GetOrderCouponResponseDto.class,
@@ -153,6 +155,87 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetCouponResponseDto> findPositiveCouponByMemberNo(Pageable pageable,
+            Long memberNo) {
+        JPQLQuery<Long> count = from(coupon).select(coupon.count())
+                .where(coupon.member.memberNo.eq(memberNo)
+                        .and(coupon.couponUsed.isFalse())
+                        .and((coupon.couponTemplate.finishedAt.after(LocalDateTime.now()))
+                                .or(coupon.couponTemplate.finishedAt.isNull())));
+
+        List<GetCouponResponseDto> positiveCouponList = from(coupon)
+                .where(coupon.member.memberNo.eq(memberNo)
+                        .and(coupon.couponUsed.isFalse())
+                        .and((coupon.couponTemplate.finishedAt.after(LocalDateTime.now()))
+                                .or(coupon.couponTemplate.finishedAt.isNull())))
+                .leftJoin(file).on(coupon.couponTemplate.eq(file.couponTemplate))
+                .innerJoin(coupon.couponTemplate, couponTemplate)
+                .innerJoin(coupon.couponTemplate.couponPolicy, couponPolicy)
+                .on(coupon.couponTemplate.couponPolicy.policyNo
+                        .eq(couponTemplate.couponPolicy.policyNo))
+                .innerJoin(coupon.member, member)
+                .select(Projections.constructor(GetCouponResponseDto.class,
+                        coupon.couponNo,
+                        member.memberId,
+                        couponTemplate.templateName,
+                        file.filePath.as("templateImage"),
+                        couponPolicy.policyFixed,
+                        couponPolicy.policyPrice,
+                        couponPolicy.policyMinimum,
+                        couponPolicy.maxDiscount,
+                        couponTemplate.finishedAt,
+                        coupon.couponUsed))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return PageableExecutionUtils.getPage(positiveCouponList, pageable, count::fetchOne);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetCouponResponseDto> findNegativeCouponByMemberNo(Pageable pageable,
+            Long memberNo) {
+
+        JPQLQuery<Long> count = from(coupon).select(coupon.count())
+                .where(coupon.member.memberNo.eq(memberNo)
+                        .and(coupon.couponUsed.isTrue()
+                                .or(coupon.couponTemplate.finishedAt.before(LocalDateTime.now()))));
+
+        List<GetCouponResponseDto> negativeCoupon = from(coupon)
+                .where(coupon.member.memberNo.eq(memberNo)
+                        .and(coupon.couponUsed.isTrue()
+                                .or(coupon.couponTemplate.finishedAt.before(LocalDateTime.now()))))
+                .leftJoin(file).on(coupon.couponTemplate.eq(file.couponTemplate))
+                .innerJoin(coupon.couponTemplate, couponTemplate)
+                .innerJoin(coupon.couponTemplate.couponPolicy, couponPolicy)
+                .on(coupon.couponTemplate.couponPolicy.policyNo
+                        .eq(couponTemplate.couponPolicy.policyNo))
+                .innerJoin(coupon.member, member)
+                .select(Projections.constructor(GetCouponResponseDto.class,
+                        coupon.couponNo,
+                        member.memberId,
+                        couponTemplate.templateName,
+                        file.filePath.as("templateImage"),
+                        couponPolicy.policyFixed,
+                        couponPolicy.policyPrice,
+                        couponPolicy.policyMinimum,
+                        couponPolicy.maxDiscount,
+                        couponTemplate.finishedAt,
+                        coupon.couponUsed))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return PageableExecutionUtils.getPage(negativeCoupon, pageable, count::fetchOne);
+    }
+
+    /**
      * 검색 조건에 따라 쿼리문을 다르게 주기위한 메소드.
      *
      * @param searchKey 검색 조건
@@ -160,14 +243,20 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
      * @return 조건에 맞는 querydsl
      */
     private BooleanExpression searchEq(String searchKey, String search) {
-        if (Objects.isNull(searchKey) || Objects.isNull(search)) return null;
+        if (Objects.isNull(searchKey) || Objects.isNull(search)) {
+            return null;
+        }
 
-        if (searchKey.equals("memberId"))
+        if (searchKey.equals("memberId")) {
             return coupon.member.memberId.eq(search);
-        if (searchKey.equals("templateName"))
+        }
+        if (searchKey.equals("templateName")) {
             return coupon.couponTemplate.templateName.eq(search);
-        if (searchKey.equals("couponNo"))
+        }
+        if (searchKey.equals("couponNo")) {
             return coupon.couponNo.eq(Long.parseLong(search));
-        else return null;
+        } else {
+            return null;
+        }
     }
 }
