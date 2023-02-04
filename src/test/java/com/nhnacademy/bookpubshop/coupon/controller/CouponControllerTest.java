@@ -270,7 +270,7 @@ class CouponControllerTest {
         );
 
         // when
-        when(couponService.getOrderCoupons(anyLong(), anyList())).thenReturn(List.of(orderCouponResponseDto));
+        when(couponService.getOrderCoupons(anyLong(), anyLong())).thenReturn(List.of(orderCouponResponseDto));
 
         // then
         mockMvc.perform(RestDocumentationRequestBuilders.get(uri + "/members/{memberNo}/order", 1L)

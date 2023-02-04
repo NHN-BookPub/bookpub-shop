@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.product.repository.impl;
 
 import com.nhnacademy.bookpubshop.author.entity.QAuthor;
 import com.nhnacademy.bookpubshop.category.entity.QCategory;
+import com.nhnacademy.bookpubshop.file.entity.QFile;
 import com.nhnacademy.bookpubshop.order.entity.QBookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProductStateCode;
@@ -15,10 +16,9 @@ import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductAuthor;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductSaleStateCode;
-import com.nhnacademy.bookpubshop.product.relationship.entity.QProductTag;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepositoryCustom;
+import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.ProductSaleState;
-import com.nhnacademy.bookpubshop.tag.entity.QTag;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -49,11 +49,10 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
     QBookpubOrder order = QBookpubOrder.bookpubOrder;
     QProductCategory productCategory = QProductCategory.productCategory;
     QCategory category = QCategory.category;
-    QTag tag = QTag.tag;
-    QProductTag productTag = QProductTag.productTag;
     QAuthor author = QAuthor.author;
     QProductAuthor productAuthor = QProductAuthor.productAuthor;
     QProductSaleStateCode productSaleStateCode = QProductSaleStateCode.productSaleStateCode;
+    QFile file = QFile.file;
 
 
     public ProductRepositoryImpl(EntityManager entityManager) {
@@ -73,11 +72,14 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .select(Projections.constructor(GetProductListResponseDto.class,
                         product.productNo,
                         product.title,
+                        file.filePath,
                         product.productStock,
                         product.salesPrice,
                         product.salesRate,
                         product.productPrice,
                         product.productDeleted))
+                .leftJoin(product.files, file)
+                .on(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
@@ -100,11 +102,14 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .select(Projections.constructor(GetProductListResponseDto.class,
                         product.productNo,
                         product.title,
+                        file.filePath,
                         product.productStock,
                         product.salesPrice,
                         product.salesRate,
                         product.productPrice,
                         product.productDeleted))
+                .leftJoin(product.files, file)
+                .on(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                 .where(product.title.like(title))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -130,6 +135,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .leftJoin(product.productTypeStateCode)
                 .leftJoin(product.productAuthors)
                 .leftJoin(product.productTags)
+                .leftJoin(file).on(product.productNo.eq(file.product.productNo))
                 .select(product)
                 .where(product.productNo.eq(id))
                 .fetchOne());
@@ -148,9 +154,12 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .on(productCategory.product.productNo.eq(product.productNo))
                 .leftJoin(category)
                 .on(category.categoryNo.eq(productCategory.category.categoryNo))
+                .leftJoin(file).on(product.productNo.eq(file.product.productNo)
+                        .and(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
                 .select(Projections.fields(GetProductByTypeResponseDto.class,
                         product.productNo,
                         product.title,
+                        file.filePath.as("thumbnail"),
                         product.salesPrice,
                         product.productPrice,
                         product.salesRate))
@@ -185,12 +194,16 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         GetProductListForOrderResponseDto.class,
                         product.productNo,
                         product.title,
+                        file.filePath,
                         product.salesPrice,
                         orderProduct.productAmount,
                         orderProductStateCode.codeName))
                 .innerJoin(orderProduct.product, product)
                 .innerJoin(orderProduct.orderProductStateCode, orderProductStateCode)
                 .innerJoin(orderProduct.order, order)
+                .leftJoin(file).on(product.productNo.eq(file.product.productNo)
+                        .and(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
+                .on(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                 .where(order.orderNo.eq(orderNo))
                 .fetch();
     }
@@ -204,9 +217,12 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .select(Projections.fields(GetProductDetailResponseDto.class,
                         product.productNo,
                         product.title,
+                        file.filePath,
                         product.productPublisher,
                         product.productPrice,
                         product.salesPrice))
+                .leftJoin(file).on(product.productNo.eq(file.product.productNo)
+                        .and(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
                 .where(product.productNo.in(productsNo))
                 .fetch();
     }
@@ -219,17 +235,22 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
 
         List<GetProductByCategoryResponseDto> content =
                 from(product)
-                        .leftJoin(productSaleStateCode)
-                        .on(product.productSaleStateCode.codeNo.eq(productSaleStateCode.codeNo))
-                        .leftJoin(productCategory)
-                        .on(productCategory.product.productNo.eq(product.productNo))
                         .select(Projections.fields(GetProductByCategoryResponseDto.class,
                                 product.productNo,
                                 product.title,
+                                file.filePath.as("thumbnail"),
                                 product.salesPrice,
                                 product.salesRate))
+                        .innerJoin(product.productSaleStateCode, productSaleStateCode)
+                        .on(productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
+
+                        .innerJoin(product.productCategories, productCategory)
+                        .on(productCategory.product.productNo.eq(product.productNo))
+
+                        .leftJoin(file).on(product.productNo.eq(file.product.productNo)
+                                .and(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
+
                         .orderBy(product.productPriority.asc())
-                        .where(product.productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
                         .where(productCategory.category.categoryNo.eq(categoryNo))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())

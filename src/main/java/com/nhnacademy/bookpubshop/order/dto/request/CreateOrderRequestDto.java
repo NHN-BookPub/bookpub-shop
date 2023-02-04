@@ -1,11 +1,10 @@
-package com.nhnacademy.bookpubshop.order.dto;
+package com.nhnacademy.bookpubshop.order.dto.request;
 
-import com.nhnacademy.bookpubshop.state.OrderState;
-import com.nhnacademy.bookpubshop.state.anno.StateCode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -19,14 +18,22 @@ import org.hibernate.validator.constraints.Length;
 @Getter
 @NoArgsConstructor
 public class CreateOrderRequestDto {
-
-    @NotBlank(message = "상품 번호 필수 입력사항입니다.")
+    @NotNull(message = "상품 번호 필수 입력사항입니다.")
     private List<Long> productNos;
-    private Map<Long, Integer> productAmounts;
-    private Map<Long, Long> productCouponAmounts;
-    private Map<Long, String> orderProductReasons;
-    @StateCode(enumClass = OrderState.class)
-    private String orderState;
+    @NotNull(message = "상품 별 구매정보는 필수입니다")
+    private Map<Long, Integer> productCount;
+    @NotNull(message = "상품 별 가격정보는 필수입니다.")
+    private Map<Long, Long> productAmount;
+    @NotNull(message = "상품 별 구매정보는 필수입니다")
+    private Map<Long, Long> productCoupon;
+
+    @NotNull(message = "상품 별 구매정보는 필수입니다")
+    private Map<Long, Long> productSaleAmount;
+    private Long memberNo;
+    @NotNull(message = "배송정책 정보는 필수입니다")
+    private Integer deliveryFeePolicyNo;
+    @NotNull(message = "포장정책 정보는 필수입니다")
+    private Integer packingFeePolicyNo;
     @NotBlank(message = "구매자 명은 필수 입력사항입니다.")
     @Length(max = 200, message = "구매자명은 최대 200글자 가능합니다.")
     private String buyerName;
@@ -45,11 +52,12 @@ public class CreateOrderRequestDto {
     @NotBlank(message = "도로명 주소는 필수 입력사항입니다.")
     @Length(max = 100, message = "도로명 주소는 최대100글자 가능합니다.")
     private String roadAddress;
-    @NotBlank(message = "수량 날짜는 필수 입력사항입니다.")
+    @NotNull(message = "수령 날짜는 필수 입력사항입니다.")
     private LocalDateTime receivedAt;
     private boolean packaged;
     private String orderRequest;
     private Long pointAmount;
     private Long couponAmount;
     private Long totalAmount;
+    private Long savePoint;
 }

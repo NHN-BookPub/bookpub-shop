@@ -13,12 +13,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
+import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
-import com.nhnacademy.bookpubshop.order.dto.CreateOrderRequestDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListForAdminResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
@@ -37,10 +38,12 @@ import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCod
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -144,7 +147,7 @@ class OrderControllerTest {
 
         orderProductStateCode = new OrderProductStateCode(
                 null,
-                OrderProductState.COMPLETE.getName(),
+                OrderProductState.COMPLETE_PAYMENT.getName(),
                 true,
                 "info");
 
@@ -153,38 +156,69 @@ class OrderControllerTest {
 
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
+        product.setProductFiles(List.of(
+                FileDummy.dummy(
+                        null,
+                        null,
+                        null,
+                        product,
+                        null,
+                        FileCategory.PRODUCT_THUMBNAIL),
+                FileDummy.dummy(
+                        null,
+                        null,
+                        null,
+                        product,
+                        null,
+                        FileCategory.PRODUCT_DETAIL),
+                FileDummy.dummy(
+                        null,
+                        null,
+                        null,
+                        product,
+                        null,
+                        FileCategory.PRODUCT_EBOOK)));
+
         new OrderProduct(null, product, order, orderProductStateCode,
                 3, 1000L, 30000L, "reason");
 
         productDto = new GetProductListForOrderResponseDto(1L,
-                product.getTitle(), product.getSalesPrice(), orderProduct.getProductAmount(), orderProductStateCode.getCodeName());
+                product.getTitle(), product.getFiles().get(0).getFilePath(), product.getSalesPrice(), orderProduct.getProductAmount(), orderProductStateCode.getCodeName());
 
         products.add(productDto);
 
         requestDto = new CreateOrderRequestDto();
-        Map<Long, Integer> amounts = new HashMap<>();
-        amounts.put(1L, 3);
+        Map<Long, Long> amounts = new HashMap<>();
+        amounts.put(1L, 3L);
         Map<Long, Long> couponAmount = new HashMap<>();
         couponAmount.put(1L, 2000L);
-        Map<Long, String> orderReason = new HashMap<>();
-        orderReason.put(1L, "test");
+        Map<Long, Integer> productCount = new HashMap<>();
+        productCount.put(1L, 1);
+        Map<Long, Long> productSaleAmount = new HashMap<>();
+        productSaleAmount.put(1L, 2000L);
+
+
         ReflectionTestUtils.setField(requestDto, "productNos", List.of(1L));
-        ReflectionTestUtils.setField(requestDto, "productAmounts", amounts);
-        ReflectionTestUtils.setField(requestDto, "productCouponAmounts", couponAmount);
-        ReflectionTestUtils.setField(requestDto, "orderProductReasons", orderReason);
-        ReflectionTestUtils.setField(requestDto, "orderState",
-                order.getOrderStateCode().getCodeName());
+        ReflectionTestUtils.setField(requestDto, "productAmount", amounts);
+        ReflectionTestUtils.setField(requestDto, "productCoupon", couponAmount);
         ReflectionTestUtils.setField(requestDto, "buyerName", order.getOrderBuyer());
         ReflectionTestUtils.setField(requestDto, "buyerNumber", order.getBuyerPhone());
         ReflectionTestUtils.setField(requestDto, "recipientName", order.getOrderRecipient());
         ReflectionTestUtils.setField(requestDto, "recipientNumber", order.getRecipientPhone());
         ReflectionTestUtils.setField(requestDto, "addressDetail", order.getAddressDetail());
         ReflectionTestUtils.setField(requestDto, "roadAddress", order.getRoadAddress());
-        ReflectionTestUtils.setField(requestDto, "receivedAt", order.getReceivedAt());
+        ReflectionTestUtils.setField(requestDto, "receivedAt", LocalDateTime.now());
         ReflectionTestUtils.setField(requestDto, "packaged", order.isOrderPackaged());
         ReflectionTestUtils.setField(requestDto, "orderRequest", order.getOrderRequest());
         ReflectionTestUtils.setField(requestDto, "pointAmount", order.getPointAmount());
         ReflectionTestUtils.setField(requestDto, "couponAmount", order.getCouponDiscount());
+        ReflectionTestUtils.setField(requestDto, "productCount",productCount);
+        ReflectionTestUtils.setField(requestDto, "productSaleAmount", productSaleAmount);
+        ReflectionTestUtils.setField(requestDto, "memberNo",1L);
+        ReflectionTestUtils.setField(requestDto, "deliveryFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "packingFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "savePoint", 100L);
+
 
         listDto = new GetOrderListResponseDto(
                 order.getOrderNo(),
@@ -220,7 +254,6 @@ class OrderControllerTest {
     @Test
     @DisplayName("전체 주문 조회 성공")
     void getOrders() throws Exception {
-
         when(orderService.getOrderList(pageable))
                 .thenReturn(new PageResponse<>(adminPages));
 
@@ -250,11 +283,11 @@ class OrderControllerTest {
                         responseFields(
                                 fieldWithPath("content[].orderNo").description("주문번호"),
                                 fieldWithPath("content[].memberId").description("회원 아이디"),
-                                fieldWithPath("content[].orderState").description("주문 상태"),
                                 fieldWithPath("content[].createdAt").description("주문 일"),
                                 fieldWithPath("content[].receivedAt").description("받는 일자"),
                                 fieldWithPath("content[].invoiceNo").description("운송장 번호"),
                                 fieldWithPath("content[].totalAmount").description("주문 수량"),
+                                fieldWithPath("content[].orderState").description("주문상태"),
                                 fieldWithPath("totalPages").description("총 페이지 수"),
                                 fieldWithPath("number").description("현재 페이지 번호"),
                                 fieldWithPath("previous").description("이전 페이지 번호"),
@@ -268,7 +301,7 @@ class OrderControllerTest {
     @Test
     @DisplayName("주문 등록 성공")
     void createOrder() throws Exception {
-        doNothing().when(orderService).createOrder(requestDto, member.getMemberNo());
+        when(orderService.createOrder(requestDto)).thenReturn(1L);
 
         mockMvc.perform(post(url)
                         .content(mapper.writeValueAsString(requestDto))
@@ -279,16 +312,16 @@ class OrderControllerTest {
                                 preprocessRequest(prettyPrint()),
                                 preprocessResponse(prettyPrint()),
                                 requestFields(
-                                        PayloadDocumentation.subsectionWithPath("productAmounts")
+                                        PayloadDocumentation.subsectionWithPath("productAmount")
                                                 .description("상품 수량"),
-                                        PayloadDocumentation.subsectionWithPath("productCouponAmounts")
-                                                .description("상품에 대한 쿠폰 할인 금액"),
-                                        PayloadDocumentation.subsectionWithPath("orderProductReasons")
-                                                .description("사유 명"),
+                                        PayloadDocumentation.subsectionWithPath("productCoupon")
+                                                .description("상품에 사용된 쿠폰"),
+                                        PayloadDocumentation.subsectionWithPath("productCount")
+                                                .description("상품별 구입 갯수"),
+                                        PayloadDocumentation.subsectionWithPath("productSaleAmount")
+                                                .description("상품에 대한 할인 금액"),
                                         fieldWithPath("productNos").description("상품번호"),
-                                        fieldWithPath("productAmounts").description("상품수량"),
-                                        fieldWithPath("orderProductReasons").description("주문상품"),
-                                        fieldWithPath("orderState").description("주문 상태"),
+                                        fieldWithPath("productAmount").description("상품수량"),
                                         fieldWithPath("buyerName").description("주문인"),
                                         fieldWithPath("buyerNumber").description("주문인 번호"),
                                         fieldWithPath("recipientName").description("수령인"),
@@ -300,14 +333,20 @@ class OrderControllerTest {
                                         fieldWithPath("orderRequest").description("요청사항"),
                                         fieldWithPath("pointAmount").description("포안트 사용량"),
                                         fieldWithPath("couponAmount").description("쿠폰 할인 금액"),
-                                        fieldWithPath("totalAmount").description("총 금액")
+                                        fieldWithPath("totalAmount").description("총 금액"),
+                                        fieldWithPath("productCount").description("상품별 구매 개수 해시맵"),
+                                        fieldWithPath("productSaleAmount").description("상품별 할인 금액"),
+                                        fieldWithPath("memberNo").description("구입 회원"),
+                                        fieldWithPath("deliveryFeePolicyNo").description("배송정책 번호"),
+                                        fieldWithPath("packingFeePolicyNo").description("포장정책 번호"),
+                                        fieldWithPath("savePoint").description("포인트 적립액수")
                                 )
                         )
 
                 );
 
         verify(orderService, times(1))
-                .createOrder(any(), anyLong());
+                .createOrder(any());
 
     }
 
@@ -382,11 +421,15 @@ class OrderControllerTest {
                                 fieldWithPath(
                                         "content[].orderProducts[].stateCode").description(
                                         "주문상품의 상태 코드"),
+                                fieldWithPath(
+                                        "content[].orderProducts[].thumbnail").description(
+                                                "주문상품의 썸네일이미지"),
                                 fieldWithPath("content[].orderState").description("주문 상태"),
                                 fieldWithPath("content[].createdAt").description("주문 일"),
                                 fieldWithPath("content[].receivedAt").description("받는 일자"),
                                 fieldWithPath("content[].invoiceNo").description("운송장 번호"),
                                 fieldWithPath("content[].totalAmount").description("주문 수량"),
+                                fieldWithPath("content[].orderState").description("주문상태"),
                                 fieldWithPath("totalPages").description("총 페이지 수"),
                                 fieldWithPath("number").description("현재 페이지 번호"),
                                 fieldWithPath("previous").description("이전 페이지 번호"),

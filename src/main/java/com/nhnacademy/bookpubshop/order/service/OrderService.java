@@ -1,16 +1,19 @@
 package com.nhnacademy.bookpubshop.order.service;
 
-import com.nhnacademy.bookpubshop.order.dto.CreateOrderRequestDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderDetailResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListForAdminResponseDto;
-import com.nhnacademy.bookpubshop.order.dto.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.state.anno.StateCode;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import java.util.Map;
 import org.springframework.data.domain.Pageable;
 
 /**
  * 멤버 서비스입니다.
+ *
  * @author : 여운석
  * @since : 1.0
  **/
@@ -27,14 +30,24 @@ public interface OrderService {
      * 주문을 등록합니다.
      *
      * @param request dto 객체.
-     * @param memberNo 멤버번호.
      */
-    void createOrder(CreateOrderRequestDto request, Long memberNo);
+    Long createOrder(CreateOrderRequestDto request);
+
+    /**
+     * 주문 상품을 등록합니다.
+     *
+     * @param request       dto객체.
+     * @param order         주문
+     * @param productCoupon 상품에 쓰인 쿠폰.
+     */
+    void createOrderProduct(CreateOrderRequestDto request,
+                            BookpubOrder order,
+                            Map<Long, Long> productCoupon);
 
     /**
      * 송장번호를 수정합니다.
      *
-     * @param orderNo 주문번호.
+     * @param orderNo   주문번호.
      * @param invoiceNo 송장번호.
      */
     void modifyInvoiceNumber(Long orderNo, String invoiceNo);
@@ -44,7 +57,7 @@ public interface OrderService {
      * 상태코드를 수정합니다.
      *
      * @param stateCode 상태코드명.
-     * @param orderNo 주문번호.
+     * @param orderNo   주문번호.
      */
     void modifyStateCode(
             @StateCode(enumClass = OrderState.class) String stateCode,

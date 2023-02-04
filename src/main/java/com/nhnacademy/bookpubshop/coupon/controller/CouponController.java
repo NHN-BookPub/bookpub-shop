@@ -106,7 +106,7 @@ public class CouponController {
     @GetMapping("/coupons/members/{memberNo}/order")
     public ResponseEntity<List<GetOrderCouponResponseDto>> orderCouponList(
             @PathVariable("memberNo") Long memberNo,
-            @RequestParam("productNo") List<Long> productNo) {
+            @RequestParam("productNo") Long productNo) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(couponService.getOrderCoupons(memberNo, productNo));

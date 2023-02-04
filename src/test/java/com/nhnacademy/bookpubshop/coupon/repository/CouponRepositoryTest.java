@@ -405,7 +405,7 @@ class CouponRepositoryTest {
         Coupon persist = entityManager.persist(memberCoupon);
 
         //when
-        List<GetOrderCouponResponseDto> couponList = couponRepository.findByProductNo(member.getMemberNo(), List.of(product.getProductNo()));
+        List<GetOrderCouponResponseDto> couponList = couponRepository.findByProductNo(member.getMemberNo(), product.getProductNo());
 
         //then
         assertThat(couponList.get(0).getCouponNo()).isEqualTo(persist.getCouponNo());

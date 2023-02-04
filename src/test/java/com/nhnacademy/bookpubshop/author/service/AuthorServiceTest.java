@@ -49,6 +49,7 @@ class AuthorServiceTest {
 
         requestDto = new CreateAuthorRequestDto();
         ReflectionTestUtils.setField(requestDto, "authorName", "남기준");
+        ReflectionTestUtils.setField(requestDto, "mainBook", "메인책");
 
         responseDto = new GetAuthorResponseDto(1, "남기준", "해리포터");
         captor = ArgumentCaptor.forClass(Author.class);
@@ -74,6 +75,7 @@ class AuthorServiceTest {
         // given
         ModifyAuthorRequestDto modifyDto = new ModifyAuthorRequestDto();
         ReflectionTestUtils.setField(modifyDto, "authorName", "경서바보");
+        ReflectionTestUtils.setField(modifyDto, "mainBook", "하이루");
 
         // when
         when(authorRepository.findById(anyInt())).thenReturn(Optional.of(author));

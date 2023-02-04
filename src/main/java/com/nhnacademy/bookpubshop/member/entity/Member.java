@@ -214,5 +214,8 @@ public class Member extends BaseCreateTimeEntity {
         this.socialJoined = true;
     }
 
-
+    public void saveMemberPoint(Long savePoint, Long usePoint) {
+        this.memberPoint += savePoint;
+        this.memberPoint -= usePoint;
+    }
 }

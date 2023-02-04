@@ -7,6 +7,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,6 +19,7 @@ import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
+import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
@@ -32,10 +34,14 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCo
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTag;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.service.ProductService;
+import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.tag.dummy.TagDummy;
 import com.nhnacademy.bookpubshop.tag.entity.Tag;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,11 +56,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * ProductController 테스트.
@@ -71,7 +77,6 @@ class ProductControllerTest {
     MockMvc mockMvc;
     @MockBean
     ProductService productService;
-
     ObjectMapper mapper;
     Product product;
     CreateProductRequestDto requestDto;
@@ -84,6 +89,12 @@ class ProductControllerTest {
     Author author;
     Category category;
     Tag tag;
+    Map<String, MultipartFile> files = new HashMap<>();
+    String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+    MockMultipartFile thumbnail;
+    MockMultipartFile detail;
+    MockMultipartFile ebook;
+    MockMultipartFile requestDtoFile;
 
     @BeforeEach
     void setUp() {
@@ -109,12 +120,36 @@ class ProductControllerTest {
                 new ProductTag(new ProductTag.Pk(tag.getTagNo(), product.getProductNo()), tag, product);
         product.getProductTags().add(productTag);
 
+        product.setProductFiles(List.of(
+                FileDummy.dummy(
+                        null,
+                        null,
+                        null,
+                        product,
+                        null,
+                        FileCategory.PRODUCT_THUMBNAIL),
+                FileDummy.dummy(
+                        null,
+                        null,
+                        null,
+                        product,
+                        null,
+                        FileCategory.PRODUCT_DETAIL),
+                FileDummy.dummy(
+                        null,
+                        null,
+                        null,
+                        product,
+                        null,
+                        FileCategory.PRODUCT_EBOOK)));
+
         requestDto = new CreateProductRequestDto();
         responseDto = new GetProductDetailResponseDto(product);
 
         listResponseDto = new GetProductListResponseDto(
                 product.getProductNo(),
                 product.getTitle(),
+                product.getFiles().get(0).getFilePath(),
                 product.getProductStock(),
                 product.getSalesPrice(),
                 product.getSalesRate(),
@@ -146,6 +181,21 @@ class ProductControllerTest {
         ReflectionTestUtils.setField(requestDto, "categoriesNo", List.of(1));
         ReflectionTestUtils.setField(requestDto, "tagsNo", List.of(1));
         ReflectionTestUtils.setField(requestDto, "relationProducts", relation);
+
+        thumbnail = new MockMultipartFile("thumbnail",
+                "thumbnail.jpeg",
+                "image/jpeg",
+                imageContent.getBytes());
+
+        detail = new MockMultipartFile("detail",
+                "detail.jpeg",
+                "image/jpeg",
+                imageContent.getBytes());
+
+        ebook = new MockMultipartFile("ebook",
+                "ebook.pdf",
+                "application/pdf",
+                imageContent.getBytes());
     }
 
     @Test
@@ -191,49 +241,47 @@ class ProductControllerTest {
                                 fieldWithPath("content[].salesPrice").description("상품 판매가"),
                                 fieldWithPath("content[].saleRate").description("상품의 할인율"),
                                 fieldWithPath("content[].productPrice").description("상품 정가"),
-                                fieldWithPath("content[].deleted").description("상품 삭제여부")
+                                fieldWithPath("content[].deleted").description("상품 삭제여부"),
+                                fieldWithPath("content[].thumbnail").description("상품 썸네일")
                         )));
 
         verify(productService, times(1)).getAllProducts(pageable);
 
     }
 
+    //this.mockMvc.perform(multipart("/upload").file("file", "example".getBytes()))
+    //	.andExpect(status().isOk())
+
+    //));
     @Test
     @DisplayName("상품 생성 성공")
     void productAddSuccessTest() throws Exception {
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
                 .andDo(document("product-create",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
-                        requestFields(
-                                fieldWithPath("productIsbn").type(JsonFieldType.STRING).description("상품 ISBN"),
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("상품 제목"),
-                                fieldWithPath("productPublisher").type(JsonFieldType.STRING).description("상품 출판사"),
-                                fieldWithPath("pageCount").type(JsonFieldType.NUMBER).description("상품 총 페이지 수"),
-                                fieldWithPath("productDescription").type(JsonFieldType.STRING).description("상품 설명"),
-                                fieldWithPath("salePrice").type(JsonFieldType.NUMBER).description("판매가"),
-                                fieldWithPath("productPrice").type(JsonFieldType.NUMBER).description("정가"),
-                                fieldWithPath("salesRate").type(JsonFieldType.NUMBER).description("할인율"),
-                                fieldWithPath("productPriority").type(JsonFieldType.NUMBER).description("상품 우선순위(숫자가 작을수록 우선순위가 높음)"),
-                                fieldWithPath("productStock").type(JsonFieldType.NUMBER).description("상품 재고수량"),
-                                fieldWithPath("publishedAt").type(JsonFieldType.STRING).description("출판일시"),
-                                fieldWithPath("subscribed").type(JsonFieldType.BOOLEAN).description("상품 구독가능여부"),
-                                fieldWithPath("productPolicyNo").type(JsonFieldType.NUMBER).description("상품 정책번호"),
-                                fieldWithPath("saleCodeNo").type(JsonFieldType.NUMBER).description("상품판매여부 코드번호()"),
-                                fieldWithPath("typeCodeNo").type(JsonFieldType.NUMBER).description("상품유형 코드번호"),
-                                fieldWithPath("authorsNo[]").type(JsonFieldType.ARRAY).description("작가 번호 리스트"),
-                                fieldWithPath("categoriesNo[]").type(JsonFieldType.ARRAY).description("카테고리 번호 리스트"),
-                                fieldWithPath("tagsNo[]").type(JsonFieldType.ARRAY).description("태그 번호 리스트"),
-                                fieldWithPath("relationProducts[]").type(JsonFieldType.ARRAY).description("연관상품 번호 리스트")
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
                         )));
 
-        then(productService).should().createProduct(any(CreateProductRequestDto.class));
+        then(productService).should().createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
@@ -241,21 +289,36 @@ class ProductControllerTest {
     void productAddFailTest_IsbnIsNull() throws Exception {
         ReflectionTestUtils.setField(requestDto, "productIsbn", null);
 
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
-                .andDo(document("product-create-isbnFail",
+                .andDo(document("product-create-fail-isbnNull",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
+                        ),
                         responseFields(
                                 fieldWithPath("[].message").description("ISBN을 입력해주세요.")
                         )));
 
-        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class));
+        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
@@ -263,21 +326,36 @@ class ProductControllerTest {
     void productAddFailTest_IsbnIsTooLong() throws Exception {
         ReflectionTestUtils.setField(requestDto, "productIsbn", "asdfasdfasdfasdfsadfsa");
 
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
-                .andDo(document("product-create-isbnFail-tooLong",
+                .andDo(document("product-create-fail-isbnOver",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
+                        ),
                         responseFields(
                                 fieldWithPath("[].message").description("ISBN은 10자 혹은 13자입니다.")
                         )));
 
-        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class));
+        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
@@ -286,21 +364,36 @@ class ProductControllerTest {
         ReflectionTestUtils.setField(requestDto, "title",
                 "asdfasdfasdfasdfsadfsaasdfasdfdasdfasfafasfdasdfasfasfdaasdfasdfasdfasdfasdfsfsadfasfasfsafsafasfsafsafsafdsdf");
 
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
-                .andDo(document("product-create-titleFail",
+                .andDo(document("product-create-fail-titleOver",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
+                        ),
                         responseFields(
                                 fieldWithPath("[].message").description("제목은 최대 100자입니다.")
                         )));
 
-        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class));
+        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
@@ -308,21 +401,36 @@ class ProductControllerTest {
     void productAddFailTest_productPublisherIsNull() throws Exception {
         ReflectionTestUtils.setField(requestDto, "productPublisher", null);
 
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
-                .andDo(document("product-create-productPublisherFail",
+                .andDo(document("product-create-fail-publisherNull",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
+                        ),
                         responseFields(
                                 fieldWithPath("[].message").description("출판사를 입력해주세요.")
                         )));
 
-        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class));
+        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
@@ -331,50 +439,75 @@ class ProductControllerTest {
         ReflectionTestUtils.setField(requestDto, "productPublisher",
                 "asdfasdfasdfadfasdfasdfasdfadfasfsafasdfsadfasdfsadfasdfsadfasdffd");
 
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
-                .andDo(document("product-create-productPublisherFail-tooLong",
+                .andDo(document("product-create-fail-publisherOver",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
+                        ),
                         responseFields(
                                 fieldWithPath("[].message").description("50자를 넘을 수 없습니다.")
                         )));
 
-        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class));
+        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
     @DisplayName("상품 생성 실패_상품 설명 길이를 초과한 경우")
     void productAddFailTest_productDescriptionTooLong() throws Exception {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 2050; i++) {
-            sb.append("a");
-        }
-
-        String result = sb.toString();
+        String result = "a".repeat(2050);
 
         ReflectionTestUtils.setField(requestDto, "productDescription", result);
 
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
-                .andDo(document("product-create-productDescriptionFail",
+                .andDo(document("product-create-fail-descriptionOver",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
+                        ),
                         responseFields(
                                 fieldWithPath("[].message").description("설명은 최대 2000자입니다.")
                         )));
 
-        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class));
+        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
@@ -382,21 +515,36 @@ class ProductControllerTest {
     void productAddFailTest_salePriceIsNull() throws Exception {
         ReflectionTestUtils.setField(requestDto, "salePrice", null);
 
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
-                .andDo(document("product-create-salePriceFail",
+                .andDo(document("product-create-fail-salePriceNull",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
+                        ),
                         responseFields(
                                 fieldWithPath("[].message").description("판매가를 입력해주세요.")
                         )));
 
-        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class));
+        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
@@ -404,43 +552,73 @@ class ProductControllerTest {
     void productAddFailTest_productPriceIsNull() throws Exception {
         ReflectionTestUtils.setField(requestDto, "productPrice", null);
 
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
-                .andDo(document("product-create-productPriceFail",
+                .andDo(document("product-create-fail-priceNull",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
+                        ),
                         responseFields(
                                 fieldWithPath("[].message").description("정가를 입력해주세요.")
                         )));
 
-        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class));
+        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
-    @DisplayName("상품 생성 실패_상품 재가 null인 경우")
+    @DisplayName("상품 생성 실패_상품 재고가 null인 경우")
     void productAddFailTest_productStockIsNull() throws Exception {
         ReflectionTestUtils.setField(requestDto, "productStock", null);
 
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
-                .andDo(document("product-create-productStockFail",
+                .andDo(document("product-create-stockNull",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
+                        ),
                         responseFields(
                                 fieldWithPath("[].message").description("상품 재고를 입력해주세요.")
                         )));
 
-        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class));
+        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
@@ -448,21 +626,36 @@ class ProductControllerTest {
     void productAddFailTest_publishedAtIsNull() throws Exception {
         ReflectionTestUtils.setField(requestDto, "publishedAt", null);
 
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
-                .andDo(document("product-create-publishedAtFail",
+                .andDo(document("product-create-publishedAtNull",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
+                        ),
                         responseFields(
                                 fieldWithPath("[].message").description("출판일시를 입력해주세요.")
                         )));
 
-        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class));
+        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
@@ -470,21 +663,36 @@ class ProductControllerTest {
     void productAddFailTest_productPolicyNoIsNull() throws Exception {
         ReflectionTestUtils.setField(requestDto, "productPolicyNo", null);
 
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
-                .andDo(document("product-create-productPolicyNoFail",
+                .andDo(document("product-create-fail-policyNull",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
+                        ),
                         responseFields(
                                 fieldWithPath("[].message").description("상품정책 번호를 입력해주세요.")
                         )));
 
-        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class));
+        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
@@ -492,21 +700,36 @@ class ProductControllerTest {
     void productAddFailTest_saleCodeNoIsNull() throws Exception {
         ReflectionTestUtils.setField(requestDto, "saleCodeNo", null);
 
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
-                .andDo(document("product-create-saleCodeNoFail",
+                .andDo(document("product-create-fail-saleCodeNull",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
+                        ),
                         responseFields(
                                 fieldWithPath("[].message").description("상품판매여부코드 번호를 입력해주세요.")
                         )));
 
-        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class));
+        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
@@ -514,21 +737,36 @@ class ProductControllerTest {
     void productAddFailTest_typeCodeNoIsNull() throws Exception {
         ReflectionTestUtils.setField(requestDto, "typeCodeNo", null);
 
-        doNothing().when(productService).createProduct(requestDto);
+        requestDtoFile = new MockMultipartFile("requestDto",
+                "",
+                "application/json",
+                mapper.writeValueAsString(requestDto)
+                        .getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(MockMvcRequestBuilders.post(url)
-                        .content(mapper.writeValueAsString(requestDto))
-                        .contentType(MediaType.APPLICATION_JSON))
+        doNothing().when(productService).createProduct(requestDto, files);
+
+        mockMvc.perform(multipart(url)
+                        .file(thumbnail)
+                        .file(detail)
+                        .file(ebook)
+                        .file(requestDtoFile)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().is4xxClientError())
                 .andDo(print())
-                .andDo(document("product-create-typeCodeNoFail",
+                .andDo(document("product-create-fail-typeCodeNull",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestParts(
+                                partWithName("thumbnail").description("상품 썸네일"),
+                                partWithName("detail").description("상품 상세이미지"),
+                                partWithName("ebook").description("상품 이북 파일"),
+                                partWithName("requestDto").description("상품 생성시 사용되는 Dto")
+                        ),
                         responseFields(
                                 fieldWithPath("[].message").description("상품유형코드 번호를 입력해주세요.")
                         )));
 
-        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class));
+        verify(productService, times(0)).createProduct(any(CreateProductRequestDto.class), any());
     }
 
     @Test
@@ -592,7 +830,10 @@ class ProductControllerTest {
                                 fieldWithPath("categories[]").description("상품 카테고리 리스트"),
                                 fieldWithPath("tags[]").description("상품 태그 리스트"),
                                 fieldWithPath("tagsColors[]").description("태그 색 리스트"),
-                                fieldWithPath("categoriesNo[]").description("상품 카테고리 번호 리스트")
+                                fieldWithPath("categoriesNo[]").description("상품 카테고리 번호 리스트"),
+                                fieldWithPath("thumbnail").description("상품 썸네일"),
+                                fieldWithPath("detail").description("상품 상세이미지"),
+                                fieldWithPath("ebook").description("상품 이북")
                         )));
 
     }
@@ -642,7 +883,8 @@ class ProductControllerTest {
                                 fieldWithPath("content[].salesPrice").description("상품 판매가"),
                                 fieldWithPath("content[].saleRate").description("상품 할인율"),
                                 fieldWithPath("content[].productPrice").description("상품 정가"),
-                                fieldWithPath("content[].deleted").description("상품의 삭제 여부")
+                                fieldWithPath("content[].deleted").description("상품의 삭제 여부"),
+                                fieldWithPath("content[].thumbnail").description("상품 썸네일")
                         )));
 
         verify(productService, times(1)).getProductListLikeTitle("test", pageable);
@@ -757,7 +999,8 @@ class ProductControllerTest {
                                 fieldWithPath("[].salesPrice").description("상품 판매가"),
                                 fieldWithPath("[].productPrice").description("상품 정가"),
                                 fieldWithPath("[].salesRate").description("상품의 할인율"),
-                                fieldWithPath("[].productCategories[]").description("상품 카테고리 리스트")
+                                fieldWithPath("[].productCategories[]").description("상품 카테고리 리스트"),
+                                fieldWithPath("[].thumbnail").description("상품 썸네일")
                         )));
     }
 
@@ -819,7 +1062,10 @@ class ProductControllerTest {
                                 fieldWithPath("[].categories[]").description("상품 카테고리 이름 리스트"),
                                 fieldWithPath("[].tags[]").description("상품 태그 리스트"),
                                 fieldWithPath("[].tagsColors[]").description("태그 색 리스트"),
-                                fieldWithPath("[].categoriesNo[]").description("상품 카테고리 번호 리스트")
+                                fieldWithPath("[].categoriesNo[]").description("상품 카테고리 번호 리스트"),
+                                fieldWithPath("[].thumbnail").description("상품 썸네일"),
+                                fieldWithPath("[].detail").description("상품 상세이미지"),
+                                fieldWithPath("[].ebook").description("상품 이북")
                         )));
     }
 
@@ -878,10 +1124,9 @@ class ProductControllerTest {
                                 fieldWithPath("content[].salesRate").description("할인율"),
                                 fieldWithPath("content[].title").description("상품 제목"),
                                 fieldWithPath("content[].categories").description("카테고리"),
-                                fieldWithPath("content[].authors").description("저자")
-
+                                fieldWithPath("content[].authors").description("저자"),
+                                fieldWithPath("content[].thumbnail").description("상품 썸네일")
                         )
-
                 ));
 
 

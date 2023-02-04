@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.order.dto;
+package com.nhnacademy.bookpubshop.order.dto.response;
 
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderResponseDto;
 import java.time.LocalDateTime;

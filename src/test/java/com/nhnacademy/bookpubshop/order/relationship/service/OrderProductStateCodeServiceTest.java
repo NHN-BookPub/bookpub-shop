@@ -34,8 +34,8 @@ class OrderProductStateCodeServiceTest {
         orderProductStateCodeService = new OrderProductStateCodeServiceImpl(orderProductStateCodeRepository);
         orderProductStateCode =
                 new OrderProductStateCode(1,
-                        OrderProductState.COMPLETE.getName(),
-                        OrderProductState.COMPLETE.isUsed(),
+                        OrderProductState.COMPLETE_PAYMENT.getName(),
+                        OrderProductState.COMPLETE_PAYMENT.isUsed(),
                         "test");
 
         requestDto = new CreateOrderProductStateCodeRequestDto();

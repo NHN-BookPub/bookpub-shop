@@ -15,8 +15,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
-import com.nhnacademy.bookpubshop.pricepolicy.dto.CreatePricePolicyRequestDto;
-import com.nhnacademy.bookpubshop.pricepolicy.dto.GetPricePolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.request.CreatePricePolicyRequestDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetOrderPolicyResponseDto;
+import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetPricePolicyResponseDto;
 import com.nhnacademy.bookpubshop.pricepolicy.service.PricePolicyService;
 import com.nhnacademy.bookpubshop.state.PricePolicyState;
 import java.time.LocalDateTime;
@@ -89,7 +90,7 @@ class PricePolicyControllerTest {
                                 fieldWithPath("[].policyName").description("정책명"),
                                 fieldWithPath("[].policyFee").description("가격"),
                                 fieldWithPath("[].createdAt").description("생성시간")
-                                )));
+                        )));
     }
 
     @Test
@@ -168,6 +169,37 @@ class PricePolicyControllerTest {
                                 fieldWithPath("[].policyName").description("정책명"),
                                 fieldWithPath("[].policyFee").description("가격"),
                                 fieldWithPath("[].createdAt").description("생성일자")
-                                )));
+                        )));
+    }
+
+    @Test
+    @DisplayName("주문에 필요한 배송비, 포장비 정책 조회 테스트")
+    void getOrderRequiredPricePolicy_Test() throws Exception {
+        // given
+        GetOrderPolicyResponseDto ship = new GetOrderPolicyResponseDto(1, "배송비", 3000L);
+        GetOrderPolicyResponseDto pack = new GetOrderPolicyResponseDto(2, "포장비", 2000L);
+
+        // when
+        when(pricePolicyService.getOrderRequestPolicy())
+                .thenReturn(List.of(ship, pack));
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.get(url + "/order")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$[0].policyNo").value(ship.getPolicyNo()))
+                .andExpect(jsonPath("$[0].policyName").value(ship.getPolicyName()))
+                .andExpect(jsonPath("$[0].policyFee").value(ship.getPolicyFee()))
+                .andExpect(jsonPath("$[1].policyNo").value(pack.getPolicyNo()))
+                .andExpect(jsonPath("$[1].policyName").value(pack.getPolicyName()))
+                .andExpect(jsonPath("$[1].policyFee").value(pack.getPolicyFee()))
+                .andDo(print())
+                .andDo(document("order-required-price-policies-get",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].policyNo").description("정책 번호"),
+                                fieldWithPath("[].policyName").description("정책명"),
+                                fieldWithPath("[].policyFee").description("가격")
+                        )));
     }
 }
