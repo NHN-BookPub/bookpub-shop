@@ -64,7 +64,7 @@ public interface MemberCustomRepository {
      * @param memberNo 인증받은 유저의 번호.
      * @return 프론트 서버에 저장 될 정보.
      */
-    MemberAuthResponseDto findByAuthMemberInfo(String memberNo);
+    MemberAuthResponseDto findByAuthMemberInfo(Long memberNo);
 
     /**
      * 멤버번호로 등급을 조회하는 메소드.

@@ -180,10 +180,10 @@ public interface MemberService {
     /**
      * 회원 정보를 가져오는 메서드 입니다.
      *
-     * @param accessToken 인증 accessToken.
+     * @param memberNo 회원번호.
      * @return 인증된 회원정보.
      */
-    MemberAuthResponseDto authMemberInfo(String accessToken);
+    MemberAuthResponseDto authMemberInfo(Long memberNo);
 
     /**
      * oauth로 가입한 회원의 정보를 가져오는 메소드 입니다.

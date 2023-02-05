@@ -1,5 +1,7 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
+import static com.nhnacademy.bookpubshop.annotation.aspect.AuthorizationPointCut.AUTH_MEMBER_INFO;
+
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
@@ -22,12 +24,12 @@ import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDt
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
-import com.nhnacademy.bookpubshop.token.util.JwtUtil;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -50,6 +52,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class MemberController {
     private final MemberService memberService;
 
@@ -114,11 +117,12 @@ public class MemberController {
      * @return 인증된 사용자의 정보.
      */
     @GetMapping("/token/auth")
-    @MemberAuth
-    public MemberAuthResponseDto authMemberInfo(HttpServletRequest request) {
-        String accessToken = request.getHeader(JwtUtil.AUTH_HEADER);
+    public ResponseEntity<MemberAuthResponseDto> authMemberInfo(HttpServletRequest request) {
+        Long memberNo = Long.parseLong(request.getHeader(AUTH_MEMBER_INFO));
 
-        return memberService.authMemberInfo(accessToken);
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(memberService.authMemberInfo(memberNo));
     }
 
 
@@ -202,7 +206,7 @@ public class MemberController {
      * @return response entity
      */
     @GetMapping("/token/members/{memberNo}")
-    @AdminAuth
+    @MemberAuth
     public ResponseEntity<MemberDetailResponseDto> memberDetails(
             @PathVariable("memberNo") Long memberNo) {
         return ResponseEntity.status(HttpStatus.OK)
