@@ -6,9 +6,11 @@ import com.nhnacademy.bookpubshop.category.dto.request.ModifyCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import com.nhnacademy.bookpubshop.category.service.CategoryService;
+import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -93,10 +95,10 @@ public class CategoryController {
      * @return 성공했을 때 응답코드 OK 200이 반환.
      */
     @GetMapping("/api/categories")
-    public ResponseEntity<List<GetCategoryResponseDto>> categoryList() {
-        return ResponseEntity.status(HttpStatus.OK)
+    public ResponseEntity<PageResponse<GetCategoryResponseDto>> categoryList(Pageable pageable) {
+        return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(categoryService.getCategories());
+                .body(new PageResponse<>(categoryService.getCategories(pageable)));
     }
 
     /**

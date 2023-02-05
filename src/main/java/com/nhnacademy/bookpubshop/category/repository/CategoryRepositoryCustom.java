@@ -4,6 +4,8 @@ import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
 
 /**
@@ -28,7 +30,7 @@ public interface CategoryRepositoryCustom {
      *
      * @return 전체 카테고리 정보 반환.
      */
-    List<GetCategoryResponseDto> findCategories();
+    Page<GetCategoryResponseDto> findCategories(Pageable pageable);
 
 
     /**
@@ -44,4 +46,12 @@ public interface CategoryRepositoryCustom {
      * @return 최상위와 해당 하위 카테고리 리스트 반환.
      */
     List<GetParentCategoryWithChildrenResponseDto> findParentCategoryWithChildren();
+
+    /**
+     * 부모 카테고리 내 하위 카테고리 이름 중복 확인.
+     *
+     * @param parentCategoryNo 부모 카테고리 번호
+     * @param categoryName     카테고리 이름
+     */
+    void existsByChildCategoryNameIsDuplicated(Integer parentCategoryNo, String categoryName);
 }

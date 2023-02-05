@@ -12,6 +12,8 @@ import com.nhnacademy.bookpubshop.category.service.CategoryService;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,13 +37,19 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public void addCategory(CreateCategoryRequestDto createCategoryRequestDto) {
-        checkCategoryNameIsDuplicated(createCategoryRequestDto.getCategoryName());
+        Integer parentCategoryNo = createCategoryRequestDto.getParentCategoryNo();
+        String categoryName = createCategoryRequestDto.getCategoryName();
 
-        Category parentCategory = tryGetParentCategory(
-                createCategoryRequestDto.getParentCategoryNo());
+        Category parentCategory = tryGetParentCategory(parentCategoryNo);
+
+        if (Objects.isNull(parentCategory)) {
+            checkCategoryNameIsDuplicated(categoryName);
+        } else {
+            checkChildCategoryNameIsDuplicated(parentCategoryNo, categoryName);
+        }
 
         categoryRepository.save(new Category(null, parentCategory,
-                createCategoryRequestDto.getCategoryName(),
+                categoryName,
                 createCategoryRequestDto.getCategoryPriority(),
                 createCategoryRequestDto.isCategoryDisplayed()));
 
@@ -52,18 +60,24 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public void modifyCategory(ModifyCategoryRequestDto modifyCategoryRequestDto) {
+        String modifyCategoryName = modifyCategoryRequestDto.getCategoryName();
+        Integer parentCategoryNo = modifyCategoryRequestDto.getParentCategoryNo();
 
         Category category = categoryRepository.findById(modifyCategoryRequestDto.getCategoryNo())
                 .orElseThrow(CategoryNotFoundException::new);
 
-        if (!category.getCategoryName().equals(modifyCategoryRequestDto.getCategoryName())) {
-            checkCategoryNameIsDuplicated(modifyCategoryRequestDto.getCategoryName());
+        Category parentCategory = tryGetParentCategory(
+                parentCategoryNo);
+
+        if (!category.getCategoryName().equals(modifyCategoryName)) {
+            if (Objects.isNull(parentCategoryNo)) {
+                checkCategoryNameIsDuplicated(modifyCategoryName);
+            } else {
+                checkChildCategoryNameIsDuplicated(parentCategoryNo, modifyCategoryName);
+            }
         }
 
-        Category parentCategory = tryGetParentCategory(
-                modifyCategoryRequestDto.getParentCategoryNo());
-
-        category.modifyCategory(modifyCategoryRequestDto.getCategoryName(),
+        category.modifyCategory(modifyCategoryName,
                 parentCategory,
                 modifyCategoryRequestDto.getCategoryPriority(),
                 modifyCategoryRequestDto.isCategoryDisplayed());
@@ -87,8 +101,8 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<GetCategoryResponseDto> getCategories() {
-        return categoryRepository.findCategories();
+    public Page<GetCategoryResponseDto> getCategories(Pageable pageable) {
+        return categoryRepository.findCategories(pageable);
     }
 
     /**
@@ -134,5 +148,12 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryRepository.existsByCategoryName(categoryName)) {
             throw new CategoryAlreadyExistsException(categoryName);
         }
+    }
+
+    private void checkChildCategoryNameIsDuplicated(Integer parentCategoryNo, String categoryName) {
+        categoryRepository.existsByChildCategoryNameIsDuplicated(
+                parentCategoryNo,
+                categoryName);
+
     }
 }
