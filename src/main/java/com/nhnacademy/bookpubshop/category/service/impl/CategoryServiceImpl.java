@@ -150,10 +150,23 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
+
+    /**
+     * 상위 카테고리별 중복 확인.
+     *
+     * @param parentCategoryNo 부모 카테고리 번호.
+     * @param categoryName     카테고리 이름
+     * @throws CategoryAlreadyExistsException 카테고리명 중복 시 예외 발생.
+     */
     private void checkChildCategoryNameIsDuplicated(Integer parentCategoryNo, String categoryName) {
-        categoryRepository.existsByChildCategoryNameIsDuplicated(
-                parentCategoryNo,
-                categoryName);
+        List<String> childList = categoryRepository.findChildNameByParentNo(
+                parentCategoryNo);
+
+        for (String name : childList) {
+            if (name.equals(categoryName)) {
+                throw new CategoryAlreadyExistsException(categoryName);
+            }
+        }
 
     }
 }

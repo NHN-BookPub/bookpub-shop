@@ -5,7 +5,6 @@ import com.nhnacademy.bookpubshop.category.dto.response.GetChildCategoryResponse
 import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.entity.QCategory;
-import com.nhnacademy.bookpubshop.category.exception.CategoryAlreadyExistsException;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
@@ -125,19 +124,13 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
      * {@inheritDoc}
      */
     @Override
-    public void existsByChildCategoryNameIsDuplicated(Integer parentCategoryNo,
-            String categoryName) {
+    public List<String> findChildNameByParentNo(Integer parentCategoryNo) {
         QCategory category = QCategory.category;
 
-        List<String> childList = from(category)
+        return from(category)
                 .select(category.categoryName)
                 .where(category.parentCategory.categoryNo.eq(parentCategoryNo))
                 .fetch();
 
-        for (String name : childList) {
-            if (name.equals(categoryName)) {
-                throw new CategoryAlreadyExistsException(categoryName);
-            }
-        }
     }
 }

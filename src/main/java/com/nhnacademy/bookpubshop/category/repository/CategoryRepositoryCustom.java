@@ -48,10 +48,10 @@ public interface CategoryRepositoryCustom {
     List<GetParentCategoryWithChildrenResponseDto> findParentCategoryWithChildren();
 
     /**
-     * 부모 카테고리 내 하위 카테고리 이름 중복 확인.
+     * 부모 카테고리 번호로 하위 카테고리 조회.
      *
      * @param parentCategoryNo 부모 카테고리 번호
-     * @param categoryName     카테고리 이름
+     * @return 하위 카테고리 이름 리스트
      */
-    void existsByChildCategoryNameIsDuplicated(Integer parentCategoryNo, String categoryName);
+    List<String> findChildNameByParentNo(Integer parentCategoryNo);
 }
