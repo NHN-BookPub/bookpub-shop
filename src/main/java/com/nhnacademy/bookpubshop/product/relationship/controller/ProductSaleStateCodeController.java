@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.product.relationship.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductSaleStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductSaleStateCodeService;
 import java.util.List;
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/state/productSale")
 public class ProductSaleStateCodeController {
     private final ProductSaleStateCodeService productSaleStateCodeService;
 
@@ -31,7 +30,8 @@ public class ProductSaleStateCodeController {
      *
      * @return 성공시 200과 모든 정책코드의 리스트가 반환됩니다.
      */
-    @GetMapping
+    @GetMapping("/token/state/productSale")
+    @AdminAuth
     public ResponseEntity<List<GetProductSaleStateCodeResponseDto>> productSaleStateCodeList() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -43,7 +43,7 @@ public class ProductSaleStateCodeController {
      *
      * @return 사용중인 코드
      */
-    @GetMapping("/used")
+    @GetMapping("/api/state/productSale/used")
     public ResponseEntity<List<GetProductSaleStateCodeResponseDto>> productSaleStateCodeUsedList() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -56,7 +56,7 @@ public class ProductSaleStateCodeController {
      * @param codeNo 정책코드번호입니다.
      * @return 성공시 200, 객체를 반환합니다.
      */
-    @GetMapping("/{codeNo}")
+    @GetMapping("/api/state/productSale/{codeNo}")
     public ResponseEntity<GetProductSaleStateCodeResponseDto> productSaleStateCodeDetails(
             @PathVariable Integer codeNo) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -72,7 +72,8 @@ public class ProductSaleStateCodeController {
      * @param used   사용여부입니다.
      * @return 성공시 201
      */
-    @PutMapping("/{codeNo}")
+    @PutMapping("/token/state/productSale/{codeNo}")
+    @AdminAuth
     public ResponseEntity<Void> productSaleStateCodeModifyUsed(
             @PathVariable Integer codeNo,
             @RequestParam boolean used) {

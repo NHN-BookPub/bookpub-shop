@@ -57,6 +57,7 @@ class ProductPolicyControllerTest {
     CreateModifyProductPolicyRequestDto requestDto;
     GetProductPolicyResponseDto responseDto;
     String url = "/api/policy/product";
+    String tokenUrl = "/token/policy/product";
 
     @BeforeEach
     void setUp() {
@@ -81,7 +82,7 @@ class ProductPolicyControllerTest {
         doNothing().when(productPolicyService)
                 .createProductPolicy(requestDto);
 
-        mockMvc.perform(post(url)
+        mockMvc.perform(post(tokenUrl)
                         .content(mapper.writeValueAsString(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -113,7 +114,7 @@ class ProductPolicyControllerTest {
                 .createProductPolicy(dto);
 
         // then
-        mockMvc.perform(post(url)
+        mockMvc.perform(post(tokenUrl)
                         .content(mapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -207,7 +208,7 @@ class ProductPolicyControllerTest {
                 .modifyProductPolicyById(1, modifyDto);
 
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.put(url + "/{policyNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(tokenUrl + "/{policyNo}", 1)
                         .content(mapper.writeValueAsString(modifyDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -239,7 +240,7 @@ class ProductPolicyControllerTest {
                 .modifyProductPolicyById(1, modifyDto);
 
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.put(url + "/{policyNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(tokenUrl + "/{policyNo}", 1)
                         .content(mapper.writeValueAsString(modifyDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())

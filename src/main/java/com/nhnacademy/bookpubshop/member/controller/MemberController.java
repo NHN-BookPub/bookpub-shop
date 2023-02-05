@@ -205,8 +205,7 @@ public class MemberController {
      * @param memberNo 멤버 번호가 기입.
      * @return response entity
      */
-    @GetMapping("/token/members/{memberNo}")
-    @MemberAuth
+    @GetMapping("/api/members/{memberNo}")
     public ResponseEntity<MemberDetailResponseDto> memberDetails(
             @PathVariable("memberNo") Long memberNo) {
         return ResponseEntity.status(HttpStatus.OK)

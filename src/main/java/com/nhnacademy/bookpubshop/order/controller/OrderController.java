@@ -1,7 +1,5 @@
 package com.nhnacademy.bookpubshop.order.controller;
 
-import com.nhnacademy.bookpubshop.annotation.AdminAuth;
-import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
@@ -39,8 +37,7 @@ public class OrderController {
      * @param pageable 페이징을 위해 받습니다.
      * @return 200, 모든 주문 반환.
      */
-    @GetMapping("/token/orders")
-    @AdminAuth
+    @GetMapping("/api/orders")
     public ResponseEntity<PageResponse<GetOrderListForAdminResponseDto>> getOrders(Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -96,8 +93,7 @@ public class OrderController {
      * @param pageable 페이징을 위해 받습니다.
      * @return 200, 멤버의 모든 주문 반환.
      */
-    @GetMapping("/token/orders/member")
-    @MemberAuth
+    @GetMapping("/api/orders/member")
     public ResponseEntity<PageResponse<GetOrderListResponseDto>> getOrdersByMember(
             Pageable pageable, @RequestParam Long no) {
 

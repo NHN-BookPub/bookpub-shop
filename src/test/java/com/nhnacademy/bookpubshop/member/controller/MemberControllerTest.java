@@ -1,16 +1,28 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
@@ -50,6 +62,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -73,6 +86,8 @@ class MemberControllerTest {
 
     @MockBean
     private MemberService memberService;
+    @MockBean
+    MockHttpServletRequest request;
 
     String path = "/api/signup";
     String oauthPath = "/api/oauth/signup";
@@ -87,7 +102,7 @@ class MemberControllerTest {
 
     @BeforeEach
     void setUp() {
-        basic = new BookPubTier("basic",1,1L,100L);
+        basic = new BookPubTier("basic", 1, 1L, 100L);
         objectMapper = new ObjectMapper();
         signUpMemberRequestDto = new SignUpMemberRequestDto();
         oauthMemberCreateRequestDto = new OauthMemberCreateRequestDto();
@@ -149,7 +164,7 @@ class MemberControllerTest {
                                 fieldWithPath("memberNickname").description("닉네임"),
                                 fieldWithPath("memberEmail").description("이메일"),
                                 fieldWithPath("tierName").description("회원등급")
-                                )));
+                        )));
     }
 
     @Test
@@ -519,7 +534,7 @@ class MemberControllerTest {
         when(memberService.getMemberDetails(1L))
                 .thenReturn(dto);
 
-        mvc.perform(RestDocumentationRequestBuilders.get("/token/members/{memberNo}", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.get("/api/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.memberNo").value(objectMapper.writeValueAsString(dto.getMemberNo())))
@@ -551,7 +566,7 @@ class MemberControllerTest {
                                 fieldWithPath("point").description("포인트"),
                                 fieldWithPath("authorities").description("인증"),
                                 fieldWithPath("addresses").description("주소")
-                                )));
+                        )));
 
         then(memberService)
                 .should().getMemberDetails(anyLong());
@@ -634,7 +649,7 @@ class MemberControllerTest {
                         preprocessResponse(prettyPrint()),
                         pathParameters(
                                 parameterWithName("memberNo").description("회원 번호"))
-                        ));
+                ));
     }
 
     @Test
@@ -659,7 +674,7 @@ class MemberControllerTest {
                                 fieldWithPath("currentMemberCnt").description("현재 회원 수"),
                                 fieldWithPath("deleteMemberCnt").description("탈퇴 회원 수"),
                                 fieldWithPath("blockMemberCnt").description("차단 회원 수")
-                                )));
+                        )));
 
         then(memberService)
                 .should().getMemberStatistics();
@@ -1261,7 +1276,7 @@ class MemberControllerTest {
     void oauthMemberExistBookpubDb() throws Exception {
         when(memberService.isOauthMember(anyString())).thenReturn(true);
 
-        mvc.perform(get("/api/oauth/{email}","tagkdj1@kakao.com"))
+        mvc.perform(get("/api/oauth/{email}", "tagkdj1@kakao.com"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("true"));
@@ -1272,7 +1287,7 @@ class MemberControllerTest {
     void oauthMemberNotExistBookpubDb() throws Exception {
         when(memberService.isOauthMember(anyString())).thenReturn(false);
 
-        mvc.perform(get("/api/oauth/{email}","tagkdj1@kakao.com"))
+        mvc.perform(get("/api/oauth/{email}", "tagkdj1@kakao.com"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("false"));
