@@ -12,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 카테고리(Category) 레포지토리 테스트.
@@ -74,18 +77,22 @@ class CategoryRepositoryTest {
     void categoriesGetTest() {
         String categoryName = "로맨스소설";
         Category romanceCategory = new Category(null, category, categoryName, 0, true);
+        Pageable pageable = PageRequest.of(0, 10);
+
         categoryRepository.save(category);
         categoryRepository.save(romanceCategory);
 
-        List<GetCategoryResponseDto> result = categoryRepository.findCategories();
+        Page<GetCategoryResponseDto> result = categoryRepository.findCategories(pageable);
 
         assertThat(result)
                 .isNotEmpty()
                 .hasSize(2);
 
-        assertThat(result.get(0).getCategoryName()).isEqualTo(category.getCategoryName());
-        assertThat(result.get(1).getCategoryName()).isEqualTo(romanceCategory.getCategoryName());
-        assertThat(result.get(1).getParent().getCategoryName()).isEqualTo(
+        assertThat(result.getContent().get(0).getCategoryName()).isEqualTo(
+                category.getCategoryName());
+        assertThat(result.getContent().get(1).getCategoryName()).isEqualTo(
+                romanceCategory.getCategoryName());
+        assertThat(result.getContent().get(1).getParent().getCategoryName()).isEqualTo(
                 category.getCategoryName());
 
     }
@@ -116,10 +123,10 @@ class CategoryRepositoryTest {
     @DisplayName("메인메이지에서 조회할 공개여부 true, 우선순위 카테고리(상,하위) 조회 테스트입니다.")
     void parentCategoryWithChildrenGetTest() {
         Category foreignCategory = new Category(null, null, "외국도서", 1, true);
-        Category romanceCategory = new Category(null, category, "로맨스소설", 0, true);
-        Category newspaperCategory = new Category(null, category, "신문", 0, false);
-        Category detectiveCategory = new Category(null, category, "추리소설", 1, true);
-        Category fantasyCategory = new Category(null, foreignCategory, "판타지소설", 0, true);
+        Category romanceCategory = new Category(null, foreignCategory, "로맨스소설", 0, true);
+        Category newspaperCategory = new Category(null, foreignCategory, "신문", 0, false);
+        Category detectiveCategory = new Category(null, foreignCategory, "추리소설", 1, true);
+        Category fantasyCategory = new Category(null, category, "판타지소설", 0, true);
         categoryRepository.save(category);
         categoryRepository.save(foreignCategory);
         categoryRepository.save(newspaperCategory);
@@ -131,11 +138,11 @@ class CategoryRepositoryTest {
 
         assertThat(result).hasSize(2);
 
-        assertThat(result.get(0).getCategoryName()).isEqualTo(foreignCategory.getCategoryName());
+        assertThat(result.get(0).getCategoryName()).isEqualTo(category.getCategoryName());
         assertThat(result.get(0).getChildList()).hasSize(1);
         assertThat(result.get(1).getChildList()).hasSize(2);
         assertThat(result.get(1).getChildList().get(0).getCategoryName()).isEqualTo(
-                detectiveCategory.getCategoryName());
+                romanceCategory.getCategoryName());
 
     }
 }
