@@ -60,6 +60,7 @@ class CategoryControllerTest {
     ModifyCategoryRequestDto modifyCategoryRequestDto;
 
     String path = "/api/categories";
+    String authPath = "/token/categories";
 
     @BeforeEach
     void setUp() {
@@ -76,7 +77,7 @@ class CategoryControllerTest {
         ReflectionTestUtils.setField(createCategoryRequestDto, "categoryDisplayed", true);
         doNothing().when(categoryService).addCategory(createCategoryRequestDto);
 
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(authPath)
                         .content(objectMapper.writeValueAsString(createCategoryRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -99,7 +100,7 @@ class CategoryControllerTest {
         ReflectionTestUtils.setField(createCategoryRequestDto, "categoryDisplayed", true);
         doNothing().when(categoryService).addCategory(createCategoryRequestDto);
 
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(authPath)
                         .content(objectMapper.writeValueAsString(createCategoryRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -125,7 +126,7 @@ class CategoryControllerTest {
                 CreateCategoryRequestDto.class);
         doNothing().when(categoryService).addCategory(createCategoryRequestDto);
 
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(authPath)
                         .content(objectMapper.writeValueAsString(createCategoryRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -157,7 +158,7 @@ class CategoryControllerTest {
         ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryDisplayed", true);
         doNothing().when(categoryService).modifyCategory(modifyCategoryRequestDto);
 
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(authPath)
                         .content(objectMapper.writeValueAsString(modifyCategoryRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -181,7 +182,7 @@ class CategoryControllerTest {
         ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryDisplayed", true);
         doNothing().when(categoryService).modifyCategory(modifyCategoryRequestDto);
 
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(authPath)
                         .content(objectMapper.writeValueAsString(modifyCategoryRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -205,7 +206,7 @@ class CategoryControllerTest {
         ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryDisplayed", true);
         doNothing().when(categoryService).modifyCategory(modifyCategoryRequestDto);
 
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(authPath)
                         .content(objectMapper.writeValueAsString(modifyCategoryRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -233,7 +234,7 @@ class CategoryControllerTest {
 
         doNothing().when(categoryService).modifyCategory(modifyCategoryRequestDto);
 
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(authPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(modifyCategoryRequestDto)))
                 .andExpect(status().is2xxSuccessful())
