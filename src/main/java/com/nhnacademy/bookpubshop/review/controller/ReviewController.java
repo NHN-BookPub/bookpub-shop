@@ -25,11 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Some description here.
+ * 상품평을 다루기 위한 컨트롤러입니다.
  *
  * @author : 정유진
  * @since : 1.0
- **/
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/reviews")
@@ -67,7 +67,7 @@ public class ReviewController {
     }
 
     /**
-     * 회원에 따른 상품평 조회를 위한 메서드입니다.
+     * 회원이 작성한 상품평 조회를 위한 메서드입니다.
      * 성공 시 200 반환.
      *
      * @param pageable 페이지 정보
@@ -83,6 +83,14 @@ public class ReviewController {
                 .body(new PageResponse<>(reviews));
     }
 
+    /**
+     * 회원이 리뷰를 작성할 수 있는 상품정보들을 조회하기 위한 메서드입니다.
+     * 성공 시 200 반환.
+     *
+     * @param pageable 페이지 정보
+     * @param memberNo 회원 번호
+     * @return 상품정보들이 담긴 Dto 페이지 정보
+     */
     @GetMapping("/member/{memberNo}/writable")
     public ResponseEntity<PageResponse<GetProductSimpleResponseDto>> memberWritableReviewList(Pageable pageable, @PathVariable Long memberNo) {
         Page<GetProductSimpleResponseDto> reviews = reviewService.getWritableMemberReviews(pageable, memberNo);
@@ -92,6 +100,14 @@ public class ReviewController {
                 .body(new PageResponse<>(reviews));
     }
 
+    /**
+     * 상품에 대한 리뷰 정보들을 조회하기 위한 메서드입니다.
+     * 상품의 리뷰평점, 리뷰갯수 등을 조회할 수 있습니다.
+     * 성공 시 200 반환.
+     *
+     * @param productNo 상품 번호
+     * @return 상품에 대한 리뷰 정보들이 담긴 Dto
+     */
     @GetMapping("/info/product/{productNo}")
     public ResponseEntity<GetProductReviewInfoResponseDto> reviewInfoProduct(@PathVariable("productNo") Long productNo) {
         GetProductReviewInfoResponseDto reviewInfo = reviewService.getReviewInfo(productNo);
@@ -134,6 +150,13 @@ public class ReviewController {
                 .build();
     }
 
+    /**
+     * 상품평 수정 시 이미지 삭제를 위한 메서드입니다.
+     * 성공 시 201 반환.
+     *
+     * @param reviewNo 상품평 번호
+     * @return the response entity
+     */
     @PutMapping("/{reviewNo}/file")
     public ResponseEntity<Void> reviewDeleteFile(@PathVariable("reviewNo") Long reviewNo) {
         reviewService.deleteReviewImage(reviewNo);
@@ -141,6 +164,14 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * 상품평 삭제를 위한 메서드입니다.
+     * soft delete 를 위한 상태값 변경을 수행합니다.
+     * 성공 시 201 반환.
+     *
+     * @param reviewNo 삭제할 상품평 번호
+     * @return the response entity
+     */
     @PutMapping("/{reviewNo}")
     public ResponseEntity<Void> reviewDelete(@PathVariable("reviewNo") Long reviewNo) {
         reviewService.deleteReview(reviewNo);

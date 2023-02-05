@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Some description here.
+ * 상품의 상품평 정보들을 조회하기 위한 Dto.
  *
  * @author : 정유진
  * @since : 1.0

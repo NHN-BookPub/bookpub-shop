@@ -19,6 +19,7 @@ import com.nhnacademy.bookpubshop.review.exception.ReviewNotFoundException;
 import com.nhnacademy.bookpubshop.review.repository.ReviewRepository;
 import com.nhnacademy.bookpubshop.review.service.ReviewService;
 import com.nhnacademy.bookpubshop.reviewpolicy.repository.ReviewPolicyRepository;
+import com.nhnacademy.bookpubshop.state.FileCategory;
 import java.io.IOException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Some description here.
+ * 상품평 서비스 구현체입니다.
  *
  * @author : 정유진
  * @since : 1.0
@@ -44,11 +45,19 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewPolicyRepository reviewPolicyRepository;
     private final FileManagement fileManagement;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<GetProductReviewResponseDto> getProductReviews(Pageable pageable, Long productNo) {
         return reviewRepository.findProductReviews(pageable, productNo);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws ReviewNotFoundException 상품평이 없을 때 발생하는 exception
+     */
     @Override
     public GetMemberReviewResponseDto getReview(Long reviewNo) {
 
@@ -57,23 +66,41 @@ public class ReviewServiceImpl implements ReviewService {
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<GetMemberReviewResponseDto> getMemberReviews(Pageable pageable, Long memberNo) {
 
         return reviewRepository.findMemberReviews(pageable, memberNo);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Page<GetProductSimpleResponseDto> getWritableMemberReviews(Pageable pageable, Long memberNo) {
+    public Page<GetProductSimpleResponseDto> getWritableMemberReviews(
+            Pageable pageable, Long memberNo) {
         return reviewRepository.findWritableMemberReviews(pageable, memberNo);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws ProductNotFoundException 상품이 없을 때 발생하는 exception
+     */
     @Override
     public GetProductReviewInfoResponseDto getReviewInfo(Long productNo) {
         return reviewRepository.findReviewInfoByProductNo(productNo).orElseThrow(
                 ProductNotFoundException::new);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws ProductNotFoundException 상품이 없을 때 발생하는 exception
+     * @throws MemberNotFoundException  회원이 없을 때 발생하는 exception
+     */
     @Transactional
     @Override
     public void createReview(CreateReviewRequestDto createRequestDto, MultipartFile image) {
@@ -93,15 +120,23 @@ public class ReviewServiceImpl implements ReviewService {
 
         try {
             review.setFile(fileManagement.saveFile(null, null, null,
-                    review, null, image, "review", "review"));
+                    review, null, image,
+                    FileCategory.REVIEW.getCategory(), FileCategory.REVIEW.getPath()));
         } catch (IOException e) {
             throw new FileNotFoundException();
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws ReviewNotFoundException 상품평이 없을 때 발생하는 Exception
+     * @throws FileNotFoundException   파일이 없을 때 발생하는 Exception
+     */
     @Override
     @Transactional
-    public void modifyReview(Long reviewNo, ModifyReviewRequestDto modifyRequestDto, MultipartFile image) {
+    public void modifyReview(Long reviewNo, ModifyReviewRequestDto modifyRequestDto,
+                             MultipartFile image) {
         Review review = reviewRepository.findById(reviewNo)
                 .orElseThrow(() -> new ReviewNotFoundException(reviewNo));
 
@@ -118,6 +153,9 @@ public class ReviewServiceImpl implements ReviewService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public void deleteReviewImage(Long reviewNo) {
@@ -135,6 +173,9 @@ public class ReviewServiceImpl implements ReviewService {
         review.deleteFile();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public void deleteReview(Long reviewNo) {

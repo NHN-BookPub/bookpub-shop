@@ -34,7 +34,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * Some description here.
+ * 상품평 정책 컨트롤러 테스트입니다.
  *
  * @author : 정유진
  * @since : 1.0
@@ -133,82 +133,105 @@ class ReviewPolicyControllerTest {
         verify(reviewPolicyService, times(0)).createReviewPolicy(any());
     }
 
-//    @Test
-//    @DisplayName("상품평정책 수정 성공 테스트")
-//    void reviewPolicyModifyPoint_Success() throws Exception {
-//        ReflectionTestUtils.setField(modifyRequestDto, "sendPoint", 100L);
-//
-//        doNothing().when(reviewPolicyService).modifyReviewPolicy(modifyRequestDto);
-//
-//        mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{policyNo}/point", 1)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(modifyRequestDto)))
-//                .andExpect(status().is2xxSuccessful())
-//                .andDo(document("review-policy-modify-point",
-//                        preprocessRequest(prettyPrint()),
-//                        pathParameters(
-//                                parameterWithName("policyNo").description("수정할 상품평정책 번호입니다.")
-//                        ),
-//                        requestFields(
-//                                fieldWithPath("sendPoint").description("생성할 상품평정책의 지급 포인트입니다.")
-//                        )));
-//
-//        verify(reviewPolicyService, times(1)).modifyReviewPolicy(any());
-//    }
+    @Test
+    @DisplayName("상품평정책 수정 성공 테스트")
+    void reviewPolicyModifyPoint_Success() throws Exception {
+        ReflectionTestUtils.setField(modifyRequestDto, "sendPoint", 100L);
+        ReflectionTestUtils.setField(modifyRequestDto, "policyNo", 1);
 
-//    @Test
-//    @DisplayName("상품평정책 수정 실패 테스트_sendPoint가 null일때")
-//    void reviewPolicyModifyPoint_Fail_PointIsNull() throws Exception {
-//        ReflectionTestUtils.setField(modifyRequestDto, "sendPoint", null);
-//
-//        doNothing().when(reviewPolicyService).modifyReviewPolicy(modifyRequestDto);
-//
-//        mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{policyNo}", 1L)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(modifyRequestDto)))
-//                .andExpect(status().is4xxClientError())
-//                .andDo(document("review-policy-modify-point-failNull",
-//                        preprocessRequest(prettyPrint()),
-//                        preprocessResponse(prettyPrint()),
-//                        pathParameters(
-//                                parameterWithName("policyNo").description("수정할 상품평정책 번호입니다.")
-//                        ),
-//                        requestFields(
-//                                fieldWithPath("sendPoint").description("생성할 상품평정책의 지급 포인트입니다.")
-//                        ),
-//                        responseFields(
-//                                fieldWithPath("[].message").description("수정할 리뷰지급포인트를 입력하세요")
-//                        )));
-//
-//        verify(reviewPolicyService, times(0)).modifyReviewPolicy(any());
-//    }
+        doNothing().when(reviewPolicyService).modifyReviewPolicy(modifyRequestDto);
 
-//    @Test
-//    @DisplayName("상품평정책 수정 실패 테스트_sendPoint가 음수일때")
-//    void reviewPolicyModifyPoint_Fail_PointIsNegative() throws Exception {
-//        ReflectionTestUtils.setField(modifyRequestDto, "sendPoint", -100L);
-//
-//        doNothing().when(reviewPolicyService).modifyReviewPolicy(modifyRequestDto);
-//
-//        mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{policyNo}/point", 1)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(modifyRequestDto)))
-//                .andExpect(status().is4xxClientError())
-//                .andDo(document("review-policy-modify-point-failNegative",
-//                        preprocessRequest(prettyPrint()),
-//                        preprocessResponse(prettyPrint()),
-//                        pathParameters(
-//                                parameterWithName("policyNo").description("수정할 상품평정책 번호입니다.")
-//                        ),
-//                        requestFields(
-//                                fieldWithPath("sendPoint").description("생성할 상품평정책의 지급 포인트입니다.")
-//                        ),
-//                        responseFields(
-//                                fieldWithPath("[].message").description("지급포인트는 0원 이상이어야합니다")
-//                        )));
-//
-//        verify(reviewPolicyService, times(0)).modifyReviewPolicy(any());
-//    }
+        mockMvc.perform(RestDocumentationRequestBuilders.put(path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(modifyRequestDto)))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(document("review-policy-modify-point",
+                        preprocessRequest(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("policyNo").description("수정할 상품평정책 번호입니다."),
+                                fieldWithPath("sendPoint").description("생성할 상품평정책의 지급 포인트입니다.")
+                        )));
+
+        verify(reviewPolicyService, times(1)).modifyReviewPolicy(any());
+    }
+
+    @Test
+    @DisplayName("상품평정책 수정 실패 테스트_policyNo가 null일때")
+    void reviewPolicyModifyPoint_Fail_PolicyNoIsNull() throws Exception {
+        ReflectionTestUtils.setField(modifyRequestDto, "sendPoint", 100L);
+        ReflectionTestUtils.setField(modifyRequestDto, "policyNo", null);
+
+        doNothing().when(reviewPolicyService).modifyReviewPolicy(modifyRequestDto);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put(path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(modifyRequestDto)))
+                .andExpect(status().is4xxClientError())
+                .andDo(document("review-policy-modify-policyNo-failNull",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("policyNo").description("수정할 상품평정책 번호입니다."),
+                                fieldWithPath("sendPoint").description("생성할 상품평정책의 지급 포인트입니다.")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("수정할 상품평 정책 번호를 입력하세요")
+                        )));
+
+        verify(reviewPolicyService, times(0)).modifyReviewPolicy(any());
+    }
+
+    @Test
+    @DisplayName("상품평정책 수정 실패 테스트_sendPoint가 null일때")
+    void reviewPolicyModifyPoint_Fail_PointIsNull() throws Exception {
+        ReflectionTestUtils.setField(modifyRequestDto, "sendPoint", null);
+        ReflectionTestUtils.setField(modifyRequestDto, "policyNo", 1);
+
+        doNothing().when(reviewPolicyService).modifyReviewPolicy(modifyRequestDto);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put(path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(modifyRequestDto)))
+                .andExpect(status().is4xxClientError())
+                .andDo(document("review-policy-modify-point-failNull",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("policyNo").description("수정할 상품평정책 번호입니다."),
+                                fieldWithPath("sendPoint").description("생성할 상품평정책의 지급 포인트입니다.")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("수정할 리뷰지급포인트를 입력하세요")
+                        )));
+
+        verify(reviewPolicyService, times(0)).modifyReviewPolicy(any());
+    }
+
+    @Test
+    @DisplayName("상품평정책 수정 실패 테스트_sendPoint가 음수일때")
+    void reviewPolicyModifyPoint_Fail_PointIsNegative() throws Exception {
+        ReflectionTestUtils.setField(modifyRequestDto, "sendPoint", -100L);
+        ReflectionTestUtils.setField(modifyRequestDto, "policyNo", 1);
+
+        doNothing().when(reviewPolicyService).modifyReviewPolicy(modifyRequestDto);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put(path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(modifyRequestDto)))
+                .andExpect(status().is4xxClientError())
+                .andDo(document("review-policy-modify-point-failNegative",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("policyNo").description("수정할 상품평정책 번호입니다."),
+                                fieldWithPath("sendPoint").description("생성할 상품평정책의 지급 포인트입니다.")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("지급포인트는 0원 이상이어야합니다")
+                        )));
+
+        verify(reviewPolicyService, times(0)).modifyReviewPolicy(any());
+    }
 
     @Test
     @DisplayName("상품평정책 현재 사용 여부 수정 성공 테스트")

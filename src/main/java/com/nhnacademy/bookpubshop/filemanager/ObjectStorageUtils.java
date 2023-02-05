@@ -1,6 +1,5 @@
 package com.nhnacademy.bookpubshop.filemanager;
 
-import com.nhnacademy.bookpubshop.config.KeyConfig;
 import com.nhnacademy.bookpubshop.config.ObjectStorageProperties;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
@@ -55,7 +54,6 @@ public class ObjectStorageUtils implements FileManagement {
     private static final String X_AUTH_TOKEN = "X-Auth-Token";
     private final RestTemplate restTemplate = new RestTemplate();
     private final FileRepository fileRepository;
-    private final KeyConfig keyConfig;
 
     private String requestToken() {
         String identityUrl = properties.getIdentity() + "/tokens";
@@ -65,16 +63,20 @@ public class ObjectStorageUtils implements FileManagement {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            TokenRequest tokenRequest = new TokenRequest(properties.getTenantId(), properties.getUsername(), properties.getPassword());
+            TokenRequest tokenRequest = new TokenRequest(properties.getTenantId(),
+                    properties.getUsername(), properties.getPassword());
 
             HttpEntity<TokenRequest> httpEntity
                     = new HttpEntity<>(tokenRequest, headers);
 
             ResponseEntity<TokenResponse> response
-                    = this.restTemplate.exchange(identityUrl, HttpMethod.POST, httpEntity, TokenResponse.class);
+                    = this.restTemplate.exchange(
+                    identityUrl, HttpMethod.POST, httpEntity, TokenResponse.class);
 
-            tokenId = Objects.requireNonNull(response.getBody()).getAccess().getToken().getId();
-            expires = Objects.requireNonNull(response.getBody()).getAccess().getToken().getExpires();
+            tokenId = Objects.requireNonNull(
+                    response.getBody()).getAccess().getToken().getId();
+            expires = Objects.requireNonNull(
+                    response.getBody()).getAccess().getToken().getExpires();
         }
 
         return tokenId;
@@ -118,7 +120,8 @@ public class ObjectStorageUtils implements FileManagement {
         String fileExtension = originalFileName.substring(posImage);
         String nameSaved = UUID.randomUUID().toString();
 
-        String url = properties.getUrl() + "/" + properties.getContainerName() + "/" + path + "/" + nameSaved + fileExtension;
+        String url = properties.getUrl() + "/" + properties.getContainerName() + "/"
+                + path + "/" + nameSaved + fileExtension;
 
         InputStream inputStream = new ByteArrayInputStream(file.getBytes());
 
@@ -136,7 +139,8 @@ public class ObjectStorageUtils implements FileManagement {
         RestTemplate restTemplateFactory = new RestTemplate(requestFactory);
 
         HttpMessageConverterExtractor<String> responseExtractor
-                = new HttpMessageConverterExtractor<>(String.class, restTemplateFactory.getMessageConverters());
+                = new HttpMessageConverterExtractor<>(
+                String.class, restTemplateFactory.getMessageConverters());
 
         // API 호출
         restTemplateFactory.execute(url, HttpMethod.PUT, requestCallback, responseExtractor);

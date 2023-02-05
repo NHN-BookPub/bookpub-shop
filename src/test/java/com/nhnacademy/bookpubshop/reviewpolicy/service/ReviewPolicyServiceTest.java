@@ -66,39 +66,39 @@ class ReviewPolicyServiceTest {
         assertThat(result.getSendPoint()).isEqualTo(createDto.getSendPoint());
     }
 
-//    @Test
-//    @DisplayName("상품평 정책 지급포인트 수정 성공 테스트")
-//    void modifyPointReviewPolicyTest_Success() {
-//        // given
-//        ReflectionTestUtils.setField(modifyDto, "sendPoint", 100L);
-//        Integer policyNo = 1;
-//
-//        // when
-//        when(reviewPolicyRepository.findById(anyInt())).thenReturn(Optional.of(reviewPolicy));
-//
-//        // then
-//        reviewPolicyService.modifyReviewPolicy(modifyDto);
-//
-//        verify(reviewPolicyRepository, times(1)).findById(anyInt());
-//    }
+    @Test
+    @DisplayName("상품평 정책 지급포인트 수정 성공 테스트")
+    void modifyPointReviewPolicyTest_Success() {
+        // given
+        ReflectionTestUtils.setField(modifyDto, "sendPoint", 100L);
+        ReflectionTestUtils.setField(modifyDto, "policyNo", 1);
 
-//    @Test
-//    @DisplayName("상품평 정책 지급포인트 수정 실패 테스트_상품평정책이 없는 경우")
-//    void modifyPointReviewPolicyTest_Fail_PolicyNo() {
-//        // given
-//        ReflectionTestUtils.setField(modifyDto, "sendPoint", 100L);
-//        Integer policyNo = 1;
-//
-//        // when
-//        when(reviewPolicyRepository.findById(anyInt())).thenReturn(Optional.empty());
-//
-//        // then
-//        assertThatThrownBy(() -> reviewPolicyService.modifyReviewPolicy(modifyDto))
-//                .isInstanceOf(ReviewPolicyNotFoundException.class)
-//                .hasMessageContaining(ReviewPolicyNotFoundException.MESSAGE);
-//
-//        verify(reviewPolicyRepository, times(1)).findById(anyInt());
-//    }
+        // when
+        when(reviewPolicyRepository.findById(anyInt())).thenReturn(Optional.of(reviewPolicy));
+
+        // then
+        reviewPolicyService.modifyReviewPolicy(modifyDto);
+
+        verify(reviewPolicyRepository, times(1)).findById(anyInt());
+    }
+
+    @Test
+    @DisplayName("상품평 정책 지급포인트 수정 실패 테스트_상품평정책이 없는 경우")
+    void modifyPointReviewPolicyTest_Fail_PolicyNo() {
+        // given
+        ReflectionTestUtils.setField(modifyDto, "sendPoint", 100L);
+        ReflectionTestUtils.setField(modifyDto, "policyNo", 1);
+
+        // when
+        when(reviewPolicyRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> reviewPolicyService.modifyReviewPolicy(modifyDto))
+                .isInstanceOf(ReviewPolicyNotFoundException.class)
+                .hasMessageContaining(ReviewPolicyNotFoundException.MESSAGE);
+
+        verify(reviewPolicyRepository, times(1)).findById(anyInt());
+    }
 
     @Test
     @DisplayName("상품평 정책 사용여부 수정 성공 테스트")
@@ -120,9 +120,6 @@ class ReviewPolicyServiceTest {
     @Test
     @DisplayName("상품평 정책 사용여부 수정 실패 테스트_상품평정책이 없는 경우")
     void modifyUsedReviewPolicyTest_Fail_PolicyNo() {
-        // given
-        Integer policyNo = 1;
-
         // when
         when(reviewPolicyRepository.findByPolicyUsedIsTrue()).thenReturn(null);
         when(reviewPolicyRepository.findById(anyInt())).thenReturn(Optional.empty());
