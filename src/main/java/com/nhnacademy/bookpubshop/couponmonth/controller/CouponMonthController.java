@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.couponmonth.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.couponmonth.dto.request.CreateCouponMonthRequestDto;
 import com.nhnacademy.bookpubshop.couponmonth.dto.request.ModifyCouponMonthRequestDto;
 import com.nhnacademy.bookpubshop.couponmonth.dto.response.GetCouponMonthResponseDto;
@@ -28,8 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api"
-)
+@RequestMapping
 public class CouponMonthController {
     private final CouponMonthService couponMonthService;
 
@@ -39,7 +39,8 @@ public class CouponMonthController {
      * @param request 등록할 정보를 담은 Dto
      * @return 성공 경우 201
      */
-    @PostMapping("/coupon-months")
+    @AdminAuth
+    @PostMapping("/token/coupon-months")
     public ResponseEntity<Void> couponMonthAdd(
             @Valid @RequestBody CreateCouponMonthRequestDto request) {
         couponMonthService.createCouponMonth(request);
@@ -53,7 +54,8 @@ public class CouponMonthController {
      * @param request 수정할 정보를 담은 Dto
      * @return 성공 경우 201
      */
-    @PutMapping("/coupon-months")
+    @AdminAuth
+    @PutMapping("/token/coupon-months")
     public ResponseEntity<Void> couponMonthModify(
             @Valid @RequestBody ModifyCouponMonthRequestDto request) {
         couponMonthService.modifyCouponMonth(request);
@@ -66,7 +68,8 @@ public class CouponMonthController {
      *
      * @return 성공 경우 200
      */
-    @DeleteMapping("/coupon-months/{monthNo}")
+    @AdminAuth
+    @DeleteMapping("/token/coupon-months/{monthNo}")
     public ResponseEntity<Void> couponMonthDelete(@PathVariable("monthNo") Long monthNo) {
         couponMonthService.deleteCouponMonth(monthNo);
 
@@ -79,7 +82,7 @@ public class CouponMonthController {
      * @return 성공 경우 200, 이달의쿠폰 리스트 응답
      * @throws IOException 파일 입출력 에러
      */
-    @GetMapping("/coupon-months")
+    @GetMapping("/api/coupon-months")
     public ResponseEntity<List<GetCouponMonthResponseDto>> couponMonthList() throws IOException {
 
         return ResponseEntity.status(HttpStatus.OK)

@@ -1,5 +1,7 @@
 package com.nhnacademy.bookpubshop.coupon.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
+import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
@@ -31,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping
 public class CouponController {
 
     private final CouponService couponService;
@@ -42,7 +44,8 @@ public class CouponController {
      *
      * @return 성공 경우 200, 태그 페이지 응답
      */
-    @GetMapping("/coupons")
+    @AdminAuth
+    @GetMapping("/token/coupons")
     public ResponseEntity<PageResponse<GetCouponResponseDto>> couponList(Pageable pageable,
                                                                          @RequestParam(value = "searchKey", required = false) String searchKey,
                                                                          @RequestParam(value = "search", required = false) String search) throws IOException {
@@ -59,7 +62,8 @@ public class CouponController {
      * @param couponNo 쿠폰을 조회하기 위한 쿠폰번호
      * @return 성공 경우 200, 태그 정보 응답
      */
-    @GetMapping("/coupons/{couponNo}")
+    @MemberAuth
+    @GetMapping("/token/coupons/{couponNo}")
     public ResponseEntity<GetCouponResponseDto> couponDetail(
             @PathVariable("couponNo") Long couponNo) {
 
@@ -74,7 +78,8 @@ public class CouponController {
      * @param request 쿠폰 생성을 위한 쿠폰 정보 Dto
      * @return 성공 경우 201 응답
      */
-    @PostMapping("/coupons")
+    @AdminAuth
+    @PostMapping("/token/coupons")
     public ResponseEntity<Void> couponAdd(@Valid @RequestBody CreateCouponRequestDto request) {
         couponService.createCoupon(request);
 
@@ -88,7 +93,8 @@ public class CouponController {
      * @param couponNo 수정할 쿠폰 번호
      * @return 성공 경우 201 응답
      */
-    @PutMapping("/coupons/{couponNo}/used")
+    @AdminAuth
+    @PutMapping("/token/coupons/{couponNo}/used")
     public ResponseEntity<Void> couponModifyUsed(@PathVariable("couponNo") Long couponNo) {
         couponService.modifyCouponUsed(couponNo);
 
@@ -103,7 +109,7 @@ public class CouponController {
      * @param productNo 상품 번호 리스트
      * @return 사용할 수 있는 쿠폰 리스트 반환
      */
-    @GetMapping("/coupons/members/{memberNo}/order")
+    @GetMapping("/api/coupons/members/{memberNo}/order")
     public ResponseEntity<List<GetOrderCouponResponseDto>> orderCouponList(
             @PathVariable("memberNo") Long memberNo,
             @RequestParam("productNo") Long productNo) {
@@ -119,7 +125,8 @@ public class CouponController {
      * @param pageable 페이지
      * @return 사용할 수 있는 쿠폰 리스트 반환
      */
-    @GetMapping("/coupons/members/{memberNo}/positive")
+    @MemberAuth
+    @GetMapping("/token/coupons/members/{memberNo}/positive")
     public ResponseEntity<PageResponse<GetCouponResponseDto>> memberPositiveCouponList(
             @PathVariable("memberNo") Long memberNo, Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -134,7 +141,8 @@ public class CouponController {
      * @param pageable 페이지
      * @return 사용불가능한 쿠폰 리스트 반환
      */
-    @GetMapping("/coupons/members/{memberNo}/negative")
+    @MemberAuth
+    @GetMapping("/token/coupons/members/{memberNo}/negative")
     public ResponseEntity<PageResponse<GetCouponResponseDto>> memberNegativeCouponList(
             @PathVariable("memberNo") Long memberNo, Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -149,9 +157,10 @@ public class CouponController {
      * @param tierCoupons 등급 쿠폰 리스트
      * @return 발급 유무
      */
-    @GetMapping("/coupons/{memberNo}/tier-coupons")
+    @MemberAuth
+    @GetMapping("/token/coupons/{memberNo}/tier-coupons")
     public ResponseEntity<Boolean> existsCouponListByMemberNo(@PathVariable Long memberNo,
-            @RequestParam List<Long> tierCoupons) {
+                                                              @RequestParam List<Long> tierCoupons) {
 
         boolean check = couponService.existsCouponsByMemberNo(memberNo, tierCoupons);
 
@@ -166,9 +175,10 @@ public class CouponController {
      * @param tierCoupons 등급 쿠폰 리스트
      * @return 발급 결과
      */
-    @PostMapping("/coupons/{memberNo}/tier-coupons")
+    @AdminAuth
+    @PostMapping("/token/coupons/{memberNo}/tier-coupons")
     public ResponseEntity<Void> issueTierCoupons(@PathVariable Long memberNo,
-            @RequestParam List<Long> tierCoupons) {
+                                                 @RequestParam List<Long> tierCoupons) {
         couponService.issueTierCouponsByMemberNo(memberNo, tierCoupons);
 
         return ResponseEntity.status(HttpStatus.CREATED)

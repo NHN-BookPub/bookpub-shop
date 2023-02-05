@@ -254,8 +254,8 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
         return Optional.of(from(review)
                 .select(Projections.constructor(
                         GetProductReviewInfoResponseDto.class,
-                        review.count().as("reviewCount"),
-                        review.reviewStar.avg().longValue().as("productStar")
+                        review.count().coalesce(0L).as("reviewCount"),
+                        review.reviewStar.avg().longValue().coalesce(0L).as("productStar")
                 ))
                 .where(review.product.productNo.eq(productNo)
                         .and(review.reviewDeleted.isFalse()))
