@@ -4,8 +4,10 @@ import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.paymentstatecode.entity.PaymentStateCode;
 import com.nhnacademy.bookpubshop.paymenttypestatecode.entity.PaymentTypeStateCode;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,7 +24,7 @@ import lombok.NoArgsConstructor;
 /**
  * 결제(payment) 테이블.
  *
- * @author : 김서현
+ * @author : 김서현, 임태원
  * @since : 1.0
  **/
 @Getter
@@ -31,7 +33,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "payment")
 public class Payment extends BaseCreateTimeEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_number")
@@ -43,13 +44,18 @@ public class Payment extends BaseCreateTimeEntity {
     private BookpubOrder order;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_state_code_number")
     private PaymentStateCode paymentStateCode;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_type_state_code_number")
     private PaymentTypeStateCode paymentTypeStateCode;
 
+    @JoinColumn(name = "approved_at")
+    private LocalDateTime approvedAt;
+
+    @JoinColumn(name = "payment_failure")
+    private String paymentFailure;
 }
