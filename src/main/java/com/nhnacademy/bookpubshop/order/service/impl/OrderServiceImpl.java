@@ -117,6 +117,7 @@ public class OrderServiceImpl implements OrderService {
                 .orderRequest(request.getOrderRequest())
                 .couponDiscount(request.getCouponAmount())
                 .orderId(orderId)
+                .orderName(request.getOrderName())
                 .build());
 
         createOrderProduct(request, order, request.getProductCoupon());
