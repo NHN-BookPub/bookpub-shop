@@ -30,7 +30,7 @@ public class ProductTypeStateCodeController {
      *
      * @return 성공시 200, 모든 유형코드가 담긴 리스트를 반환합니다.
      */
-    @GetMapping("/admin/state/productType")
+    @GetMapping("/token/state/productType")
     @AdminAuth
     public ResponseEntity<List<GetProductTypeStateCodeResponseDto>> typeCodeList() {
         return ResponseEntity.status(HttpStatus.OK)
@@ -71,7 +71,7 @@ public class ProductTypeStateCodeController {
      * @param used   사용여부입니다.
      * @return 성공시 201, 객체를 반환합니다.
      */
-    @PutMapping("/token/state/productType{codeNo}")
+    @PutMapping("/token/state/productType/{codeNo}")
     @AdminAuth
     public ResponseEntity<Void> typeCodeModifyUsed(
             @PathVariable Integer codeNo,

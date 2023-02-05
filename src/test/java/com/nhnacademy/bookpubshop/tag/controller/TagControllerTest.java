@@ -108,7 +108,7 @@ class TagControllerTest {
                 .thenReturn(List.of(getTagResponseDto));
 
         // then
-        mockMvc.perform(get(tokenPath)
+        mockMvc.perform(get(path)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].tagNo").value(getTagResponseDto.getTagNo()))

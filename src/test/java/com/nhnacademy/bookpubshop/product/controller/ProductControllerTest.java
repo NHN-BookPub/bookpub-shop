@@ -1107,7 +1107,7 @@ class ProductControllerTest {
                 .thenReturn(page);
 
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.get(url + "-categories/{categoryNo}", 4)
+        mockMvc.perform(RestDocumentationRequestBuilders.get(url +"/product/categories/{categoryNo}", 4)
                         .param("page", mapper.writeValueAsString(pageable.getPageNumber()))
                         .param("size", mapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON))

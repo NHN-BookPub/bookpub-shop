@@ -275,7 +275,7 @@ class TierControllerTest {
         when(tierService.getTierName(anyString()))
                 .thenReturn(true);
 
-        mvc.perform(RestDocumentationRequestBuilders.get(path + "/check-tierName?tierName=hi"))
+        mvc.perform(RestDocumentationRequestBuilders.get(tokenPath + "/check-tierName?tierName=hi"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("get-tier-name",

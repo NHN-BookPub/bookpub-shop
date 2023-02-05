@@ -534,7 +534,7 @@ class MemberControllerTest {
         when(memberService.getMemberDetails(1L))
                 .thenReturn(dto);
 
-        mvc.perform(RestDocumentationRequestBuilders.get("/token/members/{memberNo}", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.get("/api/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.memberNo").value(objectMapper.writeValueAsString(dto.getMemberNo())))

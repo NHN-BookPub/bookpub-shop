@@ -3,14 +3,19 @@ package com.nhnacademy.bookpubshop.product.relationship.controller;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductTypeStateCodeResponseDto;
@@ -52,10 +57,13 @@ class ProductTypeStateCodeControllerTest {
     ProductTypeStateCode productTypeStateCode;
     GetProductTypeStateCodeResponseDto responseDto;
     String url;
+    String tokenUrl;
 
     @BeforeEach
     void setUp() {
         url = "/api/state/productType";
+        tokenUrl = "/token/state/productType";
+
         productTypeStateCode = ProductTypeStateCodeDummy.dummy();
 
         responseDto = new GetProductTypeStateCodeResponseDto(
@@ -74,7 +82,7 @@ class ProductTypeStateCodeControllerTest {
         when(productTypeStateCodeService.getAllTypeStateCodes())
                 .thenReturn(responses);
 
-        mockMvc.perform(get(url)
+        mockMvc.perform(get(tokenUrl)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].codeNo")
@@ -156,7 +164,7 @@ class ProductTypeStateCodeControllerTest {
         when(productTypeStateCodeService.setUsedTypeCodeById(productTypeStateCode.getCodeNo(), productTypeStateCode.isCodeUsed()))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(url + "/{codeNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(tokenUrl + "/{codeNo}", 1)
                         .param("used", "true")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
