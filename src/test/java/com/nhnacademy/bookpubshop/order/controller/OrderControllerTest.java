@@ -448,7 +448,7 @@ class OrderControllerTest {
         when(orderService.getOrderDetailById(anyLong()))
                 .thenReturn(detailDto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get(tokenUrl + "/{orderNo}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.get(url + "/{orderNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderState").value(order.getOrderStateCode().getCodeName()))
