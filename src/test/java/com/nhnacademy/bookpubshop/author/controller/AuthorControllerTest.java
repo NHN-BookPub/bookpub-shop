@@ -59,6 +59,7 @@ class AuthorControllerTest {
     GetAuthorResponseDto responseDto;
 
     String path = "/api/authors";
+    String authPath = "/token/authors";
 
     @BeforeEach
     void setUp() {
@@ -78,7 +79,7 @@ class AuthorControllerTest {
         ArgumentCaptor<CreateAuthorRequestDto> captor =
                 ArgumentCaptor.forClass(CreateAuthorRequestDto.class);
 
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(authPath)
                         .content(objectMapper.writeValueAsString(requestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -102,7 +103,7 @@ class AuthorControllerTest {
 
         doNothing().when(authorService).createAuthor(dto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{authorNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authPath + "/{authorNo}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -141,7 +142,7 @@ class AuthorControllerTest {
 
         doNothing().when(authorService).createAuthor(dto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{authorNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authPath + "/{authorNo}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -177,7 +178,7 @@ class AuthorControllerTest {
 
         doNothing().when(authorService).modifyAuthor(1, dto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{authorNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authPath + "/{authorNo}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
@@ -205,7 +206,7 @@ class AuthorControllerTest {
 
         doNothing().when(authorService).modifyAuthor(1, dto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{authorNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authPath + "/{authorNo}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -245,7 +246,7 @@ class AuthorControllerTest {
 
         doNothing().when(authorService).modifyAuthor(1, dto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{authorNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authPath + "/{authorNo}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -285,7 +286,7 @@ class AuthorControllerTest {
 
         doNothing().when(authorService).modifyAuthor(1, dto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{authorNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authPath + "/{authorNo}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -322,7 +323,7 @@ class AuthorControllerTest {
         when(authorService.getAuthorsByPage(pageable))
                 .thenReturn(page);
 
-        mockMvc.perform(get(path)
+        mockMvc.perform(get(authPath)
                         .param("page", objectMapper.writeValueAsString(pageable.getPageNumber()))
                         .param("size", objectMapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON)

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * @since : 1.0
  **/
 public class OrderDummy {
-    public static BookpubOrder dummy(Member member, PricePolicy pricePolicy, PricePolicy packagePricePolicy, OrderStateCode orderStateCode){
+    public static BookpubOrder dummy(Member member, PricePolicy pricePolicy, PricePolicy packagePricePolicy, OrderStateCode orderStateCode) {
         return new BookpubOrder(
                 null,
                 member,
@@ -32,12 +32,14 @@ public class OrderDummy {
                 null,
                 1000L,
                 "IT",
-                "광주 동구 조선대길"
+                "광주 동구 조선대길",
+                "dasdljzxlkj",
+                "asdasdasd"
         );
 
     }
 
-    public static BookpubOrder dummy2(Member member, PricePolicy pricePolicy, PricePolicy packagePricePolicy, OrderStateCode orderStateCode){
+    public static BookpubOrder dummy2(Member member, PricePolicy pricePolicy, PricePolicy packagePricePolicy, OrderStateCode orderStateCode) {
         return new BookpubOrder(
                 1L,
                 member,
@@ -56,7 +58,9 @@ public class OrderDummy {
                 null,
                 1000L,
                 "IT",
-                "광주 동구 조선대길"
+                "광주 동구 조선대길",
+                "dalskdjzx",
+                "orderName"
         );
 
     }

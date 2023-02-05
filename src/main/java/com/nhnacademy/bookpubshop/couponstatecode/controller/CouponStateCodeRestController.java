@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.couponstatecode.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.couponstatecode.dto.GetCouponStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.couponstatecode.service.CouponStateCodeService;
 import java.util.List;
@@ -9,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @since : 1.0
  **/
 @RestController
-@RequestMapping("/api")
 @RequiredArgsConstructor
 public class CouponStateCodeRestController {
     private final CouponStateCodeService couponStateCodeService;
@@ -30,7 +29,8 @@ public class CouponStateCodeRestController {
      * @param codeNo 쿠폰상태코드 번호
      * @return 쿠폰상태코드 적용타겟을 ResponseEntity 에 담아 반환합니다
      */
-    @GetMapping("/coupon-state-codes/{codeNo}")
+    @AdminAuth
+    @GetMapping("/token/coupon-state-codes/{codeNo}")
     public ResponseEntity<GetCouponStateCodeResponseDto> couponStateCodeDetail(
             @PathVariable("codeNo") Integer codeNo) {
 
@@ -44,7 +44,8 @@ public class CouponStateCodeRestController {
      *
      * @return 쿠폰상태코드 적용타겟 리스트를 ResponseEntity 에 담아 반환합니다.
      */
-    @GetMapping("/coupon-state-codes")
+    @AdminAuth
+    @GetMapping("/token/coupon-state-codes")
     public ResponseEntity<List<GetCouponStateCodeResponseDto>> couponStateCodeList() {
 
         return ResponseEntity.status(HttpStatus.OK)

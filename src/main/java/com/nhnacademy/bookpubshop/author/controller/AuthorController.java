@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.author.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.author.dto.request.CreateAuthorRequestDto;
 import com.nhnacademy.bookpubshop.author.dto.request.ModifyAuthorRequestDto;
 import com.nhnacademy.bookpubshop.author.dto.response.GetAuthorResponseDto;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/authors")
 public class AuthorController {
     private final AuthorService authorService;
 
@@ -39,7 +38,8 @@ public class AuthorController {
      *
      * @param requestDto 저자 이름을 가진 Dto입니다.
      */
-    @PostMapping
+    @AdminAuth
+    @PostMapping("/token/authors")
     public ResponseEntity<Void> createAuthor(
             @Valid @RequestBody CreateAuthorRequestDto requestDto) {
         authorService.createAuthor(requestDto);
@@ -56,9 +56,10 @@ public class AuthorController {
      * @param dto      modify DTO
      * @return 200
      */
-    @PutMapping("/{authorNo}")
+    @AdminAuth
+    @PutMapping("/token/authors/{authorNo}")
     public ResponseEntity<Void> modifyAuthor(@PathVariable("authorNo") Integer authorNo,
-            @Valid @RequestBody ModifyAuthorRequestDto dto) {
+                                             @Valid @RequestBody ModifyAuthorRequestDto dto) {
         authorService.modifyAuthor(authorNo, dto);
 
         return ResponseEntity
@@ -73,7 +74,8 @@ public class AuthorController {
      * @param pageable 페이징을 위해 pageable을 받습니다.
      * @return 모든 저자를 반환합니다.
      */
-    @GetMapping
+    @AdminAuth
+    @GetMapping("/token/authors")
     public ResponseEntity<PageResponse<GetAuthorResponseDto>> getAuthorsByPage(Pageable pageable) {
         Page<GetAuthorResponseDto> authors =
                 authorService.getAuthorsByPage(pageable);
@@ -90,7 +92,7 @@ public class AuthorController {
      * @param name 저자 이름입니다.
      * @return 같은 이름의 모든 저자를 반환합니다.
      */
-    @GetMapping("/search")
+    @GetMapping("/api/authors/search")
     public ResponseEntity<List<GetAuthorResponseDto>> getAuthorsByName(@RequestParam String name) {
         List<GetAuthorResponseDto> authors = authorService.getAuthorsByName(name);
 

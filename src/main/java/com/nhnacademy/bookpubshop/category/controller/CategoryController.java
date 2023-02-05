@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.category.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.category.dto.request.CreateCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.request.ModifyCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -38,7 +37,8 @@ public class CategoryController {
      * @param createCategoryRequestDto 카테고리 생성 위한 값.
      * @return 성공했을 때 응답코드 CREATED 201 반환.
      */
-    @PostMapping
+    @AdminAuth
+    @PostMapping("/token/categories")
     public ResponseEntity<Void> categoryAdd(
             @Valid @RequestBody CreateCategoryRequestDto createCategoryRequestDto) {
         categoryService.addCategory(createCategoryRequestDto);
@@ -52,7 +52,8 @@ public class CategoryController {
      * @param modifyCategoryRequestDto 카테고리 수정을 위한 값.
      * @return 성공했을 때 응답코드 CREATED 201이 반환.
      */
-    @PutMapping
+    @AdminAuth
+    @PutMapping("/token/categories")
     public ResponseEntity<Void> categoryModify(
             @Valid @RequestBody ModifyCategoryRequestDto modifyCategoryRequestDto) {
         categoryService.modifyCategory(modifyCategoryRequestDto);
@@ -67,7 +68,7 @@ public class CategoryController {
      * @param categoryNo 카테고리 단건 조회를 위한 값.
      * @return 성공했을 때 응답코드 OK 200이 반환.
      */
-    @GetMapping("/{categoryNo}")
+    @GetMapping("/api/categories/{categoryNo}")
     public ResponseEntity<GetCategoryResponseDto> categoryDetail(@PathVariable Integer categoryNo) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -79,7 +80,7 @@ public class CategoryController {
      *
      * @return 최상위 카테고리 리스트 반환.
      */
-    @GetMapping("/parent")
+    @GetMapping("/api/categories/parent")
     public ResponseEntity<List<GetCategoryResponseDto>> parentCategoryList() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +92,7 @@ public class CategoryController {
      *
      * @return 성공했을 때 응답코드 OK 200이 반환.
      */
-    @GetMapping
+    @GetMapping("/api/categories")
     public ResponseEntity<List<GetCategoryResponseDto>> categoryList() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +104,7 @@ public class CategoryController {
      *
      * @return 성공했을 때 응답코드 OK 200이 반환.
      */
-    @GetMapping("/parent-child")
+    @GetMapping("/api/categories/parent-child")
     public ResponseEntity<List<GetParentCategoryWithChildrenResponseDto>> parentWithChildList() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

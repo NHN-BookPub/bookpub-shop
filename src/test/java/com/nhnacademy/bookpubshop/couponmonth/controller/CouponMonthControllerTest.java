@@ -7,7 +7,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -58,6 +57,7 @@ class CouponMonthControllerTest {
 
     ObjectMapper mapper;
     String url = "/api/coupon-months";
+    String authUrl = "/token/coupon-months";
 
     @BeforeEach
     void setUp() {
@@ -77,7 +77,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).createCouponMonth(request);
 
         // then
-        mockMvc.perform(post(url)
+        mockMvc.perform(post(authUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is2xxSuccessful())
@@ -110,7 +110,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).createCouponMonth(request);
 
         // then
-        mockMvc.perform(post(url)
+        mockMvc.perform(post(authUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
@@ -145,7 +145,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).createCouponMonth(request);
 
         // then
-        mockMvc.perform(post(url)
+        mockMvc.perform(post(authUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
@@ -179,7 +179,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).createCouponMonth(request);
 
         // then
-        mockMvc.perform(post(url)
+        mockMvc.perform(post(authUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
@@ -213,7 +213,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).createCouponMonth(request);
 
         // then
-        mockMvc.perform(post(url)
+        mockMvc.perform(post(authUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
@@ -244,7 +244,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).modifyCouponMonth(request);
 
         // then
-        mockMvc.perform(put(url)
+        mockMvc.perform(put(authUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is2xxSuccessful())
@@ -272,7 +272,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).modifyCouponMonth(request);
 
         // then
-        mockMvc.perform(put(url)
+        mockMvc.perform(put(authUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(jsonPath("$[0].message").value("수정할 이달의 쿠폰 번호를 입력하세요."))
@@ -300,7 +300,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).modifyCouponMonth(request);
 
         // then
-        mockMvc.perform(put(url)
+        mockMvc.perform(put(authUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
@@ -329,7 +329,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).modifyCouponMonth(request);
 
         // then
-        mockMvc.perform(put(url)
+        mockMvc.perform(put(authUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
@@ -358,7 +358,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).modifyCouponMonth(request);
 
         // then
-        mockMvc.perform(put(url)
+        mockMvc.perform(put(authUrl)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
@@ -386,7 +386,7 @@ class CouponMonthControllerTest {
         doNothing().when(couponMonthService).deleteCouponMonth(anyLong());
 
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.delete(url + "/{monthNo}", anyLong())
+        mockMvc.perform(RestDocumentationRequestBuilders.delete(authUrl + "/{monthNo}", anyLong())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())

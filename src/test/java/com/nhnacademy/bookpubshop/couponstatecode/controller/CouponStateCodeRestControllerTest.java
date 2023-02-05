@@ -6,7 +6,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -54,7 +53,7 @@ class CouponStateCodeRestControllerTest {
         given(couponStateCodeService.getCouponStateCode(anyInt()))
                 .willReturn(dto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/coupon-state-codes/{codeNo}", 1))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/token/coupon-state-codes/{codeNo}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.codeNo", equalTo(dto.getCodeNo())))
@@ -82,7 +81,7 @@ class CouponStateCodeRestControllerTest {
         given(couponStateCodeService.getCouponStateCodes())
                 .willReturn(dto);
 
-        mockMvc.perform(get("/api/coupon-state-codes"))
+        mockMvc.perform(get("/token/coupon-state-codes"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].codeNo", equalTo(dto.get(0).getCodeNo())))

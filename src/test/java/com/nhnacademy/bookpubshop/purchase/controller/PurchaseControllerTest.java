@@ -69,6 +69,7 @@ class PurchaseControllerTest {
     CreatePurchaseRequestDto request;
     GetPurchaseListResponseDto listResponse;
     String url = "/api/purchases";
+    String tokenUrl="/token/purchases";
 
 
     @BeforeEach
@@ -107,7 +108,7 @@ class PurchaseControllerTest {
         when(purchaseService.getPurchaseListDesc(pageable))
                 .thenReturn(pageResult);
 
-        mockMvc.perform(get(url + "?page=0&size=5")
+        mockMvc.perform(get(tokenUrl + "?page=0&size=5")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pageResult)))
                 .andExpect(status().isOk())
@@ -201,7 +202,7 @@ class PurchaseControllerTest {
         doNothing().when(purchaseService)
                 .modifyPurchase(purchase.getPurchaseNo(), request);
 
-        mockMvc.perform(put(url + "/{purchaseNo}", purchase.getPurchaseNo())
+        mockMvc.perform(put(tokenUrl + "/{purchaseNo}", purchase.getPurchaseNo())
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -251,7 +252,7 @@ class PurchaseControllerTest {
         doNothing().when(purchaseService)
                 .createPurchaseMerged(request);
 
-        mockMvc.perform(post(url + "/absorption")
+        mockMvc.perform(post(tokenUrl + "/absorption")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
