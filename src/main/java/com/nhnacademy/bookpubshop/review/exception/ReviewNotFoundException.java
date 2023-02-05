@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.review.exception;
 
 /**
- * Some description here.
+ * 상품평을 찾을 수 없을 때 발생하는 exception.
  *
  * @author : 정유진
  * @since : 1.0

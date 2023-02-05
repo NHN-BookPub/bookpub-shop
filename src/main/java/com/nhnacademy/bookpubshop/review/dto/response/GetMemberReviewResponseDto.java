@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Some description here.
+ * 회원이 작성한 리뷰를 조회할때 사용하는 Dto.
  *
  * @author : 정유진
  * @since : 1.0

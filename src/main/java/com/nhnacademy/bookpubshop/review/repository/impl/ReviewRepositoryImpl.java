@@ -29,7 +29,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.data.support.PageableExecutionUtils;
 
 /**
- * Some description here.
+ * 상품평 레포지토리 구현체.
  *
  * @author : 정유진
  * @since : 1.0
@@ -48,6 +48,11 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
     QFile reviewFile = new QFile("reviewFile");
     QFile productFile = new QFile("productFile");
 
+    private static final String PRODUCT_IMAGE_PATH = "productImagePath";
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<GetProductReviewResponseDto> findProductReviews(Pageable pageable, Long productNo) {
         JPQLQuery<Long> count = from(review)
@@ -79,6 +84,9 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<GetMemberReviewResponseDto> findMemberReviews(Pageable pageable, Long memberNo) {
         JPQLQuery<Long> count = from(review)
@@ -104,7 +112,7 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                         product.productNo,
                         product.title.as("productTitle"),
                         product.productPublisher,
-                        productFile.filePath.as("productImagePath"),
+                        productFile.filePath.as(PRODUCT_IMAGE_PATH),
                         review.reviewStar,
                         review.reviewContent,
                         reviewFile.filePath.as("reviewImagePath"),
@@ -127,8 +135,12 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Page<GetProductSimpleResponseDto> findWritableMemberReviews(Pageable pageable, Long memberNo) {
+    public Page<GetProductSimpleResponseDto> findWritableMemberReviews(
+            Pageable pageable, Long memberNo) {
         QBookpubOrder order = QBookpubOrder.bookpubOrder;
         QOrderProduct orderProduct = QOrderProduct.orderProduct;
         QOrderStateCode orderStateCode = QOrderStateCode.orderStateCode;
@@ -146,7 +158,8 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                 .leftJoin(review)
                 .on(orderProduct.product.productNo.eq(review.product.productNo))
                 .where(order.member.memberNo.eq(memberNo)
-                        .and(orderProduct.orderProductStateCode.codeName.eq(OrderProductState.CONFIRMED.getName()))
+                        .and(orderProduct.orderProductStateCode.codeName
+                                .eq(OrderProductState.CONFIRMED.getName()))
                         .and(orderStateCode.codeName.eq(OrderState.COMPLETE_DELIVERY.getName()))
                         .and((review.product.isNull()).or(review.reviewDeleted.notIn(false))))
                 .distinct();
@@ -163,7 +176,8 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                 .on((orderProduct.product.productNo.eq(review.product.productNo)).and(
                         orderProduct.order.member.memberNo.eq(review.member.memberNo)))
                 .where(order.member.memberNo.eq(memberNo)
-                        .and(orderProduct.orderProductStateCode.codeName.eq(OrderProductState.CONFIRMED.getName()))
+                        .and(orderProduct.orderProductStateCode.codeName
+                                .eq(OrderProductState.CONFIRMED.getName()))
                         .and(orderStateCode.codeName.eq(OrderState.COMPLETE_DELIVERY.getName()))
                         .and((review.product.isNull()).or(product.productNo.notIn(
                                 JPAExpressions.select(product.productNo)
@@ -178,7 +192,7 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                         product.title,
                         product.productIsbn,
                         product.productPublisher,
-                        productFile.filePath.as("productImagePath")))
+                        productFile.filePath.as(PRODUCT_IMAGE_PATH)))
                 .distinct()
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -197,6 +211,9 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<GetMemberReviewResponseDto> findReview(Long reviewNo) {
         GetMemberReviewResponseDto dto = from(review)
@@ -211,7 +228,7 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                         product.productNo,
                         product.title.as("productTitle"),
                         product.productPublisher,
-                        productFile.filePath.as("productImagePath"),
+                        productFile.filePath.as(PRODUCT_IMAGE_PATH),
                         review.reviewStar,
                         review.reviewContent,
                         reviewFile.filePath.as("reviewImagePath"),
@@ -229,6 +246,9 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
         return Optional.of(dto);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<GetProductReviewInfoResponseDto> findReviewInfoByProductNo(Long productNo) {
         return Optional.of(from(review)
