@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.product.relationship.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductTypeStateCodeResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductTypeStateCodeService;
 import java.util.List;
@@ -10,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/state/productType")
 public class ProductTypeStateCodeController {
     private final ProductTypeStateCodeService productTypeStateCodeService;
 
@@ -31,7 +30,8 @@ public class ProductTypeStateCodeController {
      *
      * @return 성공시 200, 모든 유형코드가 담긴 리스트를 반환합니다.
      */
-    @GetMapping
+    @GetMapping("/admin/state/productType")
+    @AdminAuth
     public ResponseEntity<List<GetProductTypeStateCodeResponseDto>> typeCodeList() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -43,7 +43,7 @@ public class ProductTypeStateCodeController {
      *
      * @return 사용중인 모든 유형 코드
      */
-    @GetMapping("/used")
+    @GetMapping("/api/state/productType/used")
     public ResponseEntity<List<GetProductTypeStateCodeResponseDto>> typeCodesUsedList() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -56,7 +56,7 @@ public class ProductTypeStateCodeController {
      * @param codeNo 유형 번호입니다.
      * @return 성공시 200, 객체를 반환합니다.
      */
-    @GetMapping("/{codeNo}")
+    @GetMapping("/api/state/productType/{codeNo}")
     public ResponseEntity<GetProductTypeStateCodeResponseDto> typeCodeDetails(
             @PathVariable Integer codeNo) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -71,7 +71,8 @@ public class ProductTypeStateCodeController {
      * @param used   사용여부입니다.
      * @return 성공시 201, 객체를 반환합니다.
      */
-    @PutMapping("/{codeNo}")
+    @PutMapping("/token/state/productType{codeNo}")
+    @AdminAuth
     public ResponseEntity<Void> typeCodeModifyUsed(
             @PathVariable Integer codeNo,
             @RequestParam boolean used) {

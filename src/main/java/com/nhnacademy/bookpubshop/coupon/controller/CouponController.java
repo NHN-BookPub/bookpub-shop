@@ -123,8 +123,7 @@ public class CouponController {
      * @param pageable 페이지
      * @return 사용할 수 있는 쿠폰 리스트 반환
      */
-    @MemberAuth
-    @GetMapping("/token/coupons/members/{memberNo}/positive")
+    @GetMapping("/api/coupons/members/{memberNo}/positive")
     public ResponseEntity<PageResponse<GetCouponResponseDto>> memberPositiveCouponList(
             @PathVariable("memberNo") Long memberNo, Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)

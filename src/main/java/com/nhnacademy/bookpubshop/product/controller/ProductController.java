@@ -49,7 +49,6 @@ public class ProductController {
      * @return 모든 상품을 반환합니다.
      */
     @GetMapping("/api/products")
-    @AdminAuth
     public ResponseEntity<PageResponse<GetProductListResponseDto>> productList(
             Pageable pageable) {
         Page<GetProductListResponseDto> content =
@@ -195,7 +194,7 @@ public class ProductController {
      * @param pageable   페이징 정보
      * @return 페이징 정보를 담은 상품들
      */
-    @GetMapping("/api/products-categories/{categoryNo}")
+    @GetMapping("/api/products/product/categories/{categoryNo}")
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
     getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
         Page<GetProductByCategoryResponseDto> content =

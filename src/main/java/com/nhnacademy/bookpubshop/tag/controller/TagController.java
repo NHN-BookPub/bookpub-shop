@@ -50,8 +50,7 @@ public class TagController {
      *
      * @return 성공 경우 200, 태그 리스트 응답
      */
-    @GetMapping("/token/tags")
-    @AdminAuth
+    @GetMapping("/api/tags")
     public ResponseEntity<List<GetTagResponseDto>> tagList() {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
