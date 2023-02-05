@@ -219,6 +219,7 @@ class OrderControllerTest {
         ReflectionTestUtils.setField(requestDto, "deliveryFeePolicyNo", 1);
         ReflectionTestUtils.setField(requestDto, "packingFeePolicyNo", 1);
         ReflectionTestUtils.setField(requestDto, "savePoint", 100L);
+        ReflectionTestUtils.setField(requestDto,"orderName","주문명");
 
 
         listDto = new GetOrderListResponseDto(
@@ -340,7 +341,8 @@ class OrderControllerTest {
                                         fieldWithPath("memberNo").description("구입 회원"),
                                         fieldWithPath("deliveryFeePolicyNo").description("배송정책 번호"),
                                         fieldWithPath("packingFeePolicyNo").description("포장정책 번호"),
-                                        fieldWithPath("savePoint").description("포인트 적립액수")
+                                        fieldWithPath("savePoint").description("포인트 적립액수"),
+                                        fieldWithPath("orderName").description("주문명")
                                 )
                         )
 

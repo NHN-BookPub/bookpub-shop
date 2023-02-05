@@ -60,4 +60,6 @@ public class CreateOrderRequestDto {
     private Long couponAmount;
     private Long totalAmount;
     private Long savePoint;
+    @NotNull(message = "주문명은 필수 사항입니다")
+    private String orderName;
 }

@@ -126,7 +126,8 @@ class CouponRepositoryTest {
                 1000L,
                 "IT",
                 "광주 동구 조선대길",
-                "asdkjasl"
+                "asdkjasl",
+                "orderName"
         );
 
         productPolicy = ProductPolicyDummy.dummy();
@@ -170,7 +171,8 @@ class CouponRepositoryTest {
                 1000L,
                 "IT",
                 "광주 동구 조선대길",
-                "askdjkjvhvz"
+                "askdjkjvhvz",
+                "orderName"
         );
 
         couponStateCode = CouponStateCodeDummy.dummy();

@@ -33,7 +33,8 @@ public class OrderDummy {
                 1000L,
                 "IT",
                 "광주 동구 조선대길",
-                "dasdljzxlkj"
+                "dasdljzxlkj",
+                "asdasdasd"
         );
 
     }
@@ -58,7 +59,8 @@ public class OrderDummy {
                 1000L,
                 "IT",
                 "광주 동구 조선대길",
-                "dalskdjzx"
+                "dalskdjzx",
+                "orderName"
         );
 
     }
