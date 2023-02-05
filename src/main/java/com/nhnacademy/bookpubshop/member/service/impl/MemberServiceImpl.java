@@ -254,6 +254,15 @@ public class MemberServiceImpl implements MemberService {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public Integer getTierByMemberNo(Long memberNo) {
+        return memberRepository.findTierNoByMemberNo(memberNo);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     @Override
     public void modifyMemberName(Long memberNo, ModifyMemberNameRequestDto dto) {

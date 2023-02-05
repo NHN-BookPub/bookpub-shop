@@ -403,5 +403,19 @@ public class MemberController {
                 .body(oauthMember);
     }
 
+    /**
+     * 멤버 번호로 등급번호를 조회하는 메서드입니다다.
+     *
+     * @param memberNo 멤버 번호
+     * @return 등급 번호
+     */
+    @GetMapping("/members/{memberNo}/tier")
+    public ResponseEntity<Integer> getTierNoByMemberNo(@PathVariable Long memberNo) {
+        Integer tierNo = memberService.getTierByMemberNo(memberNo);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(tierNo);
+    }
 
 }

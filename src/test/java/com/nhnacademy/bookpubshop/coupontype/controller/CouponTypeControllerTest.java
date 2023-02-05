@@ -7,9 +7,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -46,8 +45,7 @@ class CouponTypeControllerTest {
 
     @MockBean
     CouponTypeService couponTypeService;
-
-    String path = "/api/coupon-types";
+    String authPath = "/token/coupon-types";
 
     @BeforeEach
     void setUp() {
@@ -63,7 +61,7 @@ class CouponTypeControllerTest {
                 .willReturn(dto);
 
         //when && then
-        mockMvc.perform(RestDocumentationRequestBuilders.get(path + "/{typeNo}", anyLong()))
+        mockMvc.perform(RestDocumentationRequestBuilders.get(authPath + "/{typeNo}", anyLong()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.typeNo", is(dto.getTypeNo()), Long.class))
@@ -88,7 +86,7 @@ class CouponTypeControllerTest {
         given(couponTypeService.getCouponTypes()).willReturn(List.of(dto));
 
         //when && then
-        mockMvc.perform(get(path))
+        mockMvc.perform(get(authPath))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].typeNo", is(dto.getTypeNo()), Long.class))

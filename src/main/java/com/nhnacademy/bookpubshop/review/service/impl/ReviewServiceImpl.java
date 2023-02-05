@@ -1,0 +1,196 @@
+package com.nhnacademy.bookpubshop.review.service.impl;
+
+import com.nhnacademy.bookpubshop.file.exception.FileNotFoundException;
+import com.nhnacademy.bookpubshop.filemanager.FileManagement;
+import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
+import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
+import com.nhnacademy.bookpubshop.product.dto.response.GetProductSimpleResponseDto;
+import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
+import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
+import com.nhnacademy.bookpubshop.review.dto.request.CreateReviewRequestDto;
+import com.nhnacademy.bookpubshop.review.dto.request.ModifyReviewRequestDto;
+import com.nhnacademy.bookpubshop.review.dto.response.GetMemberReviewResponseDto;
+import com.nhnacademy.bookpubshop.review.dto.response.GetProductReviewInfoResponseDto;
+import com.nhnacademy.bookpubshop.review.dto.response.GetProductReviewResponseDto;
+import com.nhnacademy.bookpubshop.review.entity.Review;
+import com.nhnacademy.bookpubshop.review.exception.ReviewNotFoundException;
+import com.nhnacademy.bookpubshop.review.repository.ReviewRepository;
+import com.nhnacademy.bookpubshop.review.service.ReviewService;
+import com.nhnacademy.bookpubshop.reviewpolicy.repository.ReviewPolicyRepository;
+import com.nhnacademy.bookpubshop.state.FileCategory;
+import java.io.IOException;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+/**
+ * 상품평 서비스 구현체입니다.
+ *
+ * @author : 정유진
+ * @since : 1.0
+ **/
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class ReviewServiceImpl implements ReviewService {
+    private final ReviewRepository reviewRepository;
+    private final ProductRepository productRepository;
+    private final MemberRepository memberRepository;
+    private final ReviewPolicyRepository reviewPolicyRepository;
+    private final FileManagement fileManagement;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetProductReviewResponseDto> getProductReviews(Pageable pageable, Long productNo) {
+        return reviewRepository.findProductReviews(pageable, productNo);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws ReviewNotFoundException 상품평이 없을 때 발생하는 exception
+     */
+    @Override
+    public GetMemberReviewResponseDto getReview(Long reviewNo) {
+
+        return reviewRepository.findReview(reviewNo).orElseThrow(
+                () -> new ReviewNotFoundException(reviewNo)
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetMemberReviewResponseDto> getMemberReviews(Pageable pageable, Long memberNo) {
+
+        return reviewRepository.findMemberReviews(pageable, memberNo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetProductSimpleResponseDto> getWritableMemberReviews(
+            Pageable pageable, Long memberNo) {
+        return reviewRepository.findWritableMemberReviews(pageable, memberNo);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws ProductNotFoundException 상품이 없을 때 발생하는 exception
+     */
+    @Override
+    public GetProductReviewInfoResponseDto getReviewInfo(Long productNo) {
+        return reviewRepository.findReviewInfoByProductNo(productNo).orElseThrow(
+                ProductNotFoundException::new);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws ProductNotFoundException 상품이 없을 때 발생하는 exception
+     * @throws MemberNotFoundException  회원이 없을 때 발생하는 exception
+     */
+    @Transactional
+    @Override
+    public void createReview(CreateReviewRequestDto createRequestDto, MultipartFile image) {
+        Product product = productRepository.findById(createRequestDto.getProductNo())
+                .orElseThrow(ProductNotFoundException::new);
+
+        Member member = memberRepository.findById(createRequestDto.getMemberNo())
+                .orElseThrow(MemberNotFoundException::new);
+
+        Review review = reviewRepository.save(Review.builder()
+                .member(member)
+                .product(product)
+                .reviewPolicy(reviewPolicyRepository.findByPolicyUsedIsTrue())
+                .reviewStar(createRequestDto.getReviewStar())
+                .reviewContent(createRequestDto.getReviewContent())
+                .build());
+
+        try {
+            review.setFile(fileManagement.saveFile(null, null, null,
+                    review, null, image,
+                    FileCategory.REVIEW.getCategory(), FileCategory.REVIEW.getPath()));
+        } catch (IOException e) {
+            throw new FileNotFoundException();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws ReviewNotFoundException 상품평이 없을 때 발생하는 Exception
+     * @throws FileNotFoundException   파일이 없을 때 발생하는 Exception
+     */
+    @Override
+    @Transactional
+    public void modifyReview(Long reviewNo, ModifyReviewRequestDto modifyRequestDto,
+                             MultipartFile image) {
+        Review review = reviewRepository.findById(reviewNo)
+                .orElseThrow(() -> new ReviewNotFoundException(reviewNo));
+
+        review.modifyReview(modifyRequestDto);
+
+        if (Objects.nonNull(image)) {
+            try {
+                review.setFile(fileManagement.saveFile(null, null, null,
+                        review, null, image, "review", "review"));
+
+            } catch (IOException e) {
+                throw new FileNotFoundException();
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void deleteReviewImage(Long reviewNo) {
+        Review review = reviewRepository.findById(reviewNo)
+                .orElseThrow(() -> new ReviewNotFoundException(reviewNo));
+
+        if (Objects.nonNull(review.getFile())) {
+            try {
+                fileManagement.deleteFile(review.getFile().getFilePath());
+            } catch (IOException e) {
+                throw new FileNotFoundException();
+            }
+        }
+
+        review.deleteFile();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void deleteReview(Long reviewNo) {
+        Review review = reviewRepository.findById(reviewNo)
+                .orElseThrow(() -> new ReviewNotFoundException(reviewNo));
+
+        review.deleteReview();
+
+        if (Objects.nonNull(review.getFile())) {
+            try {
+
+                fileManagement.deleteFile(review.getFile().getFilePath());
+            } catch (IOException e) {
+                throw new FileNotFoundException();
+            }
+        }
+    }
+}

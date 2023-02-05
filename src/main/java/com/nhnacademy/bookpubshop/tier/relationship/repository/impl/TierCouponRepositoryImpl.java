@@ -53,4 +53,15 @@ public class TierCouponRepositoryImpl extends QuerydslRepositorySupport
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Long> findAllByTierNo(Integer tierNo) {
+        return from(tierCoupon)
+                .select(tierCoupon.pk.couponTemplateNo)
+                .where(tierCoupon.pk.tierNo.eq(tierNo))
+                .fetch();
+    }
 }

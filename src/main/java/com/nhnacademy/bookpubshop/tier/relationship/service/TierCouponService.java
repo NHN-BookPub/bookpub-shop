@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.tier.relationship.service;
 
 import com.nhnacademy.bookpubshop.tier.relationship.dto.request.CreateTierCouponRequestDto;
 import com.nhnacademy.bookpubshop.tier.relationship.dto.response.GetTierCouponResponseDto;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -36,4 +37,11 @@ public interface TierCouponService {
      */
     void deleteTierCoupon(Long templateNo, Integer tierNo);
 
+    /**
+     * 등급번호로 해당 등급쿠폰(템플릿 번호) 조회를 위한 메서드.
+     *
+     * @param tierNo 등급 번호
+     * @return 템플릿 번호 리스트
+     */
+    List<Long> getTierCouponsByTierNo(Integer tierNo);
 }

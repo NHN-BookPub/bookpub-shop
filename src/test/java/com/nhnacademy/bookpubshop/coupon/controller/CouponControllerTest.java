@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.coupon.controller;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -58,6 +59,7 @@ class CouponControllerTest {
 
     ObjectMapper mapper;
     String uri = "/api/coupons";
+    String authUri = "/token/coupons";
 
     @BeforeEach
     void setUp() {
@@ -78,7 +80,7 @@ class CouponControllerTest {
                 .thenReturn(page);
 
         // then
-        mockMvc.perform(get(uri)
+        mockMvc.perform(get(authUri)
                         .param("page", mapper.writeValueAsString(pageable.getPageNumber()))
                         .param("size", mapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -129,7 +131,7 @@ class CouponControllerTest {
                 .thenReturn(response);
 
         // then
-        mockMvc.perform(get(uri + "/{couponNo}", anyLong())
+        mockMvc.perform(get(authUri + "/{couponNo}", anyLong())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
@@ -165,7 +167,7 @@ class CouponControllerTest {
         doNothing().when(couponService).createCoupon(request);
 
         // then
-        mockMvc.perform(post(uri)
+        mockMvc.perform(post(authUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is2xxSuccessful())
@@ -192,7 +194,7 @@ class CouponControllerTest {
         doNothing().when(couponService).createCoupon(request);
 
         // then
-        mockMvc.perform(post(uri)
+        mockMvc.perform(post(authUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
@@ -222,7 +224,7 @@ class CouponControllerTest {
         doNothing().when(couponService).createCoupon(request);
 
         // then
-        mockMvc.perform(post(uri)
+        mockMvc.perform(post(authUri)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is4xxClientError())
@@ -248,7 +250,7 @@ class CouponControllerTest {
         doNothing().when(couponService).modifyCouponUsed(anyLong());
 
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.put(uri + "/{couponNo}" + "/used", 1L))
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authUri + "/{couponNo}" + "/used", 1L))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(document("coupon-modify",
                         preprocessRequest(prettyPrint()),

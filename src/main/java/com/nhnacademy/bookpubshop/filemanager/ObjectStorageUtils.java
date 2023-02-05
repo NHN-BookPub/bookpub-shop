@@ -16,9 +16,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +25,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequest;
@@ -67,40 +63,23 @@ public class ObjectStorageUtils implements FileManagement {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            TokenRequest tokenRequest = new TokenRequest(properties.getTenantId(), properties.getUsername(), properties.getPassword());
+            TokenRequest tokenRequest = new TokenRequest(properties.getTenantId(),
+                    properties.getUsername(), properties.getPassword());
 
             HttpEntity<TokenRequest> httpEntity
                     = new HttpEntity<>(tokenRequest, headers);
 
             ResponseEntity<TokenResponse> response
-                    = this.restTemplate.exchange(identityUrl, HttpMethod.POST, httpEntity, TokenResponse.class);
+                    = this.restTemplate.exchange(
+                    identityUrl, HttpMethod.POST, httpEntity, TokenResponse.class);
 
-            tokenId = Objects.requireNonNull(response.getBody()).getAccess().getToken().getId();
-            expires = Objects.requireNonNull(response.getBody()).getAccess().getToken().getExpires();
+            tokenId = Objects.requireNonNull(
+                    response.getBody()).getAccess().getToken().getId();
+            expires = Objects.requireNonNull(
+                    response.getBody()).getAccess().getToken().getExpires();
         }
 
         return tokenId;
-    }
-
-
-    @Override
-    public List<String> loadFiles(String path) {
-        // 헤더 생성
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(X_AUTH_TOKEN, requestToken());
-
-        HttpEntity<String> requestHttpEntity = new HttpEntity<>(null, headers);
-
-        // API 호출
-        ResponseEntity<String> response
-                = this.restTemplate.exchange(path, HttpMethod.GET, requestHttpEntity, String.class);
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            // String으로 받은 목록을 배열로 변환
-            return Arrays.asList(Objects.requireNonNull(response.getBody()).split("\\r?\\n"));
-        }
-
-        return Collections.emptyList();
     }
 
     @Override
@@ -141,7 +120,8 @@ public class ObjectStorageUtils implements FileManagement {
         String fileExtension = originalFileName.substring(posImage);
         String nameSaved = UUID.randomUUID().toString();
 
-        String url = properties.getUrl() + "/" + properties.getContainerName() + "/" + path + "/" + nameSaved + fileExtension;
+        String url = properties.getUrl() + "/" + properties.getContainerName() + "/"
+                + path + "/" + nameSaved + fileExtension;
 
         InputStream inputStream = new ByteArrayInputStream(file.getBytes());
 
@@ -159,7 +139,8 @@ public class ObjectStorageUtils implements FileManagement {
         RestTemplate restTemplateFactory = new RestTemplate(requestFactory);
 
         HttpMessageConverterExtractor<String> responseExtractor
-                = new HttpMessageConverterExtractor<>(String.class, restTemplateFactory.getMessageConverters());
+                = new HttpMessageConverterExtractor<>(
+                String.class, restTemplateFactory.getMessageConverters());
 
         // API 호출
         restTemplateFactory.execute(url, HttpMethod.PUT, requestCallback, responseExtractor);
@@ -181,28 +162,7 @@ public class ObjectStorageUtils implements FileManagement {
 
     @Override
     public String loadFile(String path) {
-        String url = path + "?limit=1";
-        // 헤더 생성
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(X_AUTH_TOKEN, requestToken());
-        headers.setAccept(List.of(MediaType.MULTIPART_FORM_DATA));
-
-        HttpEntity<String> requestHttpEntity = new HttpEntity<>(null, headers);
-
-        // API 호출
-        ResponseEntity<String> response
-                = this.restTemplate.exchange(url, HttpMethod.GET, requestHttpEntity, String.class);
-
-        if (response.getStatusCode().is5xxServerError() || response.getStatusCode().is4xxClientError()) {
-            throw new FileNotFoundException();
-        }
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            // String으로 받은 목록을 배열로 변환
-            List<String> list = Arrays.asList(Objects.requireNonNull(response.getBody()).split("\\r?\\n"));
-            return list.get(0);
-        }
-        return null;
+        return path;
     }
 
 

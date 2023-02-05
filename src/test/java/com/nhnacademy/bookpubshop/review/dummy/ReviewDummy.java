@@ -16,13 +16,11 @@ import com.nhnacademy.bookpubshop.reviewpolicy.entity.ReviewPolicy;
 public class ReviewDummy {
     public static Review dummy(Member member, Product product, ReviewPolicy reviewPolicy) {
         return new Review(
-                null,
                 member,
                 product,
                 reviewPolicy,
                 5L,
-                "좋습니다.",
-                "imagePath"
+                "좋습니다."
         );
     }
 }

@@ -13,6 +13,7 @@ import com.nhnacademy.bookpubshop.tier.relationship.exception.NotFoundTierCoupon
 import com.nhnacademy.bookpubshop.tier.relationship.repository.TierCouponRepository;
 import com.nhnacademy.bookpubshop.tier.relationship.service.TierCouponService;
 import com.nhnacademy.bookpubshop.tier.repository.TierRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,5 +70,13 @@ public class TierCouponServiceImpl implements TierCouponService {
         }
 
         tierCouponRepository.deleteById(pk);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Long> getTierCouponsByTierNo(Integer tierNo) {
+        return tierCouponRepository.findAllByTierNo(tierNo);
     }
 }
