@@ -178,7 +178,7 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
     }
 
     @Override
-    public MemberAuthResponseDto findByAuthMemberInfo(String memberNo) {
+    public MemberAuthResponseDto findByAuthMemberInfo(Long memberNo) {
         QMember member = QMember.member;
         QMemberAuthority memberAuthority = QMemberAuthority.memberAuthority;
 
@@ -187,17 +187,17 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                         member.memberNo,
                         member.memberId,
                         member.memberPwd))
-                .where(member.memberNo.eq(Long.valueOf(memberNo)))
+                .where(member.memberNo.eq(memberNo))
                 .fetchOne());
 
         Optional<List<String>> memberAuthorities = Optional.of(from(memberAuthority)
                 .innerJoin(memberAuthority.member, member)
                 .select(memberAuthority.authority.authorityName)
-                .where(member.memberNo.eq(Long.valueOf(memberNo)))
+                .where(member.memberNo.eq(memberNo))
                 .fetch());
 
         IdPwdMemberDto responseMember = findMember.orElseThrow(
-                () -> new MemberNotFoundException(memberNo));
+                () -> new MemberNotFoundException(String.valueOf(memberNo)));
         List<String> authorities = memberAuthorities.orElseThrow(
                 MemberAuthoritiesNotFoundException::new);
 
