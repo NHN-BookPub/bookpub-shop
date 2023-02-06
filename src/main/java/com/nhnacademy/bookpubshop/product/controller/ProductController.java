@@ -204,4 +204,21 @@ public class ProductController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new PageResponse<>(content));
     }
+
+    /**
+     * 모든 ebook 상품들 조회.
+     *
+     * @param pageable 페이징
+     * @return 성공시 200, 페이징된 상품들 반환.
+     */
+    @GetMapping("/api/products/ebooks")
+    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
+    getEbooks(Pageable pageable) {
+        Page<GetProductByCategoryResponseDto> content =
+                productService.getEbooks(pageable);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PageResponse<>(content));
+    }
 }

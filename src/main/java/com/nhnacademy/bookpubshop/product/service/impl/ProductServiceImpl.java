@@ -257,4 +257,12 @@ public class ProductServiceImpl implements ProductService {
     public Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo, Pageable pageable) {
         return productRepository.getProductsByCategory(categoryNo, pageable);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetProductByCategoryResponseDto> getEbooks(Pageable pageable) {
+        return productRepository.getEbooks(pageable);
+    }
 }
