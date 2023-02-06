@@ -220,7 +220,9 @@ class OrderServiceTest {
                 order.getOrderRequest(),
                 order.getPointAmount(),
                 order.getCouponDiscount(),
-                order.getOrderPrice());
+                order.getOrderPrice(),
+                order.getOrderName(),
+                order.getOrderId());
 
         productListDto = new GetProductListForOrderResponseDto(1L,
                 product.getTitle(), product.getFiles().get(0).getFilePath(), product.getSalesPrice(),

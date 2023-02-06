@@ -143,7 +143,10 @@ class OrderControllerTest {
                 order.getOrderRequest(),
                 order.getPointAmount(),
                 order.getCouponDiscount(),
-                order.getOrderPrice());
+                order.getOrderPrice(),
+                order.getOrderName(),
+                order.getOrderId());
+
 
         orderProductStateCode = new OrderProductStateCode(
                 null,
@@ -491,7 +494,9 @@ class OrderControllerTest {
                                 fieldWithPath("orderRequest").description("요구사항"),
                                 fieldWithPath("pointAmount").description("포인트 사용량"),
                                 fieldWithPath("couponAmount").description("쿠폰 할인 금액"),
-                                fieldWithPath("totalAmount").description("총 금액")
+                                fieldWithPath("totalAmount").description("총 금액"),
+                                fieldWithPath("orderName").description("주문 명"),
+                                fieldWithPath("orderId").description("주문 아이디")
 
                         )));
     }
