@@ -1,6 +1,8 @@
 package com.nhnacademy.bookpubshop.subscribe.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
+import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
@@ -29,10 +31,12 @@ class SubscribeRepositoryTest {
     SubscribeRepository subscribeRepository;
 
     Subscribe subscribe;
-
+    File file;
     @BeforeEach
     void setUp() {
         subscribe = SubscribeDummy.dummy();
+        file = FileDummy.dummy(null, null, null, null, null);
+        subscribe.setFile(file);
     }
 
     @Test
@@ -57,8 +61,10 @@ class SubscribeRepositoryTest {
     @Test
     @DisplayName("구독 조회 테스트")
     void subscribeInfo() {
-        Subscribe persist = entityManager.persist(subscribe);
         PageRequest page = PageRequest.of(0, 10);
+        entityManager.persist(file.getSubscribe());
+        entityManager.persist(file);
+        Subscribe persist = file.getSubscribe();
         Page<GetSubscribeResponseDto> result = subscribeRepository.getSubscribes(page);
 
         assertThat(result).isNotEmpty();

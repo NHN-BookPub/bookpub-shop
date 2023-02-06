@@ -5,6 +5,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
+import com.nhnacademy.bookpubshop.file.entity.File;
+import com.nhnacademy.bookpubshop.file.repository.FileRepository;
+import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateSubscribeRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.ModifySubscribeRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
@@ -12,6 +16,7 @@ import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import com.nhnacademy.bookpubshop.subscribe.exception.SubscribeNotFoundException;
 import com.nhnacademy.bookpubshop.subscribe.repository.SubscribeRepository;
 import com.nhnacademy.bookpubshop.subscribe.service.impl.SubscribeServiceImpl;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +32,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 구독 서비스 테스트
@@ -42,13 +48,15 @@ class SubscribeServiceTest {
 
     @MockBean
     SubscribeRepository repository;
+    @MockBean
+    FileManagement fileManagement;
 
     Subscribe subscribe;
     CreateSubscribeRequestDto createSubscribeRequestDto;
     GetSubscribeResponseDto getSubscribeResponseDto;
     ModifySubscribeRequestDto modifySubscribeRequestDto;
     ArgumentCaptor<Subscribe> captor;
-
+    File file;
     @BeforeEach
     void setUp() {
         subscribe = dummy();
@@ -56,6 +64,7 @@ class SubscribeServiceTest {
         getSubscribeResponseDto = responseDummy();
         createSubscribeRequestDto = createDummy();
         captor = ArgumentCaptor.forClass(Subscribe.class);
+        file = FileDummy.dummy(null, null, null, null, null);
     }
 
     @DisplayName("구독생성 테스트 입니다.")
@@ -64,7 +73,7 @@ class SubscribeServiceTest {
         when(repository.save(any()))
                 .thenReturn(subscribe);
 
-        service.createSubscribe(createSubscribeRequestDto);
+        service.createSubscribe(createSubscribeRequestDto, null);
 
         verify(repository, times(1))
                 .save(captor.capture());
@@ -130,7 +139,7 @@ class SubscribeServiceTest {
         when(repository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.modifySubscribe(modifySubscribeRequestDto, 1L))
+        assertThatThrownBy(() -> service.modifySubscribe(modifySubscribeRequestDto, 1L, any()))
                 .isInstanceOf(SubscribeNotFoundException.class)
                 .hasMessageContaining(SubscribeNotFoundException.MESSAGE);
 
@@ -139,10 +148,10 @@ class SubscribeServiceTest {
     @DisplayName("구독 정보 수정 성공 테스트")
     @Test
     void modifySubscribeSuccess() {
+        ReflectionTestUtils.setField(subscribe, "file", file);
         when(repository.findById(anyLong()))
                 .thenReturn(Optional.of(subscribe));
-
-        service.modifySubscribe(modifySubscribeRequestDto, 1L);
+        service.modifySubscribe(modifySubscribeRequestDto, 1L, any());
 
         verify(repository, times(1))
                 .findById(1L);

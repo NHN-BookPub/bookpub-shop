@@ -36,7 +36,7 @@ public class SubscribeDummy {
 
     public static GetSubscribeResponseDto responseDummy(){
         return new GetSubscribeResponseDto(1L, "name", 1000L, 100L,
-                10, 0L, false, false);
+                10, 0L, false, false,"image");
     }
 
     public static ModifySubscribeRequestDto modifyDummy(){
