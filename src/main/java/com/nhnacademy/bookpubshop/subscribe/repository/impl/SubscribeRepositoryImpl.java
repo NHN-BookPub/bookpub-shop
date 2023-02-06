@@ -39,12 +39,12 @@ public class SubscribeRepositoryImpl extends QuerydslRepositorySupport
                         GetSubscribeResponseDto.class,
                         subscribe.subscribeNo,
                         subscribe.subscribeName,
-                        subscribe.salesPrice,
-                        subscribe.subscribePrice,
-                        subscribe.salesRate,
-                        subscribe.viewCount,
-                        subscribe.subscribeDeleted,
-                        subscribe.subscribeRenewed
+                        subscribe.salesPrice.as("salePrice"),
+                        subscribe.subscribePrice.as("price"),
+                        subscribe.salesRate.as("salePrice"),
+                        subscribe.viewCount.as("viewCnt"),
+                        subscribe.subscribeDeleted.as("isDeleted"),
+                        subscribe.subscribeRenewed.as("isRenewed")
                 ))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

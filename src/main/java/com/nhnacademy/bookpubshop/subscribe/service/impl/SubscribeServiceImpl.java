@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.subscribe.service.impl;
 
 import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateSubscribeRequestDto;
+import com.nhnacademy.bookpubshop.subscribe.dto.request.ModifySubscribeRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import com.nhnacademy.bookpubshop.subscribe.exception.SubscribeNotFoundException;
@@ -29,7 +30,7 @@ public class SubscribeServiceImpl implements SubscribeService {
      */
     @Transactional
     @Override
-    public void createSubscribe(CreateSubscribeRequestDto dto){
+    public void createSubscribe(CreateSubscribeRequestDto dto) {
         subscribeRepository.save(dto.dtoToEntity());
     }
 
@@ -38,7 +39,7 @@ public class SubscribeServiceImpl implements SubscribeService {
      */
     @Transactional
     @Override
-    public void deleteSubscribe(Long subscribeNo, boolean used){
+    public void deleteSubscribe(Long subscribeNo, boolean used) {
         Subscribe subscribe = subscribeRepository.findById(subscribeNo)
                 .orElseThrow(SubscribeNotFoundException::new);
         subscribe.changeIsDeleted(used);
@@ -50,5 +51,22 @@ public class SubscribeServiceImpl implements SubscribeService {
     @Override
     public Page<GetSubscribeResponseDto> getSubscribes(Pageable pageable) {
         return subscribeRepository.getSubscribes(pageable);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void modifySubscribe(ModifySubscribeRequestDto dto, Long subscribeNo) {
+        Subscribe subscribe = subscribeRepository.findById(subscribeNo)
+                .orElseThrow(SubscribeNotFoundException::new);
+
+        subscribe.modifySubscribeInfo(dto.getName(),
+                dto.getSalePrice(),
+                dto.getPrice(),
+                dto.getSaleRate(),
+                dto.isRenewed(),
+                dto.isDeleted());
     }
 }

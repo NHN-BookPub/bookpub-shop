@@ -2,9 +2,11 @@ package com.nhnacademy.bookpubshop.subscribe.controller;
 
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateSubscribeRequestDto;
+import com.nhnacademy.bookpubshop.subscribe.dto.request.ModifySubscribeRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.service.SubscribeService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +33,7 @@ public class SubscribeController {
 
     /**
      * 구독을생성하기위한 메서드입니다.
-     * 성공시 200 이 반환됩니다.
+     * 성공시 201 이 반환됩니다.
      * 관리자만 접근가능합니다.
      *
      * @param dto 구독생성정보기입
@@ -37,9 +41,9 @@ public class SubscribeController {
      */
     @AdminAuth
     @PostMapping("/token/subscribes")
-    public ResponseEntity<Void> subscribeAdd(CreateSubscribeRequestDto dto) {
+    public ResponseEntity<Void> subscribeAdd(@Valid @RequestBody CreateSubscribeRequestDto dto) {
         service.createSubscribe(dto);
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
 
@@ -51,8 +55,7 @@ public class SubscribeController {
      * @param pageable 페이징 정보
      * @return 구독들 반환
      */
-    @AdminAuth
-    @GetMapping("/token/subscribes")
+    @GetMapping("/api/subscribes")
     public ResponseEntity<PageResponse<GetSubscribeResponseDto>> subscribeList(Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new PageResponse<>(service.getSubscribes(pageable)));
@@ -72,6 +75,24 @@ public class SubscribeController {
                                                 @RequestParam("isDeleted") boolean isDeleted) {
         service.deleteSubscribe(subscribeNo, isDeleted);
         return ResponseEntity.status(HttpStatus.OK)
+                .build();
+    }
+
+    /**
+     * 구독정보를 수정하기위해 사용되는 메서드입니다.
+     * 관리자만 접근이 가능합니다.
+     * 반환값으로는 201 이 반환됩니다.
+     *
+     * @param subscribeNo the subscribe no
+     * @param dto         the dto
+     * @return the response entity
+     */
+    @AdminAuth
+    @PutMapping("/token/subscribes/{subscribeNo}")
+    public ResponseEntity<Void> subscribeModify(@PathVariable("subscribeNo") Long subscribeNo,
+                                                @RequestBody ModifySubscribeRequestDto dto) {
+        service.modifySubscribe(dto, subscribeNo);
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
 }

@@ -82,4 +82,25 @@ public class Subscribe {
     public void changeIsDeleted(boolean subscribeDeleted) {
         this.subscribeDeleted = subscribeDeleted;
     }
+
+    /**
+     * 구독정보를 수정하기위한 메서드입니다.
+     *
+     * @param name           구독이름.
+     * @param salesPrice     할인 판매가.
+     * @param subscribePrice 원가.
+     */
+    public void modifySubscribeInfo(String name,
+                                    Long salesPrice,
+                                    Long subscribePrice,
+                                    Integer saleRate,
+                                    boolean renewed,
+                                    boolean deleted) {
+        this.subscribeName = name;
+        this.salesPrice = salesPrice;
+        this.subscribePrice = subscribePrice;
+        this.salesRate = saleRate;
+        this.subscribeRenewed = renewed;
+        this.subscribeDeleted = deleted;
+    }
 }
