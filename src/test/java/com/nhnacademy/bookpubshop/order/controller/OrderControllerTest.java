@@ -143,7 +143,10 @@ class OrderControllerTest {
                 order.getOrderRequest(),
                 order.getPointAmount(),
                 order.getCouponDiscount(),
-                order.getOrderPrice());
+                order.getOrderPrice(),
+                order.getOrderName(),
+                order.getOrderId());
+
 
         orderProductStateCode = new OrderProductStateCode(
                 null,
