@@ -570,4 +570,27 @@ class ProductServiceTest {
         verify(productRepository, times(1))
                 .getProductsByCategory(1, pageable);
     }
+
+    @Test
+    @DisplayName("E-book 조회")
+    void getEbooks() {
+        GetProductByCategoryResponseDto dto = new GetProductByCategoryResponseDto();
+        ReflectionTestUtils.setField(dto, "productNo", 1L);
+        ReflectionTestUtils.setField(dto, "title", "제목");
+        ReflectionTestUtils.setField(dto, "thumbnail", "thumbnail");
+        ReflectionTestUtils.setField(dto, "salesPrice", 1000L);
+        ReflectionTestUtils.setField(dto, "categories", List.of("요리도서"));
+        ReflectionTestUtils.setField(dto, "authors", List.of("저자 1"));
+
+        List<GetProductByCategoryResponseDto> response = List.of(dto);
+        Pageable pageable = Pageable.ofSize(5);
+
+        Page<GetProductByCategoryResponseDto> page =
+                PageableExecutionUtils.getPage(response, pageable, () -> 1L);
+
+        productService.getEbooks(pageable);
+
+        verify(productRepository, times(1))
+                .getEbooks(pageable);
+    }
 }
