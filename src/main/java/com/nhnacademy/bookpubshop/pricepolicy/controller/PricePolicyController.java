@@ -35,8 +35,7 @@ public class PricePolicyController {
      *
      * @return 200, 가격정책 리스트 반환.
      */
-    @GetMapping("/token/state/pricepolicies")
-    @AdminAuth
+    @GetMapping("/api/state/pricepolicies")
     public ResponseEntity<List<GetPricePolicyResponseDto>> getAllPolicies() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -58,23 +57,7 @@ public class PricePolicyController {
     }
 
     /**
-     * 정책의 가격을 수정합니다.
-     *
-     * @param policyNo 정책번호.
-     * @param fee      수정할 가격.
-     * @return 201 반환.
-     */
-    @PutMapping("/token/state/pricepolicies/{policyNo}")
-    @AdminAuth
-    public ResponseEntity<Void> modifyPolicy(@PathVariable Integer policyNo,
-                                             @RequestParam Long fee) {
-        pricePolicyService.modifyPricePolicyFee(policyNo, fee);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .build();
-    }
-
-    /**
-     * 정책번호로 조회합니다.
+     * 정책이름으로 조회합니다.
      *
      * @param policyName 정책명.
      * @return 200, 정책리스트.
