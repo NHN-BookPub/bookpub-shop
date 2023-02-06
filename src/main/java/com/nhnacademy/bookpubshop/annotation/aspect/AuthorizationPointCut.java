@@ -40,10 +40,12 @@ public class AuthorizationPointCut {
     public Object checkMemberAuthorization(ProceedingJoinPoint pjp) {
         HttpServletRequest request = getRequest();
         if (getHeader(request, AUTH_MEMBER_INFO, null)) {
+            log.error("헤더가 없음");
             return httpResponse(HttpStatus.UNAUTHORIZED);
         }
 
         if (!request.getRequestURI().contains(request.getHeader(AUTH_MEMBER_INFO))) {
+            log.error("Url path 에 멤버 no 가 없음");
             return httpResponse(HttpStatus.UNAUTHORIZED);
         }
 
