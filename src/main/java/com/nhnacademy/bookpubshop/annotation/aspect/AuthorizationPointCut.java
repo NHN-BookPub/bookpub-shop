@@ -57,6 +57,9 @@ public class AuthorizationPointCut {
         } catch (Throwable e) {
             return httpResponse(HttpStatus.NOT_IMPLEMENTED);
         }
+        log.error("header 2개가 없을경우 url :{}", request.getRequestURI());
+        log.error("header : {}", request.getHeader(AUTH_HEADER));
+        log.error("header : {}", request.getHeader(AUTH_MEMBER_INFO));
         return httpResponse(HttpStatus.UNAUTHORIZED);
     }
 
