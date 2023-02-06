@@ -10,13 +10,12 @@ import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
  **/
 public class SubscribeDummy {
     public static Subscribe dummy() {
-        return new Subscribe(null,
-                "좋은생각",
-                5000L,
-                6000L,
-                10,
-                5L,
-                false,
-                true);
+        return Subscribe.builder()
+                .subscribeName("hi")
+                .subscribePrice(5000L)
+                .salesRate(10)
+                .viewCount(0L)
+                .salesPrice(5000L)
+                .build();
     }
 }

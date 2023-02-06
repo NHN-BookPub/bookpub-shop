@@ -9,5 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author : 여운석
  * @since : 1.0
  **/
-public interface SubscribeRepository extends JpaRepository<Subscribe, Long> {
+public interface SubscribeRepository extends JpaRepository<Subscribe, Long>,
+        SubscribeRepositoryCustom {
 }

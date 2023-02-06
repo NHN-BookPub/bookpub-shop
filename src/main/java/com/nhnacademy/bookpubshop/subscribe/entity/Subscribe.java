@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,7 +20,6 @@ import lombok.NoArgsConstructor;
  **/
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 @Entity
 @Table(name = "subscribe")
 public class Subscribe {
@@ -52,4 +51,35 @@ public class Subscribe {
 
     @Column(name = "subscribe_renewed")
     private boolean subscribeRenewed;
+
+    /**
+     * 구독생성자.
+     *
+     * @param subscribeName  구독이름
+     * @param salesPrice     세일가격
+     * @param subscribePrice 판매가격
+     * @param salesRate      할인퍼센트
+     * @param viewCount      뷰 카운트
+     * @param renewed        갱신여부
+     */
+    @Builder
+    public Subscribe(String subscribeName,
+                     Long salesPrice, Long subscribePrice,
+                     Integer salesRate, Long viewCount, boolean renewed) {
+        this.subscribeName = subscribeName;
+        this.salesPrice = salesPrice;
+        this.subscribePrice = subscribePrice;
+        this.salesRate = salesRate;
+        this.viewCount = viewCount;
+        this.subscribeRenewed = renewed;
+    }
+
+    /**
+     * 삭제여부 수정.
+     *
+     * @param subscribeDeleted 구독상품 삭제여부 설정
+     */
+    public void changeIsDeleted(boolean subscribeDeleted) {
+        this.subscribeDeleted = subscribeDeleted;
+    }
 }
