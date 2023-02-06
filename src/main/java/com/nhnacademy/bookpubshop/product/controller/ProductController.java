@@ -18,7 +18,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -68,10 +77,10 @@ public class ProductController {
         if (thumbnail != null) {
             files.put("thumbnail", thumbnail);
         }
-        if(detail != null) {
+        if (detail != null) {
             files.put("detail", detail);
         }
-        if(ebook != null) {
+        if (ebook != null) {
             files.put("ebook", ebook);
         }
 
@@ -154,7 +163,7 @@ public class ProductController {
      */
     @GetMapping("/products/types/{typeNo}")
     public ResponseEntity<List<GetProductByTypeResponseDto>>
-    getProductsByType(@PathVariable Integer typeNo,
+        getProductsByType(@PathVariable Integer typeNo,
                       @RequestParam(name = "limit") Integer limit) {
 
         return ResponseEntity.ok()
@@ -185,7 +194,7 @@ public class ProductController {
      */
     @GetMapping("/products-categories/{categoryNo}")
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-    getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
+        getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
         Page<GetProductByCategoryResponseDto> content =
                 productService.getProductsByCategory(categoryNo, pageable);
 

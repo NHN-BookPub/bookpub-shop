@@ -87,6 +87,8 @@ class CouponMonthRepositoryTest {
         entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(file);
+        entityManager.persist(file.getSubscribe());
+
     }
 
     @Test

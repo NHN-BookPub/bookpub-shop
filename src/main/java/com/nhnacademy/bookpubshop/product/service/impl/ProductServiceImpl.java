@@ -33,7 +33,10 @@ import com.nhnacademy.bookpubshop.tag.entity.Tag;
 import com.nhnacademy.bookpubshop.tag.exception.TagNotFoundException;
 import com.nhnacademy.bookpubshop.tag.repository.TagRepository;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -72,7 +75,8 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional
-    public void createProduct(CreateProductRequestDto request, Map<String, MultipartFile> fileMap) throws IOException {
+    public void createProduct(CreateProductRequestDto request,
+                              Map<String, MultipartFile> fileMap) throws IOException {
         ProductPolicy productPolicy = productPolicyRepository
                 .findById(request.getProductPolicyNo())
                 .orElseThrow(NotFoundProductPolicyException::new);
@@ -113,7 +117,8 @@ public class ProductServiceImpl implements ProductService {
                     .orElseThrow(NotFoundAuthorException::new);
 
             product.getProductAuthors().add(new ProductAuthor(
-                    new ProductAuthor.Pk(author.getAuthorNo(), product.getProductNo()), author, product));
+                    new ProductAuthor.Pk(author.getAuthorNo(),
+                            product.getProductNo()), author, product));
         }
 
         List<Integer> categoriesNo = request.getCategoriesNo();
@@ -122,7 +127,8 @@ public class ProductServiceImpl implements ProductService {
                     .orElseThrow(CategoryNotFoundException::new);
 
             product.getProductCategories().add(new ProductCategory(
-                    new ProductCategory.Pk(category.getCategoryNo(), product.getProductNo()), category, product));
+                    new ProductCategory.Pk(category.getCategoryNo(),
+                            product.getProductNo()), category, product));
         }
 
         if (Objects.nonNull(request.getTagsNo())) {
@@ -139,11 +145,12 @@ public class ProductServiceImpl implements ProductService {
         List<File> images = product.getFiles();
 
         for (FileCategory category : FileCategory.values()) {
-            if(fileMap.get(category.getCategory()) != null) {
+            if (fileMap.get(category.getCategory()) != null) {
                 images.add(fileManagement.saveFile(
                         null,
                         null,
                         product,
+                        null,
                         null,
                         null,
                         fileMap.get(category.getCategory()),
@@ -214,7 +221,6 @@ public class ProductServiceImpl implements ProductService {
                 request.getProductPriority(),
                 product.isProductDeleted(),
                 null,
-//                            request.getProductStock(),
                 request.getPublishedAt(),
                 request.isSubscribed()));
     }
@@ -254,7 +260,8 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo, Pageable pageable) {
+    public Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo,
+                                                                       Pageable pageable) {
         return productRepository.getProductsByCategory(categoryNo, pageable);
     }
 }

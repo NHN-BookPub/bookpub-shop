@@ -123,7 +123,9 @@ class OrderRepositoryTest {
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
                 3, 1000L, 30000L, "reason");
         orderProduct = entityManager.persist(orderProduct);
-
+        file = FileDummy.dummy(null, null,
+                null, product, null, FileCategory.PRODUCT_THUMBNAIL);
+        entityManager.persist(file.getSubscribe());
     }
 
     @Test
@@ -166,10 +168,7 @@ class OrderRepositoryTest {
                 orderRepository.getOrderDetailById(persist.getOrderNo())
                         .orElseThrow(OrderNotFoundException::new);
 
-        file = entityManager.persist(
-                FileDummy.dummy(null, null,
-                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
-
+        entityManager.persist(file);
         assertThat(result.getOrderNo()).isEqualTo(persist.getOrderNo());
         assertThat(result.getOrderState()).isEqualTo(persist.getOrderStateCode().getCodeName());
         assertThat(result.getAddressDetail()).isEqualTo(persist.getAddressDetail());
@@ -225,10 +224,7 @@ class OrderRepositoryTest {
         BookpubOrder persist = order;
 
         Pageable pageable = PageRequest.of(0,10);
-
-        file = entityManager.persist(
-                FileDummy.dummy(null, null,
-                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+        entityManager.persist(file);
 
         Page<GetOrderListResponseDto> result = orderRepository.getOrdersListByUser(pageable, member.getMemberNo());
 

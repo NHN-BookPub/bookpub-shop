@@ -120,7 +120,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         try {
             review.setFile(fileManagement.saveFile(null, null, null,
-                    review, null, image,
+                    review, null, null, image,
                     FileCategory.REVIEW.getCategory(), FileCategory.REVIEW.getPath()));
         } catch (IOException e) {
             throw new FileNotFoundException();
@@ -145,7 +145,7 @@ public class ReviewServiceImpl implements ReviewService {
         if (Objects.nonNull(image)) {
             try {
                 review.setFile(fileManagement.saveFile(null, null, null,
-                        review, null, image, "review", "review"));
+                        review, null, null, image, "review", "review"));
 
             } catch (IOException e) {
                 throw new FileNotFoundException();

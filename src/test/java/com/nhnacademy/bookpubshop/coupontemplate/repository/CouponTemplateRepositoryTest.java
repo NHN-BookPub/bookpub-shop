@@ -115,6 +115,7 @@ class CouponTemplateRepositoryTest {
         entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(category);
+        entityManager.persist(file.getSubscribe());
         CouponTemplate save = entityManager.persist(couponTemplate);
         File saveFile = entityManager.persist(file);
 
@@ -148,6 +149,8 @@ class CouponTemplateRepositoryTest {
         entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(category);
+        entityManager.persist(file.getSubscribe());
+
         CouponTemplate save = entityManager.persist(couponTemplate);
         File saveFile = entityManager.persist(file);
 
@@ -185,6 +188,8 @@ class CouponTemplateRepositoryTest {
         entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(category);
+        entityManager.persist(file.getSubscribe());
+
         CouponTemplate save = entityManager.persist(couponTemplate);
         File saveFile = entityManager.persist(file);
 

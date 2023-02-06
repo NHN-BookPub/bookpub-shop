@@ -234,6 +234,7 @@ class CouponRepositoryTest {
         entityManager.persist(review);
         entityManager.persist(customerServiceStateCode);
         entityManager.persist(customerService);
+        entityManager.persist(file.getSubscribe());
         entityManager.persist(file);
     }
 
