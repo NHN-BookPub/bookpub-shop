@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.reviewpolicy.repository;
 
 import com.nhnacademy.bookpubshop.reviewpolicy.entity.ReviewPolicy;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -10,5 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since : 1.0
  **/
 public interface ReviewPolicyRepository extends JpaRepository<ReviewPolicy, Integer>, ReviewPolicyRepositoryCustom {
-    ReviewPolicy findByPolicyUsedIsTrue();
+    Optional<ReviewPolicy> findByPolicyUsedIsTrue();
+
+    boolean existsByPolicyUsedIsTrue();
 }
