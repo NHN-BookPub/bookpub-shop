@@ -32,7 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/reviews")
+@RequestMapping
 public class ReviewController {
     private final ReviewService reviewService;
 
@@ -43,8 +43,9 @@ public class ReviewController {
      * @param pageable 페이지 정보
      * @return 상품평 정보를 담은 Dto 페이지 정보
      */
-    @GetMapping("/product/{productNo}")
-    public ResponseEntity<PageResponse<GetProductReviewResponseDto>> productReviewList(Pageable pageable, @PathVariable Long productNo) {
+    @GetMapping("/api/reviews/product/{productNo}")
+    public ResponseEntity<PageResponse<GetProductReviewResponseDto>> productReviewList(
+            Pageable pageable, @PathVariable Long productNo) {
         Page<GetProductReviewResponseDto> reviews = reviewService.getProductReviews(pageable, productNo);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -59,7 +60,7 @@ public class ReviewController {
      * @param reviewNo 조회할 상품평 번호
      * @return 상품평 정보를 담은 Dto
      */
-    @GetMapping("/{reviewNo}")
+    @GetMapping("/api/reviews/{reviewNo}")
     public ResponseEntity<GetMemberReviewResponseDto> reviewDetails(@PathVariable Long reviewNo) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -73,8 +74,9 @@ public class ReviewController {
      * @param pageable 페이지 정보
      * @return 상품평 정보를 담은 Dto 페이지 정보
      */
-    @GetMapping("/member/{memberNo}")
-    public ResponseEntity<PageResponse<GetMemberReviewResponseDto>> memberReviewList(Pageable pageable, @PathVariable Long memberNo) {
+    @GetMapping("/api/reviews/member/{memberNo}")
+    public ResponseEntity<PageResponse<GetMemberReviewResponseDto>> memberReviewList(
+            Pageable pageable, @PathVariable Long memberNo) {
 
         Page<GetMemberReviewResponseDto> reviews = reviewService.getMemberReviews(pageable, memberNo);
 
@@ -91,9 +93,11 @@ public class ReviewController {
      * @param memberNo 회원 번호
      * @return 상품정보들이 담긴 Dto 페이지 정보
      */
-    @GetMapping("/member/{memberNo}/writable")
-    public ResponseEntity<PageResponse<GetProductSimpleResponseDto>> memberWritableReviewList(Pageable pageable, @PathVariable Long memberNo) {
-        Page<GetProductSimpleResponseDto> reviews = reviewService.getWritableMemberReviews(pageable, memberNo);
+    @GetMapping("/api/reviews/member/{memberNo}/writable")
+    public ResponseEntity<PageResponse<GetProductSimpleResponseDto>> memberWritableReviewList(
+            Pageable pageable, @PathVariable Long memberNo) {
+        Page<GetProductSimpleResponseDto> reviews =
+                reviewService.getWritableMemberReviews(pageable, memberNo);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -108,8 +112,9 @@ public class ReviewController {
      * @param productNo 상품 번호
      * @return 상품에 대한 리뷰 정보들이 담긴 Dto
      */
-    @GetMapping("/info/product/{productNo}")
-    public ResponseEntity<GetProductReviewInfoResponseDto> reviewInfoProduct(@PathVariable("productNo") Long productNo) {
+    @GetMapping("/api/reviews/info/product/{productNo}")
+    public ResponseEntity<GetProductReviewInfoResponseDto> reviewInfoProduct(
+            @PathVariable("productNo") Long productNo) {
         GetProductReviewInfoResponseDto reviewInfo = reviewService.getReviewInfo(productNo);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -124,9 +129,11 @@ public class ReviewController {
      * @param createRequestDto 상품평 등록에 필요한 정보를 담은 Dto
      * @return the response entity
      */
-    @PostMapping
-    public ResponseEntity<Void> reviewAdd(@Valid @RequestPart("createRequestDto") CreateReviewRequestDto createRequestDto,
-                                          @RequestPart(value = "image", required = false) MultipartFile image) {
+    @PostMapping("/api/reviews")
+    public ResponseEntity<Void> reviewAdd(@Valid @RequestPart("createRequestDto")
+                                          CreateReviewRequestDto createRequestDto,
+                                          @RequestPart(value = "image", required = false)
+                                          MultipartFile image) {
         reviewService.createReview(createRequestDto, image);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -140,9 +147,10 @@ public class ReviewController {
      * @param modifyRequestDto 상품평 수정에 필요한 정보를 담은 Dto.
      * @return the response entity
      */
-    @PutMapping("/{reviewNo}/content")
+    @PutMapping("/api/reviews/{reviewNo}/content")
     public ResponseEntity<Void> reviewModify(@PathVariable("reviewNo") Long reviewNo,
-                                             @Valid @RequestPart("modifyRequestDto") ModifyReviewRequestDto modifyRequestDto,
+                                             @Valid @RequestPart("modifyRequestDto")
+                                             ModifyReviewRequestDto modifyRequestDto,
                                              @RequestPart(value = "image", required = false) MultipartFile image) {
         reviewService.modifyReview(reviewNo, modifyRequestDto, image);
 
@@ -157,7 +165,7 @@ public class ReviewController {
      * @param reviewNo 상품평 번호
      * @return the response entity
      */
-    @PutMapping("/{reviewNo}/file")
+    @PutMapping("/api/reviews/{reviewNo}/file")
     public ResponseEntity<Void> reviewDeleteFile(@PathVariable("reviewNo") Long reviewNo) {
         reviewService.deleteReviewImage(reviewNo);
 
@@ -172,7 +180,7 @@ public class ReviewController {
      * @param reviewNo 삭제할 상품평 번호
      * @return the response entity
      */
-    @PutMapping("/{reviewNo}")
+    @PutMapping("/api/reviews/{reviewNo}")
     public ResponseEntity<Void> reviewDelete(@PathVariable("reviewNo") Long reviewNo) {
         reviewService.deleteReview(reviewNo);
 

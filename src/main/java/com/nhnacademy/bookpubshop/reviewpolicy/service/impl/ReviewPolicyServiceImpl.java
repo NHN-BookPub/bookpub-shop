@@ -8,7 +8,6 @@ import com.nhnacademy.bookpubshop.reviewpolicy.exception.ReviewPolicyNotFoundExc
 import com.nhnacademy.bookpubshop.reviewpolicy.repository.ReviewPolicyRepository;
 import com.nhnacademy.bookpubshop.reviewpolicy.service.ReviewPolicyService;
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,8 +57,10 @@ public class ReviewPolicyServiceImpl implements ReviewPolicyService {
     @Override
     @Transactional
     public void modifyUsedReviewPolicy(Integer policyNo) {
-        if (Objects.nonNull(reviewPolicyRepository.findByPolicyUsedIsTrue())) {
-            reviewPolicyRepository.findByPolicyUsedIsTrue().modifyUsed(false);
+        if (reviewPolicyRepository.existsByPolicyUsedIsTrue()) {
+            ReviewPolicy usedReviewPolicy = reviewPolicyRepository.findByPolicyUsedIsTrue()
+                    .orElseThrow(() -> new ReviewPolicyNotFoundException(policyNo));
+            usedReviewPolicy.modifyUsed(false);
         }
 
         ReviewPolicy reviewPolicy = reviewPolicyRepository.findById(policyNo)

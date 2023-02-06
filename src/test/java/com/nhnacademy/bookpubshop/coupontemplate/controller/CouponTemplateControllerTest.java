@@ -186,7 +186,6 @@ class CouponTemplateControllerTest {
         String dtoToJson = objectMapper.writeValueAsString(createRequestDto);
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
-
         mockMvc.perform(multipart(authPath)
                         .file(multipartFile)
                         .file(createRequestDto))
