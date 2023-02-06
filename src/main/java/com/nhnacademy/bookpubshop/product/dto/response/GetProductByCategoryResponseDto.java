@@ -39,4 +39,13 @@ public class GetProductByCategoryResponseDto {
     public void setAuthors(List<String> authors) {
         this.authors = authors;
     }
+
+    /**
+     * 썸네일 세팅.
+     *
+     * @param thumbnail 썸네일
+     */
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
 }
