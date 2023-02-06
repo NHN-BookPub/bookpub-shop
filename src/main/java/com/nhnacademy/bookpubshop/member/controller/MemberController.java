@@ -439,7 +439,8 @@ public class MemberController {
      * @param memberNo 멤버 번호
      * @return 등급 번호
      */
-    @GetMapping("/members/{memberNo}/tier")
+    @GetMapping("/token/members/{memberNo}/tier")
+    @MemberAuth
     public ResponseEntity<Integer> getTierNoByMemberNo(@PathVariable Long memberNo) {
         Integer tierNo = memberService.getTierByMemberNo(memberNo);
 
