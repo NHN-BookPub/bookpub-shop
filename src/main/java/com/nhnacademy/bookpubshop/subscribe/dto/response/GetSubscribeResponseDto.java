@@ -20,5 +20,6 @@ public class GetSubscribeResponseDto {
     private Long viewCnt;
     private boolean deleted;
     private boolean renewed;
+    private String imagePath;
 
 }
