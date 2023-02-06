@@ -7,6 +7,7 @@ import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.review.entity.Review;
+import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import java.io.IOException;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,12 +31,14 @@ public interface FileManagement {
      * @param customerService the customer service
      * @param file            the file
      * @param fileCategory    the file category
+     * @param subscribe       구독정보
      * @param path            the path
      * @return the file
      * @throws IOException the io exception
      */
     File saveFile(PersonalInquiry personalInquiry, CouponTemplate couponTemplate,
                   Product product, Review review, CustomerService customerService,
+                  Subscribe subscribe,
                   MultipartFile file, String fileCategory, String path) throws IOException;
 
     /**

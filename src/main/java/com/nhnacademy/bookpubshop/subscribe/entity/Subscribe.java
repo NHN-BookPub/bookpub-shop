@@ -1,10 +1,13 @@
 package com.nhnacademy.bookpubshop.subscribe.entity;
 
+import com.nhnacademy.bookpubshop.file.entity.File;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -27,6 +30,10 @@ public class Subscribe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "subscribe_number")
     private Long subscribeNo;
+
+    @OneToOne(mappedBy = "subscribe", cascade =
+            {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    private File file;
 
     @NotNull
     @Column(name = "subscribe_name")
@@ -81,6 +88,15 @@ public class Subscribe {
      */
     public void changeIsDeleted(boolean subscribeDeleted) {
         this.subscribeDeleted = subscribeDeleted;
+    }
+
+    /**
+     * 파일을 등록하기위한 메서드입니다.
+     *
+     * @param file 파일 정보가 기입됩니다.
+     */
+    public void setFile(File file) {
+        this.file = file;
     }
 
     /**
