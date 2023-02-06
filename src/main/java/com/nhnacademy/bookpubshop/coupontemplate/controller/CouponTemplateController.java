@@ -59,7 +59,7 @@ public class CouponTemplateController {
      */
     @GetMapping("/coupon-templates")
     public ResponseEntity<PageResponse<GetCouponTemplateResponseDto>>
-    couponTemplateList(Pageable pageable) throws IOException {
+        couponTemplateList(Pageable pageable) throws IOException {
 
         Page<GetCouponTemplateResponseDto> content =
                 couponTemplateService.getCouponTemplates(pageable);
@@ -79,7 +79,8 @@ public class CouponTemplateController {
     @PostMapping(value = "/coupon-templates")
     public ResponseEntity<Void> couponTemplateAdd(
             @Valid @RequestPart("createRequestDto") CreateCouponTemplateRequestDto request,
-            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+            @RequestPart(value = "image", required = false) MultipartFile image)
+            throws IOException {
 
         couponTemplateService.createCouponTemplate(request, image);
 
@@ -97,12 +98,20 @@ public class CouponTemplateController {
     public ResponseEntity<Void> couponTemplateModify(
             @PathVariable("templateNo") Long templateNo,
             @Valid @RequestPart("modifyRequestDto") ModifyCouponTemplateRequestDto request,
-            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+            @RequestPart(value = "image", required = false) MultipartFile image)
+            throws IOException {
         couponTemplateService.modifyCouponTemplate(templateNo, request, image);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * 쿠폰템플릿에 이미지를 다운하는 메서드입니다.
+     *
+     * @param templateNo 템플릿번호.
+     * @return 200 반환
+     * @throws IOException File Exception
+     */
     @GetMapping("/coupon-templates/{templateNo}/download")
     public ResponseEntity<GetDownloadInfo> couponTemplateDownload(
             @PathVariable("templateNo") Long templateNo) throws IOException {
