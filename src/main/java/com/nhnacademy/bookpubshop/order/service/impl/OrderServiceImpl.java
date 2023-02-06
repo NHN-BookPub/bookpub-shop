@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
  **/
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
@@ -123,7 +125,10 @@ public class OrderServiceImpl implements OrderService {
         createOrderProduct(request, order, request.getProductCoupon());
 
         if (Objects.nonNull(member)) {
-            updateMemberPoint(member.getMemberNo(), request.getSavePoint(), request.getPointAmount());
+            updateMemberPoint(
+                    member.getMemberNo(),
+                    request.getSavePoint(),
+                    request.getPointAmount());
         }
 
         return order.getOrderNo();
@@ -152,7 +157,7 @@ public class OrderServiceImpl implements OrderService {
                             .orderProductStateCode(orderProductStateCode)
                             .productAmount(request.getProductCount().get(productNo))
                             .couponAmount(request.getProductSaleAmount().get(productNo))
-                            .productPrice(request.getProductSaleAmount().get(productNo))
+                            .productPrice(request.getProductAmount().get(productNo))
                             .reasonName(OrderState.WAITING_PAYMENT.getReason())
                             .build());
 
@@ -169,6 +174,9 @@ public class OrderServiceImpl implements OrderService {
      * @param couponNo     사용한 쿠폰
      */
     public void updateCoupon(BookpubOrder order, OrderProduct orderProduct, Long couponNo) {
+        if (Objects.isNull(couponNo)) {
+            return;
+        }
         Coupon coupon = couponRepository.findById(couponNo)
                 .orElseThrow(() -> new NotFoundCouponException(couponNo));
         coupon.modifyOrder(order);
@@ -254,7 +262,8 @@ public class OrderServiceImpl implements OrderService {
                 orderRepository.getOrdersListByUser(pageable, memberNo);
 
         for (GetOrderListResponseDto response : returns.getContent()) {
-            response.addOrderProducts(productRepository.getProductListByOrderNo(response.getOrderNo()));
+            response.addOrderProducts(
+                    productRepository.getProductListByOrderNo(response.getOrderNo()));
         }
 
         return new PageResponse<>(returns);
