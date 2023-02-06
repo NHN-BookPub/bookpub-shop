@@ -1,0 +1,105 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+상품평(Review) 조회에 관한 Api 명세입니다.
+
+== 상품에 따른 상품평 페이지정보 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-reviews-product/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/get-reviews-product/path-parameters.adoc[]
+include::../../../../target/snippets/get-reviews-product/request-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-reviews-product/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-reviews-product/response-fields.adoc[]
+
+== 상품평 단건 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-review/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/get-review
+
+/path-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-review/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-review/response-fields.adoc[]
+
+== 해당 회원이 작성한 상품평 페이징정보 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-reviews-member/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/get-reviews-member
+
+/path-parameters.adoc[]
+include::../../../../target/snippets/get-reviews-member /request-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-reviews-member/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-reviews-member/response-fields.adoc[]
+
+== 해당 회원이 상품평 작성 가능한 상품들 페이징 정보
+
+=== 요청구조
+
+include::../../../../target/snippets/get-reviews-member-writable/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/get-reviews-member-writable
+
+/path-parameters.adoc[]
+include::../../../../target/snippets/get-reviews-member-writable /request-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-reviews-member-writable/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-reviews-member-writable/response-fields.adoc[]
+
+== 해당 상품에 대한 상품평 요약정보 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/get-review-info-product/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/get-review-info-product/path-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/get-review-info-product/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/get-review-info-product/response-fields.adoc[]
