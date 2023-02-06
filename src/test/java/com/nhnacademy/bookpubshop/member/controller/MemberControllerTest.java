@@ -573,6 +573,50 @@ class MemberControllerTest {
     }
 
     @Test
+    @DisplayName("인증된 멤버 상세 조회 성공 테스트")
+    void memberDetailsTokenTest() throws Exception {
+        MemberDetailResponseDto dto = MemberDummy.memberDetailResponseDummy();
+        when(memberService.getMemberDetails(1L))
+                .thenReturn(dto);
+
+        mvc.perform(RestDocumentationRequestBuilders.get("/token/members/{memberNo}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.memberNo").value(objectMapper.writeValueAsString(dto.getMemberNo())))
+                .andExpect(jsonPath("$.tierName").value(dto.getTierName()))
+                .andExpect(jsonPath("$.nickname").value(dto.getNickname()))
+                .andExpect(jsonPath("$.gender").value(dto.getGender()))
+                .andExpect(jsonPath("$.birthMonth").value(objectMapper.writeValueAsString(dto.getBirthMonth())))
+                .andExpect(jsonPath("$.birthYear").value(objectMapper.writeValueAsString(dto.getBirthYear())))
+                .andExpect(jsonPath("$.phone").value(dto.getPhone()))
+                .andExpect(jsonPath("$.email").value(dto.getEmail()))
+                .andExpect(jsonPath("$.point").value(objectMapper.writeValueAsString(dto.getPoint())))
+                .andExpect(jsonPath("$.authorities").value(dto.getAuthorities()))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("member-getMember-success",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        responseFields(
+                                fieldWithPath("memberNo").description("회원 번호"),
+                                fieldWithPath("memberName").description("이름"),
+                                fieldWithPath("tierName").description("회원 등급"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("birthMonth").description("생월"),
+                                fieldWithPath("birthYear").description("생년"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("point").description("포인트"),
+                                fieldWithPath("authorities").description("인증"),
+                                fieldWithPath("addresses").description("주소")
+                        )));
+
+        then(memberService)
+                .should().getMemberDetails(anyLong());
+    }
+    @Test
     @DisplayName("전체 멤버를 조회하는 메서드입니다.")
     void memberListTest() throws Exception {
         MemberResponseDto dto = new MemberResponseDto(1L, "tier", "id", "nick",
