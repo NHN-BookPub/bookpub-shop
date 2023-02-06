@@ -168,14 +168,15 @@ public class MemberController {
      * 성공시 201 을 반환합니다.
      *
      * @param memberNo   회원번호가 기입됩니다.
-     * @param requestDto 휴대전화번호가 기입됩니다.
+     * @param dto 휴대전화번호가 기입됩니다.
      * @return the response entity
      */
     @PutMapping("/token/members/{memberNo}/phone")
     @MemberAuth
     public ResponseEntity<Void> memberModifyPhone(@PathVariable("memberNo") Long memberNo,
-                                                  @Valid @RequestBody ModifyMemberPhoneRequestDto requestDto) {
-        memberService.modifyMemberPhone(memberNo, requestDto);
+                                                  @Valid
+                                                  @RequestBody ModifyMemberPhoneRequestDto dto) {
+        memberService.modifyMemberPhone(memberNo, dto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
@@ -186,14 +187,15 @@ public class MemberController {
      * 성공시 201 을 반환합니다.
      *
      * @param memberNo   회원번호가 기입됩니다.
-     * @param requestDto 휴대전화번호가 기입됩니다.
+     * @param dto 휴대전화번호가 기입됩니다.
      * @return the response entity
      */
     @PutMapping("/token/members/{memberNo}/name")
     @MemberAuth
     public ResponseEntity<Void> memberModifyName(@PathVariable("memberNo") Long memberNo,
-                                                 @Valid @RequestBody ModifyMemberNameRequestDto requestDto) {
-        memberService.modifyMemberName(memberNo, requestDto);
+                                                 @Valid @RequestBody
+                                                 ModifyMemberNameRequestDto dto) {
+        memberService.modifyMemberName(memberNo, dto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
@@ -207,6 +209,21 @@ public class MemberController {
      */
     @GetMapping("/api/members/{memberNo}")
     public ResponseEntity<MemberDetailResponseDto> memberDetails(
+            @PathVariable("memberNo") Long memberNo) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(memberService.getMemberDetails(memberNo));
+    }
+
+    /**
+     * 인증된 사용자만 사용가능한 GET 입니다.
+     * 200 이 반환됩니다.
+     *
+     * @return the response entity
+     */
+    @MemberAuth
+    @GetMapping("/token/members/{memberNo}")
+    public ResponseEntity<MemberDetailResponseDto> memberDetailsAuth(
             @PathVariable("memberNo") Long memberNo) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -259,6 +276,13 @@ public class MemberController {
                 .build();
     }
 
+    /**
+     * 회원의 로그인을 위한 api 입니다.
+     * 성공시 200 이반환됩니다.
+     *
+     * @param loginMemberRequestDto the login member request dto
+     * @return the response entity
+     */
     @PostMapping("/api/login")
     public ResponseEntity<LoginMemberResponseDto> memberLogin(
             @RequestBody LoginMemberRequestDto loginMemberRequestDto) {
@@ -312,7 +336,8 @@ public class MemberController {
      */
     @GetMapping("/token/members/{memberNo}/password-check")
     @MemberAuth
-    public ResponseEntity<MemberPasswordResponseDto> memberPasswordCheck(@PathVariable("memberNo") Long memberNo) {
+    public ResponseEntity<MemberPasswordResponseDto> memberPasswordCheck(
+            @PathVariable("memberNo") Long memberNo) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(memberService.getMemberPwd(memberNo));
@@ -330,7 +355,8 @@ public class MemberController {
     @PutMapping("/token/members/{memberNo}/password")
     @MemberAuth
     public ResponseEntity<Void> memberModifyPassword(@PathVariable("memberNo") Long memberNo,
-                                                     @RequestBody ModifyMemberPasswordRequest request) {
+                                                     @RequestBody
+                                                     ModifyMemberPasswordRequest request) {
         memberService.modifyMemberPassword(memberNo, request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
@@ -367,7 +393,8 @@ public class MemberController {
     @PostMapping("/token/members/{memberNo}/addresses")
     @MemberAuth
     public ResponseEntity<Void> memberAddressAdd(@PathVariable("memberNo") Long memberNo,
-                                                 @Valid @RequestBody CreateAddressRequestDto requestDto) {
+                                                 @Valid @RequestBody
+                                                 CreateAddressRequestDto requestDto) {
         memberService.addMemberAddress(memberNo, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
