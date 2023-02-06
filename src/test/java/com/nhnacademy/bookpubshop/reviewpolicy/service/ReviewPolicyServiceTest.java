@@ -107,13 +107,15 @@ class ReviewPolicyServiceTest {
         Integer policyNo = 1;
 
         // when
-        when(reviewPolicyRepository.findByPolicyUsedIsTrue()).thenReturn(reviewPolicy);
+        when(reviewPolicyRepository.existsByPolicyUsedIsTrue()).thenReturn(true);
+        when(reviewPolicyRepository.findByPolicyUsedIsTrue()).thenReturn(Optional.of(reviewPolicy));
         when(reviewPolicyRepository.findById(anyInt())).thenReturn(Optional.of(reviewPolicy));
 
         // then
         reviewPolicyService.modifyUsedReviewPolicy(policyNo);
 
-        verify(reviewPolicyRepository, times(2)).findByPolicyUsedIsTrue();
+        verify(reviewPolicyRepository, times(1)).existsByPolicyUsedIsTrue();
+        verify(reviewPolicyRepository, times(1)).findByPolicyUsedIsTrue();
         verify(reviewPolicyRepository, times(1)).findById(anyInt());
     }
 
@@ -121,7 +123,8 @@ class ReviewPolicyServiceTest {
     @DisplayName("상품평 정책 사용여부 수정 실패 테스트_상품평정책이 없는 경우")
     void modifyUsedReviewPolicyTest_Fail_PolicyNo() {
         // when
-        when(reviewPolicyRepository.findByPolicyUsedIsTrue()).thenReturn(null);
+        when(reviewPolicyRepository.existsByPolicyUsedIsTrue()).thenReturn(true);
+        when(reviewPolicyRepository.findByPolicyUsedIsTrue()).thenReturn(Optional.empty());
         when(reviewPolicyRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         // then
@@ -129,8 +132,9 @@ class ReviewPolicyServiceTest {
                 .isInstanceOf(ReviewPolicyNotFoundException.class)
                 .hasMessageContaining(ReviewPolicyNotFoundException.MESSAGE);
 
+        verify(reviewPolicyRepository, times(1)).existsByPolicyUsedIsTrue();
         verify(reviewPolicyRepository, times(1)).findByPolicyUsedIsTrue();
-        verify(reviewPolicyRepository, times(1)).findById(anyInt());
+        verify(reviewPolicyRepository, times(0)).findById(anyInt());
     }
 
     @Test
