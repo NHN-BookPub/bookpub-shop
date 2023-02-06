@@ -5,6 +5,8 @@ import com.nhnacademy.bookpubshop.category.dto.request.ModifyCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 카테고리 서비스 입니다.
@@ -43,7 +45,7 @@ public interface CategoryService {
      *
      * @return 전체 카테고리가 반환됩니다.
      */
-    List<GetCategoryResponseDto> getCategories();
+    Page<GetCategoryResponseDto> getCategories(Pageable pageable);
 
 
     /**

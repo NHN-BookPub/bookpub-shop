@@ -7,8 +7,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -29,7 +28,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -301,42 +304,54 @@ class CategoryControllerTest {
 
     }
 
+
     @Test
     @DisplayName("카테고리 리스트 조회")
     void getCategoryListTest() throws Exception {
-        GetCategoryResponseDto parentDto = new GetCategoryResponseDto(1, "도서");
-        GetCategoryResponseDto dto = new GetCategoryResponseDto(2, "국내도서", parentDto, 5, true);
+        GetCategoryResponseDto dto = new GetCategoryResponseDto(2, "국내도서", null, 5, true);
+        List<GetCategoryResponseDto> list = List.of(dto);
 
-        when(categoryService.getCategories()).thenReturn(List.of(dto));
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<GetCategoryResponseDto> page = PageableExecutionUtils.getPage(list, pageable,
+                () -> 1L);
+
+        when(categoryService.getCategories(pageable)).thenReturn(page);
 
         mockMvc.perform(get(path)
+                        .param("page", objectMapper.writeValueAsString(pageable.getPageNumber()))
+                        .param("size", objectMapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].categoryNo").value(dto.getCategoryNo()))
-                .andExpect(jsonPath("$[0].categoryName").value(dto.getCategoryName()))
-                .andExpect(jsonPath("$[0].parent.categoryNo").value(dto.getParent().getCategoryNo()))
-                .andExpect(jsonPath("$[0].parent.categoryName").value(dto.getParent().getCategoryName()))
-                .andExpect(jsonPath("$[0].parent.parent").value(dto.getParent().getParent()))
-                .andExpect(jsonPath("$[0].parent.categoryPriority").value(dto.getParent().getCategoryPriority()))
-                .andExpect(jsonPath("$[0].parent.categoryDisplayed").value(dto.getParent().isCategoryDisplayed()))
-                .andExpect(jsonPath("$[0].categoryPriority").value(dto.getCategoryPriority()))
-                .andExpect(jsonPath("$[0].categoryDisplayed").value(dto.isCategoryDisplayed()))
+                .andExpect(jsonPath("$.content[0].categoryNo").value(dto.getCategoryNo()))
+                .andExpect(jsonPath("$.content[0].categoryName").value(dto.getCategoryName()))
+                .andExpect(jsonPath("$.content[0].parent").value(dto.getParent()))
+                .andExpect(
+                        jsonPath("$.content[0].categoryPriority").value(dto.getCategoryPriority()))
+                .andExpect(
+                        jsonPath("$.content[0].categoryDisplayed").value(dto.isCategoryDisplayed()))
                 .andDo(print())
                 .andDo(document("get-categories",
                         preprocessResponse(prettyPrint()),
+                        requestParameters(
+                                parameterWithName("page").description("페이지 정보 기입"),
+                                parameterWithName("size").description("페이지 사이즈 기입")
+                        ),
                         responseFields(
-                                fieldWithPath("[].categoryNo").description("카테고리 번호"),
-                                fieldWithPath("[].parent.categoryNo").description("상위 카테고리 번호"),
-                                fieldWithPath("[].parent.categoryName").description("상위 카테고리 이름"),
-                                fieldWithPath("[].parent.parent").description("상위 카테고리의 상위 카테고리(depth=2이므로 null)"),
-                                fieldWithPath("[].parent.categoryPriority").description("상위 카테고리 우선순위"),
-                                fieldWithPath("[].parent.categoryDisplayed").description("상위 카테고리 노출 여부"),
-                                fieldWithPath("[].categoryName").description("카테고리 이름"),
-                                fieldWithPath("[].categoryPriority").description("카테고리 우선순위(숫자가 클수록 우선순위가 높음)"),
-                                fieldWithPath("[].categoryDisplayed").description("카테고리 노출 여부")
+                                fieldWithPath("content[].categoryNo").description("카테고리 번호"),
+                                fieldWithPath("content[].categoryName").description("카테고리 이름"),
+                                fieldWithPath("content[].parent").description("최상위 카테고리"),
+                                fieldWithPath("content[].categoryPriority").description(
+                                        "카테고리 우선순위(숫자가 작을수록 우선순위가 높음)"),
+                                fieldWithPath("content[].categoryDisplayed").description(
+                                        "카테고리 노출 여부"),
+                                fieldWithPath("totalPages").description("총 페이지 수 반환"),
+                                fieldWithPath("number").description("현재 페이지 반환"),
+                                fieldWithPath("previous").description("이전 페이지 여부"),
+                                fieldWithPath("next").description("다음 페이지 여부")
+
                         )));
 
-        verify(categoryService, times(1)).getCategories();
+        verify(categoryService, times(1)).getCategories(any());
     }
 
     @Test

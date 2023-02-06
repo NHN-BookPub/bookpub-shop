@@ -13,6 +13,7 @@ import com.nhnacademy.bookpubshop.category.exception.CategoryAlreadyExistsExcept
 import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
 import com.nhnacademy.bookpubshop.category.service.impl.CategoryServiceImpl;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -219,14 +223,20 @@ class CategoryServiceTest {
     @Test
     @DisplayName("카테고리 다건 조회 성공 테스트.")
     void getCategoriesSuccessTest() {
+        List<GetCategoryResponseDto> responses = new ArrayList<>();
+        responses.add(getCategoryResponseDto);
 
-        when(categoryRepository.findCategories()).thenReturn(List.of(getCategoryResponseDto));
+        Pageable pageable = Pageable.ofSize(5);
+        Page<GetCategoryResponseDto> page = PageableExecutionUtils.getPage(responses, pageable,
+                () -> 1L);
 
-        List<GetCategoryResponseDto> categories = categoryService.getCategories();
-        assertThat(categories.get(0).getCategoryName()).isEqualTo(
+        when(categoryRepository.findCategories(pageable)).thenReturn(page);
+
+        assertThat(categoryService.getCategories(pageable).getContent().get(0)
+                .getCategoryName()).isEqualTo(
                 getCategoryResponseDto.getCategoryName());
 
-        verify(categoryRepository, times(1)).findCategories();
+        verify(categoryRepository, times(1)).findCategories(pageable);
     }
 
 
