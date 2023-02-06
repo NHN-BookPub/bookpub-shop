@@ -44,7 +44,8 @@ public class ReviewController {
      * @return 상품평 정보를 담은 Dto 페이지 정보
      */
     @GetMapping("/api/reviews/product/{productNo}")
-    public ResponseEntity<PageResponse<GetProductReviewResponseDto>> productReviewList(Pageable pageable, @PathVariable Long productNo) {
+    public ResponseEntity<PageResponse<GetProductReviewResponseDto>> productReviewList(
+            Pageable pageable, @PathVariable Long productNo) {
         Page<GetProductReviewResponseDto> reviews = reviewService.getProductReviews(pageable, productNo);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -74,7 +75,8 @@ public class ReviewController {
      * @return 상품평 정보를 담은 Dto 페이지 정보
      */
     @GetMapping("/api/reviews/member/{memberNo}")
-    public ResponseEntity<PageResponse<GetMemberReviewResponseDto>> memberReviewList(Pageable pageable, @PathVariable Long memberNo) {
+    public ResponseEntity<PageResponse<GetMemberReviewResponseDto>> memberReviewList(
+            Pageable pageable, @PathVariable Long memberNo) {
 
         Page<GetMemberReviewResponseDto> reviews = reviewService.getMemberReviews(pageable, memberNo);
 
@@ -92,8 +94,10 @@ public class ReviewController {
      * @return 상품정보들이 담긴 Dto 페이지 정보
      */
     @GetMapping("/api/reviews/member/{memberNo}/writable")
-    public ResponseEntity<PageResponse<GetProductSimpleResponseDto>> memberWritableReviewList(Pageable pageable, @PathVariable Long memberNo) {
-        Page<GetProductSimpleResponseDto> reviews = reviewService.getWritableMemberReviews(pageable, memberNo);
+    public ResponseEntity<PageResponse<GetProductSimpleResponseDto>> memberWritableReviewList(
+            Pageable pageable, @PathVariable Long memberNo) {
+        Page<GetProductSimpleResponseDto> reviews =
+                reviewService.getWritableMemberReviews(pageable, memberNo);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -109,7 +113,8 @@ public class ReviewController {
      * @return 상품에 대한 리뷰 정보들이 담긴 Dto
      */
     @GetMapping("/api/reviews/info/product/{productNo}")
-    public ResponseEntity<GetProductReviewInfoResponseDto> reviewInfoProduct(@PathVariable("productNo") Long productNo) {
+    public ResponseEntity<GetProductReviewInfoResponseDto> reviewInfoProduct(
+            @PathVariable("productNo") Long productNo) {
         GetProductReviewInfoResponseDto reviewInfo = reviewService.getReviewInfo(productNo);
 
         return ResponseEntity.status(HttpStatus.OK)
@@ -125,8 +130,10 @@ public class ReviewController {
      * @return the response entity
      */
     @PostMapping("/api/reviews")
-    public ResponseEntity<Void> reviewAdd(@Valid @RequestPart("createRequestDto") CreateReviewRequestDto createRequestDto,
-                                          @RequestPart(value = "image", required = false) MultipartFile image) {
+    public ResponseEntity<Void> reviewAdd(@Valid @RequestPart("createRequestDto")
+                                          CreateReviewRequestDto createRequestDto,
+                                          @RequestPart(value = "image", required = false)
+                                          MultipartFile image) {
         reviewService.createReview(createRequestDto, image);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -142,7 +149,8 @@ public class ReviewController {
      */
     @PutMapping("/api/reviews/{reviewNo}/content")
     public ResponseEntity<Void> reviewModify(@PathVariable("reviewNo") Long reviewNo,
-                                             @Valid @RequestPart("modifyRequestDto") ModifyReviewRequestDto modifyRequestDto,
+                                             @Valid @RequestPart("modifyRequestDto")
+                                             ModifyReviewRequestDto modifyRequestDto,
                                              @RequestPart(value = "image", required = false) MultipartFile image) {
         reviewService.modifyReview(reviewNo, modifyRequestDto, image);
 
