@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.subscribe.repository.impl;
 
+import com.nhnacademy.bookpubshop.file.entity.QFile;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.entity.QSubscribe;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
@@ -30,6 +31,7 @@ public class SubscribeRepositoryImpl extends QuerydslRepositorySupport
     @Override
     public Page<GetSubscribeResponseDto> getSubscribes(Pageable pageable) {
         QSubscribe subscribe = QSubscribe.subscribe;
+        QFile file = QFile.file;
 
         JPQLQuery<Long> count = from(subscribe)
                 .select(subscribe.count());
@@ -44,11 +46,14 @@ public class SubscribeRepositoryImpl extends QuerydslRepositorySupport
                         subscribe.salesRate.as("salePrice"),
                         subscribe.viewCount.as("viewCnt"),
                         subscribe.subscribeDeleted.as("isDeleted"),
-                        subscribe.subscribeRenewed.as("isRenewed")
+                        subscribe.subscribeRenewed.as("isRenewed"),
+                        file.filePath.as("imagePath")
                 ))
+                .leftJoin(subscribe.file, file)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 }

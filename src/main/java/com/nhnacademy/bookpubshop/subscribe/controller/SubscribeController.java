@@ -10,15 +10,16 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 구독관련 RestController 입니다.
@@ -41,8 +42,9 @@ public class SubscribeController {
      */
     @AdminAuth
     @PostMapping("/token/subscribes")
-    public ResponseEntity<Void> subscribeAdd(@Valid @RequestBody CreateSubscribeRequestDto dto) {
-        service.createSubscribe(dto);
+    public ResponseEntity<Void> subscribeAdd(@Valid @RequestPart CreateSubscribeRequestDto dto,
+                                             @RequestPart(value = "image") MultipartFile image) {
+        service.createSubscribe(dto, image);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
@@ -82,16 +84,19 @@ public class SubscribeController {
      * 구독정보를 수정하기위해 사용되는 메서드입니다.
      * 관리자만 접근이 가능합니다.
      * 반환값으로는 201 이 반환됩니다.
+     * 여담 : 수정인데 Post 를 한이유는 Multipart post 로만 전송해야한다.
      *
-     * @param subscribeNo the subscribe no
+     * @param subscribeNo 구독번호
      * @param dto         the dto
      * @return the response entity
      */
     @AdminAuth
-    @PutMapping("/token/subscribes/{subscribeNo}")
+    @PostMapping(value = "/token/subscribes/{subscribeNo}",
+            produces = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<Void> subscribeModify(@PathVariable("subscribeNo") Long subscribeNo,
-                                                @RequestBody ModifySubscribeRequestDto dto) {
-        service.modifySubscribe(dto, subscribeNo);
+                                                @RequestPart("dto") ModifySubscribeRequestDto dto,
+                                                @RequestPart("image") MultipartFile image) {
+        service.modifySubscribe(dto, subscribeNo, image);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }
