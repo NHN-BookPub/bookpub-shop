@@ -7,6 +7,9 @@ import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
 import com.nhnacademy.bookpubshop.coupon.exception.CouponNotFoundException;
 import com.nhnacademy.bookpubshop.coupon.repository.CouponRepository;
 import com.nhnacademy.bookpubshop.coupon.service.CouponService;
+import com.nhnacademy.bookpubshop.couponmonth.entity.CouponMonth;
+import com.nhnacademy.bookpubshop.couponmonth.exception.CouponMonthNotFoundException;
+import com.nhnacademy.bookpubshop.couponmonth.repository.CouponMonthRepository;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontemplate.exception.CouponTemplateNotFoundException;
 import com.nhnacademy.bookpubshop.coupontemplate.repository.CouponTemplateRepository;
@@ -22,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * CouponService 구현체.
@@ -38,6 +42,7 @@ public class CouponServiceImpl implements CouponService {
     private final MemberRepository memberRepository;
     private final CouponTemplateRepository couponTemplateRepository;
     private final ProductRepository productRepository;
+    private final CouponMonthRepository couponMonthRepository;
 
     /**
      * {@inheritDoc}
@@ -133,7 +138,6 @@ public class CouponServiceImpl implements CouponService {
             throw new ProductNotFoundException();
         }
 
-
         return couponRepository.findByProductNo(memberNo, productNo);
     }
 
@@ -190,5 +194,40 @@ public class CouponServiceImpl implements CouponService {
             couponRepository.save(coupon);
         }
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean checkedMonthCouponByMemberNo(Long memberNo, Long templateNo) {
+        return couponRepository.existsMonthCouponsByMemberNo(memberNo, templateNo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void issueMonthCouponByMemberNo(@RequestParam("memberNo") Long memberNo,
+            @RequestParam("templateNo") Long templateNo) {
+
+        CouponTemplate couponTemplate = couponTemplateRepository.findById(templateNo)
+                .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
+
+        CouponMonth couponMonth = couponMonthRepository.findByCouponTemplate(couponTemplate)
+                .orElseThrow(() -> new CouponMonthNotFoundException(templateNo));
+
+        couponMonth.modifyCouponMonthQuantity();
+
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        Coupon coupon = Coupon.builder()
+                .couponTemplate(couponTemplate)
+                .member(member)
+                .build();
+
+        couponRepository.save(coupon);
     }
 }

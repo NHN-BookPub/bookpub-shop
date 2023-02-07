@@ -158,6 +158,19 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
+    public boolean existsMonthCouponsByMemberNo(Long memberNo, Long templateNo) {
+        Long monthCoupon = from(coupon)
+                .select(coupon.couponNo)
+                .where(coupon.member.memberNo.eq(memberNo)
+                        .and(coupon.couponTemplate.templateNo.eq(templateNo))).fetchOne();
+
+        return !Objects.isNull(monthCoupon);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Page<GetCouponResponseDto> findPositiveCouponByMemberNo(Pageable pageable,
             Long memberNo) {
         JPQLQuery<Long> count = from(coupon).select(coupon.count())

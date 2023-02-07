@@ -52,4 +52,8 @@ public class CouponMonth {
         this.monthQuantity = monthQuantity;
     }
 
+    public void modifyCouponMonthQuantity() {
+        this.monthQuantity -= 1;
+    }
+
 }
