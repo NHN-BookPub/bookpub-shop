@@ -73,7 +73,7 @@ class CouponTemplateRepositoryTest {
         category = CategoryDummy.dummy();
         couponTemplate = CouponTemplateDummy.dummy(couponPolicy, couponType,
                 product, category, couponStateCode);
-        file = FileDummy.dummy(null, null, couponTemplate, null, null);
+        file = FileDummy.dummy(null, null, couponTemplate, null, null, null);
     }
 
     @Test

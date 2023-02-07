@@ -6,6 +6,7 @@ import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.review.entity.Review;
+import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -43,6 +43,10 @@ public class File extends BaseCreateTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_number")
     private Review review;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscribe_number")
+    private Subscribe subscribe;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "personal_inquiry_number")

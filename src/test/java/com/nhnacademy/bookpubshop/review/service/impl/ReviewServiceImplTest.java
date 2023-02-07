@@ -105,7 +105,7 @@ class ReviewServiceImplTest {
         productTypeStateCode = ProductTypeStateCodeDummy.dummy();
         productSaleStateCode = ProductSaleStateCodeDummy.dummy();
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
-        file = FileDummy.dummy(null, null, null, null, null);
+        file = FileDummy.dummy(null, null, null, null, null, null);
         reviewPolicy = ReviewPolicyDummy.dummy();
         review = ReviewDummy.dummy(member, product, reviewPolicy);
 
@@ -296,7 +296,7 @@ class ReviewServiceImplTest {
         //when
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
         when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
-        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), anyString(), anyString()))
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), anyString(), anyString()))
                 .thenReturn(file);
         when(reviewPolicyRepository.findByPolicyUsedIsTrue()).thenReturn(Optional.of(reviewPolicy));
         when(reviewRepository.save(any())).thenReturn(review);
@@ -312,7 +312,7 @@ class ReviewServiceImplTest {
 
         verify(productRepository, times(1)).findById(anyLong());
         verify(memberRepository, times(1)).findById(anyLong());
-        verify(fileManagement).saveFile(any(), any(), any(), any(), any(), any(), anyString(), anyString());
+        verify(fileManagement).saveFile(any(), any(), any(), any(), any(), any(), any(), anyString(), anyString());
     }
 
     @Test
@@ -326,7 +326,7 @@ class ReviewServiceImplTest {
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
         when(memberRepository.findById(anyLong())).thenReturn(Optional.of(member));
         when(reviewPolicyRepository.findByPolicyUsedIsTrue()).thenReturn(Optional.of(reviewPolicy));
-        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), anyString(), anyString()))
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), anyString(), anyString()))
                 .thenThrow(IOException.class);
         when(reviewRepository.save(any())).thenReturn(review);
 
@@ -345,14 +345,14 @@ class ReviewServiceImplTest {
 
         //when
         when(reviewRepository.findById(anyLong())).thenReturn(Optional.of(review));
-        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), anyString(), anyString()))
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), anyString(), anyString()))
                 .thenReturn(file);
 
         //then
         reviewService.modifyReview(1L, modifyReviewDto, multipartFile);
 
         verify(reviewRepository, times(1)).findById(anyLong());
-        verify(fileManagement, times(1)).saveFile(any(), any(), any(), any(), any(), any(), anyString(), anyString());
+        verify(fileManagement, times(1)).saveFile(any(), any(), any(), any(), any(), any(), any(), anyString(), anyString());
 
     }
 
@@ -365,7 +365,7 @@ class ReviewServiceImplTest {
 
         //when
         when(reviewRepository.findById(anyLong())).thenReturn(Optional.empty());
-        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), anyString(), anyString()))
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), anyString(), anyString()))
                 .thenThrow(IOException.class);
         when(reviewRepository.save(any())).thenReturn(review);
 
@@ -384,7 +384,7 @@ class ReviewServiceImplTest {
 
         //when
         when(reviewRepository.findById(anyLong())).thenReturn(Optional.of(review));
-        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), anyString(), anyString()))
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), anyString(), anyString()))
                 .thenThrow(IOException.class);
         when(reviewRepository.save(any())).thenReturn(review);
 

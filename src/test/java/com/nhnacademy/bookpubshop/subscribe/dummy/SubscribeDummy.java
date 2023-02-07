@@ -1,6 +1,10 @@
 package com.nhnacademy.bookpubshop.subscribe.dummy;
 
+import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateSubscribeRequestDto;
+import com.nhnacademy.bookpubshop.subscribe.dto.request.ModifySubscribeRequestDto;
+import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 구독의 더미 클래스입니다.
@@ -10,13 +14,39 @@ import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
  **/
 public class SubscribeDummy {
     public static Subscribe dummy() {
-        return new Subscribe(null,
-                "좋은생각",
-                5000L,
-                6000L,
-                10,
-                5L,
-                false,
-                true);
+        return Subscribe.builder()
+                .subscribePrice(1000L)
+                .subscribeName("name")
+                .salesPrice(100L)
+                .salesRate(10)
+                .renewed(false)
+                .build();
+    }
+
+    public static CreateSubscribeRequestDto createDummy() {
+        CreateSubscribeRequestDto dto = new CreateSubscribeRequestDto();
+        ReflectionTestUtils.setField(dto, "name", "이름");
+        ReflectionTestUtils.setField(dto, "salePrice", 1000L);
+        ReflectionTestUtils.setField(dto, "price", 1000L);
+        ReflectionTestUtils.setField(dto, "salesRate", 0);
+        ReflectionTestUtils.setField(dto, "renewed", true);
+        return dto;
+
+    }
+
+    public static GetSubscribeResponseDto responseDummy(){
+        return new GetSubscribeResponseDto(1L, "name", 1000L, 100L,
+                10, 0L, false, false,"image");
+    }
+
+    public static ModifySubscribeRequestDto modifyDummy(){
+        ModifySubscribeRequestDto dto = new ModifySubscribeRequestDto();
+        ReflectionTestUtils.setField(dto, "name", "이름");
+        ReflectionTestUtils.setField(dto, "salePrice", 1000L);
+        ReflectionTestUtils.setField(dto, "price", 1000L);
+        ReflectionTestUtils.setField(dto, "saleRate", 0);
+        ReflectionTestUtils.setField(dto, "renewed", false);
+        ReflectionTestUtils.setField(dto, "deleted", false);
+        return dto;
     }
 }

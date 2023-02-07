@@ -92,7 +92,8 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
                 getCouponStateCode(createRequestDto.getCodeNo())
         );
 
-        couponTemplate.setFile(fileManagement.saveFile(null, couponTemplate, null, null, null, image, "coupon", "coupon_template"));
+        couponTemplate.setFile(fileManagement.saveFile(null, couponTemplate,
+                null, null, null, null, image, "coupon", "coupon_template"));
 
         couponTemplateRepository.save(couponTemplate);
     }
@@ -122,7 +123,8 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
                 modifyRequestDto.getFinishedAt(),
                 modifyRequestDto.isTemplateBundled());
 
-        couponTemplate.setFile(fileManagement.saveFile(null, couponTemplate, null, null, null, image, "coupon", "coupon_template"));
+        couponTemplate.setFile(fileManagement.saveFile(null, couponTemplate,
+                null, null, null, null, image, "coupon", "coupon_template"));
 
     }
 

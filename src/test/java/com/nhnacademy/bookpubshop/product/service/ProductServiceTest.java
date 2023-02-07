@@ -137,21 +137,21 @@ class ProductServiceTest {
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_THUMBNAIL),
+                        FileCategory.PRODUCT_THUMBNAIL, null),
                 FileDummy.dummy(
                         null,
                         null,
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_DETAIL),
+                        FileCategory.PRODUCT_DETAIL, null),
                 FileDummy.dummy(
                         null,
                         null,
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_EBOOK)));
+                        FileCategory.PRODUCT_EBOOK, null)));
 
         requestDto = new CreateProductRequestDto();
 

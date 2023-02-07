@@ -74,7 +74,7 @@ class CouponMonthRepositoryTest {
         couponTemplate = CouponTemplateDummy.dummy(couponPolicy, couponType, product, category, couponStateCode);
         couponMonth = CouponMonthDummy.dummy(couponTemplate);
 
-        file = FileDummy.dummy(null, null, couponTemplate, product, null);
+        file = FileDummy.dummy(null, null, couponTemplate, product, null,null);
 
         entityManager.persist(category);
         entityManager.persist(couponPolicy);

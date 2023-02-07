@@ -12,6 +12,7 @@ import com.nhnacademy.bookpubshop.filemanager.dto.response.TokenResponse;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.review.entity.Review;
+import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -102,6 +103,7 @@ public class ObjectStorageUtils implements FileManagement {
                          Product product,
                          Review review,
                          CustomerService customerService,
+                         Subscribe subscribe,
                          MultipartFile file,
                          String fileCategory,
                          String path) throws IOException {
@@ -148,6 +150,7 @@ public class ObjectStorageUtils implements FileManagement {
         return fileRepository.save(new File(
                 null,
                 review,
+                subscribe,
                 personalInquiry,
                 couponTemplate,
                 product,
