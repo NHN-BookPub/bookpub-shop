@@ -1,8 +1,8 @@
-package com.nhnacademy.bookpubshop.inquirycode.repository;
+package com.nhnacademy.bookpubshop.inquirystatecode.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.nhnacademy.bookpubshop.inquirycode.dummy.InquiryCodeDummy;
-import com.nhnacademy.bookpubshop.inquirycode.entity.InquiryCode;
+import com.nhnacademy.bookpubshop.inquirystatecode.dummy.InquiryCodeDummy;
+import com.nhnacademy.bookpubshop.inquirystatecode.entity.InquiryStateCode;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,25 +18,25 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
  * @since : 1.0
  **/
 @DataJpaTest
-class InquiryCodeRepositoryTest {
+class InquiryStateCodeRepositoryTest {
     @Autowired
-    InquiryCodeRepository inquiryCodeRepository;
+    InquiryStateCodeRepository inquiryStateCodeRepository;
 
     @Autowired
     TestEntityManager entityManager;
 
-    InquiryCode inquiryCode;
+    InquiryStateCode inquiryStateCode;
 
     @BeforeEach
     void setUp() {
-        inquiryCode = InquiryCodeDummy.dummy();
+        inquiryStateCode = InquiryCodeDummy.dummy();
     }
 
     @Test
     @DisplayName("문의코드테이블 저장 테스트")
     void inquiryCodeTest() {
-        InquiryCode persist = entityManager.persist(inquiryCode);
-        Optional<InquiryCode> findInquiryCode = inquiryCodeRepository.findById(persist.getInquiryCodeNo());
+        InquiryStateCode persist = entityManager.persist(inquiryStateCode);
+        Optional<InquiryStateCode> findInquiryCode = inquiryStateCodeRepository.findById(persist.getInquiryCodeNo());
 
         assertThat(findInquiryCode).isPresent();
         assertThat(findInquiryCode.get().getInquiryCodeInfo()).isEqualTo(persist.getInquiryCodeInfo());

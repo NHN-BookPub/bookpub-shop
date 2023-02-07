@@ -3,8 +3,8 @@ package com.nhnacademy.bookpubshop.inquiry.repository;
 import static com.nhnacademy.bookpubshop.state.InquiryState.EXCHANGE;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.inquiry.entity.Inquiry;
-import com.nhnacademy.bookpubshop.inquirycode.entity.InquiryCode;
-import com.nhnacademy.bookpubshop.inquirycode.repository.InquiryCodeRepository;
+import com.nhnacademy.bookpubshop.inquirystatecode.entity.InquiryStateCode;
+import com.nhnacademy.bookpubshop.inquirystatecode.repository.InquiryStateCodeRepository;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
@@ -43,7 +43,7 @@ class InquiryRepositoryTest {
     TestEntityManager entityManager;
 
     @Autowired
-    InquiryCodeRepository inquiryCodeRepository;
+    InquiryStateCodeRepository inquiryStateCodeRepository;
 
     @Autowired
     ProductRepository productRepository;
@@ -66,7 +66,7 @@ class InquiryRepositoryTest {
     ProductPolicy productPolicy;
     ProductTypeStateCode productTypeStateCode;
     ProductSaleStateCode productSaleStateCode;
-    InquiryCode inquiryCode;
+    InquiryStateCode inquiryStateCode;
 
     @BeforeEach
     void setUp() {
@@ -80,8 +80,8 @@ class InquiryRepositoryTest {
         productSaleStateCode = ProductSaleStateCodeDummy.dummy();
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
-        inquiryCode = new InquiryCode(null, EXCHANGE.getName(), EXCHANGE.isUsed(), "교환");
-        inquiryCodeRepository.save(inquiryCode);
+        inquiryStateCode = new InquiryStateCode(null, EXCHANGE.getName(), EXCHANGE.isUsed(), "교환");
+        inquiryStateCodeRepository.save(inquiryStateCode);
 
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);
@@ -93,7 +93,7 @@ class InquiryRepositoryTest {
     @DisplayName(value = "상품문의(inquiry) 레포지토리 save 테스트")
     void inquirySaveTest() {
         LocalDateTime now = LocalDateTime.now();
-        Inquiry inquiry = new Inquiry(null, null, member, product, inquiryCode, "content", false, false);
+        Inquiry inquiry = new Inquiry(null, null, member, product, inquiryStateCode, "content", false, false);
         inquiryRepository.save(inquiry);
 
         Optional<Inquiry> optional = inquiryRepository.findById(inquiry.getInquiryNo());
@@ -103,7 +103,7 @@ class InquiryRepositoryTest {
         assertThat(optional.get().isInquiryDisplayed()).isEqualTo(inquiry.isInquiryDisplayed());
         assertThat(optional.get().getParentInquiry()).isNull();
         assertThat(optional.get().isInquiryAnswered()).isEqualTo(inquiry.isInquiryAnswered());
-        assertThat(optional.get().getInquiryCode().getInquiryCodeNo()).isEqualTo(inquiryCode.getInquiryCodeNo());
+        assertThat(optional.get().getInquiryStateCode().getInquiryCodeNo()).isEqualTo(inquiryStateCode.getInquiryCodeNo());
         assertThat(optional.get().getCreatedAt()).isAfter(now);
 
         entityManager.clear();

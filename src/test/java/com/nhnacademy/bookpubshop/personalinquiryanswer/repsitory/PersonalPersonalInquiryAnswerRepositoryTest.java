@@ -1,12 +1,12 @@
-package com.nhnacademy.bookpubshop.inquiryanswer.repsitory;
+package com.nhnacademy.bookpubshop.personalinquiryanswer.repsitory;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.nhnacademy.bookpubshop.inquiryanswer.dummy.InquiryAnswerDummy;
-import com.nhnacademy.bookpubshop.inquiryanswer.entity.InquiryAnswer;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.personalinquiry.dummy.PersonalInquiryDummy;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
+import com.nhnacademy.bookpubshop.personalinquiryanswer.dummy.PersonalInquiryAnswerDummy;
+import com.nhnacademy.bookpubshop.personalinquiryanswer.entity.PersonalInquiryAnswer;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
@@ -25,24 +25,24 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
  * @since : 1.0
  **/
 @DataJpaTest
-class InquiryAnswerRepositoryTest {
+class PersonalPersonalInquiryAnswerRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
 
     @Autowired
-    InquiryAnswerRepository inquiryAnswerRepository;
+    PersonalInquiryAnswerRepository personalInquiryAnswerRepository;
 
     BookPubTier tier;
     Member member;
     PersonalInquiry personalInquiry;
-    InquiryAnswer inquiryAnswer;
+    PersonalInquiryAnswer personalInquiryAnswer;
 
     @BeforeEach
     void setUp() {
         tier = TierDummy.dummy();
         member = MemberDummy.dummy(tier);
         personalInquiry = PersonalInquiryDummy.dummy(member);
-        inquiryAnswer = InquiryAnswerDummy.dummy(personalInquiry);
+        personalInquiryAnswer = PersonalInquiryAnswerDummy.dummy(personalInquiry);
 
         entityManager.persist(tier);
         entityManager.persist(member);
@@ -54,8 +54,8 @@ class InquiryAnswerRepositoryTest {
     void inquiryAnswerSaveTest() {
         LocalDateTime now = LocalDateTime.now();
 
-        InquiryAnswer persist = entityManager.persist(inquiryAnswer);
-        Optional<InquiryAnswer> result = inquiryAnswerRepository.findById(persist.getAnswerNumber());
+        PersonalInquiryAnswer persist = entityManager.persist(personalInquiryAnswer);
+        Optional<PersonalInquiryAnswer> result = personalInquiryAnswerRepository.findById(persist.getAnswerNumber());
 
         assertThat(result).isPresent();
         assertThat(result.get().getAnswerContent()).isEqualTo(persist.getAnswerContent());
