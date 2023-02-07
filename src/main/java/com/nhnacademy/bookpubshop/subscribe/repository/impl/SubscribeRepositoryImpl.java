@@ -4,11 +4,8 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.set;
 
 import com.nhnacademy.bookpubshop.file.entity.QFile;
-import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeDetailResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
-import com.nhnacademy.bookpubshop.subscribe.dto.response.QGetSubscribeDetailResponseDto;
-import com.nhnacademy.bookpubshop.subscribe.dto.response.QGetSubscribeDetailResponseDto_SubscribeProduct;
 import com.nhnacademy.bookpubshop.subscribe.entity.QSubscribe;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import com.nhnacademy.bookpubshop.subscribe.relationship.entity.QSubscribeProductList;
