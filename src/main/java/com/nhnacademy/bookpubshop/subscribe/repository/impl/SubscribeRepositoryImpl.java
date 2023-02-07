@@ -42,12 +42,12 @@ public class SubscribeRepositoryImpl extends QuerydslRepositorySupport
                         GetSubscribeResponseDto.class,
                         subscribe.subscribeNo,
                         subscribe.subscribeName,
-                        subscribe.salesPrice.as("salePrice"),
                         subscribe.subscribePrice.as("price"),
-                        subscribe.salesRate.as("salePrice"),
+                        subscribe.salesPrice,
+                        subscribe.salesRate.as("salesRate"),
                         subscribe.viewCount.as("viewCnt"),
-                        subscribe.subscribeDeleted.as("isDeleted"),
-                        subscribe.subscribeRenewed.as("isRenewed"),
+                        subscribe.subscribeDeleted.as("deleted"),
+                        subscribe.subscribeRenewed.as("renewed"),
                         file.filePath.as("imagePath")
                 ))
                 .leftJoin(subscribe.file, file)
