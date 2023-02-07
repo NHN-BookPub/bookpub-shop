@@ -183,7 +183,7 @@ class WishlistRepositoryTest {
 //                new File(null, null, null, null, product,
 //                        null, "thumbnail", "path", ".exe", "origin", "name"));
 
-        product.setProductFiles(List.of(file));
+//        product.setProductFiles(List.of(file));
 
 
         Wishlist wishlist = new Wishlist(new Wishlist.Pk(member.getMemberNo(), product.getProductNo()),
