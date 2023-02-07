@@ -60,18 +60,6 @@ class WishlistRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
 
-//    @Autowired
-//    ProductRepository productRepository;
-//
-//    @Autowired
-//    ProductPolicyRepository productPolicyRepository;
-//
-//    @Autowired
-//    ProductTypeStateCodeRepository productTypeStateCodeRepository;
-//
-//    @Autowired
-//    ProductSaleStateCodeRepository productSaleStateCodeRepository;
-
     @Autowired
     WishlistRepository wishlistRepository;
 
