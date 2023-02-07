@@ -14,7 +14,6 @@ import com.nhnacademy.bookpubshop.coupontype.dummy.CouponTypeDummy;
 import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
 import com.nhnacademy.bookpubshop.customersupport.dummy.CustomerServiceDummy;
 import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
-import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
@@ -34,7 +33,6 @@ import com.nhnacademy.bookpubshop.reviewpolicy.dummy.ReviewPolicyDummy;
 import com.nhnacademy.bookpubshop.reviewpolicy.entity.ReviewPolicy;
 import com.nhnacademy.bookpubshop.servicecode.dummy.CustomerServiceStateCodeDummy;
 import com.nhnacademy.bookpubshop.servicecode.entity.CustomerServiceStateCode;
-import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistResponseDto;
@@ -115,12 +113,12 @@ class WishlistRepositoryTest {
         couponTemplate = CouponTemplateDummy.dummy(couponPolicy, couponType, product, category, couponStateCode);
         customerServiceStateCode = CustomerServiceStateCodeDummy.dummy();
         customerService = CustomerServiceDummy.dummy(customerServiceStateCode, member);
-        file = new File(null, review,
-                personalInquiry, couponTemplate,
-                product, customerService,
-                FileCategory.PRODUCT_THUMBNAIL.getCategory(),
-                "path", ".png",
-                "origin", "a");
+//        file = new File(null, review,
+//                personalInquiry, couponTemplate,
+//                product, customerService,
+//                FileCategory.PRODUCT_THUMBNAIL.getCategory(),
+//                "path", ".png",
+//                "origin", "a");
 
 
     }
@@ -181,8 +179,8 @@ class WishlistRepositoryTest {
         entityManager.persist(customerServiceStateCode);
         entityManager.persist(customerService);
         File fileDummy = entityManager.persist(
-                FileDummy.dummy(null, null,
-                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+                new File(null, null, null, null, product,
+                        null, "thumbnail", "path", ".exe", "origin", "name"));
 
         product.setProductFiles(List.of(file));
 
