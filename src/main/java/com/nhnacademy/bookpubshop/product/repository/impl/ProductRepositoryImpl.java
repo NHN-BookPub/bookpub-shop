@@ -159,7 +159,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .select(Projections.fields(GetProductByTypeResponseDto.class,
                         product.productNo,
                         product.title,
-                        file.filePath.as("thumbnail"),
+                        file.filePath.as(FileCategory.PRODUCT_THUMBNAIL.getCategory()),
                         product.salesPrice,
                         product.productPrice,
                         product.salesRate))
@@ -238,7 +238,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         .select(Projections.fields(GetProductByCategoryResponseDto.class,
                                 product.productNo,
                                 product.title,
-                                file.filePath.as("thumbnail"),
+                                file.filePath.as(FileCategory.PRODUCT_THUMBNAIL.getCategory()),
                                 product.salesPrice,
                                 product.salesRate))
                         .innerJoin(product.productSaleStateCode, productSaleStateCode)
@@ -256,6 +256,78 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         .limit(pageable.getPageSize())
                         .fetch();
 
+        setCategoryAndAuthors(content);
+
+        JPQLQuery<Long> count = from(product)
+                .leftJoin(product.productCategories)
+                .leftJoin(product.productAuthors)
+                .leftJoin(product.productTags)
+                .leftJoin(product.productSaleStateCode)
+                .select(product.count())
+                .where(category.categoryNo.eq(categoryNo))
+                .where(product.productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()));
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetProductByCategoryResponseDto> getEbooks(Pageable pageable) {
+        List<GetProductByCategoryResponseDto> content =
+                from(product)
+                        .select(Projections.fields(GetProductByCategoryResponseDto.class,
+                                product.productNo,
+                                product.title,
+                                product.salesPrice,
+                                product.salesRate))
+                        .innerJoin(product.productSaleStateCode, productSaleStateCode)
+                        .on(productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
+
+                        .innerJoin(product.productCategories, productCategory)
+                        .on(productCategory.product.productNo.eq(product.productNo))
+
+                        .innerJoin(file).on(product.productNo.eq(file.product.productNo)
+                                .and(file.fileCategory.eq(FileCategory.PRODUCT_EBOOK.getCategory())))
+
+                        .orderBy(product.productPriority.asc())
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
+
+        setCategoryAndAuthors(content);
+
+        for (GetProductByCategoryResponseDto getProductByCategoryResponseDto : content) {
+            getProductByCategoryResponseDto.setThumbnail(
+                    from(file)
+                            .innerJoin(product)
+                            .on(file.product.productNo.eq(product.productNo))
+                            .select(file.filePath)
+                            .where(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())
+                                    .and(file.product.productNo.eq(getProductByCategoryResponseDto.getProductNo())))
+                            .fetchOne());
+        }
+
+        JPQLQuery<Long> count = from(product)
+                .leftJoin(product.productCategories)
+                .leftJoin(product.productAuthors)
+                .leftJoin(product.productTags)
+                .leftJoin(product.productSaleStateCode)
+                .innerJoin(file).on(product.productNo.eq(file.product.productNo))
+                .select(product.count())
+                .where(file.fileCategory.eq(FileCategory.PRODUCT_EBOOK.getCategory()))
+                .where(product.productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()));
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    /**
+     * 상품별 카테고리와 저자들을 넣어주는 메소드입니다.
+     *
+     * @param content 상품리스트.
+     */
+    private void setCategoryAndAuthors(List<GetProductByCategoryResponseDto> content) {
         for (GetProductByCategoryResponseDto getProductByCategoryResponseDto : content) {
             getProductByCategoryResponseDto.setCategories(
                     from(category)
@@ -271,16 +343,5 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                             .select(author.authorName)
                             .where(productAuthor.product.productNo.eq(getProductByCategoryResponseDto.getProductNo())).fetch());
         }
-
-        JPQLQuery<Long> count = from(product)
-                .leftJoin(product.productCategories)
-                .leftJoin(product.productAuthors)
-                .leftJoin(product.productTags)
-                .leftJoin(product.productSaleStateCode)
-                .select(product.count())
-                .where(category.categoryNo.eq(categoryNo))
-                .where(product.productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()));
-
-        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 }

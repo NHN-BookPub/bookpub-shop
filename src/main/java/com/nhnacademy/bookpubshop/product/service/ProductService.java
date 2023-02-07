@@ -94,4 +94,12 @@ public interface ProductService {
      * @return 카텍리별 상품들
      */
     Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo, Pageable pageable);
+
+    /**
+     * 모든 ebook 상품들 조회.
+     *
+     * @param pageable 페이징
+     * @return 상품이 담긴 페이지 객체
+     */
+    Page<GetProductByCategoryResponseDto> getEbooks(Pageable pageable);
 }

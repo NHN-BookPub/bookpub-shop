@@ -77,4 +77,12 @@ public interface ProductRepositoryCustom {
      * @return 페이징을 담은 상품들
      */
     Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo, Pageable pageable);
+
+    /**
+     * 모든 Ebook 상품들을 반환합니다.
+     *
+     * @param pageable 페이징 정보
+     * @return 페이징 상품들
+     */
+    Page<GetProductByCategoryResponseDto> getEbooks(Pageable pageable);
 }

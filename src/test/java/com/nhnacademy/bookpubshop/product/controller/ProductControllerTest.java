@@ -26,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
@@ -1148,4 +1149,70 @@ class ProductControllerTest {
         verify(productService, times(1)).getProductsByCategory(4, pageable);
     }
 
+    @Test
+    @DisplayName("Ebook 조회 테스트")
+    void getEbook() throws Exception {
+        // given
+        GetProductByCategoryResponseDto dto = new GetProductByCategoryResponseDto();
+        ReflectionTestUtils.setField(dto, "productNo", 1L);
+        ReflectionTestUtils.setField(dto, "title", "제목");
+        ReflectionTestUtils.setField(dto, "thumbnail", "thumbnail");
+        ReflectionTestUtils.setField(dto, "salesPrice", 1000L);
+        ReflectionTestUtils.setField(dto, "salesRate", 10);
+        ReflectionTestUtils.setField(dto, "categories", List.of("요리도서"));
+        ReflectionTestUtils.setField(dto, "authors", List.of("저자 1"));
+
+        List<GetProductByCategoryResponseDto> response = List.of(dto);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<GetProductByCategoryResponseDto> page =
+                PageableExecutionUtils.getPage(response, pageable, () -> 1L);
+
+        // when
+        when(productService.getEbooks(pageable))
+                .thenReturn(page);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.get(url +"/ebooks")
+                        .param("page", mapper.writeValueAsString(pageable.getPageNumber()))
+                        .param("size", mapper.writeValueAsString(pageable.getPageSize()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.content").isNotEmpty())
+                .andExpect(jsonPath("$.content[0].productNo").value(dto.getProductNo()))
+                .andExpect(jsonPath("$.content[0].title").value(dto.getTitle()))
+                .andExpect(jsonPath("$.content[0].thumbnail").value(dto.getThumbnail()))
+                .andExpect(jsonPath("$.content[0].salesPrice").value(dto.getSalesPrice()))
+                .andExpect(jsonPath("$.content[0].salesRate").value(dto.getSalesRate()))
+                .andExpect(jsonPath("$.content[0].productNo").value(dto.getProductNo()))
+                .andDo(print())
+                .andDo(document("product-get-ebooks",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+
+                        requestParameters(
+                                parameterWithName("page").description("조회할 페이지 번호"),
+                                parameterWithName("size").description("페이지 사이즈")
+                        ),
+
+                        responseFields(
+                                fieldWithPath("totalPages").description("총 페이지 개수"),
+                                fieldWithPath("number").description("현재 페이지 번호"),
+                                fieldWithPath("previous").description("이전 페이지 존재 여부"),
+                                fieldWithPath("next").description("다음 페이지 존재 여부"),
+                                fieldWithPath("content[].productNo").description("상품 번호"),
+                                fieldWithPath("content[].title").description("상품 제목"),
+                                fieldWithPath("content[].thumbnail").description("상품 썸네일"),
+                                fieldWithPath("content[].salesPrice").description("판매가격"),
+                                fieldWithPath("content[].salesRate").description("할인율"),
+                                fieldWithPath("content[].title").description("상품 제목"),
+                                fieldWithPath("content[].categories").description("카테고리"),
+                                fieldWithPath("content[].authors").description("저자"),
+                                fieldWithPath("content[].thumbnail").description("상품 썸네일")
+                        )
+                ));
+
+
+        verify(productService, times(1)).getEbooks(pageable);
+    }
 }

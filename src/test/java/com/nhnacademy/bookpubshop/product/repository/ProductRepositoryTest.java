@@ -311,4 +311,44 @@ class ProductRepositoryTest {
         assertThat(content.get(0).getCategories()).isEqualTo(List.of(category.getCategoryName()));
         assertThat(content.get(0).getAuthors()).isEqualTo(List.of(author.getAuthorName()));
     }
+
+    @Test
+    void getEbooks() {
+        Product persist = entityManager.persist(product);
+        Author author = entityManager.persist(AuthorDummy.dummy());
+        File file = entityManager.persist(FileDummy
+                .dummy(null, null, null, persist, null, FileCategory.PRODUCT_THUMBNAIL));
+
+        persist.getProductAuthors().add(
+                new ProductAuthor(
+                        new ProductAuthor.Pk(author.getAuthorNo(), product.getProductNo()), author, product));
+
+        Category category = CategoryDummy.dummy();
+        entityManager.persist(category);
+
+        persist.getProductCategories().add(
+                new ProductCategory(
+                        new ProductCategory.Pk(category.getCategoryNo(), product.getProductNo()), category, product));
+
+        Tag tag = TagDummy.dummy();
+        entityManager.persist(tag);
+        persist.getProductTags().add(
+                new ProductTag(new ProductTag.Pk(tag.getTagNo(), product.getProductNo()), tag, product));
+
+        entityManager.persist(product);
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<GetProductByCategoryResponseDto> result = productRepository.getProductsByCategory(category.getCategoryNo(), pageable);
+
+        List<GetProductByCategoryResponseDto> content = result.getContent();
+        assertThat(content).isNotEmpty();
+        assertThat(content.get(0).getProductNo()).isEqualTo(persist.getProductNo());
+        assertThat(content.get(0).getTitle()).isEqualTo(persist.getTitle());
+        assertThat(content.get(0).getSalesPrice()).isEqualTo(persist.getSalesPrice());
+        assertThat(content.get(0).getSalesRate()).isEqualTo(persist.getSalesRate());
+        assertThat(content.get(0).getCategories()).isEqualTo(List.of(category.getCategoryName()));
+        assertThat(content.get(0).getAuthors()).isEqualTo(List.of(author.getAuthorName()));
+        assertThat(content.get(0).getThumbnail()).isEqualTo(file.getFilePath());
+    }
 }
