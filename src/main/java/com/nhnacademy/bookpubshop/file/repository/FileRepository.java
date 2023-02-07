@@ -10,7 +10,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since : 1.0
  **/
 public interface FileRepository extends JpaRepository<File, Long> {
+
+
     File findByFilePath(String path);
+
 
     boolean existsByFilePath(String path);
 }
