@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.inquiryanswer.entity;
+package com.nhnacademy.bookpubshop.personalinquiryanswer.entity;
 
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class InquiryAnswer extends BaseCreateTimeEntity {
+public class PersonalInquiryAnswer extends BaseCreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "personal_inquiry_answer_number")
@@ -48,8 +48,8 @@ public class InquiryAnswer extends BaseCreateTimeEntity {
      * @param answerContent   the answer content
      */
     @Builder
-    public InquiryAnswer(PersonalInquiry personalInquiry,
-                         String answerContent) {
+    public PersonalInquiryAnswer(PersonalInquiry personalInquiry,
+                                 String answerContent) {
         this.personalInquiry = personalInquiry;
         this.answerContent = answerContent;
     }

@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.inquiry.entity;
 
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
-import com.nhnacademy.bookpubshop.inquirycode.entity.InquiryCode;
+import com.nhnacademy.bookpubshop.inquirystatecode.entity.InquiryStateCode;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import javax.persistence.Column;
@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -52,7 +53,7 @@ public class Inquiry extends BaseCreateTimeEntity {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "inquiry_state_code_number")
-    private InquiryCode inquiryCode;
+    private InquiryStateCode inquiryStateCode;
 
     @NotNull
     @Column(name = "inquiry_content")
@@ -64,4 +65,16 @@ public class Inquiry extends BaseCreateTimeEntity {
     @Column(name = "inquiry_answered")
     private boolean inquiryAnswered;
 
+    @Builder
+    public Inquiry(Inquiry parentInquiry, Member member, Product product,
+                   InquiryStateCode inquiryStateCode, String inquiryContent,
+                   boolean inquiryDisplayed, boolean inquiryAnswered) {
+        this.parentInquiry = parentInquiry;
+        this.member = member;
+        this.product = product;
+        this.inquiryStateCode = inquiryStateCode;
+        this.inquiryContent = inquiryContent;
+        this.inquiryDisplayed = inquiryDisplayed;
+        this.inquiryAnswered = inquiryAnswered;
+    }
 }

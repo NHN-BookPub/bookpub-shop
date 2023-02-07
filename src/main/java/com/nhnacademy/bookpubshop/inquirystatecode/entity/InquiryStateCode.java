@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.inquirycode.entity;
+package com.nhnacademy.bookpubshop.inquirystatecode.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class InquiryCode {
+public class InquiryStateCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inquiry_state_code_number", nullable = false)
