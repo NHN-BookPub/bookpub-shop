@@ -490,7 +490,7 @@ class ProductControllerTest {
     @Test
     @DisplayName("상품 생성 실패_상품 설명 길이를 초과한 경우")
     void productAddFailTest_productDescriptionTooLong() throws Exception {
-        String result = "a".repeat(2050);
+        String result = "a".repeat(5050);
 
         ReflectionTestUtils.setField(requestDto, "productDescription", result);
 
