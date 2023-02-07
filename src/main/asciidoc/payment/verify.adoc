@@ -1,0 +1,18 @@
+= payment verify
+:toc:
+
+== 결제 검증 단건 조회
+Payment Verify Get
+
+=== 요청구조
+include::../../../../target/snippets/verify/http-request.adoc[]
+
+=== 요청 파라미터
+include::../../../../target/snippets/verify/httpie-request.adoc[]
+
+=== 응답 구조
+include::../../../../target/snippets/verify/http-response.adoc[]
+
+==== 응답 파라미터들
+
+include::../../../../target/snippets/verify/response-body.adoc[]

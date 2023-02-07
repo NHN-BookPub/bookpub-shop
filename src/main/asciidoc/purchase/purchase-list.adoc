@@ -1,20 +1,15 @@
 = Coupon
 :toc:
 
-== 쿠폰 리스트 조회
+== 매입 리스트 조회
 Purchase-List-get
 
 === 요청구조
-include::../../../../target/snippets/purchaseList-get/http-request.adoc
-
-
-==== 요청 파라미터들
-
-include::../../../../target/snippets/purchaseList-get/request-fields.adoc
+include::../../../../target/snippets/purchaseList-get/http-request.adoc[]
 
 === 응답 구조
-include::../../../../target/snippets/purchaseList-get/http-response.adoc
+include::../../../../target/snippets/purchaseList-get/http-response.adoc[]
 
 ==== 응답 파라미터들
 
-include::../../../../target/snippets/purchaseList-get/response-body.adoc
+include::../../../../target/snippets/purchaseList-get/response-body.adoc[]

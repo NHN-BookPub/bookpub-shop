@@ -5,16 +5,16 @@
 purchase-create
 
 === 요청구조
-include::../../../../target/snippets/purchase-add/http-request.adoc
+include::../../../../target/snippets/purchase-add/http-request.adoc[]
 
 
 ==== 요청 파라미터들
 
-include::../../../../target/snippets/purchase-add/request-fields.adoc
+include::../../../../target/snippets/purchase-add/request-fields.adoc[]
 
 === 응답 구조
-include::../../../../target/snippets/purchase-add/http-response.adoc
+include::../../../../target/snippets/purchase-add/http-response.adoc[]
 
 ==== 응답 파라미터들
 
-include::../../../../target/snippets/purchase-add/response-body.adoc
+include::../../../../target/snippets/purchase-add/response-body.adoc[]
