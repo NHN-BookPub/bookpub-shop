@@ -54,7 +54,6 @@ public class Wishlist {
      * @author : 박경서
      * @since : 1.0
      **/
-
     @AllArgsConstructor
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Getter
@@ -63,5 +62,12 @@ public class Wishlist {
     public static class Pk implements Serializable {
         private Long memberNo;
         private Long productNo;
+    }
+
+    /**
+     * 알람 여부를 수정하는 메서드.
+     */
+    public void modifyWishlistAlarm() {
+        this.wishlistApplied = !this.wishlistApplied;
     }
 }
