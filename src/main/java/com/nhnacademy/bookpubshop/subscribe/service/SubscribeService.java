@@ -42,6 +42,7 @@ public interface SubscribeService {
      *
      * @param dto         수정 정보가 들어갑니다.
      * @param subscribeNo 구독번호가 기입됩니다.
+     * @param image 이미지 파일이 기입됩니다.
      */
     void modifySubscribe(ModifySubscribeRequestDto dto, Long subscribeNo, MultipartFile image);
 }
