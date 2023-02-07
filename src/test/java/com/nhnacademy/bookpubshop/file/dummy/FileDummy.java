@@ -17,7 +17,7 @@ import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
  **/
 public class FileDummy {
 
-    public static File dummy2(PersonalInquiry personalInquiry,
+    public static File dummy(PersonalInquiry personalInquiry,
                               Review review,
                               CouponTemplate couponTemplate,
                               Subscribe subscribe,

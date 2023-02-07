@@ -36,7 +36,7 @@ class SubscribeRepositoryTest {
     @BeforeEach
     void setUp() {
         subscribe = SubscribeDummy.dummy();
-        file = FileDummy.dummy2(null, null, null, subscribe, null, null);
+        file = FileDummy.dummy(null, null, null, subscribe, null, null);
         subscribe.setFile(file);
     }
 
