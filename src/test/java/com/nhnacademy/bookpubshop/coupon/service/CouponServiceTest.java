@@ -125,7 +125,7 @@ class CouponServiceTest {
         couponTemplate = CouponTemplateDummy.dummy(couponPolicy, couponType, product, category, couponStateCode);
         couponMonth = CouponMonthDummy.dummy(couponTemplate);
 
-        file = FileDummy.dummy(null, null, couponTemplate, null, product, null);
+        file = FileDummy.dummy2(null, null, couponTemplate, null, product, null);
         tier = TierDummy.dummy();
         member = MemberDummy.dummy(tier);
         orderStateCode = OrderStateCodeDummy.dummy();

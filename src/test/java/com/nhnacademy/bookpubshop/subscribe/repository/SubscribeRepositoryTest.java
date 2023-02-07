@@ -3,24 +3,11 @@ package com.nhnacademy.bookpubshop.subscribe.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
-import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
-import com.nhnacademy.bookpubshop.product.entity.Product;
-import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
-import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
-import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
-import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
-import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
-import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
-import com.nhnacademy.bookpubshop.state.FileCategory;
-import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeDetailResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
-import com.nhnacademy.bookpubshop.subscribe.relationship.entity.SubscribeProductList;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +36,7 @@ class SubscribeRepositoryTest {
     @BeforeEach
     void setUp() {
         subscribe = SubscribeDummy.dummy();
-        file = FileDummy.dummy(null, null, null, subscribe, null, null);
+        file = FileDummy.dummy2(null, null, null, subscribe, null, null);
         subscribe.setFile(file);
     }
 

@@ -157,7 +157,7 @@ class OrderControllerTest {
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
         product.setProductFiles(List.of(
-                FileDummy.dummy(
+                FileDummy.dummy2(
                         null,
                         null,
                         null,
@@ -165,7 +165,7 @@ class OrderControllerTest {
                         product,
                         null,
                         FileCategory.PRODUCT_THUMBNAIL),
-                FileDummy.dummy(
+                FileDummy.dummy2(
                         null,
                         null,
                         null,
@@ -173,7 +173,7 @@ class OrderControllerTest {
                         product,
                         null,
                         FileCategory.PRODUCT_DETAIL),
-                FileDummy.dummy(
+                FileDummy.dummy2(
                         null,
                         null,
                         null,

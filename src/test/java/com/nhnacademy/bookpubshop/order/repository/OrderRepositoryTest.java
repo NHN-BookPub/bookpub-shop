@@ -123,7 +123,7 @@ class OrderRepositoryTest {
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
                 3, 1000L, 30000L, "reason");
         orderProduct = entityManager.persist(orderProduct);
-        file = FileDummy.dummy(null, null,
+        file = FileDummy.dummy2(null, null,
                 null, null,product, null, FileCategory.PRODUCT_THUMBNAIL);
     }
 

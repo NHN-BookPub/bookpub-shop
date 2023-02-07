@@ -63,7 +63,7 @@ class ProductRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        file = FileDummy.dummy(null, null,
+        file = FileDummy.dummy2(null, null,
                 null, null,product, null, FileCategory.PRODUCT_THUMBNAIL);
         productPolicy = ProductPolicyDummy.dummy();
         productTypeStateCode = ProductTypeStateCodeDummy.dummy();

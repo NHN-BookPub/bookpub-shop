@@ -7,7 +7,6 @@ import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.review.entity.Review;
 import com.nhnacademy.bookpubshop.state.FileCategory;
-import com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 
 /**
@@ -18,12 +17,12 @@ import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
  **/
 public class FileDummy {
 
-    public static File dummy(PersonalInquiry personalInquiry,
-                             Review review,
-                             CouponTemplate couponTemplate,
-                             Subscribe subscribe,
-                             Product product,
-                             CustomerService customerService) {
+    public static File dummy2(PersonalInquiry personalInquiry,
+                              Review review,
+                              CouponTemplate couponTemplate,
+                              Subscribe subscribe,
+                              Product product,
+                              CustomerService customerService) {
         return new File(
                 null, review,
                 subscribe,
@@ -38,13 +37,13 @@ public class FileDummy {
         );
     }
 
-    public static File dummy(PersonalInquiry personalInquiry,
-                             Review review,
-                             CouponTemplate couponTemplate,
-                             Subscribe subscribe,
-                             Product product,
-                             CustomerService customerService,
-                             FileCategory category) {
+    public static File dummy2(PersonalInquiry personalInquiry,
+                              Review review,
+                              CouponTemplate couponTemplate,
+                              Subscribe subscribe,
+                              Product product,
+                              CustomerService customerService,
+                              FileCategory category) {
         return new File(null,review,
                 subscribe,
                 personalInquiry,

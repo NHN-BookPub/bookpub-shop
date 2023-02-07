@@ -120,7 +120,7 @@ class FileRepositoryTest {
         customerService = CustomerServiceDummy.dummy(customerServiceStateCode, member);
         personalInquiry = PersonalInquiryDummy.dummy(member);
 
-        file = FileDummy.dummy(personalInquiry, review, couponTemplate,null, product, customerService);
+        file = FileDummy.dummy2(personalInquiry, review, couponTemplate,null, product, customerService);
 
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);

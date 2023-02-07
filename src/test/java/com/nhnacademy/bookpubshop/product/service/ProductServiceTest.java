@@ -131,7 +131,7 @@ class ProductServiceTest {
         product.getProductTags().add(productTag);
 
         product.setProductFiles(List.of(
-                FileDummy.dummy(
+                FileDummy.dummy2(
                         null,
                         null,
                         null,
@@ -139,7 +139,7 @@ class ProductServiceTest {
                         product,
                         null,
                         FileCategory.PRODUCT_THUMBNAIL),
-                FileDummy.dummy(
+                FileDummy.dummy2(
                         null,
                         null,
                         null,
@@ -147,7 +147,7 @@ class ProductServiceTest {
                         product,
                         null,
                         FileCategory.PRODUCT_DETAIL),
-                FileDummy.dummy(
+                FileDummy.dummy2(
                         null,
                         null,
                         null,

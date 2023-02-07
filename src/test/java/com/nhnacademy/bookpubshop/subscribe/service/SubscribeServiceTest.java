@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
-import com.nhnacademy.bookpubshop.file.repository.FileRepository;
 import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateSubscribeRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.ModifySubscribeRequestDto;
@@ -16,7 +15,6 @@ import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import com.nhnacademy.bookpubshop.subscribe.exception.SubscribeNotFoundException;
 import com.nhnacademy.bookpubshop.subscribe.repository.SubscribeRepository;
 import com.nhnacademy.bookpubshop.subscribe.service.impl.SubscribeServiceImpl;
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,7 +62,7 @@ class SubscribeServiceTest {
         getSubscribeResponseDto = responseDummy();
         createSubscribeRequestDto = createDummy();
         captor = ArgumentCaptor.forClass(Subscribe.class);
-        file = FileDummy.dummy(null, null, null,subscribe, null, null);
+        file = FileDummy.dummy2(null, null, null,subscribe, null, null);
     }
 
     @DisplayName("구독생성 테스트 입니다.")
