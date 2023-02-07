@@ -250,6 +250,9 @@ class ReviewRepositoryTest {
     @Test
     @DisplayName("상품평 단건 조회 테스트")
     void findReviewTest() {
+        File thumbnailFile = new File(null, null, null, null, product, null,
+                FileCategory.PRODUCT_THUMBNAIL.getCategory(), "path", "extension", "origin", "saved");
+        product.setProductFiles(List.of(thumbnailFile));
         entityManager.persist(review);
 
         Optional<GetMemberReviewResponseDto> result = reviewRepository.findReview(review.getReviewNo());
