@@ -16,75 +16,75 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetSubscribeDetailResponseDto {
-    private Long subscribeNo;
-    private String subscribeName;
-    private Long price;
-    private Long salePrice;
-    private Integer salesRate;
-    private Long viewCnt;
-    private boolean deleted;
-    private boolean renewed;
-    private String imagePath;
-
-    private Set<SubscribeProduct> subscribeProducts = new LinkedHashSet<>();
-
-    /**
-     * Instantiates a new Get subscribe detail response dto.
-     *
-     * @param subscribeNo   the subscribe no
-     * @param subscribeName the subscribe name
-     * @param price         the price
-     * @param salePrice     the sale price
-     * @param salesRate     the sales rate
-     * @param viewCnt       the view cnt
-     * @param deleted       the deleted
-     * @param renewed       the renewed
-     * @param imagePath     the image path
-     * @param products      the products
-     */
-    @QueryProjection
-    public GetSubscribeDetailResponseDto(Long subscribeNo, String subscribeName,
-                                         Long price, Long salePrice,
-                                         Integer salesRate, Long viewCnt,
-                                         boolean deleted, boolean renewed,
-                                         String imagePath,
-                                         Set<SubscribeProduct> products) {
-        this.subscribeNo = subscribeNo;
-        this.subscribeName = subscribeName;
-        this.price = price;
-        this.salePrice = salePrice;
-        this.salesRate = salesRate;
-        this.viewCnt = viewCnt;
-        this.deleted = deleted;
-        this.renewed = renewed;
-        this.imagePath = imagePath;
-        subscribeProducts = products;
-    }
-
-    /**
-     * The type Subscribe product.
-     */
-    @Getter
-    @Setter
-    @EqualsAndHashCode
-    public static class SubscribeProduct {
-        private Long productNo;
-        private String title;
-        private String thumbnail;
-
-        /**
-         * Instantiates a new Subscribe product.
-         *
-         * @param productNo the product no
-         * @param title     the title
-         * @param thumbnail the thumbnail
-         */
-        @QueryProjection
-        public SubscribeProduct(Long productNo, String title,
-                                String thumbnail) {
-            this.productNo = productNo;
-            this.title = title;
-            this.thumbnail = thumbnail;
-        }
-    }
+//    private Long subscribeNo;
+//    private String subscribeName;
+//    private Long price;
+//    private Long salePrice;
+//    private Integer salesRate;
+//    private Long viewCnt;
+//    private boolean deleted;
+//    private boolean renewed;
+//    private String imagePath;
+//
+//    private Set<SubscribeProduct> subscribeProducts = new LinkedHashSet<>();
+//
+//    /**
+//     * Instantiates a new Get subscribe detail response dto.
+//     *
+//     * @param subscribeNo   the subscribe no
+//     * @param subscribeName the subscribe name
+//     * @param price         the price
+//     * @param salePrice     the sale price
+//     * @param salesRate     the sales rate
+//     * @param viewCnt       the view cnt
+//     * @param deleted       the deleted
+//     * @param renewed       the renewed
+//     * @param imagePath     the image path
+//     * @param products      the products
+//     */
+//    @QueryProjection
+//    public GetSubscribeDetailResponseDto(Long subscribeNo, String subscribeName,
+//                                         Long price, Long salePrice,
+//                                         Integer salesRate, Long viewCnt,
+//                                         boolean deleted, boolean renewed,
+//                                         String imagePath,
+//                                         Set<SubscribeProduct> products) {
+//        this.subscribeNo = subscribeNo;
+//        this.subscribeName = subscribeName;
+//        this.price = price;
+//        this.salePrice = salePrice;
+//        this.salesRate = salesRate;
+//        this.viewCnt = viewCnt;
+//        this.deleted = deleted;
+//        this.renewed = renewed;
+//        this.imagePath = imagePath;
+//        subscribeProducts = products;
+//    }
+//
+//    /**
+//     * The type Subscribe product.
+//     */
+//    @Getter
+//    @Setter
+//    @EqualsAndHashCode
+//    public static class SubscribeProduct {
+//        private Long productNo;
+//        private String title;
+//        private String thumbnail;
+//
+//        /**
+//         * Instantiates a new Subscribe product.
+//         *
+//         * @param productNo the product no
+//         * @param title     the title
+//         * @param thumbnail the thumbnail
+//         */
+//        @QueryProjection
+//        public SubscribeProduct(Long productNo, String title,
+//                                String thumbnail) {
+//            this.productNo = productNo;
+//            this.title = title;
+//            this.thumbnail = thumbnail;
+//        }
+//    }
 }
