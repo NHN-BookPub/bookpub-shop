@@ -27,7 +27,7 @@ public class CreateProductRequestDto {
     private String productPublisher;
 
     private Integer pageCount;
-    @Length(max = 2000, message = "설명은 최대 2000자입니다.")
+    @Length(max = 5000, message = "설명은 최대 2000자입니다.")
     private String productDescription;
     @NotNull(message = "판매가를 입력해주세요.")
     private Long salePrice;
