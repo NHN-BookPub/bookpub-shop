@@ -64,6 +64,7 @@ class ReviewControllerTest {
     ReviewService reviewService;
 
     String path = "/api/reviews";
+    String authPath = "/token/reviews";
 
     CreateReviewRequestDto createRequestDto;
     ModifyReviewRequestDto modifyRequestDto;
@@ -205,7 +206,7 @@ class ReviewControllerTest {
         when(reviewService.getMemberReviews(any(), anyLong())).thenReturn(page);
 
         //then
-        mockMvc.perform(RestDocumentationRequestBuilders.get(path + "/member/{memberNo}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.get(authPath + "/member/{memberNo}", 1L)
                         .param("page", objectMapper.writeValueAsString(pageable.getPageNumber()))
                         .param("size", objectMapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -268,7 +269,7 @@ class ReviewControllerTest {
         when(reviewService.getWritableMemberReviews(any(), anyLong())).thenReturn(page);
 
         //then
-        mockMvc.perform(RestDocumentationRequestBuilders.get(path + "/member/{memberNo}/writable", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.get(authPath + "/member/{memberNo}/writable", 1L)
                         .param("page", objectMapper.writeValueAsString(pageable.getPageNumber()))
                         .param("size", objectMapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -345,7 +346,7 @@ class ReviewControllerTest {
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
         //then
-        mockMvc.perform(multipart(path)
+        mockMvc.perform(multipart(authPath + "/members/{memberNo}", 1L)
                         .file(multipartFile)
                         .file(createRequestDto))
                 .andExpect(status().isCreated())
@@ -377,9 +378,10 @@ class ReviewControllerTest {
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
         //then
-        mockMvc.perform(multipart(path)
+        mockMvc.perform(multipart(authPath + "/members/{memberNo}", 1L)
                         .file(multipartFile)
-                        .file(createRequestDto))
+                        .file(createRequestDto)
+                )
                 .andExpect(status().is4xxClientError())
                 .andDo(document("review-create-fail-memberNo-null",
                         preprocessRequest(prettyPrint()),
@@ -412,7 +414,7 @@ class ReviewControllerTest {
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
         //then
-        mockMvc.perform(multipart(path)
+        mockMvc.perform(multipart(authPath + "/members/{memberNo}", 1L)
                         .file(multipartFile)
                         .file(createRequestDto))
                 .andExpect(status().is4xxClientError())
@@ -447,7 +449,7 @@ class ReviewControllerTest {
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
         //then
-        mockMvc.perform(multipart(path)
+        mockMvc.perform(multipart(authPath + "/members/{memberNo}", 1L)
                         .file(multipartFile)
                         .file(createRequestDto))
                 .andExpect(status().is4xxClientError())
@@ -482,7 +484,7 @@ class ReviewControllerTest {
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
         //then
-        mockMvc.perform(multipart(path)
+        mockMvc.perform(multipart(authPath + "/members/{memberNo}", 1L)
                         .file(multipartFile)
                         .file(createRequestDto))
                 .andExpect(status().is4xxClientError())
@@ -515,7 +517,7 @@ class ReviewControllerTest {
         MockMultipartFile modifyRequestDto = new MockMultipartFile("modifyRequestDto", "modifyRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
         //then
-        mockMvc.perform(multipart(path + "/{reviewNo}/content", 1L)
+        mockMvc.perform(multipart(authPath + "/{reviewNo}/content/members/{memberNo}", 1L, 1L)
                         .file(modifyRequestDto)
                         .file(multipartFile)
                         .with(req -> {
@@ -549,7 +551,7 @@ class ReviewControllerTest {
         MockMultipartFile modifyRequestDto = new MockMultipartFile("modifyRequestDto", "modifyRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
         //then
-        mockMvc.perform(multipart(path + "/{reviewNo}/content", 1L)
+        mockMvc.perform(multipart(authPath + "/{reviewNo}/content/members/{memberNo}", 1L, 1L)
                         .file(modifyRequestDto)
                         .file(multipartFile)
                         .with(req -> {
@@ -586,7 +588,7 @@ class ReviewControllerTest {
         MockMultipartFile modifyRequestDto = new MockMultipartFile("modifyRequestDto", "modifyRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
         //then
-        mockMvc.perform(multipart(path + "/{reviewNo}/content", 1L)
+        mockMvc.perform(multipart(authPath + "/{reviewNo}/content/members/{memberNo}", 1L, 1L)
                         .file(modifyRequestDto)
                         .file(multipartFile)
                         .with(req -> {
@@ -617,12 +619,13 @@ class ReviewControllerTest {
         doNothing().when(reviewService).deleteReviewImage(anyLong());
 
         //then
-        mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{reviewNo}/file", 1L))
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authPath + "/{reviewNo}/file/members/{memberNo}", 1L, 1L))
                 .andExpect(status().isCreated())
                 .andDo(document("review-modify-image-delete",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         pathParameters(
+                                parameterWithName("memberNo").description("상품평을 작성한 회원 번호입니다"),
                                 parameterWithName("reviewNo").description("이미지를 삭제할 상품평 번호입니다")
                         )));
     }
@@ -634,12 +637,13 @@ class ReviewControllerTest {
         doNothing().when(reviewService).deleteReview(anyLong());
 
         //then
-        mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{reviewNo}", 1L))
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authPath + "/{reviewNo}/members/{memberNo}", 1L, 1L))
                 .andExpect(status().isCreated())
                 .andDo(document("review-modify-delete",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         pathParameters(
+                                parameterWithName("memberNo").description("상품평을 작성한 멤버 번호입니다"),
                                 parameterWithName("reviewNo").description("삭제할 상품평 번호입니다")
                         )));
     }

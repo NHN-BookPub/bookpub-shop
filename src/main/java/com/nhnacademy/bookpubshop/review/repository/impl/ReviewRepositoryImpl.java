@@ -16,6 +16,7 @@ import com.nhnacademy.bookpubshop.review.dto.response.GetProductReviewResponseDt
 import com.nhnacademy.bookpubshop.review.entity.QReview;
 import com.nhnacademy.bookpubshop.review.entity.Review;
 import com.nhnacademy.bookpubshop.review.repository.ReviewRepositoryCustom;
+import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.state.OrderState;
 import com.querydsl.core.types.Projections;
@@ -97,7 +98,9 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                 .on(review.product.productNo.eq(productFile.product.productNo))
                 .innerJoin(review.product, product)
                 .where(review.member.memberNo.eq(memberNo)
-                        .and(review.reviewDeleted.isFalse()));
+                        .and(review.reviewDeleted.isFalse())
+                        .and((productFile.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                                .or(productFile.fileCategory.isNull())));
 
         List<GetMemberReviewResponseDto> content = from(review)
                 .leftJoin(reviewFile)
@@ -106,7 +109,9 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                 .on(review.product.productNo.eq(productFile.product.productNo))
                 .innerJoin(review.product, product)
                 .where(review.member.memberNo.eq(memberNo)
-                        .and(review.reviewDeleted.isFalse()))
+                        .and(review.reviewDeleted.isFalse())
+                        .and((productFile.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                                .or(productFile.fileCategory.isNull())))
                 .select(Projections.fields(GetMemberReviewResponseDto.class,
                         review.reviewNo,
                         product.productNo,
@@ -161,7 +166,16 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                         .and(orderProduct.orderProductStateCode.codeName
                                 .eq(OrderProductState.CONFIRMED.getName()))
                         .and(orderStateCode.codeName.eq(OrderState.COMPLETE_DELIVERY.getName()))
-                        .and((review.product.isNull()).or(review.reviewDeleted.notIn(false))))
+                        .and((review.product.isNull()).or(product.productNo.notIn(
+                                JPAExpressions.select(product.productNo)
+                                        .from(review)
+                                        .join(review.product, product)
+                                        .join(review.member, member)
+                                        .where(member.memberNo.eq(memberNo)
+                                                .and(review.reviewDeleted.isFalse()))
+                        )))
+                        .and((productFile.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                                .or(productFile.fileCategory.isNull())))
                 .distinct();
 
         List<GetProductSimpleResponseDto> content = from(orderProduct)
@@ -186,7 +200,9 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                                         .join(review.member, member)
                                         .where(member.memberNo.eq(memberNo)
                                                 .and(review.reviewDeleted.isFalse()))
-                        ))))
+                        )))
+                        .and((productFile.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                                .or(productFile.fileCategory.isNull())))
                 .select(Projections.fields(GetProductSimpleResponseDto.class,
                         product.productNo,
                         product.title,
