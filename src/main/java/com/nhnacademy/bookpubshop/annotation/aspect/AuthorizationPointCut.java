@@ -28,7 +28,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class AuthorizationPointCut {
 
     private static final String AUTH_HEADER = "X-Authorization-Roles";
-    private static final String AUTH_MEMBER_INFO = "X-Authorization-Id";
+    public static final String AUTH_MEMBER_INFO = "X-Authorization-Id";
 
     /**
      * Member 에대한 권한과 값을 검사하기위한 Aop 설정입니다.
@@ -40,10 +40,12 @@ public class AuthorizationPointCut {
     public Object checkMemberAuthorization(ProceedingJoinPoint pjp) {
         HttpServletRequest request = getRequest();
         if (getHeader(request, AUTH_MEMBER_INFO, null)) {
+            log.error("헤더가 없음");
             return httpResponse(HttpStatus.UNAUTHORIZED);
         }
 
         if (!request.getRequestURI().contains(request.getHeader(AUTH_MEMBER_INFO))) {
+            log.error("Url path 에 멤버 no 가 없음");
             return httpResponse(HttpStatus.UNAUTHORIZED);
         }
 

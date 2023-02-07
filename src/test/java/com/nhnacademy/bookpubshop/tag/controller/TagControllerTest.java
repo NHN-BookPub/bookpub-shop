@@ -56,6 +56,7 @@ class TagControllerTest {
     ModifyTagRequestDto modifyTagRequestDto;
 
     String path = "/api/tags";
+    String tokenPath = "/token/tags";
 
     @BeforeEach
     void setUp() {
@@ -138,7 +139,7 @@ class TagControllerTest {
         doNothing().when(tagService).addTag(addTagRequestDto);
 
         // then
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(tokenPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(addTagRequestDto)))
                 .andExpect(status().is2xxSuccessful())
@@ -168,7 +169,7 @@ class TagControllerTest {
         doNothing().when(tagService).addTag(addTagRequestDto);
 
         // then
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(tokenPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(addTagRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -205,7 +206,7 @@ class TagControllerTest {
         doNothing().when(tagService).addTag(addTagRequestDto);
 
         // then
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(tokenPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(addTagRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -237,7 +238,7 @@ class TagControllerTest {
         doNothing().when(tagService).modifyTagInformation(modifyTagRequestDto);
 
         // then
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(tokenPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(modifyTagRequestDto)))
                 .andExpect(status().is2xxSuccessful())
@@ -270,7 +271,7 @@ class TagControllerTest {
         doNothing().when(tagService).modifyTagInformation(modifyTagRequestDto);
 
         // then
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(tokenPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(modifyTagRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -307,7 +308,7 @@ class TagControllerTest {
         doNothing().when(tagService).modifyTagInformation(modifyTagRequestDto);
 
         // then
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(tokenPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(modifyTagRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -337,7 +338,7 @@ class TagControllerTest {
         doNothing().when(tagService).deleteTagByTagNumber(anyInt());
 
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.delete(path + "/{tagNo}", anyInt()))
+        mockMvc.perform(RestDocumentationRequestBuilders.delete(tokenPath + "/{tagNo}", anyInt()))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
                 .andDo(document("tag-delete",

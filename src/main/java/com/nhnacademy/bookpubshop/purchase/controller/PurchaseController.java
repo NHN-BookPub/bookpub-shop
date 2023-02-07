@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.purchase.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.purchase.dto.CreatePurchaseRequestDto;
 import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseListResponseDto;
 import com.nhnacademy.bookpubshop.purchase.service.PurchaseService;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/purchases")
 public class PurchaseController {
     private final PurchaseService purchaseService;
 
@@ -35,7 +35,8 @@ public class PurchaseController {
      *
      * @return 200, 최신순으로 매입 이력을 반환합니다.
      */
-    @GetMapping
+    @GetMapping("/token/purchases")
+    @AdminAuth
     public ResponseEntity<PageResponse<GetPurchaseListResponseDto>> getPurchaseListDesc(
             Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -49,7 +50,7 @@ public class PurchaseController {
      * @param productNo 상품번호입니다.
      * @return 200, 구매이력 리스트가 반환됩니다.
      */
-    @GetMapping("/{productNo}")
+    @GetMapping("/api/purchases/{productNo}")
     public ResponseEntity<PageResponse<GetPurchaseListResponseDto>> getPurchaseByProductNo(
             @PathVariable Long productNo,
             Pageable pageable) {
@@ -65,7 +66,8 @@ public class PurchaseController {
      * @param request    수정시 사용되는 dto 입니다.
      * @return 201 반환.
      */
-    @PutMapping("/{purchaseNo}")
+    @PutMapping("/token/purchases/{purchaseNo}")
+    @AdminAuth
     public ResponseEntity<Void> modifyPurchase(
             @PathVariable Long purchaseNo,
             @RequestBody CreatePurchaseRequestDto request) {
@@ -80,7 +82,7 @@ public class PurchaseController {
      * @param request 생성시 사용되는 dto class.
      * @return 201 반환.
      */
-    @PostMapping
+    @PostMapping("/api/purchases")
     public ResponseEntity<Void> createPurchase(
             @RequestBody CreatePurchaseRequestDto request) {
         purchaseService.createPurchase(request);
@@ -94,7 +96,8 @@ public class PurchaseController {
      * @param request Dto 입니다.
      * @return 201 반환.
      */
-    @PostMapping("/absorption")
+    @PostMapping("/token/purchases/absorption")
+    @AdminAuth
     public ResponseEntity<Void> createPurchaseMerged(
             @RequestBody CreatePurchaseRequestDto request) {
         purchaseService.createPurchaseMerged(request);

@@ -56,6 +56,10 @@ public class BookpubOrder extends BaseCreateTimeEntity {
     private OrderStateCode orderStateCode;
 
     @NotNull
+    @Column(name = "order_id")
+    private String orderId;
+
+    @NotNull
     @Column(name = "order_recipient")
     private String orderRecipient;
 
@@ -99,6 +103,9 @@ public class BookpubOrder extends BaseCreateTimeEntity {
     @Column(name = "order_road_address")
     private String roadAddress;
 
+    @Column(name = "order_name")
+    private String orderName;
+
     /**
      * Builder 를 적용하기 위한 생성자입니다.
      * 모든 필드를 받습니다.
@@ -121,7 +128,9 @@ public class BookpubOrder extends BaseCreateTimeEntity {
                         String orderRequest,
                         Long couponDiscount,
                         String addressDetail,
-                        String roadAddress) {
+                        String roadAddress,
+                        String orderId,
+                        String orderName) {
         this.orderNo = orderNo;
         this.member = member;
         this.deliveryPricePolicy = deliveryPricePolicy;
@@ -140,6 +149,8 @@ public class BookpubOrder extends BaseCreateTimeEntity {
         this.couponDiscount = couponDiscount;
         this.addressDetail = addressDetail;
         this.roadAddress = roadAddress;
+        this.orderId = orderId;
+        this.orderName = orderName;
     }
 
     public void modifyInvoiceNo(String invoiceNumber) {

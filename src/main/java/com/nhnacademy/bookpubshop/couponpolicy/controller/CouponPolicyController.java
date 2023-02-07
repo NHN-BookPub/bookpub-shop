@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.couponpolicy.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.couponpolicy.dto.request.CreateCouponPolicyRequestDto;
 import com.nhnacademy.bookpubshop.couponpolicy.dto.request.ModifyCouponPolicyRequestDto;
 import com.nhnacademy.bookpubshop.couponpolicy.dto.response.GetCouponPolicyResponseDto;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @since : 1.0
  **/
 @RestController
-@RequestMapping("/api/coupon-policies")
 @RequiredArgsConstructor
 public class CouponPolicyController {
 
@@ -37,7 +36,8 @@ public class CouponPolicyController {
      * @param request CreateCouponPolicyRequestDto 쿠폰정책 등록을 위한 값 기입
      * @return 성공시 응답코드 CREATED 201이 반환된다.
      */
-    @PostMapping
+    @AdminAuth
+    @PostMapping("/token/coupon-policies")
     public ResponseEntity<Void> couponPolicyAdd(
             @Valid @RequestBody CreateCouponPolicyRequestDto request) {
         couponPolicyService.addCouponPolicy(request);
@@ -52,7 +52,8 @@ public class CouponPolicyController {
      * @param request ModifyCouponPolicyRequestDto 쿠폰정책 수정을 위한 값 기입
      * @return 성공시 응답코드 CREATED 201이 반환된다.
      */
-    @PutMapping
+    @AdminAuth
+    @PutMapping("/token/coupon-policies")
     public ResponseEntity<Void> couponPolicyModify(
             @Valid @RequestBody ModifyCouponPolicyRequestDto request) {
         couponPolicyService.modifyCouponPolicy(request);
@@ -68,7 +69,8 @@ public class CouponPolicyController {
      * @param policyNo 쿠폰정책번호
      * @return 성공했을시 응답코드 OK 200이 반환되고, 쿠폰정책 조회 정보값이 담긴다.
      */
-    @GetMapping("/{policyNo}")
+    @AdminAuth
+    @GetMapping("/token/coupon-policies/{policyNo}")
     public ResponseEntity<GetCouponPolicyResponseDto> couponPolicyDetail(
             @PathVariable("policyNo") Integer policyNo) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -81,7 +83,8 @@ public class CouponPolicyController {
      *
      * @return the 성공했을시 응답코드 OK 200이 반환되고, 쿠폰정책 조회 정보값 리스트가 담긴다.
      */
-    @GetMapping
+    @AdminAuth
+    @GetMapping("/token/coupon-policies")
     public ResponseEntity<List<GetCouponPolicyResponseDto>> couponPolicyList() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

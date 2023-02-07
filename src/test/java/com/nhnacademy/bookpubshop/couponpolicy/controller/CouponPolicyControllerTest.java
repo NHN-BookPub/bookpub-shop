@@ -14,7 +14,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.couponpolicy.dto.request.CreateCouponPolicyRequestDto;
 import com.nhnacademy.bookpubshop.couponpolicy.dto.request.ModifyCouponPolicyRequestDto;
@@ -53,8 +52,7 @@ class CouponPolicyControllerTest {
 
     @MockBean
     CouponPolicyService couponPolicyService;
-
-    String path = "/api/coupon-policies";
+    String authPath = "/token/coupon-policies";
 
     CreateCouponPolicyRequestDto createCouponPolicyRequestDto;
     ModifyCouponPolicyRequestDto modifyCouponPolicyRequestDto;
@@ -76,7 +74,7 @@ class CouponPolicyControllerTest {
 
         doNothing().when(couponPolicyService).addCouponPolicy(createCouponPolicyRequestDto);
 
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(authPath)
                         .content(objectMapper.writeValueAsString(createCouponPolicyRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -100,7 +98,7 @@ class CouponPolicyControllerTest {
 
         doNothing().when(couponPolicyService).addCouponPolicy(createCouponPolicyRequestDto);
 
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(authPath)
                         .content(objectMapper.writeValueAsString(createCouponPolicyRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -130,7 +128,7 @@ class CouponPolicyControllerTest {
 
         doNothing().when(couponPolicyService).addCouponPolicy(createCouponPolicyRequestDto);
 
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(authPath)
                         .content(objectMapper.writeValueAsString(createCouponPolicyRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -160,7 +158,7 @@ class CouponPolicyControllerTest {
 
         doNothing().when(couponPolicyService).addCouponPolicy(createCouponPolicyRequestDto);
 
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(authPath)
                         .content(objectMapper.writeValueAsString(createCouponPolicyRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -189,7 +187,7 @@ class CouponPolicyControllerTest {
 
         doNothing().when(couponPolicyService).addCouponPolicy(createCouponPolicyRequestDto);
 
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(authPath)
                         .content(objectMapper.writeValueAsString(createCouponPolicyRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -218,7 +216,7 @@ class CouponPolicyControllerTest {
 
         doNothing().when(couponPolicyService).addCouponPolicy(createCouponPolicyRequestDto);
 
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(authPath)
                         .content(objectMapper.writeValueAsString(createCouponPolicyRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -248,7 +246,7 @@ class CouponPolicyControllerTest {
 
         doNothing().when(couponPolicyService).modifyCouponPolicy(modifyCouponPolicyRequestDto);
 
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(authPath)
                         .content(objectMapper.writeValueAsString(modifyCouponPolicyRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -276,7 +274,7 @@ class CouponPolicyControllerTest {
 
         doNothing().when(couponPolicyService).modifyCouponPolicy(modifyCouponPolicyRequestDto);
 
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(authPath)
                         .content(objectMapper.writeValueAsString(modifyCouponPolicyRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -307,7 +305,7 @@ class CouponPolicyControllerTest {
 
         doNothing().when(couponPolicyService).modifyCouponPolicy(modifyCouponPolicyRequestDto);
 
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(authPath)
                         .content(objectMapper.writeValueAsString(modifyCouponPolicyRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -338,7 +336,7 @@ class CouponPolicyControllerTest {
 
         doNothing().when(couponPolicyService).modifyCouponPolicy(modifyCouponPolicyRequestDto);
 
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(authPath)
                         .content(objectMapper.writeValueAsString(modifyCouponPolicyRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -369,7 +367,7 @@ class CouponPolicyControllerTest {
 
         doNothing().when(couponPolicyService).modifyCouponPolicy(modifyCouponPolicyRequestDto);
 
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(authPath)
                         .content(objectMapper.writeValueAsString(modifyCouponPolicyRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -400,7 +398,7 @@ class CouponPolicyControllerTest {
 
         doNothing().when(couponPolicyService).modifyCouponPolicy(modifyCouponPolicyRequestDto);
 
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(authPath)
                         .content(objectMapper.writeValueAsString(modifyCouponPolicyRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -431,7 +429,7 @@ class CouponPolicyControllerTest {
 
         doNothing().when(couponPolicyService).modifyCouponPolicy(modifyCouponPolicyRequestDto);
 
-        mockMvc.perform(put(path)
+        mockMvc.perform(put(authPath)
                         .content(objectMapper.writeValueAsString(modifyCouponPolicyRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -460,7 +458,7 @@ class CouponPolicyControllerTest {
         given(couponPolicyService.getCouponPolicy(anyInt())).willReturn(dto);
 
         //when && then
-        mockMvc.perform(RestDocumentationRequestBuilders.get(path + "/{policyNo}", 1))
+        mockMvc.perform(RestDocumentationRequestBuilders.get(authPath + "/{policyNo}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.policyNo", equalTo(dto.getPolicyNo())))
@@ -491,7 +489,7 @@ class CouponPolicyControllerTest {
         given(couponPolicyService.getCouponPolicies()).willReturn(List.of(dto, tmp));
 
         //when && then
-        mockMvc.perform(get(path))
+        mockMvc.perform(get(authPath))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].policyNo", equalTo(dto.getPolicyNo())))

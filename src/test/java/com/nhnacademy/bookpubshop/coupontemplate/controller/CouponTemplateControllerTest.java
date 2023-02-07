@@ -58,8 +58,7 @@ class CouponTemplateControllerTest {
     MockMvc mockMvc;
     @MockBean
     private CouponTemplateService couponTemplateService;
-
-    String path = "/api/coupon-templates";
+    String authPath = "/token/coupon-templates";
     private ObjectMapper objectMapper;
 
     CreateCouponTemplateRequestDto createRequestDto;
@@ -80,7 +79,7 @@ class CouponTemplateControllerTest {
 
         when(couponTemplateService.getDetailCouponTemplate(anyLong())).thenReturn(dto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get(path + "/{templateNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.get(authPath + "/{templateNo}", 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -138,7 +137,7 @@ class CouponTemplateControllerTest {
                 .thenReturn(page);
 
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.get(path)
+        mockMvc.perform(RestDocumentationRequestBuilders.get(authPath)
                         .param("page", objectMapper.writeValueAsString(pageable.getPageNumber()))
                         .param("size", objectMapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -188,7 +187,7 @@ class CouponTemplateControllerTest {
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
 
-        mockMvc.perform(multipart(path)
+        mockMvc.perform(multipart(authPath)
                         .file(multipartFile)
                         .file(createRequestDto))
                 .andExpect(status().isCreated())
@@ -230,7 +229,7 @@ class CouponTemplateControllerTest {
         String dtoToJson = objectMapper.writeValueAsString(createRequestDto);
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart(path)
+        mockMvc.perform(multipart(authPath)
                         .file(createRequestDto)
                         .file(multipartFile))
                 .andExpect(status().is4xxClientError())
@@ -277,7 +276,7 @@ class CouponTemplateControllerTest {
         String dtoToJson = objectMapper.writeValueAsString(createRequestDto);
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart(path)
+        mockMvc.perform(multipart(authPath)
                         .file(createRequestDto)
                         .file(multipartFile))
                 .andExpect(status().is4xxClientError())
@@ -324,7 +323,7 @@ class CouponTemplateControllerTest {
         String dtoToJson = objectMapper.writeValueAsString(createRequestDto);
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart(path)
+        mockMvc.perform(multipart(authPath)
                         .file(createRequestDto)
                         .file(multipartFile))
                 .andExpect(status().is4xxClientError())
@@ -371,7 +370,7 @@ class CouponTemplateControllerTest {
         String dtoToJson = objectMapper.writeValueAsString(createRequestDto);
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart(path)
+        mockMvc.perform(multipart(authPath)
                         .file(createRequestDto)
                         .file(multipartFile))
                 .andExpect(status().is4xxClientError())
@@ -418,7 +417,7 @@ class CouponTemplateControllerTest {
         String dtoToJson = objectMapper.writeValueAsString(createRequestDto);
         MockMultipartFile createRequestDto = new MockMultipartFile("createRequestDto", "createRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart(path)
+        mockMvc.perform(multipart(authPath)
                         .file(createRequestDto)
                         .file(multipartFile))
                 .andExpect(status().is4xxClientError())
@@ -466,7 +465,7 @@ class CouponTemplateControllerTest {
         String dtoToJson = objectMapper.writeValueAsString(modifyRequestDto);
         MockMultipartFile modifyRequestDto = new MockMultipartFile("modifyRequestDto", "modifyRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart(path + "/{templateNo}", 1L)
+        mockMvc.perform(multipart(authPath + "/{templateNo}", 1L)
                         .file(modifyRequestDto)
                         .file(multipartFile)
                         .with(req -> {
@@ -512,7 +511,7 @@ class CouponTemplateControllerTest {
         String dtoToJson = objectMapper.writeValueAsString(modifyRequestDto);
         MockMultipartFile modifyRequestDto = new MockMultipartFile("modifyRequestDto", "modifyRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart(path + "/{templateNo}", 1L)
+        mockMvc.perform(multipart(authPath + "/{templateNo}", 1L)
                         .file(modifyRequestDto)
                         .file(multipartFile)
                         .with(req -> {
@@ -564,7 +563,7 @@ class CouponTemplateControllerTest {
         String dtoToJson = objectMapper.writeValueAsString(modifyRequestDto);
         MockMultipartFile modifyRequestDto = new MockMultipartFile("modifyRequestDto", "modifyRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart(path + "/{templateNo}", 1L)
+        mockMvc.perform(multipart(authPath + "/{templateNo}", 1L)
                         .file(modifyRequestDto)
                         .file(multipartFile)
                         .with(req -> {
@@ -615,7 +614,7 @@ class CouponTemplateControllerTest {
         String dtoToJson = objectMapper.writeValueAsString(modifyRequestDto);
         MockMultipartFile modifyRequestDto = new MockMultipartFile("modifyRequestDto", "modifyRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart(path + "/{templateNo}", 1L)
+        mockMvc.perform(multipart(authPath + "/{templateNo}", 1L)
                         .file(modifyRequestDto)
                         .file(multipartFile)
                         .with(req -> {
@@ -666,7 +665,7 @@ class CouponTemplateControllerTest {
         String dtoToJson = objectMapper.writeValueAsString(modifyRequestDto);
         MockMultipartFile modifyRequestDto = new MockMultipartFile("modifyRequestDto", "modifyRequestDto", "application/json", dtoToJson.getBytes(StandardCharsets.UTF_8));
 
-        mockMvc.perform(multipart(path + "/{templateNo}", 1L)
+        mockMvc.perform(multipart(authPath + "/{templateNo}", 1L)
                         .file(modifyRequestDto)
                         .file(multipartFile)
                         .with(req -> {

@@ -51,10 +51,12 @@ class ProductSaleStateCodeControllerTest {
     ProductSaleStateCode productSaleStateCode;
     GetProductSaleStateCodeResponseDto responseDto;
     String url;
+    String tokenUrl;
 
     @BeforeEach
     void setUp() {
         url = "/api/state/productSale";
+        tokenUrl = "/token/state/productSale";
         mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         productSaleStateCode = ProductSaleStateCodeDummy.dummy();
 
@@ -74,7 +76,7 @@ class ProductSaleStateCodeControllerTest {
         when(productSaleStateCodeService.getAllProductSaleStateCode())
                 .thenReturn(responses);
 
-        mockMvc.perform(get(url)
+        mockMvc.perform(get(tokenUrl)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].codeNo").value(1))
                 .andExpect(jsonPath("$[0].codeCategory").value(productSaleStateCode.getCodeCategory()))
@@ -153,7 +155,7 @@ class ProductSaleStateCodeControllerTest {
         when(productSaleStateCodeService.setUsedSaleCodeById(productSaleStateCode.getCodeNo(), productSaleStateCode.isCodeUsed()))
                 .thenReturn(responseDto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(url + "/{codeNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(tokenUrl + "/{codeNo}", 1)
                         .param("used", "true")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())

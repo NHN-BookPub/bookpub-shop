@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @since : 1.0
  **/
 @RestController
-@RequestMapping("/api")
 @RequiredArgsConstructor
 public class CouponTypeController {
 
@@ -31,7 +29,7 @@ public class CouponTypeController {
      * @param typeNo 쿠폰유형번호
      * @return GetCouponTypeResponseDto 를 담은 response entity
      */
-    @GetMapping("/coupon-types/{typeNo}")
+    @GetMapping("/token/coupon-types/{typeNo}")
     public ResponseEntity<GetCouponTypeResponseDto> couponTypeDetail(
             @PathVariable("typeNo") Long typeNo) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -44,7 +42,7 @@ public class CouponTypeController {
      *
      * @return GetCouponTypeResponseDto 리스트를 담은 Response entity
      */
-    @GetMapping("/coupon-types")
+    @GetMapping("/token/coupon-types")
     public ResponseEntity<List<GetCouponTypeResponseDto>> couponTypeList() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

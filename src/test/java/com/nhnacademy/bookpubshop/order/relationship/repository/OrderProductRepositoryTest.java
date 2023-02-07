@@ -84,7 +84,9 @@ class OrderProductRepositoryTest {
                 null,
                 1000L,
                 "IT관",
-                "광주 동구 조선대길"
+                "광주 동구 조선대길",
+                "dsafijvxzkjs",
+                "orderName"
         );
         entityManager.persist(bookPubTier);
         entityManager.persist(member);

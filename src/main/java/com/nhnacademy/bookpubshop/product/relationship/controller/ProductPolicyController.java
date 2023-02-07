@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.product.relationship.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.product.relationship.dto.CreateModifyProductPolicyRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.service.ProductPolicyService;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/policy/product")
 public class ProductPolicyController {
     private final ProductPolicyService productPolicyService;
 
@@ -35,14 +34,14 @@ public class ProductPolicyController {
      * @param requestDto 상품을 등록하기 위한 Dto.
      * @return 성공시 201과 생성된 객체를 반환합니다.
      */
-    @PostMapping
+    @PostMapping("/token/policy/product")
+    @AdminAuth
     public ResponseEntity<Void> createProductPolicy(
             @Valid @RequestBody CreateModifyProductPolicyRequestDto requestDto) {
         productPolicyService.createProductPolicy(requestDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
                 .build();
-
     }
 
     /**
@@ -51,7 +50,7 @@ public class ProductPolicyController {
      * @param policyNo 상품번호입니다.
      * @return 성공시 200, 찾은 객체를 반환합니다.
      */
-    @GetMapping("/{policyNo}")
+    @GetMapping("/api/policy/product/{policyNo}")
     public ResponseEntity<GetProductPolicyResponseDto> getProductPolicy(
             @PathVariable Integer policyNo) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -64,7 +63,7 @@ public class ProductPolicyController {
      *
      * @return 모든 상품 정책 리스트를 반환합니다.
      */
-    @GetMapping
+    @GetMapping("/api/policy/product")
     public ResponseEntity<List<GetProductPolicyResponseDto>> getProductPolicies() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -78,7 +77,8 @@ public class ProductPolicyController {
      * @param policy   수정을 위한 Dto 입니다.
      * @return response entity
      */
-    @PutMapping("/{policyNo}")
+    @PutMapping("/token/policy/product/{policyNo}")
+    @AdminAuth
     public ResponseEntity<Void> modifyProductPolicy(
             @PathVariable Integer policyNo,
             @Valid @RequestBody CreateModifyProductPolicyRequestDto policy) {

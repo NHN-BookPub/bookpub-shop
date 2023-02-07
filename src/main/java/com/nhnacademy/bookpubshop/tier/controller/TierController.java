@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.tier.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.tier.dto.request.CreateTierRequestDto;
 import com.nhnacademy.bookpubshop.tier.dto.request.ModifyTierRequestDto;
 import com.nhnacademy.bookpubshop.tier.dto.response.TierResponseDto;
@@ -7,6 +8,7 @@ import com.nhnacademy.bookpubshop.tier.service.TierService;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,8 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @since : 1.0
  */
 @RestController
-@RequestMapping("/api/tiers")
 @RequiredArgsConstructor
+@Slf4j
 public class TierController {
     private final TierService tierService;
 
@@ -37,7 +38,8 @@ public class TierController {
      * @param createTierRequestDto 등급을 생성하기위한 값기입.
      * @return 성공했을시 응답코드 CREATED 201이 반환된다.
      */
-    @PostMapping
+    @PostMapping("/token/tiers")
+    @AdminAuth
     public ResponseEntity<Void> tierAdd(
             @Valid @RequestBody CreateTierRequestDto createTierRequestDto) {
         tierService.addTier(createTierRequestDto);
@@ -51,7 +53,8 @@ public class TierController {
      * @param modifyTierRequestDto 등급을 수정하기위한 값 기입.
      * @return 성공했을시 응답코드 CREATED 201이 반환된다.
      */
-    @PutMapping
+    @PutMapping("/token/tiers")
+    @AdminAuth
     public ResponseEntity<Void> tierModify(
             @Valid @RequestBody ModifyTierRequestDto modifyTierRequestDto) {
         tierService.modifyTier(modifyTierRequestDto);
@@ -66,7 +69,7 @@ public class TierController {
      * @param tierNo 등급을 값을 조회하기위한 값.
      * @return 성공했을시 응답코드 OK 200이 반환된다.
      */
-    @GetMapping("/{tierNo}")
+    @GetMapping("/api/tiers/{tierNo}")
     public ResponseEntity<TierResponseDto> tierDetails(@PathVariable("tierNo") Integer tierNo) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -79,7 +82,8 @@ public class TierController {
      * @param name 등급 이름
      * @return boolean 값이 반환됩니다.
      */
-    @GetMapping("/check-tierName")
+    @GetMapping("/token/tiers/check-tierName")
+    @AdminAuth
     public ResponseEntity<Boolean> tierNameCheck(@RequestParam("tierName") String name){
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -91,7 +95,8 @@ public class TierController {
      *
      * @return 성공했을시 응답코드 OK 200이 반환된다.
      */
-    @GetMapping()
+    @GetMapping("/token/tiers")
+    @AdminAuth
     public ResponseEntity<List<TierResponseDto>> tierList() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

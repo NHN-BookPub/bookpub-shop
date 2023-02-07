@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.pricepolicy.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.pricepolicy.dto.request.CreatePricePolicyRequestDto;
 import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetOrderPolicyResponseDto;
 import com.nhnacademy.bookpubshop.pricepolicy.dto.response.GetPricePolicyResponseDto;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/state/pricepolicies")
 public class PricePolicyController {
     private final PricePolicyService pricePolicyService;
 
@@ -36,7 +35,8 @@ public class PricePolicyController {
      *
      * @return 200, 가격정책 리스트 반환.
      */
-    @GetMapping
+    @GetMapping("/token/state/pricepolicies")
+    @AdminAuth
     public ResponseEntity<List<GetPricePolicyResponseDto>> getAllPolicies() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -49,7 +49,8 @@ public class PricePolicyController {
      * @param request 등록을 위한 Dto.
      * @return 201 반환.
      */
-    @PostMapping
+    @PostMapping("/token/state/pricepolicies")
+    @AdminAuth
     public ResponseEntity<Void> createPolicy(@Valid @RequestBody CreatePricePolicyRequestDto request) {
         pricePolicyService.createPricePolicy(request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -63,7 +64,8 @@ public class PricePolicyController {
      * @param fee      수정할 가격.
      * @return 201 반환.
      */
-    @PutMapping("/{policyNo}")
+    @PutMapping("/token/state/pricepolicies/{policyNo}")
+    @AdminAuth
     public ResponseEntity<Void> modifyPolicy(@PathVariable Integer policyNo,
                                              @RequestParam Long fee) {
         pricePolicyService.modifyPricePolicyFee(policyNo, fee);
@@ -77,7 +79,7 @@ public class PricePolicyController {
      * @param policyName 정책명.
      * @return 200, 정책리스트.
      */
-    @GetMapping("/{policyName}")
+    @GetMapping("/api/state/pricepolicies/{policyName}")
     public ResponseEntity<List<GetPricePolicyResponseDto>> getPoliciesByName(
             @PathVariable String policyName) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -85,7 +87,12 @@ public class PricePolicyController {
                 .body(pricePolicyService.getPricePoliciesByName(policyName));
     }
 
-    @GetMapping("/order")
+    /**
+     * 주문에 사용할 정책을 불러오는 메소드.
+     *
+     * @return 포장비, 배송비 정책 반환.
+     */
+    @GetMapping("/api/state/pricepolicies/order")
     public ResponseEntity<List<GetOrderPolicyResponseDto>> getShipAndPackPolicy() {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)

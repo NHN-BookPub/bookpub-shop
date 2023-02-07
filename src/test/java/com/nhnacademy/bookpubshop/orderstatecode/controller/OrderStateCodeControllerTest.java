@@ -59,6 +59,7 @@ class OrderStateCodeControllerTest {
 
 
     String path = "/api/state/orderstates";
+    String tokenPath = "/token/state/orderstates";
 
     @BeforeEach
     void setUp() {
@@ -151,7 +152,7 @@ class OrderStateCodeControllerTest {
         doNothing().when(orderStateCodeService).createPricePolicy(createOrderStateCodeRequestDto);
 
         //then
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(tokenPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(createOrderStateCodeRequestDto)))
                 .andExpect(status().is2xxSuccessful())
@@ -183,7 +184,7 @@ class OrderStateCodeControllerTest {
         doNothing().when(orderStateCodeService).createPricePolicy(createOrderStateCodeRequestDto);
 
         //then
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(tokenPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(createOrderStateCodeRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -221,7 +222,7 @@ class OrderStateCodeControllerTest {
         doNothing().when(orderStateCodeService).createPricePolicy(createOrderStateCodeRequestDto);
 
         //then
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(tokenPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(createOrderStateCodeRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -260,7 +261,7 @@ class OrderStateCodeControllerTest {
         doNothing().when(orderStateCodeService).createPricePolicy(createOrderStateCodeRequestDto);
 
         //then
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(tokenPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(createOrderStateCodeRequestDto)))
                 .andExpect(status().is4xxClientError())

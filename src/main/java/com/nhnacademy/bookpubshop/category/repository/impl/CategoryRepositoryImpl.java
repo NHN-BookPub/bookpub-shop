@@ -7,9 +7,13 @@ import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.entity.QCategory;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepositoryCustom;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPQLQuery;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.data.support.PageableExecutionUtils;
 
 /**
  * 카테고리 Custom Repository 구현체.
@@ -48,11 +52,13 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
      * {@inheritDoc}
      */
     @Override
-    public List<GetCategoryResponseDto> findCategories() {
+    public Page<GetCategoryResponseDto> findCategories(Pageable pageable) {
 
         QCategory category = QCategory.category;
 
-        return from(category)
+        JPQLQuery<Long> count = from(category).select(category.count());
+
+        List<GetCategoryResponseDto> content = from(category)
                 .select(Projections.constructor(GetCategoryResponseDto.class,
                         category.categoryNo,
                         category.categoryName,
@@ -60,8 +66,13 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                                 parent.categoryName), category.categoryPriority,
                         category.categoryDisplayed))
                 .leftJoin(category.parentCategory, parent).on(parent.eq(category.parentCategory))
-                .orderBy(category.categoryPriority.desc()).orderBy(category.categoryName.asc())
+                .orderBy(category.categoryPriority.asc()).orderBy(category.categoryName.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+
     }
 
     /**
@@ -76,7 +87,7 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                         parent.categoryName,
                         parent.categoryPriority,
                         parent.categoryDisplayed))
-                .orderBy(parent.categoryPriority.desc()).orderBy(parent.categoryName.asc())
+                .orderBy(parent.categoryPriority.asc()).orderBy(parent.categoryName.asc())
                 .fetch();
     }
 
@@ -92,7 +103,7 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                 .select(Projections.constructor(GetParentCategoryWithChildrenResponseDto.class,
                         parent.categoryNo,
                         parent.categoryName))
-                .orderBy(parent.categoryPriority.desc(), parent.categoryName.asc())
+                .orderBy(parent.categoryPriority.asc(), parent.categoryName.asc())
                 .fetch();
 
         parentList.forEach(p -> {
@@ -101,11 +112,25 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                             child.categoryNo, child.categoryName))
                     .where(child.parentCategory.categoryNo.eq(p.getCategoryNo()),
                             child.categoryDisplayed.isTrue())
-                    .orderBy(child.categoryPriority.desc(), child.categoryName.asc())
+                    .orderBy(child.categoryPriority.asc(), child.categoryName.asc())
                     .fetch();
             p.setChildList(childList);
         });
 
         return parentList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> findChildNameByParentNo(Integer parentCategoryNo) {
+        QCategory category = QCategory.category;
+
+        return from(category)
+                .select(category.categoryName)
+                .where(category.parentCategory.categoryNo.eq(parentCategoryNo))
+                .fetch();
+
     }
 }

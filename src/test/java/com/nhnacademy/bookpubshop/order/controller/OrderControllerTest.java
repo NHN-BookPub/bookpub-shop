@@ -108,7 +108,7 @@ class OrderControllerTest {
     Page<GetOrderListResponseDto> pages;
     Page<GetOrderListForAdminResponseDto> adminPages;
     String url = "/api/orders";
-
+    String tokenUrl = "/token/orders";
 
     @BeforeEach
     void setUp() {
@@ -218,6 +218,7 @@ class OrderControllerTest {
         ReflectionTestUtils.setField(requestDto, "deliveryFeePolicyNo", 1);
         ReflectionTestUtils.setField(requestDto, "packingFeePolicyNo", 1);
         ReflectionTestUtils.setField(requestDto, "savePoint", 100L);
+        ReflectionTestUtils.setField(requestDto,"orderName","주문명");
 
 
         listDto = new GetOrderListResponseDto(
@@ -257,7 +258,7 @@ class OrderControllerTest {
         when(orderService.getOrderList(pageable))
                 .thenReturn(new PageResponse<>(adminPages));
 
-        mockMvc.perform(get(url)
+        mockMvc.perform(get(tokenUrl)
                         .param("page", mapper.writeValueAsString(pageable.getPageNumber()))
                         .param("size", mapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -339,7 +340,8 @@ class OrderControllerTest {
                                         fieldWithPath("memberNo").description("구입 회원"),
                                         fieldWithPath("deliveryFeePolicyNo").description("배송정책 번호"),
                                         fieldWithPath("packingFeePolicyNo").description("포장정책 번호"),
-                                        fieldWithPath("savePoint").description("포인트 적립액수")
+                                        fieldWithPath("savePoint").description("포인트 적립액수"),
+                                        fieldWithPath("orderName").description("주문명")
                                 )
                         )
 
@@ -401,12 +403,18 @@ class OrderControllerTest {
         when(orderService.getOrderListByUsers(any(), anyLong()))
                 .thenReturn(new PageResponse<>(pages));
 
-        mockMvc.perform(get(url + "/member?page=0&size=10&no=" + 1)
+        mockMvc.perform(RestDocumentationRequestBuilders
+                        .get(tokenUrl + "/member/{memberNo}",1)
+                        .param("page","0")
+                        .param("size","10")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("order-by-member-get",
                         preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원번호")
+                        ),
                         responseFields(
                                 fieldWithPath("content[].orderNo").description("주문번호"),
                                 fieldWithPath("content[].orderProducts[].productNo").description(

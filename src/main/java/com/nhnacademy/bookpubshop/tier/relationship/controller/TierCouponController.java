@@ -1,5 +1,7 @@
 package com.nhnacademy.bookpubshop.tier.relationship.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
+import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.tier.relationship.dto.request.CreateTierCouponRequestDto;
 import com.nhnacademy.bookpubshop.tier.relationship.dto.response.GetTierCouponResponseDto;
 import com.nhnacademy.bookpubshop.tier.relationship.service.impl.TierCouponServiceImpl;
@@ -27,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/tier-coupons")
+@RequestMapping("/token/tier-coupons")
 public class TierCouponController {
 
     private final TierCouponServiceImpl tierCouponService;
@@ -39,6 +41,7 @@ public class TierCouponController {
      * @return 성공 경우 200 응답
      */
     @GetMapping
+    @MemberAuth
     public ResponseEntity<PageResponse<GetTierCouponResponseDto>> tierCouponList(
             Pageable pageable) {
         return ResponseEntity.ok()
@@ -53,6 +56,7 @@ public class TierCouponController {
      * @return 성공 경우 200 응답
      */
     @PostMapping
+    @AdminAuth
     public ResponseEntity<Void> tierCouponAdd(@RequestBody CreateTierCouponRequestDto request) {
         tierCouponService.createTierCoupon(request);
 
@@ -69,8 +73,9 @@ public class TierCouponController {
      * @return 성공 경우 200 응답
      */
     @DeleteMapping
+    @AdminAuth
     public ResponseEntity<Void> tierCouponDelete(@RequestParam Long templateNo,
-            @RequestParam Integer tierNo) {
+                                                 @RequestParam Integer tierNo) {
 
         tierCouponService.deleteTierCoupon(templateNo, tierNo);
 

@@ -1,16 +1,28 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
@@ -50,6 +62,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
@@ -73,6 +86,8 @@ class MemberControllerTest {
 
     @MockBean
     private MemberService memberService;
+    @MockBean
+    MockHttpServletRequest request;
 
     String path = "/api/signup";
     String oauthPath = "/api/oauth/signup";
@@ -87,7 +102,7 @@ class MemberControllerTest {
 
     @BeforeEach
     void setUp() {
-        basic = new BookPubTier("basic",1,1L,100L);
+        basic = new BookPubTier("basic", 1, 1L, 100L);
         objectMapper = new ObjectMapper();
         signUpMemberRequestDto = new SignUpMemberRequestDto();
         oauthMemberCreateRequestDto = new OauthMemberCreateRequestDto();
@@ -149,7 +164,7 @@ class MemberControllerTest {
                                 fieldWithPath("memberNickname").description("닉네임"),
                                 fieldWithPath("memberEmail").description("이메일"),
                                 fieldWithPath("tierName").description("회원등급")
-                                )));
+                        )));
     }
 
     @Test
@@ -407,7 +422,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberNickName(anyLong(), any());
 
-        mvc.perform(put("/api/members/{memberNo}/nickName", 1L)
+        mvc.perform(put("/token/members/{memberNo}/nickName", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -431,7 +446,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberNickName(anyLong(), any());
 
-        mvc.perform(put("/api/members/{memberNo}/nickName", 1L)
+        mvc.perform(put("/token/members/{memberNo}/nickName", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -455,7 +470,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberNickName(1L, dto);
 
-        mvc.perform(put("/api/members/{memberNo}/nickName", 1L)
+        mvc.perform(put("/token/members/{memberNo}/nickName", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
@@ -476,7 +491,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberEmail(anyLong(), any());
 
-        mvc.perform(put("/api/members/{memberNo}/email", 1L)
+        mvc.perform(put("/token/members/{memberNo}/email", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -499,7 +514,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberEmail(1L, dto);
 
-        mvc.perform(put("/api/members/{memberNo}/email", 1L)
+        mvc.perform(put("/token/members/{memberNo}/email", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
@@ -551,12 +566,56 @@ class MemberControllerTest {
                                 fieldWithPath("point").description("포인트"),
                                 fieldWithPath("authorities").description("인증"),
                                 fieldWithPath("addresses").description("주소")
-                                )));
+                        )));
 
         then(memberService)
                 .should().getMemberDetails(anyLong());
     }
 
+    @Test
+    @DisplayName("인증된 멤버 상세 조회 성공 테스트")
+    void memberDetailsTokenTest() throws Exception {
+        MemberDetailResponseDto dto = MemberDummy.memberDetailResponseDummy();
+        when(memberService.getMemberDetails(1L))
+                .thenReturn(dto);
+
+        mvc.perform(RestDocumentationRequestBuilders.get("/token/members/{memberNo}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.memberNo").value(objectMapper.writeValueAsString(dto.getMemberNo())))
+                .andExpect(jsonPath("$.tierName").value(dto.getTierName()))
+                .andExpect(jsonPath("$.nickname").value(dto.getNickname()))
+                .andExpect(jsonPath("$.gender").value(dto.getGender()))
+                .andExpect(jsonPath("$.birthMonth").value(objectMapper.writeValueAsString(dto.getBirthMonth())))
+                .andExpect(jsonPath("$.birthYear").value(objectMapper.writeValueAsString(dto.getBirthYear())))
+                .andExpect(jsonPath("$.phone").value(dto.getPhone()))
+                .andExpect(jsonPath("$.email").value(dto.getEmail()))
+                .andExpect(jsonPath("$.point").value(objectMapper.writeValueAsString(dto.getPoint())))
+                .andExpect(jsonPath("$.authorities").value(dto.getAuthorities()))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("member-getMember-success",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        responseFields(
+                                fieldWithPath("memberNo").description("회원 번호"),
+                                fieldWithPath("memberName").description("이름"),
+                                fieldWithPath("tierName").description("회원 등급"),
+                                fieldWithPath("nickname").description("닉네임"),
+                                fieldWithPath("gender").description("성별"),
+                                fieldWithPath("birthMonth").description("생월"),
+                                fieldWithPath("birthYear").description("생년"),
+                                fieldWithPath("phone").description("전화번호"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("point").description("포인트"),
+                                fieldWithPath("authorities").description("인증"),
+                                fieldWithPath("addresses").description("주소")
+                        )));
+
+        then(memberService)
+                .should().getMemberDetails(anyLong());
+    }
     @Test
     @DisplayName("전체 멤버를 조회하는 메서드입니다.")
     void memberListTest() throws Exception {
@@ -571,7 +630,7 @@ class MemberControllerTest {
         when(memberService.getMembers(request))
                 .thenReturn(page);
 
-        mvc.perform(get("/api/admin/members")
+        mvc.perform(get("/token/admin/members")
                         .param("page", objectMapper.writeValueAsString(request.getPageNumber()))
                         .param("size", objectMapper.writeValueAsString(request.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -626,7 +685,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .blockMember(1L);
 
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/admin/members/{memberNo}", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/admin/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
@@ -634,7 +693,7 @@ class MemberControllerTest {
                         preprocessResponse(prettyPrint()),
                         pathParameters(
                                 parameterWithName("memberNo").description("회원 번호"))
-                        ));
+                ));
     }
 
     @Test
@@ -644,7 +703,7 @@ class MemberControllerTest {
         when(memberService.getMemberStatistics())
                 .thenReturn(dto);
 
-        mvc.perform(get("/api/admin/members/statistics")
+        mvc.perform(get("/token/admin/members/statistics")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.memberCnt").value(dto.getMemberCnt()))
@@ -659,7 +718,7 @@ class MemberControllerTest {
                                 fieldWithPath("currentMemberCnt").description("현재 회원 수"),
                                 fieldWithPath("deleteMemberCnt").description("탈퇴 회원 수"),
                                 fieldWithPath("blockMemberCnt").description("차단 회원 수")
-                                )));
+                        )));
 
         then(memberService)
                 .should().getMemberStatistics();
@@ -673,7 +732,7 @@ class MemberControllerTest {
         when(memberService.getTierStatistics())
                 .thenReturn(List.of(dto));
 
-        mvc.perform(get("/api/admin/tier/statistics")
+        mvc.perform(get("/token/admin/tier/statistics")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].tierName").value(dto.getTierName()))
                 .andExpect(jsonPath("$[0].tierValue").value(objectMapper.writeValueAsString(dto.getTierValue())))
@@ -763,7 +822,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberPhone(anyLong(), any());
 
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/phone", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/phone", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -787,7 +846,7 @@ class MemberControllerTest {
 
         doNothing().when(memberService)
                 .modifyMemberPhone(anyLong(), any());
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/phone", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/phone", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -811,7 +870,7 @@ class MemberControllerTest {
 
         doNothing().when(memberService)
                 .modifyMemberPhone(anyLong(), any());
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/phone", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/phone", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
@@ -832,7 +891,7 @@ class MemberControllerTest {
 
         doNothing().when(memberService)
                 .modifyMemberName(anyLong(), any());
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/name", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/name", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -856,7 +915,7 @@ class MemberControllerTest {
 
         doNothing().when(memberService)
                 .modifyMemberName(anyLong(), any());
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/name", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/name", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
@@ -875,7 +934,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .deleteMember(anyLong());
 
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(document("member-delete-success",
@@ -891,7 +950,7 @@ class MemberControllerTest {
         when(memberService.getMemberPwd(anyLong()))
                 .thenReturn(dto);
 
-        mvc.perform(RestDocumentationRequestBuilders.get("/api/members/{memberNo}/password-check", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.get("/token/members/{memberNo}/password-check", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.password").value(dto.getPassword()))
@@ -913,7 +972,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberPassword(anyLong(), any(ModifyMemberPasswordRequest.class));
 
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/password", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/password", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
@@ -934,7 +993,7 @@ class MemberControllerTest {
         doNothing().when(memberService)
                 .modifyMemberBaseAddress(anyLong(), anyLong());
 
-        mvc.perform(RestDocumentationRequestBuilders.put("/api/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
+        mvc.perform(RestDocumentationRequestBuilders.put("/token/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
@@ -958,7 +1017,7 @@ class MemberControllerTest {
         CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
         ReflectionTestUtils.setField(createAddressRequestDto, "addressDetail", "asdf");
 
-        mvc.perform(RestDocumentationRequestBuilders.post("/api/members/{memberNo}/addresses", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.post("/token/members/{memberNo}/addresses", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createAddressRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -982,7 +1041,7 @@ class MemberControllerTest {
         CreateAddressRequestDto createAddressRequestDto = new CreateAddressRequestDto();
         ReflectionTestUtils.setField(createAddressRequestDto, "address", "aaaa");
 
-        mvc.perform(RestDocumentationRequestBuilders.post("/api/members/{memberNo}/addresses", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.post("/token/members/{memberNo}/addresses", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createAddressRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -1011,7 +1070,7 @@ class MemberControllerTest {
         ReflectionTestUtils.setField(createAddressRequestDto, "address", "aaaa");
         ReflectionTestUtils.setField(createAddressRequestDto, "addressDetail", "aaaa");
 
-        mvc.perform(RestDocumentationRequestBuilders.post("/api/members/{memberNo}/addresses", 1L)
+        mvc.perform(RestDocumentationRequestBuilders.post("/token/members/{memberNo}/addresses", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createAddressRequestDto)))
                 .andExpect(status().is2xxSuccessful())
@@ -1034,7 +1093,7 @@ class MemberControllerTest {
     void memberAddressDeleteTest() {
         doNothing().when(memberService).deleteMemberAddress(anyLong(), anyLong());
 
-        mvc.perform(RestDocumentationRequestBuilders.delete("/api/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
+        mvc.perform(RestDocumentationRequestBuilders.delete("/token/members/{memberNo}/addresses/{addressNo}", 1L, 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
@@ -1261,7 +1320,7 @@ class MemberControllerTest {
     void oauthMemberExistBookpubDb() throws Exception {
         when(memberService.isOauthMember(anyString())).thenReturn(true);
 
-        mvc.perform(get("/api/oauth/{email}","tagkdj1@kakao.com"))
+        mvc.perform(get("/api/oauth/{email}", "tagkdj1@kakao.com"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("true"));
@@ -1272,7 +1331,7 @@ class MemberControllerTest {
     void oauthMemberNotExistBookpubDb() throws Exception {
         when(memberService.isOauthMember(anyString())).thenReturn(false);
 
-        mvc.perform(get("/api/oauth/{email}","tagkdj1@kakao.com"))
+        mvc.perform(get("/api/oauth/{email}", "tagkdj1@kakao.com"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("false"));
