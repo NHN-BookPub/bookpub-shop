@@ -177,7 +177,7 @@ public class CouponController {
      * @param tierCoupons 등급 쿠폰 리스트
      * @return 발급 결과
      */
-    @AdminAuth
+    @MemberAuth
     @PostMapping("/token/coupons/{memberNo}/tier-coupons")
     public ResponseEntity<Void> issueTierCoupons(@PathVariable Long memberNo,
                                                  @RequestParam List<Long> tierCoupons) {
