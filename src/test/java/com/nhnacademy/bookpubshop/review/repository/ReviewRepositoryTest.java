@@ -32,6 +32,7 @@ import com.nhnacademy.bookpubshop.review.dummy.ReviewDummy;
 import com.nhnacademy.bookpubshop.review.entity.Review;
 import com.nhnacademy.bookpubshop.reviewpolicy.dummy.ReviewPolicyDummy;
 import com.nhnacademy.bookpubshop.reviewpolicy.entity.ReviewPolicy;
+import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
@@ -155,33 +156,56 @@ class ReviewRepositoryTest {
     @Test
     @DisplayName("해당 회원이 작성한 상품평 조회 테스트")
     void findMemberReviewsTest() {
-        Pageable pageable = Pageable.ofSize(10);
+        // given
+        Product reviewProduct = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
+        File reviewProductFile = new File(null, null, null, null, reviewProduct, null,
+                FileCategory.PRODUCT_THUMBNAIL.getCategory(), "d", "d", "d", "d");
+        Review memberReview = ReviewDummy.dummy(member, reviewProduct, reviewPolicy);
+        File reviewFile = FileDummy.dummy(null, memberReview, null, null, null);
+        ProductAuthor reviewProductAuthor = new ProductAuthor(new ProductAuthor.Pk(author.getAuthorNo(), reviewProduct.getProductNo()),
+                author, reviewProduct);
 
         entityManager.persist(review);
+        entityManager.persist(reviewProduct.getRelationProduct().get(0));
+        entityManager.persist(reviewProduct);
+        entityManager.persist(reviewProductFile);
+        entityManager.persist(reviewProductAuthor);
+        entityManager.persist(reviewFile);
+        entityManager.persist(memberReview);
 
+        reviewProduct.getProductAuthors().add(reviewProductAuthor);
+        reviewProduct.setProductFiles(List.of(reviewProductFile));
+        memberReview.setFile(reviewFile);
+
+        Pageable pageable = Pageable.ofSize(10);
+
+        // when
         Page<GetMemberReviewResponseDto> result = reviewRepository.findMemberReviews(pageable, review.getMember().getMemberNo());
         List<GetMemberReviewResponseDto> content = result.getContent();
 
+        // then
         assertThat(result).isNotEmpty();
-        assertThat(content.get(0).getReviewNo()).isEqualTo(review.getReviewNo());
-        assertThat(content.get(0).getProductNo()).isEqualTo(review.getProduct().getProductNo());
-        assertThat(content.get(0).getProductTitle()).isEqualTo(review.getProduct().getTitle());
-        assertThat(content.get(0).getProductPublisher()).isEqualTo(review.getProduct().getProductPublisher());
-        assertThat(review.getProduct().getProductAuthors()
+        assertThat(content.get(0).getReviewNo()).isEqualTo(memberReview.getReviewNo());
+        assertThat(content.get(0).getProductNo()).isEqualTo(memberReview.getProduct().getProductNo());
+        assertThat(content.get(0).getProductTitle()).isEqualTo(memberReview.getProduct().getTitle());
+        assertThat(content.get(0).getProductPublisher()).isEqualTo(memberReview.getProduct().getProductPublisher());
+        assertThat(memberReview.getProduct().getProductAuthors()
                 .stream().anyMatch(a -> a.getAuthor().getAuthorName()
                         .equals(content.get(0).getProductAuthorNames().get(0))))
                 .isTrue();
-        assertThat(content.get(0).getReviewStar()).isEqualTo(review.getReviewStar());
-        assertThat(content.get(0).getReviewContent()).isEqualTo(review.getReviewContent());
-        assertThat(content.get(0).getReviewImagePath()).isEqualTo(review.getFile().getFilePath());
-        assertThat(content.get(0).getCreatedAt()).isEqualTo(review.getCreatedAt());
+        assertThat(content.get(0).getReviewStar()).isEqualTo(memberReview.getReviewStar());
+        assertThat(content.get(0).getReviewContent()).isEqualTo(memberReview.getReviewContent());
+        assertThat(content.get(0).getReviewImagePath()).isEqualTo(memberReview.getFile().getFilePath());
+        assertThat(content.get(0).getCreatedAt()).isEqualTo(memberReview.getCreatedAt());
     }
 
     @Test
     @DisplayName("해당 회원이 상품평 작성 가능한 상품들 조회 테스트")
     void findWritableMemberReviewsTest() {
+        // given
         Product reviewProduct = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
-        File reviewProductFile = FileDummy.dummy(null, null, null, reviewProduct, null);
+        File reviewProductFile = new File(null, null, null, null, reviewProduct, null,
+                FileCategory.PRODUCT_THUMBNAIL.getCategory(), "d", "d", "d", "d");
         OrderStateCode reviewOrderStateCode = new OrderStateCode(
                 null, OrderState.COMPLETE_DELIVERY.getName(), OrderState.COMPLETE_DELIVERY.isUsed(), null);
         BookpubOrder reviewOrder = OrderDummy.dummy(review.getMember(), pricePolicy, pricePolicy, reviewOrderStateCode);
@@ -206,9 +230,11 @@ class ReviewRepositoryTest {
 
         Pageable pageable = Pageable.ofSize(10);
 
+        // when
         Page<GetProductSimpleResponseDto> result = reviewRepository.findWritableMemberReviews(pageable, reviewOrder.getMember().getMemberNo());
         List<GetProductSimpleResponseDto> content = result.getContent();
 
+        // then
         assertThat(result).isNotEmpty();
         assertThat(content.get(0).getProductNo()).isEqualTo(reviewOrderProduct.getProduct().getProductNo());
         assertThat(content.get(0).getTitle()).isEqualTo(reviewOrderProduct.getProduct().getTitle());
