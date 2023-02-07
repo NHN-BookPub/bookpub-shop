@@ -23,7 +23,7 @@ public class GetMemberReviewResponseDto {
     private String productPublisher;
     private List<String> productAuthorNames = new ArrayList<>();
     private String productImagePath;
-    private Long reviewStar;
+    private Integer reviewStar;
     private String reviewContent;
     private String reviewImagePath;
     private LocalDateTime createdAt;

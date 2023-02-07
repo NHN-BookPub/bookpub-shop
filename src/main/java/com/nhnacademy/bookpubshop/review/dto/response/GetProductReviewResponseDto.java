@@ -15,7 +15,7 @@ import lombok.Getter;
 public class GetProductReviewResponseDto {
     private Long reviewNo;
     private String memberNickname;
-    private Long reviewStar;
+    private Integer reviewStar;
     private String reviewContent;
     private String imagePath;
     private LocalDateTime createdAt;

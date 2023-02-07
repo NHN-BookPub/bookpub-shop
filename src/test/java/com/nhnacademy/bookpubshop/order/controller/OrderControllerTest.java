@@ -108,6 +108,7 @@ class OrderControllerTest {
     Page<GetOrderListResponseDto> pages;
     Page<GetOrderListForAdminResponseDto> adminPages;
     String url = "/api/orders";
+    String tokenUrl = "/token/orders";
 
     @BeforeEach
     void setUp() {
@@ -142,7 +143,10 @@ class OrderControllerTest {
                 order.getOrderRequest(),
                 order.getPointAmount(),
                 order.getCouponDiscount(),
-                order.getOrderPrice());
+                order.getOrderPrice(),
+                order.getOrderName(),
+                order.getOrderId());
+
 
         orderProductStateCode = new OrderProductStateCode(
                 null,
@@ -257,7 +261,7 @@ class OrderControllerTest {
         when(orderService.getOrderList(pageable))
                 .thenReturn(new PageResponse<>(adminPages));
 
-        mockMvc.perform(get(url)
+        mockMvc.perform(get(tokenUrl)
                         .param("page", mapper.writeValueAsString(pageable.getPageNumber()))
                         .param("size", mapper.writeValueAsString(pageable.getPageSize()))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -402,12 +406,18 @@ class OrderControllerTest {
         when(orderService.getOrderListByUsers(any(), anyLong()))
                 .thenReturn(new PageResponse<>(pages));
 
-        mockMvc.perform(get(url + "/member?page=0&size=10&no=" + 1)
+        mockMvc.perform(RestDocumentationRequestBuilders
+                        .get(tokenUrl + "/member/{memberNo}",1)
+                        .param("page","0")
+                        .param("size","10")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("order-by-member-get",
                         preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원번호")
+                        ),
                         responseFields(
                                 fieldWithPath("content[].orderNo").description("주문번호"),
                                 fieldWithPath("content[].orderProducts[].productNo").description(
@@ -484,7 +494,9 @@ class OrderControllerTest {
                                 fieldWithPath("orderRequest").description("요구사항"),
                                 fieldWithPath("pointAmount").description("포인트 사용량"),
                                 fieldWithPath("couponAmount").description("쿠폰 할인 금액"),
-                                fieldWithPath("totalAmount").description("총 금액")
+                                fieldWithPath("totalAmount").description("총 금액"),
+                                fieldWithPath("orderName").description("주문 명"),
+                                fieldWithPath("orderId").description("주문 아이디")
 
                         )));
     }

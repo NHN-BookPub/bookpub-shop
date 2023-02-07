@@ -110,3 +110,20 @@ include::../../../../target/snippets/product-get-category/http-response.adoc[]
 
 include::../../../../target/snippets/product-get-category/response-fields.adoc[]
 
+== 이북 리스트 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/product-get-ebooks/http-request.adoc[]
+
+=== 요청 파라미터들
+
+include::../../../../target/snippets/product-get-ebooks/http-parameters.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/product-get-ebooks/http-response.adoc[]
+
+===응답 파라미터들
+
+include::../../../../target/snippets/product-get-ebooks/http-fields.adoc[]

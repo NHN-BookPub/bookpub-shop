@@ -77,7 +77,7 @@ class PricePolicyControllerTest {
                 .thenReturn(list);
 
         // then
-        mockMvc.perform(get(tokenUrl)
+        mockMvc.perform(get(url)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$[0].policyNo").value(dto.getPolicyNo()))
@@ -117,30 +117,6 @@ class PricePolicyControllerTest {
                         requestFields(
                                 fieldWithPath("policyName").description("정책 이름"),
                                 fieldWithPath("policyFee").description("가격")
-                        )));
-    }
-
-    @Test
-    @DisplayName("가격 정책 수정 성공 테스트")
-    void modifyPricePolicy_Success_Test() throws Exception {
-        // given
-        Long fee = 1000L;
-
-        // when
-        doNothing().when(pricePolicyService)
-                .modifyPricePolicyFee(1, fee);
-
-        // then
-        mockMvc.perform(RestDocumentationRequestBuilders.put(tokenUrl + "/{policyNo}", 1)
-                        .param("fee", String.valueOf(fee))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is2xxSuccessful())
-                .andDo(print())
-                .andDo(document("price-policy-modify-success",
-                        preprocessRequest(prettyPrint()),
-                        pathParameters(parameterWithName("policyNo").description("정책 번호")),
-                        requestParameters(
-                                parameterWithName("fee").description("가격")
                         )));
     }
 

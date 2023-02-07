@@ -1,0 +1,45 @@
+= Book-Pub
+:toc:
+
+== Api 명세
+
+상품평(Review) 등록에 관한 Api 명세입니다.
+
+== 상품평 등록
+
+=== 요청구조
+
+include::../../../../target/snippets/review-create/http-request.adoc[]
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/review-create/request-parts.adoc[]
+include::../../../../target/snippets/review-create/request-part-createRequestDto-fields.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/review-create/http-response.adoc[]
+
+=== 예외 상황
+
+==== 1. 회원번호가 기입되지 않은 경우
+
+include::../../../../target/snippets/review-create-fail-memberNo-Null/http-request.adoc[]
+include::../../../../target/snippets/review-create-fail-memberNo-Null/http-response.adoc[]
+
+==== 2. 상품번호가 기입되지 않은 경우
+
+include::../../../../target/snippets/review-create-fail-productNo-null/http-request.adoc[]
+include::../../../../target/snippets/review-create-fail-productNo-null/http-response.adoc[]
+
+==== 3. 상품평 평점이 기입되지 않은 경우
+
+include::../../../../target/snippets/review-create-fail-reviewStar-null/http-request.adoc[]
+include::../../../../target/snippets/review-create-fail-reviewStar-null/http-response.adoc[]
+
+==== 3. 상품평 내용이 기입되지 않은 경우
+
+include::../../../../target/snippets/review-create-fail-reviewContent-null/http-request.adoc[]
+include::../../../../target/snippets/review-create-fail-reviewContent-null/http-response.adoc[]
+
+

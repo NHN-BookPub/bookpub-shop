@@ -62,7 +62,9 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                                 order.orderRequest,
                                 order.pointAmount,
                                 order.couponDiscount,
-                                order.orderPrice
+                                order.orderPrice,
+                                order.orderName,
+                                order.orderId
                         ))
                         .innerJoin(order.orderStateCode, orderStateCode)
                         .innerJoin(order.deliveryPricePolicy, packagingPricePolicy)
