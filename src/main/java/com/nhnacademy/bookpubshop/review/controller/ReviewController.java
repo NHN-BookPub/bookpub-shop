@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.review.controller;
 
+import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductSimpleResponseDto;
 import com.nhnacademy.bookpubshop.review.dto.request.CreateReviewRequestDto;
 import com.nhnacademy.bookpubshop.review.dto.request.ModifyReviewRequestDto;
@@ -74,7 +75,8 @@ public class ReviewController {
      * @param pageable 페이지 정보
      * @return 상품평 정보를 담은 Dto 페이지 정보
      */
-    @GetMapping("/api/reviews/member/{memberNo}")
+    @MemberAuth
+    @GetMapping("/token/reviews/member/{memberNo}")
     public ResponseEntity<PageResponse<GetMemberReviewResponseDto>> memberReviewList(
             Pageable pageable, @PathVariable Long memberNo) {
 
@@ -93,7 +95,8 @@ public class ReviewController {
      * @param memberNo 회원 번호
      * @return 상품정보들이 담긴 Dto 페이지 정보
      */
-    @GetMapping("/api/reviews/member/{memberNo}/writable")
+    @MemberAuth
+    @GetMapping("/token/reviews/member/{memberNo}/writable")
     public ResponseEntity<PageResponse<GetProductSimpleResponseDto>> memberWritableReviewList(
             Pageable pageable, @PathVariable Long memberNo) {
         Page<GetProductSimpleResponseDto> reviews =
@@ -129,7 +132,8 @@ public class ReviewController {
      * @param createRequestDto 상품평 등록에 필요한 정보를 담은 Dto
      * @return the response entity
      */
-    @PostMapping("/api/reviews")
+    @MemberAuth
+    @PostMapping("/token/reviews/members/{memberNo}")
     public ResponseEntity<Void> reviewAdd(@Valid @RequestPart("createRequestDto")
                                           CreateReviewRequestDto createRequestDto,
                                           @RequestPart(value = "image", required = false)
@@ -147,11 +151,12 @@ public class ReviewController {
      * @param modifyRequestDto 상품평 수정에 필요한 정보를 담은 Dto.
      * @return the response entity
      */
-    @PutMapping("/api/reviews/{reviewNo}/content")
+    @MemberAuth
+    @PutMapping("/token/reviews/{reviewNo}/content/members/{memberNo}")
     public ResponseEntity<Void> reviewModify(@PathVariable("reviewNo") Long reviewNo,
                                              @Valid @RequestPart("modifyRequestDto")
                                              ModifyReviewRequestDto modifyRequestDto,
-                                             @RequestPart(value = "image", required = false) MultipartFile image) {
+                                             @RequestPart(value = "image", required = false) MultipartFile image, @PathVariable String memberNo) {
         reviewService.modifyReview(reviewNo, modifyRequestDto, image);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -165,7 +170,8 @@ public class ReviewController {
      * @param reviewNo 상품평 번호
      * @return the response entity
      */
-    @PutMapping("/api/reviews/{reviewNo}/file")
+    @MemberAuth
+    @PutMapping("/token/reviews/{reviewNo}/file/members/{memberNo}")
     public ResponseEntity<Void> reviewDeleteFile(@PathVariable("reviewNo") Long reviewNo) {
         reviewService.deleteReviewImage(reviewNo);
 
@@ -180,7 +186,8 @@ public class ReviewController {
      * @param reviewNo 삭제할 상품평 번호
      * @return the response entity
      */
-    @PutMapping("/api/reviews/{reviewNo}")
+    @MemberAuth
+    @PutMapping("/token/reviews/{reviewNo}/members/{memberNo}")
     public ResponseEntity<Void> reviewDelete(@PathVariable("reviewNo") Long reviewNo) {
         reviewService.deleteReview(reviewNo);
 
