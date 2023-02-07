@@ -15,6 +15,7 @@ import com.nhnacademy.bookpubshop.coupon.repository.CouponRepository;
 import com.nhnacademy.bookpubshop.coupon.service.impl.CouponServiceImpl;
 import com.nhnacademy.bookpubshop.couponmonth.dummy.CouponMonthDummy;
 import com.nhnacademy.bookpubshop.couponmonth.entity.CouponMonth;
+import com.nhnacademy.bookpubshop.couponmonth.repository.CouponMonthRepository;
 import com.nhnacademy.bookpubshop.couponpolicy.dummy.CouponPolicyDummy;
 import com.nhnacademy.bookpubshop.couponpolicy.entity.CouponPolicy;
 import com.nhnacademy.bookpubshop.couponstatecode.dummy.CouponStateCodeDummy;
@@ -86,6 +87,9 @@ class CouponServiceTest {
     ProductRepository productRepository;
     @MockBean
     FileManagement fileManagement;
+
+    @MockBean
+    CouponMonthRepository couponMonthRepository;
     ArgumentCaptor<Coupon> captor;
 
     CouponPolicy couponPolicy;
@@ -112,7 +116,8 @@ class CouponServiceTest {
 
     @BeforeEach
     void setUp() {
-        couponService = new CouponServiceImpl(couponRepository, memberRepository, couponTemplateRepository, productRepository);
+        couponService = new CouponServiceImpl(couponRepository, memberRepository,
+                couponTemplateRepository, productRepository, couponMonthRepository);
         couponPolicy = CouponPolicyDummy.dummy();
         couponType = CouponTypeDummy.dummy();
         couponStateCode = CouponStateCodeDummy.dummy();
