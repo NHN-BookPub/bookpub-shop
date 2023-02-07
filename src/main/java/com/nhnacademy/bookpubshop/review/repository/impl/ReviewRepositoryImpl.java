@@ -238,7 +238,8 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                 .leftJoin(productFile)
                 .on(review.product.productNo.eq(productFile.product.productNo))
                 .innerJoin(review.product, product)
-                .where(review.reviewNo.eq(reviewNo))
+                .where(review.reviewNo.eq(reviewNo).and((productFile.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                        .or(productFile.fileCategory.isNull())))
                 .select(Projections.fields(GetMemberReviewResponseDto.class,
                         review.reviewNo,
                         product.productNo,
