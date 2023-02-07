@@ -9,6 +9,7 @@ import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.review.entity.Review;
+import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -46,6 +47,7 @@ public class FileUtils implements FileManagement {
                          Product product,
                          Review review,
                          CustomerService customerService,
+                         Subscribe subscribe,
                          MultipartFile file,
                          String fileCategory,
                          String path) throws IOException {
@@ -69,6 +71,7 @@ public class FileUtils implements FileManagement {
         return fileRepository.save(new File(
                 null,
                 review,
+                subscribe,
                 personalInquiry,
                 couponTemplate,
                 product,

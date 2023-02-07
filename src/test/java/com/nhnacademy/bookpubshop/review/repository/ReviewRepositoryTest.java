@@ -92,8 +92,8 @@ class ReviewRepositoryTest {
         productAuthor = new ProductAuthor(new ProductAuthor.Pk(author.getAuthorNo(), product.getProductNo()),
                 author, product);
         review = ReviewDummy.dummy(member, product, reviewPolicy);
-        file = FileDummy.dummy(null, review, null, null, null);
-        productFile = FileDummy.dummy(null, null, null, product, null);
+        file = FileDummy.dummy(null, review, null, null, null, null);
+        productFile = FileDummy.dummy(null, null, null, product, null, null);
 
         entityManager.persist(bookPubTier);
         entityManager.persist(member);
@@ -158,10 +158,10 @@ class ReviewRepositoryTest {
     void findMemberReviewsTest() {
         // given
         Product reviewProduct = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
-        File reviewProductFile = new File(null, null, null, null, reviewProduct, null,
+        File reviewProductFile = new File(null, null, null, null, null, reviewProduct, null,
                 FileCategory.PRODUCT_THUMBNAIL.getCategory(), "d", "d", "d", "d");
         Review memberReview = ReviewDummy.dummy(member, reviewProduct, reviewPolicy);
-        File reviewFile = FileDummy.dummy(null, memberReview, null, null, null);
+        File reviewFile = FileDummy.dummy(null, memberReview, null, null, null, null);
         ProductAuthor reviewProductAuthor = new ProductAuthor(new ProductAuthor.Pk(author.getAuthorNo(), reviewProduct.getProductNo()),
                 author, reviewProduct);
 
@@ -204,7 +204,7 @@ class ReviewRepositoryTest {
     void findWritableMemberReviewsTest() {
         // given
         Product reviewProduct = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
-        File reviewProductFile = new File(null, null, null, null, reviewProduct, null,
+        File reviewProductFile = new File(null, null, null, null, null, reviewProduct, null,
                 FileCategory.PRODUCT_THUMBNAIL.getCategory(), "d", "d", "d", "d");
         OrderStateCode reviewOrderStateCode = new OrderStateCode(
                 null, OrderState.COMPLETE_DELIVERY.getName(), OrderState.COMPLETE_DELIVERY.isUsed(), null);
@@ -250,7 +250,7 @@ class ReviewRepositoryTest {
     @Test
     @DisplayName("상품평 단건 조회 테스트")
     void findReviewTest() {
-        File thumbnailFile = new File(null, null, null, null, product, null,
+        File thumbnailFile = new File(null, null, null, null, null, product, null,
                 FileCategory.PRODUCT_THUMBNAIL.getCategory(), "path", "extension", "origin", "saved");
         product.setProductFiles(List.of(thumbnailFile));
         entityManager.persist(review);

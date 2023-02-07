@@ -212,7 +212,7 @@ class CouponRepositoryTest {
         customerService = CustomerServiceDummy.dummy(customerServiceStateCode, member);
 
 
-        file = FileDummy.dummy(inquiry, review, couponTemplate, product, customerService);
+        file = FileDummy.dummy(inquiry, review, couponTemplate, product, customerService, null);
         couponTemplate.setFile(file);
 
 

@@ -26,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
@@ -143,21 +142,21 @@ class ProductControllerTest {
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_THUMBNAIL),
+                        FileCategory.PRODUCT_THUMBNAIL, null),
                 FileDummy.dummy(
                         null,
                         null,
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_DETAIL),
+                        FileCategory.PRODUCT_DETAIL, null),
                 FileDummy.dummy(
                         null,
                         null,
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_EBOOK)));
+                        FileCategory.PRODUCT_EBOOK, null)));
 
         requestDto = new CreateProductRequestDto();
         responseDto = new GetProductDetailResponseDto(product);

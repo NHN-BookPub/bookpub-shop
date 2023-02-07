@@ -82,7 +82,7 @@ class ProductRepositoryTest {
 
         file = entityManager.persist(
                 FileDummy.dummy(null, null,
-                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL, null));
 
         product.setProductFiles(List.of(file));
 
@@ -121,7 +121,7 @@ class ProductRepositoryTest {
 
         file = entityManager.persist(
                 FileDummy.dummy(null, null,
-                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL, null));
 
         // when
         Page<GetProductListResponseDto> allProducts = productRepository.getAllProducts(pageable);
@@ -139,7 +139,7 @@ class ProductRepositoryTest {
 
         file = entityManager.persist(
                 FileDummy.dummy(null, null,
-                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL, null));
 
         // when
         Page<GetProductListResponseDto> likeTitle = productRepository.getProductListLikeTitle(persist.getTitle(), pageable);
@@ -175,7 +175,7 @@ class ProductRepositoryTest {
 
         file = entityManager.persist(
                 FileDummy.dummy(null, null,
-                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL, null));
 
         // when
         Optional<GetProductDetailResponseDto> result = productRepository.getProductDetailById(save.getProductNo());
@@ -211,7 +211,7 @@ class ProductRepositoryTest {
 
         file = entityManager.persist(
                 FileDummy.dummy(null, null,
-                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL, null));
 
         persist.getProductCategories().add(
                 new ProductCategory(
@@ -257,7 +257,7 @@ class ProductRepositoryTest {
 
         file = entityManager.persist(
                 FileDummy.dummy(null, null,
-                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL, null));
 
         // when
         List<GetProductDetailResponseDto> productsInCart = productRepository.getProductsInCart(List.of(persist.getProductNo()));
@@ -317,7 +317,8 @@ class ProductRepositoryTest {
         Product persist = entityManager.persist(product);
         Author author = entityManager.persist(AuthorDummy.dummy());
         File file = entityManager.persist(FileDummy
-                .dummy(null, null, null, persist, null, FileCategory.PRODUCT_THUMBNAIL));
+                .dummy(null, null,
+                        null, persist, null, FileCategory.PRODUCT_THUMBNAIL, null));
 
         persist.getProductAuthors().add(
                 new ProductAuthor(

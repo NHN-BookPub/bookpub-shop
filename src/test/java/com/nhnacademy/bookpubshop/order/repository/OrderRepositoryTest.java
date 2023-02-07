@@ -46,7 +46,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 /**
- *  주문 Repo Test 입니다.
+ * 주문 Repo Test 입니다.
  *
  * @author : 김서현, 여운석
  * @since : 1.0
@@ -168,7 +168,7 @@ class OrderRepositoryTest {
 
         file = entityManager.persist(
                 FileDummy.dummy(null, null,
-                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL, null));
 
         assertThat(result.getOrderNo()).isEqualTo(persist.getOrderNo());
         assertThat(result.getOrderState()).isEqualTo(persist.getOrderStateCode().getCodeName());
@@ -201,7 +201,7 @@ class OrderRepositoryTest {
     void getOrdersList() {
         BookpubOrder persist = order;
 
-        Pageable pageable = PageRequest.of(0,10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         Page<GetOrderListForAdminResponseDto> result = orderRepository.getOrdersList(pageable);
 
@@ -224,11 +224,11 @@ class OrderRepositoryTest {
     void getOrdersListByUser() {
         BookpubOrder persist = order;
 
-        Pageable pageable = PageRequest.of(0,10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         file = entityManager.persist(
                 FileDummy.dummy(null, null,
-                        null, product, null, FileCategory.PRODUCT_THUMBNAIL));
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL, null));
 
         Page<GetOrderListResponseDto> result = orderRepository.getOrdersListByUser(pageable, member.getMemberNo());
 

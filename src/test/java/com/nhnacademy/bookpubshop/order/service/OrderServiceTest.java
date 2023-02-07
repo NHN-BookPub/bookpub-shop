@@ -183,21 +183,21 @@ class OrderServiceTest {
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_THUMBNAIL),
+                        FileCategory.PRODUCT_THUMBNAIL,null),
                 FileDummy.dummy(
                         null,
                         null,
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_DETAIL),
+                        FileCategory.PRODUCT_DETAIL,null),
                 FileDummy.dummy(
                         null,
                         null,
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_EBOOK)));
+                        FileCategory.PRODUCT_EBOOK,null)));
 
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
                 3, 1000L, 30000L, "reason");
