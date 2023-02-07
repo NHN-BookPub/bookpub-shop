@@ -52,7 +52,7 @@ class ReviewPolicyControllerTest {
     @MockBean
     ReviewPolicyService reviewPolicyService;
 
-    String path = "/api/review-policies";
+    String authPath = "/token/review-policies";
 
     CreateReviewPolicyRequestDto createRequestDto;
     ModifyPointReviewPolicyRequestDto modifyRequestDto;
@@ -71,7 +71,7 @@ class ReviewPolicyControllerTest {
 
         doNothing().when(reviewPolicyService).createReviewPolicy(createRequestDto);
 
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(authPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().is2xxSuccessful())
@@ -91,7 +91,7 @@ class ReviewPolicyControllerTest {
 
         doNothing().when(reviewPolicyService).createReviewPolicy(createRequestDto);
 
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(authPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -116,7 +116,7 @@ class ReviewPolicyControllerTest {
 
         doNothing().when(reviewPolicyService).createReviewPolicy(createRequestDto);
 
-        mockMvc.perform(post(path)
+        mockMvc.perform(post(authPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -141,7 +141,7 @@ class ReviewPolicyControllerTest {
 
         doNothing().when(reviewPolicyService).modifyReviewPolicy(modifyRequestDto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(path)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(modifyRequestDto)))
                 .andExpect(status().is2xxSuccessful())
@@ -163,7 +163,7 @@ class ReviewPolicyControllerTest {
 
         doNothing().when(reviewPolicyService).modifyReviewPolicy(modifyRequestDto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(path)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(modifyRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -189,7 +189,7 @@ class ReviewPolicyControllerTest {
 
         doNothing().when(reviewPolicyService).modifyReviewPolicy(modifyRequestDto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(path)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(modifyRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -215,7 +215,7 @@ class ReviewPolicyControllerTest {
 
         doNothing().when(reviewPolicyService).modifyReviewPolicy(modifyRequestDto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(path)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(modifyRequestDto)))
                 .andExpect(status().is4xxClientError())
@@ -238,7 +238,7 @@ class ReviewPolicyControllerTest {
     void reviewPolicyModifyUsed_Success() throws Exception {
         doNothing().when(reviewPolicyService).modifyUsedReviewPolicy(1);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.put(path + "/{policyNo}/used", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.put(authPath + "/{policyNo}/used", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(modifyRequestDto)))
                 .andExpect(status().is2xxSuccessful())
@@ -258,7 +258,7 @@ class ReviewPolicyControllerTest {
 
         when(reviewPolicyService.getReviewPolicies()).thenReturn(List.of(dto));
 
-        mockMvc.perform(get(path))
+        mockMvc.perform(get(authPath))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].policyNo").value(dto.getPolicyNo()))
                 .andExpect(jsonPath("$[0].sendPoint").value(dto.getSendPoint()))

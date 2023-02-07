@@ -44,10 +44,13 @@ public class CouponController {
      */
     @AdminAuth
     @GetMapping("/token/coupons")
-    public ResponseEntity<PageResponse<GetCouponResponseDto>> couponList(Pageable pageable,
-                                                                         @RequestParam(value = "searchKey", required = false) String searchKey,
-                                                                         @RequestParam(value = "search", required = false) String search) throws IOException {
-        Page<GetCouponResponseDto> content = couponService.getCoupons(pageable, searchKey, search);
+    public ResponseEntity<PageResponse<GetCouponResponseDto>>
+        couponList(Pageable pageable,
+               @RequestParam(value = "searchKey", required = false) String searchKey,
+               @RequestParam(value = "search", required = false) String search)
+            throws IOException {
+        Page<GetCouponResponseDto> content =
+                couponService.getCoupons(pageable, searchKey, search);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -123,7 +126,8 @@ public class CouponController {
      * @param pageable 페이지
      * @return 사용할 수 있는 쿠폰 리스트 반환
      */
-    @GetMapping("/api/coupons/members/{memberNo}/positive")
+    @MemberAuth
+    @GetMapping("/token/coupons/members/{memberNo}/positive")
     public ResponseEntity<PageResponse<GetCouponResponseDto>> memberPositiveCouponList(
             @PathVariable("memberNo") Long memberNo, Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -156,8 +160,9 @@ public class CouponController {
      */
     @MemberAuth
     @GetMapping("/token/coupons/{memberNo}/tier-coupons")
-    public ResponseEntity<Boolean> existsCouponListByMemberNo(@PathVariable Long memberNo,
-                                                              @RequestParam List<Long> tierCoupons) {
+    public ResponseEntity<Boolean> existsCouponListByMemberNo(
+            @PathVariable Long memberNo,
+            @RequestParam List<Long> tierCoupons) {
 
         boolean check = couponService.existsCouponsByMemberNo(memberNo, tierCoupons);
 

@@ -57,7 +57,7 @@ public class Review extends BaseCreateTimeEntity {
     private ReviewPolicy reviewPolicy;
 
     @Column(name = "review_star")
-    private Long reviewStar;
+    private Integer reviewStar;
 
     @NotNull
     @Column(name = "review_content")
@@ -76,7 +76,7 @@ public class Review extends BaseCreateTimeEntity {
 
     @Builder
     public Review(Member member, Product product, ReviewPolicy reviewPolicy,
-                  Long reviewStar, String reviewContent) {
+                  Integer reviewStar, String reviewContent) {
         this.member = member;
         this.product = product;
         this.reviewPolicy = reviewPolicy;

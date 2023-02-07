@@ -19,7 +19,7 @@ public class ReviewDummy {
                 member,
                 product,
                 reviewPolicy,
-                5L,
+                5,
                 "좋습니다."
         );
     }

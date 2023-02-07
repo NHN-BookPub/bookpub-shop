@@ -1,5 +1,7 @@
 package com.nhnacademy.bookpubshop.order.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
+import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
@@ -37,8 +39,10 @@ public class OrderController {
      * @param pageable 페이징을 위해 받습니다.
      * @return 200, 모든 주문 반환.
      */
-    @GetMapping("/api/orders")
-    public ResponseEntity<PageResponse<GetOrderListForAdminResponseDto>> getOrders(Pageable pageable) {
+    @AdminAuth
+    @GetMapping("/token/orders")
+    public ResponseEntity<PageResponse<GetOrderListForAdminResponseDto>>
+        getOrders(Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(orderService.getOrderList(pageable));
@@ -81,7 +85,8 @@ public class OrderController {
      * @return 201 반환.
      */
     @PutMapping("/api/orders/{orderNo}/state")
-    public ResponseEntity<Void> modifyStateCode(@PathVariable Long orderNo, @RequestParam String code) {
+    public ResponseEntity<Void> modifyStateCode(
+            @PathVariable Long orderNo, @RequestParam String code) {
         orderService.modifyStateCode(code, orderNo);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
@@ -93,13 +98,15 @@ public class OrderController {
      * @param pageable 페이징을 위해 받습니다.
      * @return 200, 멤버의 모든 주문 반환.
      */
-    @GetMapping("/api/orders/member")
+    @MemberAuth
+    @GetMapping("/token/orders/member/{memberNo}")
     public ResponseEntity<PageResponse<GetOrderListResponseDto>> getOrdersByMember(
-            Pageable pageable, @RequestParam Long no) {
+            Pageable pageable,
+            @PathVariable("memberNo") Long memberNo) {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(orderService.getOrderListByUsers(pageable, no));
+                .body(orderService.getOrderListByUsers(pageable, memberNo));
     }
 
     /**

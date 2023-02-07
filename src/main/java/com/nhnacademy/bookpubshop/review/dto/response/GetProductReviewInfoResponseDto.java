@@ -13,5 +13,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class GetProductReviewInfoResponseDto {
     private Long reviewCount;
-    private Long productStar;
+    private Integer productStar;
 }

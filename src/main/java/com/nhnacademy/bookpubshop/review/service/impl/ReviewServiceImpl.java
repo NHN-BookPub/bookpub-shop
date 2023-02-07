@@ -18,6 +18,8 @@ import com.nhnacademy.bookpubshop.review.entity.Review;
 import com.nhnacademy.bookpubshop.review.exception.ReviewNotFoundException;
 import com.nhnacademy.bookpubshop.review.repository.ReviewRepository;
 import com.nhnacademy.bookpubshop.review.service.ReviewService;
+import com.nhnacademy.bookpubshop.reviewpolicy.entity.ReviewPolicy;
+import com.nhnacademy.bookpubshop.reviewpolicy.exception.ReviewPolicyUsedNotFoundException;
 import com.nhnacademy.bookpubshop.reviewpolicy.repository.ReviewPolicyRepository;
 import com.nhnacademy.bookpubshop.state.FileCategory;
 import java.io.IOException;
@@ -60,7 +62,6 @@ public class ReviewServiceImpl implements ReviewService {
      */
     @Override
     public GetMemberReviewResponseDto getReview(Long reviewNo) {
-
         return reviewRepository.findReview(reviewNo).orElseThrow(
                 () -> new ReviewNotFoundException(reviewNo)
         );
@@ -71,7 +72,6 @@ public class ReviewServiceImpl implements ReviewService {
      */
     @Override
     public Page<GetMemberReviewResponseDto> getMemberReviews(Pageable pageable, Long memberNo) {
-
         return reviewRepository.findMemberReviews(pageable, memberNo);
     }
 
@@ -100,6 +100,8 @@ public class ReviewServiceImpl implements ReviewService {
      *
      * @throws ProductNotFoundException 상품이 없을 때 발생하는 exception
      * @throws MemberNotFoundException  회원이 없을 때 발생하는 exception
+     * @throws FileNotFoundException    파일이 입출력 에러 시 발생하는 Exception
+     * @thorws ReviewPolicyUsedNotFoundException 사용하는 상품평 정책이 없을 때 발생하는 exception
      */
     @Transactional
     @Override
@@ -110,10 +112,13 @@ public class ReviewServiceImpl implements ReviewService {
         Member member = memberRepository.findById(createRequestDto.getMemberNo())
                 .orElseThrow(MemberNotFoundException::new);
 
+        ReviewPolicy reviewPolicy = reviewPolicyRepository.findByPolicyUsedIsTrue()
+                .orElseThrow(ReviewPolicyUsedNotFoundException::new);
+
         Review review = reviewRepository.save(Review.builder()
                 .member(member)
                 .product(product)
-                .reviewPolicy(reviewPolicyRepository.findByPolicyUsedIsTrue())
+                .reviewPolicy(reviewPolicy)
                 .reviewStar(createRequestDto.getReviewStar())
                 .reviewContent(createRequestDto.getReviewContent())
                 .build());
@@ -131,7 +136,7 @@ public class ReviewServiceImpl implements ReviewService {
      * {@inheritDoc}
      *
      * @throws ReviewNotFoundException 상품평이 없을 때 발생하는 Exception
-     * @throws FileNotFoundException   파일이 없을 때 발생하는 Exception
+     * @throws FileNotFoundException   파일이 입출력 에러 시 발생하는 Exception
      */
     @Override
     @Transactional
@@ -155,6 +160,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws ReviewNotFoundException 상품평이 없을 때 발생하는 Exception
+     * @throws FileNotFoundException   파일이 입출력 에러 시 발생하는 Exception
      */
     @Override
     @Transactional
@@ -175,6 +183,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws ReviewNotFoundException 상품평이 없을 때 발생하는 Exception
+     * @throws FileNotFoundException   파일이 없을 때 발생하는 Exception
      */
     @Override
     @Transactional
@@ -186,7 +197,6 @@ public class ReviewServiceImpl implements ReviewService {
 
         if (Objects.nonNull(review.getFile())) {
             try {
-
                 fileManagement.deleteFile(review.getFile().getFilePath());
             } catch (IOException e) {
                 throw new FileNotFoundException();

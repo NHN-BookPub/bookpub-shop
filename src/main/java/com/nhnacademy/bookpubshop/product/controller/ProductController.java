@@ -165,7 +165,7 @@ public class ProductController {
      */
     @GetMapping("/api/products/types/{typeNo}")
     public ResponseEntity<List<GetProductByTypeResponseDto>>
-    getProductsByType(@PathVariable Integer typeNo,
+        getProductsByType(@PathVariable Integer typeNo,
                       @RequestParam(name = "limit") Integer limit) {
 
         return ResponseEntity.ok()
@@ -196,9 +196,26 @@ public class ProductController {
      */
     @GetMapping("/api/products/product/categories/{categoryNo}")
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-    getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
+        getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
         Page<GetProductByCategoryResponseDto> content =
                 productService.getProductsByCategory(categoryNo, pageable);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PageResponse<>(content));
+    }
+
+    /**
+     * 모든 ebook 상품들 조회.
+     *
+     * @param pageable 페이징
+     * @return 성공시 200, 페이징된 상품들 반환.
+     */
+    @GetMapping("/api/products/ebooks")
+    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
+    getEbooks(Pageable pageable) {
+        Page<GetProductByCategoryResponseDto> content =
+                productService.getEbooks(pageable);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
