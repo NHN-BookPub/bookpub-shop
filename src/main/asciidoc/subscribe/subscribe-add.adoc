@@ -1,0 +1,37 @@
+= Book-Pub
+:toc:left
+
+== Api 명세
+
+== 구독 등록
+
+=== 요청구조
+
+include::../../../../target/snippets/subscribe-add-success/http-request.adoc[]
+
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/subscribe-add-success/request-parts.adoc[]
+
+=== 응답 구조
+
+include::../../../../target/snippets/subscribe-add-success/http-response.adoc[]
+
+=== 예외 상황
+
+==== 이름이 비었을경우
+include::../../../../target/snippets/subscribe-add-fail-name-blank/http-response.adoc[]
+
+==== 가격이 잘못 기입되었을 경우
+include::../../../../target/snippets/subscribe-add-fail-price/http-response.adoc[]
+
+==== 할인률이 100을넘을경우
+include::../../../../target/snippets/subscribe-add-fail-saleRate-max/http-response.adoc[]
+
+==== 할인가격을 잘못 기입했을 경우
+include::../../../../target/snippets/subscribe-add-fail-salePrice/http-response.adoc[]
+
+==== 할인률에 음수를 줫을경우
+include::../../../../target/snippets/subscribe-add-fail-saleRate-min/http-response.adoc[]
+
