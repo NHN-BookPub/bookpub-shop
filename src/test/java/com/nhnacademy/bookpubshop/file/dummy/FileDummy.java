@@ -8,6 +8,7 @@ import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.review.entity.Review;
 import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy;
+import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 
 /**
  * File 개체의 더미입니다.
@@ -20,11 +21,12 @@ public class FileDummy {
     public static File dummy(PersonalInquiry personalInquiry,
                              Review review,
                              CouponTemplate couponTemplate,
+                             Subscribe subscribe,
                              Product product,
                              CustomerService customerService) {
         return new File(
                 null, review,
-                SubscribeDummy.dummy(),
+                subscribe,
                 personalInquiry,
                 couponTemplate, product,
                 customerService,
@@ -39,11 +41,12 @@ public class FileDummy {
     public static File dummy(PersonalInquiry personalInquiry,
                              Review review,
                              CouponTemplate couponTemplate,
+                             Subscribe subscribe,
                              Product product,
                              CustomerService customerService,
                              FileCategory category) {
         return new File(null,review,
-                SubscribeDummy.dummy(),
+                subscribe,
                 personalInquiry,
                 couponTemplate, product,
                 customerService,

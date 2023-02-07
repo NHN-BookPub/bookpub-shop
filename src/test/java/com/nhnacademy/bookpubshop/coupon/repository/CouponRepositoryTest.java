@@ -44,6 +44,8 @@ import com.nhnacademy.bookpubshop.servicecode.dummy.CustomerServiceStateCodeDumm
 import com.nhnacademy.bookpubshop.servicecode.entity.CustomerServiceStateCode;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.state.OrderState;
+import com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy;
+import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
@@ -96,9 +98,11 @@ class CouponRepositoryTest {
     CustomerServiceStateCode customerServiceStateCode;
     File file;
     OrderProduct orderProduct;
+    Subscribe subscribe;
 
     @BeforeEach
     void setUp() {
+        subscribe = SubscribeDummy.dummy();
         orderProductStateCode =
                 new OrderProductStateCode(null,
                         OrderProductState.CONFIRMED.getName(),
@@ -212,7 +216,7 @@ class CouponRepositoryTest {
         customerService = CustomerServiceDummy.dummy(customerServiceStateCode, member);
 
 
-        file = FileDummy.dummy(inquiry, review, couponTemplate, product, customerService);
+        file = FileDummy.dummy(inquiry, review, couponTemplate, subscribe, product, customerService);
         couponTemplate.setFile(file);
 
 

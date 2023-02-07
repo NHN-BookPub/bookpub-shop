@@ -1,19 +1,15 @@
 package com.nhnacademy.bookpubshop.subscribe.repository.impl;
 
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.set;
 
 import com.nhnacademy.bookpubshop.file.entity.QFile;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeDetailResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.entity.QSubscribe;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
-import com.nhnacademy.bookpubshop.subscribe.relationship.entity.QSubscribeProductList;
 import com.nhnacademy.bookpubshop.subscribe.repository.SubscribeRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -62,41 +58,5 @@ public class SubscribeRepositoryImpl extends QuerydslRepositorySupport
                 .fetch();
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
-    }
-
-    @Override
-    public Optional<GetSubscribeDetailResponseDto> getSubscribeDetail(Long subscribeNo) {
-//        QSubscribe subscribe = QSubscribe.subscribe;
-//        QProduct product = QProduct.product;
-//        QFile file = QFile.file;
-//        QFile checkFile = new QFile("check");
-//        QSubscribeProductList subscribeProductList = QSubscribeProductList.subscribeProductList;
-//
-//        Map<Long, GetSubscribeDetailResponseDto> transform = from(subscribeProductList)
-//                .join(subscribeProductList.subscribe, subscribe)
-//                .join(subscribeProductList.product, product)
-//                .join(subscribe, file.subscribe)
-//                .where(subscribe.subscribeNo.eq(subscribeNo))
-//                .transform(groupBy(subscribe.subscribeNo)
-//                        .as(new QGetSubscribeDetailResponseDto(
-//                                subscribe.subscribeNo,
-//                                subscribe.subscribeName,
-//                                subscribe.subscribePrice,
-//                                subscribe.salesPrice,
-//                                subscribe.salesRate,
-//                                subscribe.viewCount,
-//                                subscribe.subscribeDeleted,
-//                                subscribe.subscribeRenewed,
-//                                subscribe.file.filePath,
-//                                set(new QGetSubscribeDetailResponseDto_SubscribeProduct(
-//                                        product.productNo,
-//                                        product.title,
-//                                        file.filePath))
-//                        )));
-//
-//        return transform.keySet().stream()
-//                .map(transform::get)
-//                .findFirst();
-        return Optional.empty();
     }
 }

@@ -64,7 +64,7 @@ class SubscribeServiceTest {
         getSubscribeResponseDto = responseDummy();
         createSubscribeRequestDto = createDummy();
         captor = ArgumentCaptor.forClass(Subscribe.class);
-        file = FileDummy.dummy(null, null, null, null, null);
+        file = FileDummy.dummy(null, null, null,subscribe, null, null);
     }
 
     @DisplayName("구독생성 테스트 입니다.")

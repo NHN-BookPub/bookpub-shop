@@ -124,8 +124,7 @@ class OrderRepositoryTest {
                 3, 1000L, 30000L, "reason");
         orderProduct = entityManager.persist(orderProduct);
         file = FileDummy.dummy(null, null,
-                null, product, null, FileCategory.PRODUCT_THUMBNAIL);
-        entityManager.persist(file.getSubscribe());
+                null, null,product, null, FileCategory.PRODUCT_THUMBNAIL);
     }
 
     @Test

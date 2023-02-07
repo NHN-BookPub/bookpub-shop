@@ -64,7 +64,7 @@ class ProductRepositoryTest {
     @BeforeEach
     void setUp() {
         file = FileDummy.dummy(null, null,
-                null, product, null, FileCategory.PRODUCT_THUMBNAIL);
+                null, null,product, null, FileCategory.PRODUCT_THUMBNAIL);
         productPolicy = ProductPolicyDummy.dummy();
         productTypeStateCode = ProductTypeStateCodeDummy.dummy();
         productSaleStateCode = ProductSaleStateCodeDummy.dummy();
@@ -75,7 +75,6 @@ class ProductRepositoryTest {
 
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
         entityManager.persist(product.getRelationProduct().get(0));
-        entityManager.persist(file.getSubscribe());
 
 
     }
@@ -166,7 +165,6 @@ class ProductRepositoryTest {
         persist.getProductTags().add(
                 new ProductTag(new ProductTag.Pk(tag.getTagNo(), product.getProductNo()), tag, product));
         Product save = productRepository.save(product);
-        entityManager.persist(file.getSubscribe());
 
         entityManager.persist(file);
 

@@ -73,7 +73,7 @@ class CouponTemplateRepositoryTest {
         category = CategoryDummy.dummy();
         couponTemplate = CouponTemplateDummy.dummy(couponPolicy, couponType,
                 product, category, couponStateCode);
-        file = FileDummy.dummy(null, null, couponTemplate, null, null);
+        file = FileDummy.dummy(null, null, couponTemplate,null, null, null);
     }
 
     @Test
@@ -115,7 +115,6 @@ class CouponTemplateRepositoryTest {
         entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(category);
-        entityManager.persist(file.getSubscribe());
         CouponTemplate save = entityManager.persist(couponTemplate);
         File saveFile = entityManager.persist(file);
 
@@ -149,7 +148,6 @@ class CouponTemplateRepositoryTest {
         entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(category);
-        entityManager.persist(file.getSubscribe());
 
         CouponTemplate save = entityManager.persist(couponTemplate);
         File saveFile = entityManager.persist(file);
@@ -188,7 +186,6 @@ class CouponTemplateRepositoryTest {
         entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(category);
-        entityManager.persist(file.getSubscribe());
 
         CouponTemplate save = entityManager.persist(couponTemplate);
         File saveFile = entityManager.persist(file);

@@ -74,7 +74,7 @@ class CouponMonthRepositoryTest {
         couponTemplate = CouponTemplateDummy.dummy(couponPolicy, couponType, product, category, couponStateCode);
         couponMonth = CouponMonthDummy.dummy(couponTemplate);
 
-        file = FileDummy.dummy(null, null, couponTemplate, product, null);
+        file = FileDummy.dummy(null, null, couponTemplate,null, product, null);
 
         entityManager.persist(category);
         entityManager.persist(couponPolicy);
@@ -87,7 +87,6 @@ class CouponMonthRepositoryTest {
         entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(file);
-        entityManager.persist(file.getSubscribe());
 
     }
 

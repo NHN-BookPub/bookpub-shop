@@ -45,10 +45,11 @@ class SubscribeRepositoryTest {
 
     Subscribe subscribe;
     File file;
+
     @BeforeEach
     void setUp() {
         subscribe = SubscribeDummy.dummy();
-        file = FileDummy.dummy(null, null, null, null, null);
+        file = FileDummy.dummy(null, null, null, subscribe, null, null);
         subscribe.setFile(file);
     }
 
@@ -90,35 +91,6 @@ class SubscribeRepositoryTest {
         assertThat(result.getContent().get(0).getSalePrice()).isEqualTo(persist.getSalesPrice());
         assertThat(result.getContent().get(0).isDeleted()).isEqualTo(persist.isSubscribeDeleted());
         assertThat(result.getContent().get(0).isRenewed()).isEqualTo(persist.isSubscribeRenewed());
-
-    }
-
-    @Disabled
-    @Test
-    @DisplayName("check query")
-    void setSubscribeRepository(){
-
-        ProductPolicy productPolicy = ProductPolicyDummy.dummy();
-        ProductTypeStateCode productTypeStateCode = ProductTypeStateCodeDummy.dummy();
-        ProductSaleStateCode productSaleStateCode = ProductSaleStateCodeDummy.dummy();
-
-        entityManager.persist(productPolicy);
-        entityManager.persist(productTypeStateCode);
-        entityManager.persist(productSaleStateCode);
-        Product product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
-
-        entityManager.persist(product.getRelationProduct().get(0));
-        File file2 = FileDummy.dummy(null, null,
-                null, product, null, FileCategory.PRODUCT_THUMBNAIL);
-        entityManager.persist(file2.getSubscribe());
-        SubscribeProductList subscribeProductList =
-                new SubscribeProductList(null, file.getSubscribe(), product, LocalDateTime.now());
-        entityManager.persist(product);
-        Subscribe persist = entityManager.persist(file.getSubscribe());
-        entityManager.persist(file2);
-        entityManager.persist(subscribeProductList);
-
-        Optional<GetSubscribeDetailResponseDto> detail = subscribeRepository.getSubscribeDetail(persist.getSubscribeNo());
 
     }
 }
