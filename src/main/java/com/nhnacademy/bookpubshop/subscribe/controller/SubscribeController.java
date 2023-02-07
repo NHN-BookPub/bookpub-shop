@@ -62,6 +62,15 @@ public class SubscribeController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new PageResponse<>(service.getSubscribes(pageable)));
     }
+//
+//    @GetMapping("/api/subscribes/{subscribeNo}")
+//    public ResponseEntity<GetSubscribeDetailResponseDto> subscribeDetail(
+//            @PathVariable("subscribeNo") Integer subscribeNo){
+//
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .build();
+//    }
+
 
     /**
      * 구독관련 삭제.

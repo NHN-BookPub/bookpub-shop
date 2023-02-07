@@ -77,7 +77,7 @@ public class Subscribe {
         this.salesPrice = salesPrice;
         this.subscribePrice = subscribePrice;
         this.salesRate = salesRate;
-        this.viewCount = viewCount;
+        this.viewCount = 0L;
         this.subscribeRenewed = renewed;
     }
 

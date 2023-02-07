@@ -3,11 +3,24 @@ package com.nhnacademy.bookpubshop.subscribe.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
+import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.state.FileCategory;
+import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeDetailResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
+import com.nhnacademy.bookpubshop.subscribe.relationship.entity.SubscribeProductList;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +90,35 @@ class SubscribeRepositoryTest {
         assertThat(result.getContent().get(0).getSalePrice()).isEqualTo(persist.getSalesPrice());
         assertThat(result.getContent().get(0).isDeleted()).isEqualTo(persist.isSubscribeDeleted());
         assertThat(result.getContent().get(0).isRenewed()).isEqualTo(persist.isSubscribeRenewed());
+
+    }
+
+    @Disabled
+    @Test
+    @DisplayName("check query")
+    void setSubscribeRepository(){
+
+        ProductPolicy productPolicy = ProductPolicyDummy.dummy();
+        ProductTypeStateCode productTypeStateCode = ProductTypeStateCodeDummy.dummy();
+        ProductSaleStateCode productSaleStateCode = ProductSaleStateCodeDummy.dummy();
+
+        entityManager.persist(productPolicy);
+        entityManager.persist(productTypeStateCode);
+        entityManager.persist(productSaleStateCode);
+        Product product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
+
+        entityManager.persist(product.getRelationProduct().get(0));
+        File file2 = FileDummy.dummy(null, null,
+                null, product, null, FileCategory.PRODUCT_THUMBNAIL);
+        entityManager.persist(file2.getSubscribe());
+        SubscribeProductList subscribeProductList =
+                new SubscribeProductList(null, file.getSubscribe(), product, LocalDateTime.now());
+        entityManager.persist(product);
+        Subscribe persist = entityManager.persist(file.getSubscribe());
+        entityManager.persist(file2);
+        entityManager.persist(subscribeProductList);
+
+        Optional<GetSubscribeDetailResponseDto> detail = subscribeRepository.getSubscribeDetail(persist.getSubscribeNo());
 
     }
 }
