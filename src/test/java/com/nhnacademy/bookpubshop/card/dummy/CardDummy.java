@@ -1,8 +1,6 @@
 package com.nhnacademy.bookpubshop.card.dummy;
 
 import com.nhnacademy.bookpubshop.card.entity.Card;
-import com.nhnacademy.bookpubshop.cardstatecode.entity.CardStateCode;
-import com.nhnacademy.bookpubshop.payment.entity.Payment;
 
 /**
  * 카드 더미 클래스입니다.
@@ -12,15 +10,12 @@ import com.nhnacademy.bookpubshop.payment.entity.Payment;
  **/
 public class CardDummy {
 
-    public static Card dummy(Payment payment, CardStateCode cardStateCode) {
+    public static Card dummy() {
 
         return new Card(
-                payment.getPaymentNo(),
-                payment,
-                cardStateCode,
+                1L,
                 "test_company",
                 "test_number",
-                true,
                 1
         );
     }
