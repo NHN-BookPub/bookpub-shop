@@ -218,7 +218,7 @@ public class CouponServiceImpl implements CouponService {
         CouponMonth couponMonth = couponMonthRepository.findByCouponTemplate(couponTemplate)
                 .orElseThrow(() -> new CouponMonthNotFoundException(templateNo));
 
-        couponMonth.modifyCouponMonthQuantity();
+        couponMonth.minusCouponMonthQuantity();
 
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(MemberNotFoundException::new);
