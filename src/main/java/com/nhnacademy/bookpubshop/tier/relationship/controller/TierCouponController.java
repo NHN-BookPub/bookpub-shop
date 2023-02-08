@@ -38,6 +38,7 @@ public class TierCouponController {
      * @param pageable 페이지 정보
      * @return 성공 경우 200 응답
      */
+    @AdminAuth
     @GetMapping("/token/tier-coupons")
     public ResponseEntity<PageResponse<GetTierCouponResponseDto>> tierCouponList(
             Pageable pageable) {
