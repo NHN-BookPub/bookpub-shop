@@ -5,6 +5,7 @@ import com.nhnacademy.bookpubshop.tier.relationship.dto.response.GetTierCouponRe
 import com.nhnacademy.bookpubshop.tier.relationship.service.TierCouponService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -53,7 +54,8 @@ public class TierCouponController {
      * @return 성공 경우 200 응답
      */
     @PostMapping
-    public ResponseEntity<Void> tierCouponAdd(@RequestBody CreateTierCouponRequestDto request) {
+    public ResponseEntity<Void> tierCouponAdd(
+            @RequestBody @Valid CreateTierCouponRequestDto request) {
         tierCouponService.createTierCoupon(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
