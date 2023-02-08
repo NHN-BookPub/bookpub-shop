@@ -30,6 +30,8 @@ public class PaymentTypeServiceImpl implements PaymentTypeService {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws NotFoundPaymentTypeException 결제타입을 찾을 수 없을 때 발생하는 에러.
      */
     @Override
     public PaymentTypeStateCode getPaymentType(String type) {

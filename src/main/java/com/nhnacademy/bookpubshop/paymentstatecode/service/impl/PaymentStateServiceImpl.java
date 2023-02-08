@@ -30,6 +30,8 @@ public class PaymentStateServiceImpl implements PaymentStateService {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws NotFoundPaymentStateException 결제 상태를 찾을 수 없을 때 발생하는 에러.
      */
     @Override
     public PaymentStateCode getPaymentState(String state) {

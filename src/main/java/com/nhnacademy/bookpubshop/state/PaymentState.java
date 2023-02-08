@@ -13,10 +13,7 @@ import lombok.Getter;
 public enum PaymentState {
     COMPLETE_PAYMENT("결제승인", true),
     CANCEL_PAYMENT("결제거절", true),
-    WAITING_PAYMENT("결제대기", true),
-    DONE("DONE", true),
-    CANCELED("CANCELED", true);
-
+    WAITING_PAYMENT("결제대기", true);
 
     private final String name;
     private final boolean isUsed;
