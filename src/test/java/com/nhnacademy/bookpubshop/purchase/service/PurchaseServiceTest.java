@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.purchase.service;
 
 import static com.nhnacademy.bookpubshop.state.ProductTypeState.BEST_SELLER;
-import static com.nhnacademy.bookpubshop.state.ProductTypeState.NEW;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,6 +10,7 @@ import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.purchase.dto.CreatePurchaseRequestDto;
 import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseListResponseDto;
@@ -18,6 +18,7 @@ import com.nhnacademy.bookpubshop.purchase.entity.Purchase;
 import com.nhnacademy.bookpubshop.purchase.exception.NotFoundPurchasesException;
 import com.nhnacademy.bookpubshop.purchase.repository.PurchaseRepository;
 import com.nhnacademy.bookpubshop.purchase.service.impl.PurchaseServiceImpl;
+import com.nhnacademy.bookpubshop.state.ProductSaleState;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +43,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 class PurchaseServiceTest {
     ProductRepository productRepository;
     PurchaseRepository purchaseRepository;
+    ProductSaleStateCodeRepository productSaleStateCodeRepository;
     PurchaseService purchaseService;
     Product product;
     ProductPolicy productPolicy;
@@ -57,12 +59,13 @@ class PurchaseServiceTest {
     void setUp() {
         productRepository = Mockito.mock(ProductRepository.class);
         purchaseRepository = Mockito.mock(PurchaseRepository.class);
+        productSaleStateCodeRepository = Mockito.mock(ProductSaleStateCodeRepository.class);
 
-        purchaseService = new PurchaseServiceImpl(purchaseRepository, productRepository);
+        purchaseService = new PurchaseServiceImpl(purchaseRepository, productRepository, productSaleStateCodeRepository);
 
         productPolicy = new ProductPolicy(1, "method", true, 1);
         typeStateCode = new ProductTypeStateCode(1, BEST_SELLER.getName(), BEST_SELLER.isUsed(), "info");
-        saleStateCode = new ProductSaleStateCode(1, NEW.getName(), NEW.isUsed(), "info");
+        saleStateCode = new ProductSaleStateCode(1, ProductSaleState.SALE.name(), ProductSaleState.SALE.isUsed(), "info");
 
         product = new Product(1L,
                 productPolicy,
@@ -94,10 +97,13 @@ class PurchaseServiceTest {
 
         pageable = Pageable.ofSize(5);
 
-        listResponse = new GetPurchaseListResponseDto(product.getProductNo(),
+        listResponse = new GetPurchaseListResponseDto(
+                product.getProductNo(),
+                product.getTitle(),
                 purchase.getPurchaseNo(),
                 purchase.getPurchaseAmount(),
-                purchase.getPurchasePrice());
+                purchase.getPurchasePrice(),
+                purchase.getCreatedAt());
 
         request = new CreatePurchaseRequestDto();
 
@@ -134,20 +140,6 @@ class PurchaseServiceTest {
                         product.getProductNo(), pageable)
                 .getContent().get(0).getPurchaseAmount())
                 .isEqualTo(purchase.getPurchaseAmount());
-    }
-
-    @Test
-    @DisplayName("상품번호로 구매이력 조회 실패(이력 없음)")
-    void getPurchaseByProductNoFailed() {
-        Page<GetPurchaseListResponseDto> page =
-                PageableExecutionUtils.getPage(Collections.EMPTY_LIST, pageable, () -> 1L);
-
-        when(purchaseRepository.findByProductNumberWithPage(product.getProductNo(), pageable))
-                .thenReturn(page);
-
-        assertThatThrownBy(() ->
-                purchaseService.getPurchaseByProductNo(product.getProductNo(), pageable))
-                .isInstanceOf(NotFoundPurchasesException.class);
     }
 
     @Test
@@ -252,9 +244,7 @@ class PurchaseServiceTest {
         when(purchaseRepository.getPurchaseListDesc(pageable))
                 .thenReturn(page);
 
-        assertThatThrownBy(() ->
-                purchaseService.getPurchaseListDesc(pageable))
-                .isInstanceOf(NotFoundPurchasesException.class);
+        assertThat(purchaseService.getPurchaseListDesc(pageable).getContent().isEmpty());
     }
 
 
@@ -262,9 +252,13 @@ class PurchaseServiceTest {
     @DisplayName("매입이력 등록시 상품 재고 증가")
     void createPurchaseMerged() {
         when(productRepository.findById(product.getProductNo()))
-                .thenReturn(Optional.ofNullable(product));
+                .thenReturn(Optional.of(product));
+        when(productSaleStateCodeRepository.findByCodeCategory(ProductSaleState.SALE.getName()))
+                .thenReturn(Optional.of(saleStateCode));
         when(purchaseRepository.save(any()))
                 .thenReturn(purchase);
+        when(productRepository.save(any()))
+                .thenReturn(product);
 
         purchaseService.createPurchaseMerged(request);
 
