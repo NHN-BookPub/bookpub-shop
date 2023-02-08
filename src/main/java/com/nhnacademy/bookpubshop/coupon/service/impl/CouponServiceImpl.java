@@ -18,7 +18,6 @@ import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
-import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -100,26 +99,10 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
-    public Page<GetCouponResponseDto> getCoupons(Pageable pageable, String searchKey, String search)
-            throws IOException {
-
-//        Page<GetCouponResponseDto> dto =
-//        couponRepository.findAllBy(pageable, searchKey, URLDecoder.decode(search, StandardCharsets.UTF_8));
-//
-//        List<GetCouponResponseDto> dtoList = dto.getContent();
-//        List<GetCouponResponseDto> transformList = new ArrayList<>();
-//
-//        for (GetCouponResponseDto tmpDto : dtoList) {
-//            if (Objects.nonNull(tmpDto.getTemplateImage())) {
-//                transformList.add(tmpDto.transform(
-//                        fileManagement.loadFile(tmpDto.getTemplateImage()
-//                        )));
-//            } else
-//                transformList.add(tmpDto.transform(null));
-//        }
+    public Page<GetCouponResponseDto> getCoupons(Pageable pageable, String searchKey,
+            String search) {
         return couponRepository.findAllBy(pageable, searchKey, search);
 
-//        return new PageImpl<>(transformList, pageable, dto.getTotalElements());
     }
 
     /**
