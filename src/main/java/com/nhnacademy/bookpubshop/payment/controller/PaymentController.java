@@ -37,6 +37,13 @@ public class PaymentController {
                 .build();
     }
 
+    /**
+     * 유효한 주문인지 검증하는 메소드.
+     *
+     * @param orderId 주문 id.
+     * @param amount 주문금액.
+     * @return 유효한 주문인지 아닌지.
+     */
     @PostMapping("/api/payment/verify")
     public ResponseEntity<Boolean> verify(@RequestParam String orderId,
                                           @RequestParam Long amount) {

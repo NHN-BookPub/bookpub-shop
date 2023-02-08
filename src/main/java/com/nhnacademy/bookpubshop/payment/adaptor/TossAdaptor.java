@@ -9,5 +9,13 @@ import com.nhnacademy.bookpubshop.payment.dto.TossResponseDto;
  * @since : 1.0
  **/
 public interface TossAdaptor {
+    /**
+     * 토스 서버에 결제요청하는 메소드.
+     *
+     * @param paymentKey 결제 키.
+     * @param orderId 주문 아이디.
+     * @param amount 총 금액.
+     * @return 결제응답.
+     */
     TossResponseDto requestPayment(String paymentKey, String orderId, Long amount);
 }

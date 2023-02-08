@@ -26,6 +26,9 @@ public class TossAdaptorImpl implements TossAdaptor {
     private final TossConfig tossConfig;
     private final RestTemplate restTemplate;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TossResponseDto requestPayment(String paymentKey, String orderId, Long amount) {
         final String url = UriComponentsBuilder.newInstance()

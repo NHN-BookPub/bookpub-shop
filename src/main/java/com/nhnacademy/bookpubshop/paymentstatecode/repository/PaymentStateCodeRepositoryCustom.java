@@ -14,7 +14,18 @@ import org.springframework.data.repository.NoRepositoryBean;
  **/
 @NoRepositoryBean
 public interface PaymentStateCodeRepositoryCustom {
+    /**
+     * 모든 결제상태를 불러오는 메소드.
+     *
+     * @return 모든 결제상태.
+     */
     List<GetPaymentStateResponseDto> getAllPaymentState();
 
+    /**
+     * 상태이름으로 결제상태를 불러오는 메소드.
+     *
+     * @param state 결제상태명.
+     * @return 결제상태.
+     */
     Optional<PaymentStateCode> getPaymentStateCode(String state);
 }

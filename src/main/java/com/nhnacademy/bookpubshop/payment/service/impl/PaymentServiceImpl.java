@@ -45,6 +45,9 @@ public class PaymentServiceImpl implements PaymentService {
     private final TossAdaptor tossAdaptor;
     private final ApplicationEventPublisher eventPublisher;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean verifyPayment(String orderId, Long amount) {
         GetOrderVerifyResponseDto getOrderVerifyResponseDto
@@ -54,6 +57,9 @@ public class PaymentServiceImpl implements PaymentService {
         return Objects.equals(getOrderVerifyResponseDto.getAmount(), amount);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public void createPayment(String paymentKey, String orderId, Long amount) {
