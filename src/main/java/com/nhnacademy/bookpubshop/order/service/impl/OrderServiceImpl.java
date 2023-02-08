@@ -7,6 +7,7 @@ import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
@@ -115,6 +116,7 @@ public class OrderServiceImpl implements OrderService {
                 .receivedAt(request.getReceivedAt())
                 .orderPrice(request.getTotalAmount())
                 .pointAmount(request.getPointAmount())
+                .pointSave(request.getSavePoint())
                 .orderPackaged(request.isPackaged())
                 .orderRequest(request.getOrderRequest())
                 .couponDiscount(request.getCouponAmount())
@@ -263,5 +265,18 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return new PageResponse<>(returns);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return 주문, 결제 정보.
+     * @throws OrderNotFoundException 주문정보가 없습니다.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public GetOrderAndPaymentResponseDto getOrderAndPaymentInfo(String orderId) {
+        return orderRepository.getOrderAndPayment(orderId)
+                .orElseThrow(OrderNotFoundException::new);
     }
 }

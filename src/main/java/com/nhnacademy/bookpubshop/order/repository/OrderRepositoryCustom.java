@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.order.repository;
 
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
@@ -58,4 +59,12 @@ public interface OrderRepositoryCustom {
      * @return amount 정보가 담겨있는 dto.
      */
     Optional<BookpubOrder> getOrderByOrderKey(String orderId);
+
+    /**
+     * 최종 결제 성공 후 메인화면에서 띄워줄 정보.
+     *
+     * @param orderId 주문아이디.
+     * @return 주문,결제 정보.
+     */
+    Optional<GetOrderAndPaymentResponseDto> getOrderAndPayment(String orderId);
 }

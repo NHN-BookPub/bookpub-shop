@@ -29,6 +29,7 @@ import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
@@ -120,6 +121,7 @@ class OrderServiceTest {
     Map<Long, Long> couponAmount;
     Map<Long, Integer> productCount;
     Map<Long, Long> productSaleAmount;
+    GetOrderAndPaymentResponseDto dto;
 
 
     @BeforeEach
@@ -183,21 +185,21 @@ class OrderServiceTest {
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_THUMBNAIL,null),
+                        FileCategory.PRODUCT_THUMBNAIL, null),
                 FileDummy.dummy(
                         null,
                         null,
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_DETAIL,null),
+                        FileCategory.PRODUCT_DETAIL, null),
                 FileDummy.dummy(
                         null,
                         null,
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_EBOOK,null)));
+                        FileCategory.PRODUCT_EBOOK, null)));
 
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
                 3, 1000L, 30000L, "reason");
@@ -272,6 +274,18 @@ class OrderServiceTest {
         ReflectionTestUtils.setField(requestDto, "deliveryFeePolicyNo", 1);
         ReflectionTestUtils.setField(requestDto, "packingFeePolicyNo", 1);
         ReflectionTestUtils.setField(requestDto, "savePoint", 100L);
+
+
+        dto = new GetOrderAndPaymentResponseDto(
+                "ordername",
+                "address",
+                "recipient",
+                LocalDateTime.parse("2022-09-04T09:04:22"),
+                15000L,
+                1500L,
+                "국민",
+                "url"
+        );
     }
 
     @Test
@@ -713,5 +727,23 @@ class OrderServiceTest {
                 .getContent().get(0).getCreatedAt()).isEqualTo(order.getCreatedAt());
         assertThat(orderService.getOrderListByUsers(pageable, member.getMemberNo())
                 .getContent().get(0).getInvoiceNo()).isEqualTo(order.getInvoiceNumber());
+    }
+
+    @Test
+    @DisplayName("주문아이디로 주문, 결제 정보 호출")
+    void getOrderAndPaymentInfo() {
+        when(orderRepository.getOrderAndPayment(anyString()))
+                .thenReturn(Optional.ofNullable(dto));
+
+        GetOrderAndPaymentResponseDto orderId = orderService.getOrderAndPaymentInfo("orderId");
+
+        assertThat(orderId.getSavePoint()).isEqualTo(dto.getSavePoint());
+        assertThat(orderId.getOrderName()).isEqualTo(dto.getOrderName());
+        assertThat(orderId.getRecipient()).isEqualTo(dto.getRecipient());
+        assertThat(orderId.getReceiveDate()).isEqualTo(dto.getReceiveDate());
+        assertThat(orderId.getAddress()).isEqualTo(dto.getAddress());
+        assertThat(orderId.getCardCompany()).isEqualTo(dto.getCardCompany());
+        assertThat(orderId.getReceiptUrl()).isEqualTo(dto.getReceiptUrl());
+        assertThat(orderId.getTotalAmount()).isEqualTo(dto.getTotalAmount());
     }
 }

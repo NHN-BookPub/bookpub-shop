@@ -1,15 +1,28 @@
 package com.nhnacademy.bookpubshop.order.controller;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
@@ -17,6 +30,7 @@ import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
@@ -107,8 +121,10 @@ class OrderControllerTest {
     Pageable pageable;
     Page<GetOrderListResponseDto> pages;
     Page<GetOrderListForAdminResponseDto> adminPages;
+    GetOrderAndPaymentResponseDto dto;
     String url = "/api/orders";
     String tokenUrl = "/token/orders";
+
 
     @BeforeEach
     void setUp() {
@@ -166,21 +182,21 @@ class OrderControllerTest {
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_THUMBNAIL,null),
+                        FileCategory.PRODUCT_THUMBNAIL, null),
                 FileDummy.dummy(
                         null,
                         null,
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_DETAIL,null),
+                        FileCategory.PRODUCT_DETAIL, null),
                 FileDummy.dummy(
                         null,
                         null,
                         null,
                         product,
                         null,
-                        FileCategory.PRODUCT_EBOOK,null)));
+                        FileCategory.PRODUCT_EBOOK, null)));
 
         new OrderProduct(null, product, order, orderProductStateCode,
                 3, 1000L, 30000L, "reason");
@@ -215,13 +231,13 @@ class OrderControllerTest {
         ReflectionTestUtils.setField(requestDto, "orderRequest", order.getOrderRequest());
         ReflectionTestUtils.setField(requestDto, "pointAmount", order.getPointAmount());
         ReflectionTestUtils.setField(requestDto, "couponAmount", order.getCouponDiscount());
-        ReflectionTestUtils.setField(requestDto, "productCount",productCount);
+        ReflectionTestUtils.setField(requestDto, "productCount", productCount);
         ReflectionTestUtils.setField(requestDto, "productSaleAmount", productSaleAmount);
-        ReflectionTestUtils.setField(requestDto, "memberNo",1L);
+        ReflectionTestUtils.setField(requestDto, "memberNo", 1L);
         ReflectionTestUtils.setField(requestDto, "deliveryFeePolicyNo", 1);
         ReflectionTestUtils.setField(requestDto, "packingFeePolicyNo", 1);
         ReflectionTestUtils.setField(requestDto, "savePoint", 100L);
-        ReflectionTestUtils.setField(requestDto,"orderName","주문명");
+        ReflectionTestUtils.setField(requestDto, "orderName", "주문명");
 
 
         listDto = new GetOrderListResponseDto(
@@ -253,6 +269,17 @@ class OrderControllerTest {
         adminOrders.add(adminListDto);
 
         adminPages = PageableExecutionUtils.getPage(adminOrders, pageable, adminOrders::size);
+
+        dto = new GetOrderAndPaymentResponseDto(
+                "ordername",
+                "address",
+                "recipient",
+                null,
+                15000L,
+                1500L,
+                "국민",
+                "url"
+        );
     }
 
     @Test
@@ -407,9 +434,9 @@ class OrderControllerTest {
                 .thenReturn(new PageResponse<>(pages));
 
         mockMvc.perform(RestDocumentationRequestBuilders
-                        .get(tokenUrl + "/member/{memberNo}",1)
-                        .param("page","0")
-                        .param("size","10")
+                        .get(tokenUrl + "/member/{memberNo}", 1)
+                        .param("page", "0")
+                        .param("size", "10")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
@@ -434,7 +461,7 @@ class OrderControllerTest {
                                         "주문상품의 상태 코드"),
                                 fieldWithPath(
                                         "content[].orderProducts[].thumbnail").description(
-                                                "주문상품의 썸네일이미지"),
+                                        "주문상품의 썸네일이미지"),
                                 fieldWithPath("content[].orderState").description("주문 상태"),
                                 fieldWithPath("content[].createdAt").description("주문 일"),
                                 fieldWithPath("content[].receivedAt").description("받는 일자"),
@@ -498,6 +525,42 @@ class OrderControllerTest {
                                 fieldWithPath("orderName").description("주문 명"),
                                 fieldWithPath("orderId").description("주문 아이디")
 
+                        )));
+    }
+
+    @Test
+    @DisplayName("주문 결제 정보를 반환")
+    void getOrderAndPaymentInfo() throws Exception {
+        when(orderService.getOrderAndPaymentInfo(anyString()))
+                .thenReturn(dto);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get(
+                url + "/payment/{orderId}", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orderName").value(dto.getOrderName()))
+                .andExpect(jsonPath("$.address").value(dto.getAddress()))
+                .andExpect(jsonPath("$.recipient").value(dto.getRecipient()))
+                .andExpect(jsonPath("$.receiveDate").value(dto.getReceiveDate()))
+                .andExpect(jsonPath("$.totalAmount").value(dto.getTotalAmount()))
+                .andExpect(jsonPath("$.savePoint").value(dto.getSavePoint()))
+                .andExpect(jsonPath("$.cardCompany").value(dto.getCardCompany()))
+                .andExpect(jsonPath("$.receiptUrl").value(dto.getReceiptUrl()))
+                .andDo(document("order-payment-info",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("orderId").description("주문 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("orderName").description("주문명"),
+                                fieldWithPath("address").description("주소"),
+                                fieldWithPath("recipient").description("수령인"),
+                                fieldWithPath("receiveDate").description("배송일"),
+                                fieldWithPath("totalAmount").description("총 금액"),
+                                fieldWithPath("savePoint").description("적립 포인트"),
+                                fieldWithPath("cardCompany").description("카드 회사"),
+                                fieldWithPath("receiptUrl").description("영수증 링크")
                         )));
     }
 }

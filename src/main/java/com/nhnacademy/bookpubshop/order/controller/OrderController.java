@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.order.controller;
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
@@ -41,8 +42,8 @@ public class OrderController {
      */
     @AdminAuth
     @GetMapping("/token/orders")
-    public ResponseEntity<PageResponse<GetOrderListForAdminResponseDto>>
-        getOrders(Pageable pageable) {
+    public ResponseEntity<PageResponse<GetOrderListForAdminResponseDto>> getOrders(
+            Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(orderService.getOrderList(pageable));
@@ -121,5 +122,19 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(orderService.getOrderDetailById(orderNo));
+    }
+
+    /**
+     * 주문,결제 정보를 반환하는 api.
+     *
+     * @param orderId 주문아이디.
+     * @return 주문, 결제 정보.
+     */
+    @GetMapping("/api/orders/payment/{orderId}")
+    public ResponseEntity<GetOrderAndPaymentResponseDto> getOrderAndPaymentInfo(
+            @PathVariable String orderId) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(orderService.getOrderAndPaymentInfo(orderId));
     }
 }
