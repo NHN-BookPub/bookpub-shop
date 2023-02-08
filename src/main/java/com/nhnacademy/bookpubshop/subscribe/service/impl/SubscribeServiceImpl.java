@@ -3,14 +3,21 @@ package com.nhnacademy.bookpubshop.subscribe.service.impl;
 import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.filemanager.FileException;
 import com.nhnacademy.bookpubshop.filemanager.FileManagement;
+import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
+import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
+import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateRelationProductRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateSubscribeRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.ModifySubscribeRequestDto;
+import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeDetailResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import com.nhnacademy.bookpubshop.subscribe.exception.SubscribeNotFoundException;
+import com.nhnacademy.bookpubshop.subscribe.relationship.entity.SubscribeProductList;
 import com.nhnacademy.bookpubshop.subscribe.repository.SubscribeRepository;
 import com.nhnacademy.bookpubshop.subscribe.service.SubscribeService;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class SubscribeServiceImpl implements SubscribeService {
     private final SubscribeRepository subscribeRepository;
+    private final ProductRepository productRepository;
     private final FileManagement fileManagement;
     public static final String SUBSCRIBE = "subscribe";
 
@@ -93,6 +101,44 @@ public class SubscribeServiceImpl implements SubscribeService {
                 dto.isRenewed(),
                 dto.isDeleted());
         subscribe.setFile(file);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public GetSubscribeDetailResponseDto getSubscribeDetail(Long subscribeNo) {
+        return subscribeRepository.getSubscribeDetail(subscribeNo)
+                .orElseThrow(SubscribeNotFoundException::new);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Transactional
+    @Override
+    public void addRelationProducts(Long subscribeNo,
+                                    List<CreateRelationProductRequestDto> productNos) {
+        Subscribe subscribe = subscribeRepository.findById(subscribeNo)
+                .orElseThrow(SubscribeNotFoundException::new);
+        addRelationProduct(productNos, subscribe);
 
     }
+
+    /**
+     * 구독에 해당하는 연관상품들을 추가하기위한 메서드입니다.
+     *
+     * @param productNos 상품번호들이 들어옵니다.
+     * @param subscribe  구독정보가 들어옵니다.
+     */
+    private void addRelationProduct(List<CreateRelationProductRequestDto> productNos,
+                                    Subscribe subscribe) {
+        for (CreateRelationProductRequestDto dto : productNos) {
+            Product product = productRepository.findById(dto.getProductNo())
+                    .orElseThrow(ProductNotFoundException::new);
+            subscribe.addRelationList(new SubscribeProductList(null, subscribe,
+                    product, dto.getFinishedAt()));
+        }
+    }
+
 }

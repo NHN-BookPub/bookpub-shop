@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.subscribe.controller;
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateSubscribeRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.ModifySubscribeRequestDto;
+import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeDetailResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.service.SubscribeService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
@@ -92,12 +93,26 @@ public class SubscribeController {
      */
     @AdminAuth
     @PostMapping(value = "/token/subscribes/{subscribeNo}",
-            produces = { MediaType.MULTIPART_FORM_DATA_VALUE })
+            produces = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Void> subscribeModify(@PathVariable("subscribeNo") Long subscribeNo,
                                                 @RequestPart("dto") ModifySubscribeRequestDto dto,
                                                 @RequestPart("image") MultipartFile image) {
         service.modifySubscribe(dto, subscribeNo, image);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
+    }
+
+    /**
+     * 구독의 상세정보를 보여주는 메서드입니다.
+     * 성공시 200 이반환됩니다.
+     *
+     * @param subscribeNo 구독번호가 기입됩니다.
+     * @return 구독상세정보들이반환됩니다.
+     */
+    @GetMapping("/api/subscribes/{subscribeNo}")
+    public ResponseEntity<GetSubscribeDetailResponseDto> subscribeDetail(
+            @PathVariable("subscribeNo") Long subscribeNo) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(service.getSubscribeDetail(subscribeNo));
     }
 }
