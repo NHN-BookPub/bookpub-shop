@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.purchase.dto;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,7 +14,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public class GetPurchaseListResponseDto {
     private Long productNo;
+    private String productTitle;
     private Long purchaseNo;
     private Integer purchaseAmount;
     private Long purchasePrice;
+    private LocalDateTime createdAt;
 }
