@@ -2,7 +2,7 @@ package com.nhnacademy.bookpubshop.tier.relationship.controller;
 
 import com.nhnacademy.bookpubshop.tier.relationship.dto.request.CreateTierCouponRequestDto;
 import com.nhnacademy.bookpubshop.tier.relationship.dto.response.GetTierCouponResponseDto;
-import com.nhnacademy.bookpubshop.tier.relationship.service.impl.TierCouponServiceImpl;
+import com.nhnacademy.bookpubshop.tier.relationship.service.TierCouponService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/tier-coupons")
 public class TierCouponController {
 
-    private final TierCouponServiceImpl tierCouponService;
+    private final TierCouponService tierCouponService;
 
     /**
      * 등급 쿠폰을 조회하기 위한 메서드입니다.
