@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
 import static com.nhnacademy.bookpubshop.annotation.aspect.AuthorizationPointCut.AUTH_MEMBER_INFO;
-
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
@@ -439,8 +438,9 @@ public class MemberController {
      * @param memberNo 멤버 번호
      * @return 등급 번호
      */
-    @GetMapping("/token/members/{memberNo}/tier")
     @MemberAuth
+    @GetMapping("/token/members/{memberNo}/tier")
+
     public ResponseEntity<Integer> getTierNoByMemberNo(@PathVariable Long memberNo) {
         Integer tierNo = memberService.getTierByMemberNo(memberNo);
 
