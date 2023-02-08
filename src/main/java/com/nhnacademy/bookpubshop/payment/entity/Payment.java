@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,7 +37,7 @@ public class Payment extends BaseCreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_number")
-    private Long paymentNo;
+    private Long  paymentNo;
 
     @NotNull
     @OneToOne
@@ -53,9 +54,42 @@ public class Payment extends BaseCreateTimeEntity {
     @JoinColumn(name = "payment_type_state_code_number")
     private PaymentTypeStateCode paymentTypeStateCode;
 
-    @JoinColumn(name = "approved_at")
+    @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 
-    @JoinColumn(name = "payment_failure")
+    @Column(name = "payment_failure")
     private String paymentFailure;
+
+    @Column(name = "payment_key")
+    private String paymentKey;
+
+    @Column(name = "receipt")
+    private String receipt;
+
+
+    /**
+     * 페이먼트 엔티티 생성자.
+     *
+     * @param order                주문.
+     * @param paymentStateCode     결제상태.
+     * @param paymentTypeStateCode 결제유형.
+     * @param approvedAt 승인일시.
+     * @param paymentKey 결제 키.
+     * @param receipt 영수증.
+     */
+    @Builder
+    public Payment(BookpubOrder order,
+                   PaymentStateCode paymentStateCode,
+                   PaymentTypeStateCode paymentTypeStateCode,
+                   LocalDateTime approvedAt,
+                   String paymentKey,
+                   String receipt) {
+        this.order = order;
+        this.paymentStateCode = paymentStateCode;
+        this.paymentTypeStateCode = paymentTypeStateCode;
+        this.approvedAt = approvedAt;
+        this.paymentKey = paymentKey;
+        this.receipt = receipt;
+
+    }
 }

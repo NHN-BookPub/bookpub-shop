@@ -1,10 +1,12 @@
 package com.nhnacademy.bookpubshop.order.repository.impl;
 
 import static com.querydsl.jpa.JPAExpressions.select;
+
 import com.nhnacademy.bookpubshop.member.entity.QMember;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderVerifyResponseDto;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.entity.QBookpubOrder;
 import com.nhnacademy.bookpubshop.order.repository.OrderRepositoryCustom;
@@ -123,10 +125,30 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
 
         JPQLQuery<Long> count =
                 select(order.orderNo.count())
-                .from(order)
-                .innerJoin(order.member, member)
-                .where(member.memberNo.eq(memberNo));
+                        .from(order)
+                        .innerJoin(order.member, member)
+                        .where(member.memberNo.eq(memberNo));
 
         return PageableExecutionUtils.getPage(query.fetch(), pageable, count::fetchOne);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<GetOrderVerifyResponseDto> verifyPayment(String orderId) {
+        return Optional.of(from(order)
+                .select(Projections.constructor(GetOrderVerifyResponseDto.class,
+                        order.orderPrice))
+                .where(order.orderId.eq(orderId))
+                .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<BookpubOrder> getOrderByOrderKey(String orderId) {
+        return Optional.of(from(order)
+                .select(order)
+                .where(order.orderId.eq(orderId)).fetchOne());
     }
 }

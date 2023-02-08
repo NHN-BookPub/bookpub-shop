@@ -17,12 +17,12 @@ public class PaymentDummy {
     public static Payment dummy(BookpubOrder order, PaymentStateCode paymentStateCode,
             PaymentTypeStateCode paymentTypeStateCode) {
         return new Payment(
-                null,
                 order,
                 paymentStateCode,
                 paymentTypeStateCode,
                 LocalDateTime.now(),
-                null
+                "paymentKey",
+                "receipt"
         );
     }
 

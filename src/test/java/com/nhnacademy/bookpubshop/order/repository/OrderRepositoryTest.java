@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.order.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
@@ -8,6 +9,7 @@ import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderVerifyResponseDto;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.exception.OrderNotFoundException;
@@ -255,5 +257,24 @@ class OrderRepositoryTest {
                 .isEqualTo(orderProduct.getProductAmount());
         assertThat(response.get(0).getSalesPrice())
                 .isEqualTo(product.getSalesPrice());
+    }
+
+    @Test
+    @DisplayName("주문 아이디로 검증 성공")
+    void verifyOrder() {
+        Optional<GetOrderVerifyResponseDto> getOrderVerifyResponseDto
+                = orderRepository.verifyPayment(order.getOrderId());
+
+        assertThat(getOrderVerifyResponseDto).isPresent();
+        assertThat(getOrderVerifyResponseDto.get().getAmount()).isEqualTo(10000L);
+    }
+
+    @Test
+    @DisplayName("주문 아이디로 주문 불러오기")
+    void getOrderByOrderKey() {
+        Optional<BookpubOrder> orderByOrderKey
+                = orderRepository.getOrderByOrderKey(order.getOrderId());
+
+        assertThat(orderByOrderKey).isPresent();
     }
 }

@@ -20,7 +20,24 @@ public abstract class SignupDto {
 
     public abstract String getMemberId();
 
-    public Member getMember(BookPubTier tier, String birth, String memberId, String email, String gender, String name, String nickname, String phone, String pwd) {
+    /**
+     * 회원가입 dto에서 member entity를 생성하는 메소드입니다.
+     *
+     * @param tier 등급
+     * @param birth 생일
+     * @param memberId 멤버 아이디
+     * @param email 이메일
+     * @param gender 성별
+     * @param name 이름
+     * @param nickname 닉네임
+     * @param phone 전화번호
+     * @param pwd 비밀번호
+     * @return 회원 entity
+     */
+    public Member getMember(BookPubTier tier, String birth,
+                            String memberId, String email,
+                            String gender, String name,
+                            String nickname, String phone, String pwd) {
         Integer memberYear = Integer.parseInt(birth.substring(0, 2));
         Integer memberMonthDay = Integer.parseInt(birth.substring(2));
 

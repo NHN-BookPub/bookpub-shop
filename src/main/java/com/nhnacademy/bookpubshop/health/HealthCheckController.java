@@ -15,7 +15,7 @@ public class HealthCheckController {
     private boolean health = true;
 
     @GetMapping("/monitor/l7check")
-    public ResponseEntity<String> getHealth(){
+    public ResponseEntity<String> getHealth() {
         if (health) {
             return ResponseEntity.ok("정상적 실행");
         }
@@ -24,7 +24,7 @@ public class HealthCheckController {
     }
 
     @GetMapping("/deploy/ready")
-    public void readyToDeploy(){
+    public void readyToDeploy() {
         this.health = false;
     }
 }

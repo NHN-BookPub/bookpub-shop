@@ -2,21 +2,23 @@ package com.nhnacademy.bookpubshop.member.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
 import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
 import com.nhnacademy.bookpubshop.authority.entity.Authority;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberAuthResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dummy.MemberAuthorityDummy;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
-import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
-import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
+import com.nhnacademy.bookpubshop.member.relationship.entity.MemberAuthority;
+import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -145,7 +147,7 @@ class MemberRepositoryTest {
 
     @DisplayName("멤버 통계")
     @Test
-    void memberStatisticsTest(){
+    void memberStatisticsTest() {
         entityManager.persist(member);
 
         MemberStatisticsResponseDto result = memberRepository.memberStatistics();
@@ -159,7 +161,7 @@ class MemberRepositoryTest {
 
     @DisplayName("멤버 등급별 통계")
     @Test
-    void memberTierStatisticsTest(){
+    void memberTierStatisticsTest() {
         Member persist = entityManager.persist(member);
         Member dummy = MemberDummy.dummy2(bookPubTier);
         entityManager.persist(dummy);
@@ -198,7 +200,35 @@ class MemberRepositoryTest {
         entityManager.flush();
         entityManager.clear();
 
-        assertThatThrownBy(()->memberRepository.findByMemberLoginInfo("failId"))
+        assertThatThrownBy(() -> memberRepository.findByMemberLoginInfo("failId"))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+    }
+
+    @DisplayName("인증받은 회원정보 불러오기 성공")
+    @Test
+    void findAuthMember() {
+        entityManager.persist(member);
+        entityManager.persist(authority);
+        entityManager.persist(memberAuthority);
+
+        MemberAuthResponseDto result
+                = memberRepository.findByAuthMemberInfo(member.getMemberNo());
+
+        assertThat(result.getMemberNo()).isEqualTo(member.getMemberNo());
+        assertThat(result.getMemberPwd()).isEqualTo(member.getMemberPwd());
+        assertThat(result.getAuthorities()).hasSize(1);
+    }
+
+    @DisplayName("인증받은 회원정보 불러오기 실패 -> 멤버가 없음")
+    @Test
+    void findAuthMember_fail_notFoundMember() {
+        entityManager.persist(member);
+        entityManager.persist(authority);
+        entityManager.persist(memberAuthority);
+
+        assertThatThrownBy(
+                () -> memberRepository.findByAuthMemberInfo(1234L))
                 .isInstanceOf(MemberNotFoundException.class)
                 .hasMessageContaining(MemberNotFoundException.MESSAGE);
     }

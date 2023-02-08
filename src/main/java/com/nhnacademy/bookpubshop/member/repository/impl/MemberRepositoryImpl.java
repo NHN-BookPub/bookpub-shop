@@ -170,11 +170,16 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                 .where(member.memberId.eq(id))
                 .fetch());
 
-        IdPwdMemberDto responseMember = findMember.orElseThrow(() -> new MemberNotFoundException(id));
-        List<String> authorities = memberAuthorities.orElseThrow(MemberAuthoritiesNotFoundException::new);
+        IdPwdMemberDto responseMember =
+                findMember.orElseThrow(() -> new MemberNotFoundException(id));
+        List<String> authorities =
+                memberAuthorities.orElseThrow(MemberAuthoritiesNotFoundException::new);
 
         return new LoginMemberResponseDto(
-                responseMember.getMemberNo(), responseMember.getMemberId(), responseMember.getMemberPwd(), authorities);
+                responseMember.getMemberNo(),
+                responseMember.getMemberId(),
+                responseMember.getMemberPwd(),
+                authorities);
     }
 
     @Override
@@ -190,21 +195,19 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                 .where(member.memberNo.eq(memberNo))
                 .fetchOne());
 
-        Optional<List<String>> memberAuthorities = Optional.of(from(memberAuthority)
+        List<String> memberAuthorities = from(memberAuthority)
                 .innerJoin(memberAuthority.member, member)
                 .select(memberAuthority.authority.authorityName)
                 .where(member.memberNo.eq(memberNo))
-                .fetch());
+                .fetch();
 
         IdPwdMemberDto responseMember = findMember.orElseThrow(
                 () -> new MemberNotFoundException(String.valueOf(memberNo)));
-        List<String> authorities = memberAuthorities.orElseThrow(
-                MemberAuthoritiesNotFoundException::new);
 
         return new MemberAuthResponseDto(
                 responseMember.getMemberNo(),
                 responseMember.getMemberPwd(),
-                authorities);
+                memberAuthorities);
     }
 
     /**
