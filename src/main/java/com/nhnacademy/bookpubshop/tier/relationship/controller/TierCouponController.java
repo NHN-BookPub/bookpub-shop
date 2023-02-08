@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.tier.relationship.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.tier.relationship.dto.request.CreateTierCouponRequestDto;
 import com.nhnacademy.bookpubshop.tier.relationship.dto.response.GetTierCouponResponseDto;
 import com.nhnacademy.bookpubshop.tier.relationship.service.TierCouponService;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/tier-coupons")
 public class TierCouponController {
 
     private final TierCouponService tierCouponService;
@@ -39,7 +38,7 @@ public class TierCouponController {
      * @param pageable 페이지 정보
      * @return 성공 경우 200 응답
      */
-    @GetMapping
+    @GetMapping("/api/tier-coupons")
     public ResponseEntity<PageResponse<GetTierCouponResponseDto>> tierCouponList(
             Pageable pageable) {
         return ResponseEntity.ok()
@@ -53,7 +52,8 @@ public class TierCouponController {
      * @param request 등급 쿠폰을 생성하기 위한 정보
      * @return 성공 경우 200 응답
      */
-    @PostMapping
+    @AdminAuth
+    @PostMapping("/token/tier-coupons")
     public ResponseEntity<Void> tierCouponAdd(
             @RequestBody @Valid CreateTierCouponRequestDto request) {
         tierCouponService.createTierCoupon(request);
@@ -70,9 +70,10 @@ public class TierCouponController {
      * @param tierNo     등급 번호
      * @return 성공 경우 200 응답
      */
-    @DeleteMapping
+    @AdminAuth
+    @DeleteMapping("/token/tier-coupons")
     public ResponseEntity<Void> tierCouponDelete(@RequestParam Long templateNo,
-                                                 @RequestParam Integer tierNo) {
+            @RequestParam Integer tierNo) {
 
         tierCouponService.deleteTierCoupon(templateNo, tierNo);
 
@@ -86,7 +87,7 @@ public class TierCouponController {
      * @param tierNo 등급 번호
      * @return 등급쿠폰 리스트
      */
-    @GetMapping("/{tierNo}")
+    @GetMapping("/api/tier-coupons/{tierNo}")
     public ResponseEntity<List<Long>> getTierCouponListByTierNo(@PathVariable Integer tierNo) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
