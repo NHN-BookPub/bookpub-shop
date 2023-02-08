@@ -170,7 +170,7 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                 .fetch();
 
         if (findMember.isEmpty() || memberAuthorities.isEmpty()) {
-            return null;
+            throw new MemberNotFoundException();
         }
 
         return new LoginMemberResponseDto(
