@@ -1,6 +1,6 @@
 package com.nhnacademy.bookpubshop.tier.relationship.dto.request;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateTierCouponRequestDto {
 
-    @NotBlank(message = "쿠폰템플릿 번호를 입력해주세요.")
+    @NotNull(message = "쿠폰템플릿 번호를 입력해주세요.")
     private Long templateNo;
 
-    @NotBlank(message = "등급 번호를 입력해주세요.")
+    @NotNull(message = "등급 번호를 입력해주세요.")
     private Integer tierNo;
 
 }
