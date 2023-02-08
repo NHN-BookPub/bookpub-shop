@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
 import static com.nhnacademy.bookpubshop.annotation.aspect.AuthorizationPointCut.AUTH_MEMBER_INFO;
+
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
@@ -15,7 +16,6 @@ import com.nhnacademy.bookpubshop.member.dto.request.NickRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.OauthMemberCreateRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
-import com.nhnacademy.bookpubshop.member.dto.response.MemberAuthResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberPasswordResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
@@ -25,6 +25,7 @@ import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.service.MemberService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.util.List;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -116,12 +117,12 @@ public class MemberController {
      * @return 인증된 사용자의 정보.
      */
     @GetMapping("/token/auth")
-    public ResponseEntity<MemberAuthResponseDto> authMemberInfo(HttpServletRequest request) {
+    public ResponseEntity<MemberDetailResponseDto> authMemberInfo(HttpServletRequest request) {
         Long memberNo = Long.parseLong(request.getHeader(AUTH_MEMBER_INFO));
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(memberService.authMemberInfo(memberNo));
+                .body(memberService.getMemberDetails(memberNo));
     }
 
 
@@ -166,8 +167,8 @@ public class MemberController {
      * 회원의 휴대전화를 수정할때 쓰이는 메서드입니다.
      * 성공시 201 을 반환합니다.
      *
-     * @param memberNo   회원번호가 기입됩니다.
-     * @param dto 휴대전화번호가 기입됩니다.
+     * @param memberNo 회원번호가 기입됩니다.
+     * @param dto      휴대전화번호가 기입됩니다.
      * @return the response entity
      */
     @PutMapping("/token/members/{memberNo}/phone")
@@ -185,8 +186,8 @@ public class MemberController {
      * 회원의 휴대전화를 수정할때 쓰이는 메서드입니다.
      * 성공시 201 을 반환합니다.
      *
-     * @param memberNo   회원번호가 기입됩니다.
-     * @param dto 휴대전화번호가 기입됩니다.
+     * @param memberNo 회원번호가 기입됩니다.
+     * @param dto      휴대전화번호가 기입됩니다.
      * @return the response entity
      */
     @PutMapping("/token/members/{memberNo}/name")
@@ -288,6 +289,11 @@ public class MemberController {
         String memberId = loginMemberRequestDto.getMemberId();
 
         LoginMemberResponseDto loginInfo = memberService.loginMember(memberId);
+
+        if (Objects.isNull(loginInfo)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .build();
+        }
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
