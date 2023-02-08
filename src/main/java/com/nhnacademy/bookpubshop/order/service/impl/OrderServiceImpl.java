@@ -26,9 +26,12 @@ import com.nhnacademy.bookpubshop.pricepolicy.repository.PricePolicyRepository;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
+import com.nhnacademy.bookpubshop.product.exception.SoldOutException;
+import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.state.OrderState;
+import com.nhnacademy.bookpubshop.state.ProductSaleState;
 import com.nhnacademy.bookpubshop.state.anno.StateCode;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.util.Map;
@@ -59,6 +62,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final OrderProductStateCodeRepository orderProductStateCodeRepository;
     private final CouponRepository couponRepository;
+    private final ProductSaleStateCodeRepository productSaleStateCodeRepository;
 
     /**
      * {@inheritDoc}
@@ -147,6 +151,8 @@ public class OrderServiceImpl implements OrderService {
             Product product = productRepository.findById(productNo)
                     .orElseThrow(ProductNotFoundException::new);
 
+            updateProductInventory(productNo, request.getProductCount().get(productNo));
+
             OrderProduct orderProduct = orderProductRepository.save(
                     OrderProduct.builder()
                             .product(product)
@@ -159,7 +165,6 @@ public class OrderServiceImpl implements OrderService {
                             .build());
 
             updateCoupon(order, orderProduct, productCoupon.get(productNo));
-            updateProductInventory(productNo);
         }
     }
 
@@ -198,11 +203,45 @@ public class OrderServiceImpl implements OrderService {
      *
      * @param productNo 상품번호.
      */
-    public void updateProductInventory(Long productNo) {
+    public void updateProductInventory(Long productNo, Integer productAmount) {
         Product product = productRepository.findById(productNo)
                 .orElseThrow(ProductNotFoundException::new);
 
-        product.minusStock();
+        isSoldOut(productAmount, product);
+
+        makeSoldOut(productAmount, product);
+
+        product.minusStock(productAmount);
+    }
+
+    /**
+     * 주문시 상품의 재고가 부족한지 체크하는 메소드입니다.
+     * 재고가 부족할 시 품절 예외가 발생합니다.
+     *
+     * @param productAmount 주문 할 상품의 양
+     * @param product 주문 할 상품
+     */
+    private void isSoldOut(Integer productAmount, Product product) {
+        if (product.getProductSaleStateCode()
+                .getCodeCategory().equals(ProductSaleState.SOLD_OUT.getName())
+                || product.getProductStock() - productAmount < 0) {
+            throw new SoldOutException();
+        }
+    }
+
+    /**
+     * 상품의 재고가 주문한 양과 동일하면 상품을 품절상태로 변경합니다.
+     *
+     * @param productAmount 주문 할 상품의 양
+     * @param product 주문 할 상품
+     */
+    private void makeSoldOut(Integer productAmount, Product product) {
+        if (product.getProductStock() - productAmount == 0) {
+            product.modifySaleStateCode(
+                    productSaleStateCodeRepository
+                            .findByCodeCategory(ProductSaleState.STOP.name())
+                            .orElseThrow(NotFoundStateCodeException::new));
+        }
     }
 
     /**

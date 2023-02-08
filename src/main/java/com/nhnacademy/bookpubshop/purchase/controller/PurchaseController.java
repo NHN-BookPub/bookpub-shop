@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -50,7 +49,8 @@ public class PurchaseController {
      * @param productNo 상품번호입니다.
      * @return 200, 구매이력 리스트가 반환됩니다.
      */
-    @GetMapping("/api/purchases/{productNo}")
+    @GetMapping("/token/purchases/{productNo}")
+    @AdminAuth
     public ResponseEntity<PageResponse<GetPurchaseListResponseDto>> getPurchaseByProductNo(
             @PathVariable Long productNo,
             Pageable pageable) {
@@ -82,10 +82,12 @@ public class PurchaseController {
      * @param request 생성시 사용되는 dto class.
      * @return 201 반환.
      */
-    @PostMapping("/api/purchases")
+    @PostMapping("/token/purchases")
+    @AdminAuth
     public ResponseEntity<Void> createPurchase(
             @RequestBody CreatePurchaseRequestDto request) {
         purchaseService.createPurchase(request);
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
     }

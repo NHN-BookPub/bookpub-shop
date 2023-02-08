@@ -59,6 +59,7 @@ import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCod
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
@@ -97,6 +98,7 @@ class OrderServiceTest {
     ProductRepository productRepository;
     OrderProductStateCodeRepository orderProductStateCodeRepository;
     CouponRepository couponRepository;
+    ProductSaleStateCodeRepository productSaleStateCodeRepository;
 
     Member member;
     BookPubTier bookPubTier;
@@ -133,6 +135,7 @@ class OrderServiceTest {
         productRepository = Mockito.mock(ProductRepository.class);
         orderProductStateCodeRepository = Mockito.mock(OrderProductStateCodeRepository.class);
         couponRepository = Mockito.mock(CouponRepository.class);
+        productSaleStateCodeRepository = Mockito.mock(ProductSaleStateCodeRepository.class);
 
 
         orderService = new OrderServiceImpl(
@@ -143,7 +146,8 @@ class OrderServiceTest {
                 orderProductRepository,
                 productRepository,
                 orderProductStateCodeRepository,
-                couponRepository
+                couponRepository,
+                productSaleStateCodeRepository
         );
 
         bookPubTier = TierDummy.dummy();
@@ -336,6 +340,8 @@ class OrderServiceTest {
                 .thenReturn(Optional.of(packagePricePolicy));
         when(orderStateCodeRepository.findByCodeName(anyString()))
                 .thenReturn(Optional.of(orderStateCode));
+        when(productSaleStateCodeRepository.findByCodeCategory(anyString()))
+                .thenReturn(Optional.of(productSaleStateCode));
         when(orderProductStateCodeRepository.findByCodeName(anyString()))
                 .thenReturn(Optional.of(orderProductStateCode));
         when(productRepository.findById(anyLong()))
@@ -543,6 +549,8 @@ class OrderServiceTest {
                 .thenReturn(Optional.of(orderStateCode));
         when(orderProductStateCodeRepository.findByCodeName(anyString()))
                 .thenReturn(Optional.of(orderProductStateCode));
+        when(productSaleStateCodeRepository.findByCodeCategory(anyString()))
+                .thenReturn(Optional.of(productSaleStateCode));
         when(productRepository.findById(anyLong()))
                 .thenReturn(Optional.of(product));
         when(couponRepository.findById(anyLong()))

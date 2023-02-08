@@ -38,13 +38,16 @@ public class PurchaseRepositoryImpl extends QuerydslRepositorySupport
 
         JPQLQuery<GetPurchaseListResponseDto> query =
                 from(purchase)
+                        .join(product).on(product.productNo.eq(purchase.product.productNo))
                         .select(Projections.constructor(
                                 GetPurchaseListResponseDto.class,
                                 product.productNo,
+                                product.title,
                                 purchase.purchaseNo,
                                 purchase.purchaseAmount,
-                                purchase.purchasePrice))
-                        .innerJoin(product).on(product.productNo.eq(productNo))
+                                purchase.purchasePrice,
+                                purchase.createdAt))
+                        .where(purchase.product.productNo.eq(productNo))
                         .orderBy(purchase.createdAt.desc())
                         .limit(pageable.getPageSize())
                         .offset(pageable.getOffset());
@@ -68,9 +71,11 @@ public class PurchaseRepositoryImpl extends QuerydslRepositorySupport
                 .select(Projections.constructor(
                         GetPurchaseListResponseDto.class,
                         product.productNo,
+                        product.title,
                         purchase.purchaseNo,
                         purchase.purchaseAmount,
-                        purchase.purchasePrice))
+                        purchase.purchasePrice,
+                        purchase.createdAt))
                 .orderBy(purchase.createdAt.desc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset());
