@@ -203,19 +203,41 @@ public class OrderServiceImpl implements OrderService {
         Product product = productRepository.findById(productNo)
                 .orElseThrow(ProductNotFoundException::new);
 
+        isSoldOut(productAmount, product);
+
+        makeSoldOut(productAmount, product);
+
+        product.minusStock(productAmount);
+    }
+
+    /**
+     * 주문시 상품의 재고가 부족한지 체크하는 메소드입니다.
+     * 재고가 부족할 시 품절 예외가 발생합니다.
+     *
+     * @param productAmount 주문 할 상품의 양
+     * @param product 주문 할 상품
+     */
+    private void isSoldOut(Integer productAmount, Product product) {
         if (product.getProductSaleStateCode()
                 .getCodeCategory().equals(ProductSaleState.SOLD_OUT.getName())
                 || product.getProductStock() - productAmount < 0) {
             throw new SoldOutException();
         }
+    }
 
+    /**
+     * 상품의 재고가 주문한 양과 동일하면 상품을 품절상태로 변경합니다.
+     *
+     * @param productAmount 주문 할 상품의 양
+     * @param product 주문 할 상품
+     */
+    private void makeSoldOut(Integer productAmount, Product product) {
         if (product.getProductStock() - productAmount == 0) {
             product.modifySaleStateCode(
                     productSaleStateCodeRepository
                             .findByCodeCategory(ProductSaleState.STOP.name())
                             .orElseThrow(NotFoundStateCodeException::new));
         }
-        product.minusStock(productAmount);
     }
 
     /**

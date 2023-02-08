@@ -101,14 +101,32 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         product.plusStock(request.getPurchaseAmount());
 
-        if (product.getProductSaleStateCode().getCodeCategory()
-                .equals(ProductSaleState.SOLD_OUT.getName())) {
-            product.modifySaleStateCode(
-                    productSaleStateCodeRepository
-                            .findByCodeCategory(ProductSaleState.SALE.name())
-                            .orElseThrow(NotFoundStateCodeException::new));
+        if (isSoldOutState(product)) {
+            updateProductStateToSale(product);
         }
 
         productRepository.save(product);
+    }
+
+    /**
+     * 재고를 업데이트한 상품이 품절상태인지 확인합니다.
+     *
+     * @param product 업데이트 할 상품
+     */
+    private boolean isSoldOutState(Product product) {
+        return product.getProductSaleStateCode().getCodeCategory()
+                .equals(ProductSaleState.SOLD_OUT.getName());
+    }
+
+    /**
+     * 상품의 상태를 판매중으로 변경합니다.
+     *
+     * @param product 업데이트 할 상품
+     */
+    private void updateProductStateToSale(Product product) {
+        product.modifySaleStateCode(
+                productSaleStateCodeRepository
+                        .findByCodeCategory(ProductSaleState.SALE.name())
+                        .orElseThrow(NotFoundStateCodeException::new));
     }
 }
