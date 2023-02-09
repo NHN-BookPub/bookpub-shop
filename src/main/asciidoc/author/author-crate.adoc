@@ -1,7 +1,4 @@
-= Book-Pub
-:toc:
-
-== API 명세
+세
 
 저자(Author) 등록에 관한 API 명세
 
