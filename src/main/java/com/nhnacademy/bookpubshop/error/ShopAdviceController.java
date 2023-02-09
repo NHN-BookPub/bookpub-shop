@@ -83,11 +83,10 @@ public class ShopAdviceController {
                 NotSupportedCompanyException.class, CategoryNotFoundException.class,
                 CouponNotFoundException.class, NotFoundCouponException.class,
                 CouponMonthNotFoundException.class, CouponTemplateNotFoundException.class,
-                IdAlreadyExistsException.class, MemberNotFoundException.class,
-                NicknameAlreadyExistsException.class, OrderNotFoundException.class,
+                MemberNotFoundException.class, NicknameAlreadyExistsException.class,
                 PersonalInquiryNotFoundException.class, ProductNotFoundException.class,
                 ReviewNotFoundException.class, SubscribeNotFoundException.class,
-                TagNotFoundException.class
+                TagNotFoundException.class, OrderNotFoundException.class,
 
             })
     public ResponseEntity<ErrorResponse> errorhandler() {
@@ -97,7 +96,7 @@ public class ShopAdviceController {
 
     @ExceptionHandler(value =
             {
-                IdAlreadyExistsException.class, NicknameAlreadyExistsException.class,
+                IdAlreadyExistsException.class,
                 NotFoundOrderStateException.class, NotFoundPaymentStateException.class,
                 NotFoundPaymentTypeException.class, NotFoundProductPolicyException.class,
                 NotFoundPricePolicyException.class, NotFoundStateCodeException.class,
