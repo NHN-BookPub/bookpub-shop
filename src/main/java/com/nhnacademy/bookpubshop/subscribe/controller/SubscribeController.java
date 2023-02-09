@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.subscribe.controller;
 
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
+import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateSubscribeProductRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateSubscribeRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.ModifySubscribeRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeDetailResponseDto;
@@ -11,12 +12,13 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -92,8 +94,7 @@ public class SubscribeController {
      * @return the response entity
      */
     @AdminAuth
-    @PostMapping(value = "/token/subscribes/{subscribeNo}",
-            produces = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/token/subscribes/{subscribeNo}")
     public ResponseEntity<Void> subscribeModify(@PathVariable("subscribeNo") Long subscribeNo,
                                                 @RequestPart("dto") ModifySubscribeRequestDto dto,
                                                 @RequestPart("image") MultipartFile image) {
@@ -114,5 +115,40 @@ public class SubscribeController {
             @PathVariable("subscribeNo") Long subscribeNo) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(service.getSubscribeDetail(subscribeNo));
+    }
+
+    /**
+     * 구독의 갱신여부를 변경하는 메서드입니다.
+     * 성공시 201 이 반환됩니다.
+     *
+     * @param subscribeNo 구독번호가 기입됩니다.
+     * @param isRenewed   갱신여부가 기입됩니다.
+     * @return the response entity
+     */
+    @AdminAuth
+    @PutMapping("/token/subscribes/{subscribeNo}")
+    public ResponseEntity<Void> subscribeRenew(@PathVariable("subscribeNo") Long subscribeNo,
+                                               @RequestParam("isRenewed") boolean isRenewed) {
+        service.modifySubscribeRenewed(subscribeNo, isRenewed);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 구독의 연관상품 추가하기위한 메서드입니다.
+     * 성공시 201 이 반환됩니다.
+     *
+     * @param subscribeNo 구독번호가 기입됩니다.
+     * @param dto         추가되는 상품번호들이 들어옵니다.
+     * @return the response entity
+     */
+    @AdminAuth
+    @PostMapping("/token/subscribes/{subscribeNo}/product-list")
+    public ResponseEntity<Void> subscribeProductListAdd(
+            @PathVariable("subscribeNo") Long subscribeNo,
+            @Valid @RequestBody CreateSubscribeProductRequestDto dto) {
+        service.addRelationProducts(subscribeNo, dto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
     }
 }

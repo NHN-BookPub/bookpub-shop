@@ -23,5 +23,11 @@ public interface SubscribeRepositoryCustom {
      */
     Page<GetSubscribeResponseDto> getSubscribes(Pageable pageable);
 
+    /**
+     * 구독의 상세정보를 반환
+     *
+     * @param subscribeNo 구독번호.
+     * @return 구독상세값 반환.
+     */
     Optional<GetSubscribeDetailResponseDto> getSubscribeDetail(Long subscribeNo);
 }

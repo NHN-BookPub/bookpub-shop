@@ -2,7 +2,6 @@ package com.nhnacademy.bookpubshop.subscribe.relationship.entity;
 
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,7 +39,4 @@ public class SubscribeProductList {
     @ManyToOne
     @JoinColumn(name = "product_number", nullable = false)
     private Product product;
-
-    @Column(name = "subscribe_product_list_published_at", nullable = false)
-    private LocalDateTime publishedAt;
 }

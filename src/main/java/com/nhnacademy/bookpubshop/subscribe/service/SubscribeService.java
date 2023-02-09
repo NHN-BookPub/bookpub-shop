@@ -1,11 +1,10 @@
 package com.nhnacademy.bookpubshop.subscribe.service;
 
-import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateRelationProductRequestDto;
+import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateSubscribeProductRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateSubscribeRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.ModifySubscribeRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeDetailResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,7 +60,15 @@ public interface SubscribeService {
      * 구독관련 연관상품을 추가하기위한 메서드입니다.
      *
      * @param subscribeNo 해당구독번호가 기입됩니다,.
-     * @param productNos  해당되는 상품번호들이 기입됩니다.
+     * @param dto  해당되는 상품번호들이 기입됩니다.
      */
-    void addRelationProducts(Long subscribeNo, List<CreateRelationProductRequestDto> productNos);
+    void addRelationProducts(Long subscribeNo, CreateSubscribeProductRequestDto dto);
+
+    /**
+     * 구독 갱신여부를 수정하기위한 메서드입니다.
+     *
+     * @param subscribeNo 구독 번호가 기입됩니다.
+     * @param isRenewed   갱신여부가 기입됩니다.
+     */
+    void modifySubscribeRenewed(Long subscribeNo, boolean isRenewed);
 }

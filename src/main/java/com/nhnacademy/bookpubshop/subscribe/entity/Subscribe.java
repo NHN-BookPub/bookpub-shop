@@ -36,10 +36,12 @@ public class Subscribe {
     private Long subscribeNo;
 
     @OneToOne(mappedBy = "subscribe", cascade =
-            {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+            {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private File file;
 
-    @OneToMany(mappedBy = "subscribe", cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+    @OneToMany(mappedBy = "subscribe",
+            cascade = {
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
     List<SubscribeProductList> productrelationList = new ArrayList<>();
 
@@ -98,6 +100,15 @@ public class Subscribe {
     }
 
     /**
+     * 갱신 여부 수정.
+     *
+     * @param subscribeRenewed 구독갱신여부 기입.
+     */
+    public void changeIsRenewed(boolean subscribeRenewed) {
+        this.subscribeRenewed = subscribeRenewed;
+    }
+
+    /**
      * 파일을 등록하기위한 메서드입니다.
      *
      * @param file 파일 정보가 기입됩니다.
@@ -117,14 +128,12 @@ public class Subscribe {
                                     Long salesPrice,
                                     Long subscribePrice,
                                     Integer saleRate,
-                                    boolean renewed,
-                                    boolean deleted) {
+                                    boolean renewed) {
         this.subscribeName = name;
         this.salesPrice = salesPrice;
         this.subscribePrice = subscribePrice;
         this.salesRate = saleRate;
         this.subscribeRenewed = renewed;
-        this.subscribeDeleted = deleted;
     }
 
     /**
@@ -134,5 +143,13 @@ public class Subscribe {
      */
     public void addRelationList(SubscribeProductList productList) {
         this.productrelationList.add(productList);
+    }
+
+    /**
+     * 구독의 상품관계 비워주는 메서드입니다.
+     */
+    public void removeRelationList(){
+        this.productrelationList.clear();
+
     }
 }

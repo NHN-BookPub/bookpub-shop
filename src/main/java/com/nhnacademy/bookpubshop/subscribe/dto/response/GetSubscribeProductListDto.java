@@ -2,7 +2,6 @@ package com.nhnacademy.bookpubshop.subscribe.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * 구독안에 연관상품의 정보를 받기위한 dto 입니다.
@@ -12,7 +11,6 @@ import lombok.NoArgsConstructor;
  **/
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
 public class GetSubscribeProductListDto {
     private Long productNo;
     private String title;
