@@ -42,6 +42,8 @@ public class SubscribeServiceImpl implements SubscribeService {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws FileException 파일에서 나는 IO Exception.
      */
     @Transactional
     @Override
@@ -60,6 +62,8 @@ public class SubscribeServiceImpl implements SubscribeService {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws SubscribeNotFoundException 구독이 없을경우발생.
      */
     @Transactional
     @Override
@@ -79,6 +83,9 @@ public class SubscribeServiceImpl implements SubscribeService {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws SubscribeNotFoundException 구독이없을경우발생.
+     * @throws FileException              파일 에서 나는 IO Exception.
      */
     @Transactional
     @Override
@@ -103,6 +110,8 @@ public class SubscribeServiceImpl implements SubscribeService {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws SubscribeNotFoundException 구독이없을경우 발생.
      */
     @Override
     public GetSubscribeDetailResponseDto getSubscribeDetail(Long subscribeNo) {
@@ -112,6 +121,8 @@ public class SubscribeServiceImpl implements SubscribeService {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws SubscribeNotFoundException 구독이 없을경우 발생.
      */
     @Transactional
     @Override
@@ -122,6 +133,11 @@ public class SubscribeServiceImpl implements SubscribeService {
         addRelationProduct(productNos.getProductNo(), subscribe);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws SubscribeNotFoundException 구독이없을경우 발생.
+     */
     @Transactional
     @Override
     public void modifySubscribeRenewed(Long subscribeNo, boolean isRenewed) {
@@ -135,11 +151,13 @@ public class SubscribeServiceImpl implements SubscribeService {
      *
      * @param productNos 상품번호들이 들어옵니다.
      * @param subscribe  구독정보가 들어옵니다.
+     * @throws ProductNotFoundException 상품이없을경우발생.
      */
     private void addRelationProduct(List<Long> productNos,
                                     Subscribe subscribe) {
         List<SubscribeProductList> list = productNos.stream()
-                .map(productNo -> productRepository.findById(productNo).orElseThrow(ProductNotFoundException::new))
+                .map(productNo -> productRepository.findById(productNo)
+                        .orElseThrow(ProductNotFoundException::new))
                 .map(p -> new SubscribeProductList(null, subscribe, p))
                 .collect(Collectors.toList());
         subscribe.removeRelationList();
