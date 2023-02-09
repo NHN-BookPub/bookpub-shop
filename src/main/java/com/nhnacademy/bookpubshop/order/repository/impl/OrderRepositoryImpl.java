@@ -86,6 +86,43 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
+    public Optional<GetOrderDetailResponseDto> getOrderDetailByOrderId(String orderId) {
+        return Optional.of(
+                from(order)
+                        .select(Projections.constructor(
+                                GetOrderDetailResponseDto.class,
+                                order.orderNo,
+                                orderStateCode.codeName,
+                                order.orderBuyer,
+                                order.buyerPhone,
+                                order.orderRecipient,
+                                order.recipientPhone,
+                                order.roadAddress,
+                                order.addressDetail,
+                                order.createdAt,
+                                order.receivedAt,
+                                order.invoiceNumber,
+                                order.orderPackaged,
+                                packagingPricePolicy.policyFee,
+                                deliveryPricePolicy.policyFee,
+                                order.orderRequest,
+                                order.pointAmount,
+                                order.couponDiscount,
+                                order.orderPrice,
+                                order.orderName,
+                                order.orderId
+                        ))
+                        .innerJoin(order.orderStateCode, orderStateCode)
+                        .innerJoin(order.deliveryPricePolicy, packagingPricePolicy)
+                        .innerJoin(order.packagingPricePolicy, deliveryPricePolicy)
+                        .where(order.orderId.eq(orderId))
+                        .fetchOne());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Page<GetOrderListForAdminResponseDto> getOrdersList(Pageable pageable) {
         JPQLQuery<GetOrderListForAdminResponseDto> query = from(order)
                 .select(Projections.constructor(

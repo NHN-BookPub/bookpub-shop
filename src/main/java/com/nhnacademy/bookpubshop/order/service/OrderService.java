@@ -28,6 +28,14 @@ public interface OrderService {
     GetOrderDetailResponseDto getOrderDetailById(Long orderNo);
 
     /**
+     * 주문 상세 정보를 조회합니다.(주문Id 조회)
+     *
+     * @param orderId 주문 Id
+     * @return 주문상세정보
+     */
+    GetOrderDetailResponseDto getOrderDetailByOrderId(String orderId);
+
+    /**
      * 주문을 등록합니다.
      *
      * @param request dto 객체.
