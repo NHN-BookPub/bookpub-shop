@@ -1,26 +1,25 @@
 package com.nhnacademy.bookpubshop.subscribe.controller;
 
-import static com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy.modifyDummy;
-import static com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy.responseDummy;
+import static com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
+import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateSubscribeProductRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.CreateSubscribeRequestDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.request.ModifySubscribeRequestDto;
+import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeDetailResponseDto;
+import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeProductListDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.service.SubscribeService;
 import java.nio.charset.StandardCharsets;
@@ -64,6 +63,8 @@ class SubscribeControllerTest {
     CreateSubscribeRequestDto createSubscribeRequestDto;
     GetSubscribeResponseDto getSubscribeResponseDto;
     ModifySubscribeRequestDto modifySubscribeRequestDto;
+    GetSubscribeDetailResponseDto getSubscribeDetailResponseDto;
+    GetSubscribeProductListDto getSubscribeProductListDto;
     String tokenPath = "/token/subscribes";
     String apiPath = "/api/subscribes";
     String imageContent;
@@ -72,9 +73,10 @@ class SubscribeControllerTest {
 
     @BeforeEach
     void setUp() {
+        getSubscribeProductListDto = listDto();
         objectMapper = new ObjectMapper();
-
-        imageContent="234kh2kl4h2l34k2j34hlk23h4";
+        getSubscribeDetailResponseDto = detailDummy();
+        imageContent = "234kh2kl4h2l34k2j34hlk23h4";
         multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
         modifySubscribeRequestDto = modifyDummy();
         getSubscribeResponseDto = responseDummy();
@@ -89,7 +91,7 @@ class SubscribeControllerTest {
         ReflectionTestUtils.setField(createSubscribeRequestDto, "price", 1000L);
         ReflectionTestUtils.setField(createSubscribeRequestDto, "salesRate", 0);
         ReflectionTestUtils.setField(createSubscribeRequestDto, "renewed", true);
-        doNothing().when(service).createSubscribe(createSubscribeRequestDto,null);
+        doNothing().when(service).createSubscribe(createSubscribeRequestDto, null);
         dto = new MockMultipartFile("dto", "", "application/json",
                 objectMapper.writeValueAsString(createSubscribeRequestDto).getBytes(StandardCharsets.UTF_8));
 
@@ -117,7 +119,7 @@ class SubscribeControllerTest {
         ReflectionTestUtils.setField(createSubscribeRequestDto, "price", 1000L);
         ReflectionTestUtils.setField(createSubscribeRequestDto, "salesRate", 0);
         ReflectionTestUtils.setField(createSubscribeRequestDto, "renewed", true);
-        doNothing().when(service).createSubscribe(createSubscribeRequestDto,null);
+        doNothing().when(service).createSubscribe(createSubscribeRequestDto, null);
         dto = new MockMultipartFile("dto", "", "application/json",
                 objectMapper.writeValueAsString(createSubscribeRequestDto).getBytes(StandardCharsets.UTF_8));
 
@@ -145,7 +147,7 @@ class SubscribeControllerTest {
         ReflectionTestUtils.setField(createSubscribeRequestDto, "price", 1000L);
         ReflectionTestUtils.setField(createSubscribeRequestDto, "salesRate", 0);
         ReflectionTestUtils.setField(createSubscribeRequestDto, "renewed", true);
-        doNothing().when(service).createSubscribe(createSubscribeRequestDto,null);
+        doNothing().when(service).createSubscribe(createSubscribeRequestDto, null);
         dto = new MockMultipartFile("dto", "", "application/json",
                 objectMapper.writeValueAsString(createSubscribeRequestDto).getBytes(StandardCharsets.UTF_8));
 
@@ -173,7 +175,7 @@ class SubscribeControllerTest {
         ReflectionTestUtils.setField(createSubscribeRequestDto, "price", -111L);
         ReflectionTestUtils.setField(createSubscribeRequestDto, "salesRate", 0);
         ReflectionTestUtils.setField(createSubscribeRequestDto, "renewed", true);
-        doNothing().when(service).createSubscribe(createSubscribeRequestDto,null);
+        doNothing().when(service).createSubscribe(createSubscribeRequestDto, null);
         dto = new MockMultipartFile("dto", "", "application/json",
                 objectMapper.writeValueAsString(createSubscribeRequestDto).getBytes(StandardCharsets.UTF_8));
 
@@ -201,7 +203,7 @@ class SubscribeControllerTest {
         ReflectionTestUtils.setField(createSubscribeRequestDto, "price", 111L);
         ReflectionTestUtils.setField(createSubscribeRequestDto, "salesRate", -1);
         ReflectionTestUtils.setField(createSubscribeRequestDto, "renewed", true);
-        doNothing().when(service).createSubscribe(createSubscribeRequestDto,null);
+        doNothing().when(service).createSubscribe(createSubscribeRequestDto, null);
         dto = new MockMultipartFile("dto", "", "application/json",
                 objectMapper.writeValueAsString(createSubscribeRequestDto).getBytes(StandardCharsets.UTF_8));
 
@@ -229,7 +231,7 @@ class SubscribeControllerTest {
         ReflectionTestUtils.setField(createSubscribeRequestDto, "price", 111L);
         ReflectionTestUtils.setField(createSubscribeRequestDto, "salesRate", 111);
         ReflectionTestUtils.setField(createSubscribeRequestDto, "renewed", true);
-        doNothing().when(service).createSubscribe(createSubscribeRequestDto,null);
+        doNothing().when(service).createSubscribe(createSubscribeRequestDto, null);
 
         dto = new MockMultipartFile("dto", "", "application/json",
                 objectMapper.writeValueAsString(createSubscribeRequestDto).getBytes(StandardCharsets.UTF_8));
@@ -259,7 +261,7 @@ class SubscribeControllerTest {
         ReflectionTestUtils.setField(createSubscribeRequestDto, "renewed", true);
 
 
-        doNothing().when(service).createSubscribe(createSubscribeRequestDto,multipartFile);
+        doNothing().when(service).createSubscribe(createSubscribeRequestDto, multipartFile);
         dto = new MockMultipartFile("dto", "", "application/json",
                 objectMapper.writeValueAsString(createSubscribeRequestDto).getBytes(StandardCharsets.UTF_8));
         mvc.perform(multipart(tokenPath)
@@ -276,7 +278,7 @@ class SubscribeControllerTest {
                                 partWithName("dto").description("구동생성시 필요한 정보")
                         )
                 ));
-        then(service).should().createSubscribe(any(),any());
+        then(service).should().createSubscribe(any(), any());
     }
 
     @DisplayName("구독 리스트 조회")
@@ -302,8 +304,8 @@ class SubscribeControllerTest {
                 .andExpect(jsonPath("$.content[0].renewed").value(getSubscribeResponseDto.isRenewed()))
                 .andDo(print())
                 .andDo(document("subscribe-getList",
-                        preprocessRequest(),
-                        preprocessResponse(),
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("content[].subscribeNo").description("구독번호 반환"),
                                 fieldWithPath("content[].subscribeName").description("구독명 반환"),
@@ -334,8 +336,9 @@ class SubscribeControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
                 .andDo(document("subscribe-delete",
-                        preprocessRequest(),
-                        preprocessResponse()));
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("subscribeNo").description("구독번호가 기입"))));
 
         then(service).should().deleteSubscribe(1L, true);
     }
@@ -343,7 +346,7 @@ class SubscribeControllerTest {
     @DisplayName("구독정보 수정 성공 테스트")
     @Test
     void subscribeModify() throws Exception {
-        doNothing().when(service).modifySubscribe(any(ModifySubscribeRequestDto.class), anyLong(),any());
+        doNothing().when(service).modifySubscribe(any(ModifySubscribeRequestDto.class), anyLong(), any());
 
         MockMultipartFile dto = new MockMultipartFile("dto", "", "application/json",
                 objectMapper.writeValueAsString(modifySubscribeRequestDto).getBytes(StandardCharsets.UTF_8));
@@ -355,12 +358,114 @@ class SubscribeControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
                 .andDo(document("subscribe-modify",
-                        preprocessRequest(),
-                        preprocessResponse(),
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
                         requestParts(
                                 partWithName("dto").description("구독 수정정보들이 들어옵니다."),
                                 partWithName("image").description("구독 수정 이미지가 들어옵니다.")
                         )
                 ));
+    }
+
+    @DisplayName("구독의 상세정보를 반환 성공")
+    @Test
+    void subscribeDetail() throws Exception {
+        when(service.getSubscribeDetail(anyLong()))
+                .thenReturn(getSubscribeDetailResponseDto);
+
+        mvc.perform(get(apiPath + "/{subscribeNo}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.subscribeNo").value(objectMapper.writeValueAsString(getSubscribeDetailResponseDto.getSubscribeNo())))
+                .andExpect(jsonPath("$.subscribeName").value(getSubscribeDetailResponseDto.getSubscribeName()))
+                .andExpect(jsonPath("$.price").value(objectMapper.writeValueAsString(getSubscribeDetailResponseDto.getPrice())))
+                .andExpect(jsonPath("$.salePrice").value(objectMapper.writeValueAsString(getSubscribeDetailResponseDto.getSalePrice())))
+                .andExpect(jsonPath("$.salesRate").value(objectMapper.writeValueAsString(getSubscribeDetailResponseDto.getSalesRate())))
+                .andExpect(jsonPath("$.viewCnt").value(objectMapper.writeValueAsString(getSubscribeDetailResponseDto.getViewCnt())))
+                .andExpect(jsonPath("$.deleted").value(objectMapper.writeValueAsString(getSubscribeDetailResponseDto.isDeleted())))
+                .andExpect(jsonPath("$.renewed").value(objectMapper.writeValueAsString(getSubscribeDetailResponseDto.isRenewed())))
+                .andExpect(jsonPath("$.productLists[0].productNo").value(objectMapper.writeValueAsString(getSubscribeProductListDto.getProductNo())))
+                .andExpect(jsonPath("$.productLists[0].title").value((getSubscribeProductListDto.getTitle())))
+                .andExpect(jsonPath("$.productLists[0].filePath").value((getSubscribeProductListDto.getFilePath())))
+                .andDo(print())
+                .andDo(document("subscribe-detail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("subscribeNo").description("구독번호가 기입")),
+                        responseFields(
+                                fieldWithPath("subscribeNo").description("구독번호 반환"),
+                                fieldWithPath("subscribeName").description("구독명이 반환"),
+                                fieldWithPath("price").description("원가격이 반환"),
+                                fieldWithPath("salePrice").description("할인가격이 반환"),
+                                fieldWithPath("salesRate").description("할인률이 반환"),
+                                fieldWithPath("viewCnt").description("뷰 카운트가 반환"),
+                                fieldWithPath("deleted").description("삭제여부가 반환"),
+                                fieldWithPath("renewed").description("갱신여부가 반환"),
+                                fieldWithPath("imagePath").description("이미지 경로가 반환"),
+                                fieldWithPath("productLists[].productNo").description("상품번호를 반환"),
+                                fieldWithPath("productLists[].title").description("상품명을 반환"),
+                                fieldWithPath("productLists[].filePath").description("파일 경로를 반환")
+                        )
+                ));
+    }
+
+    @DisplayName("구독 갱신여부 변경 성공")
+    @Test
+    void renewedSuccess() throws Exception {
+        doNothing().when(service)
+                .modifySubscribeRenewed(anyLong(), anyBoolean());
+
+        mvc.perform(put(tokenPath + "/{subscribeNo}", 1L)
+                        .param("isRenewed", "true")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andDo(print())
+                .andDo(document("subscribe-renewed",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("subscribeNo").description("구독번호가 기입")),
+                        requestParameters(parameterWithName("isRenewed").description("갱신여부가 기입"))
+                ));
+
+    }
+
+    @DisplayName("구독의 연관상품 반환 실패")
+    @Test
+    void relationProductListFail() throws Exception {
+        CreateSubscribeProductRequestDto requestDto = new CreateSubscribeProductRequestDto();
+
+        mvc.perform(post(tokenPath + "/{subscribeNo}/product-list", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("[0].message").value("상품 번호들은 비어있을수 없습니다."))
+                .andDo(print())
+                .andDo(document("subscribe-product-list-fail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("subscribeNo").description("구독번호가 기입"))
+                ));
+
+    }
+
+    @DisplayName("구독의 연관상품 반환 성공")
+    @Test
+    void relationProductListSuccess() throws Exception {
+        CreateSubscribeProductRequestDto requestDto = new CreateSubscribeProductRequestDto();
+        ReflectionTestUtils.setField(requestDto, "productNo", List.of(1L));
+        mvc.perform(post(tokenPath + "/{subscribeNo}/product-list", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("subscribe-product-list-success",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("subscribeNo").description("구독번호가 기입")),
+                        requestFields(
+                                fieldWithPath("productNo.[]").description("상품번호들이 기입")
+                        )
+                ));
+
     }
 }

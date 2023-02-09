@@ -17,7 +17,6 @@ import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto
 import com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
 import com.nhnacademy.bookpubshop.subscribe.relationship.entity.SubscribeProductList;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -115,7 +114,7 @@ class SubscribeRepositoryTest {
                 FileDummy.dummy(null, null,
                         null, product, null, FileCategory.PRODUCT_THUMBNAIL, null));
         entityManager.persist(product);
-        subscribe.addRelationList(new SubscribeProductList(null, subscribe, product, LocalDateTime.now()));
+        subscribe.addRelationList(new SubscribeProductList(null, subscribe, product));
 
         Optional<GetSubscribeDetailResponseDto> result = subscribeRepository.getSubscribeDetail(subscribe.getSubscribeNo());
 
