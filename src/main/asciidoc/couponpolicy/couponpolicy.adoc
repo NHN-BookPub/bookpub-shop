@@ -1,0 +1,5 @@
+=== 쿠폰정책
+
+include::couponpolicy-create.adoc[]
+include::couponpolicy-modify.adoc[]
+include::couponpolicy-get.adoc[]

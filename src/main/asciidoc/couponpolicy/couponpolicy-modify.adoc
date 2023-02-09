@@ -1,49 +1,79 @@
-= Coupon-Policy
 :toc:
 
-== 쿠폰 정책 수정
+==== 쿠폰 정책 수정
 
-Coupon-Policy modify
+쿠폰 정책(Coupon Policy) 수정 API 명세입니다.
 
-== 요청 구조
+===== 요청 구조
 
 include::../../../../target/snippets/coupon-policy-modify-success/http-request.adoc[]
 
-== 요청 파라미터
+===== 요청 파라미터
 
 include::../../../../target/snippets/coupon-policy-modify-success/request-fields.adoc[]
 
-== 응답 구조
+===== 응답 구조
 
 include::../../../../target/snippets/coupon-policy-modify-success/http-response.adoc[]
 
-== 예외 사항
+===== 예외 사항
 
-- maxDiscount가 음수인 경우
+======  1.최대할인가격이 음수 인경우
+
+Request
 
 include::../../../../target/snippets/coupon-policy-modify-maxDiscount-negativeFail/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/coupon-policy-modify-maxDiscount-negativeFail/http-response.adoc[]
 
-- policyMinimum이 음수인 경우
+======  2.최소금액이 음수일경우
+
+Request
 
 include::../../../../target/snippets/coupon-policy-modify-policyMinimum-negativeFail/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/coupon-policy-modify-policyMinimum-negativeFail/http-response.adoc[]
 
-- policyMinimum이 null인 경우
+======  3.최소 주문금액이 null 인경우
+
+Request
 
 include::../../../../target/snippets/coupon-policy-modify-policyMinimumFail/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/coupon-policy-modify-policyMinimumFail/http-response.adoc[]
 
-- policyNo가 null인 경우
+======  4. 정책번호가 null 인경우
+
+Request
 
 include::../../../../target/snippets/coupon-policy-modify-policyNoFail/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/coupon-policy-modify-policyNoFail/http-response.adoc[]
 
-- policyPrice가 음수인 경우
+======  5.할인금액이 음수 인경우
+
+Request
+
 include::../../../../target/snippets/coupon-policy-modify-policyPrice-negativeFail/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/coupon-policy-modify-policyPrice-negativeFail/http-response.adoc[]
 
-- policyPrice가 null인 경우
+======  6.할인금액이 null 인경우
+
+Request
 
 include::../../../../target/snippets/coupon-policy-modify-policyPriceFail/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/coupon-policy-modify-policyPriceFail/http-response.adoc[]

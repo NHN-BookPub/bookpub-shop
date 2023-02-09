@@ -1,20 +1,19 @@
-= Coupon
 :toc:
 
-== 쿠폰 수정
+==== 매입 수정
 purchase-modify
 
-=== 요청구조
+===== 요청구조
 include::../../../../target/snippets/purchase-put/http-request.adoc[]
 
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/purchase-put/request-fields.adoc[]
 
-=== 응답 구조
+===== 응답 구조
 include::../../../../target/snippets/purchase-put/http-response.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터들
 
 include::../../../../target/snippets/purchase-put/response-body.adoc[]

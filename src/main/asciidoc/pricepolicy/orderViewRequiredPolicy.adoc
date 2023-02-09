@@ -1,19 +1,17 @@
-= Price-Policy
 :toc:
+==== 가격 정책 조회
 
-== 가격 정책 조회
+order view 에서 필요한 배송비, 포장비 최신 정책
 
-order view에서 필요한 배송비, 포장비 최신 정책
-
-== 요청 구조
+===== 요청 구조
 
 include::../../../../target/snippets/order-required-price-policies-get/http-request.adoc[]
 
-== 응답 구조
+===== 응답 구조
 
 include::../../../../target/snippets/order-required-price-policies-get/http-response.adoc[]
 
-== 응답 파라미터
+===== 응답 파라미터
 
 include::../../../../target/snippets/order-required-price-policies-get/response-fields.adoc[]
 

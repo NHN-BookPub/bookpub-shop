@@ -1,32 +1,33 @@
-= Book-Pub
 :toc:
-
-== Api 명세
+==== 상품평정책 등록
 
 상품평정책(ReviewPolicy) 등록에 관한 Api 명세입니다.
 
-== 상품평정책 등록
-
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/review-policy-create/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/review-policy-create/request-fields.adoc[]
 
-=== 응답구조
+===== 응답구조
 
 include::../../../../target/snippets/review-policy-create/http-response.adoc[]
 
-=== 예외 상황
+===== 예외 상황
 
-==== 1. 지급포인트가 기입되지 않은 경우
+====== 1. 지급포인트가 기입되지 않은 경우
+
+Request
 
 include::../../../../target/snippets/review-policy-create-pointFail-null/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/review-policy-create-pointFail-null/http-response.adoc[]
 
-==== 1-2. 지급포인트가 음수로 입력된 경우
+====== 1-2. 지급포인트가 음수로 입력된 경우
 
 include::../../../../target/snippets/review-policy-create-pointFail-negative/http-request.adoc[]
 include::../../../../target/snippets/review-policy-create-pointFail-negative/http-response.adoc[]

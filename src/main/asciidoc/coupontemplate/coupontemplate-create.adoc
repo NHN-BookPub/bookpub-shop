@@ -1,34 +1,45 @@
+:toc:
 
-= CouponTemplate
-:toc:left
+==== 쿠폰탬플릿 생성
 
-== 쿠폰탬플릿 생성
-CouponTemplate create
+쿠폰 템플릿(CouponTemplate) 을 생성하는 API 명세 입니다.
 
-=== 요청구조
+===== 요청구조
+
 include::../../../../target/snippets/coupon_template_create/http-request.adoc[]
 
-
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/coupon_template_create/request-part-createRequestDto-fields.adoc[]
 
-
-=== 응답 구조
+===== 응답 구조
 
 include::../../../../target/snippets/coupon_template_create/http-response.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터들
 
 include::../../../../target/snippets/coupon_template_create/response-body.adoc[]
 
-==== 예외 상황
+===== 예외 상황
+
+====== 1. 상태코드번호를 기입하지않았을경우
 
 include::../../../../target/snippets/coupon_template_create_CodeNoIsNull/http-response.adoc[]
-include::../../../../target/snippets/coupon_template_create_fail/http-response.adoc[]
+
+====== 2. 정책번호를 기입하지않았을경우
+
 include::../../../../target/snippets/coupon_template_create_policyNoIsNull/http-response.adoc[]
+
+====== 3. 쿠폰 템플릿명을 입력하지않았을경우
+
 include::../../../../target/snippets/coupon_template_create_TemplateNameIsNull/http-response.adoc[]
+
+====== 4. 쿠폰이름의 이름의 길이가 초과했을경우
+
 include::../../../../target/snippets/coupon_template_create_TemplateNameIsTooLong/http-response.adoc[]
+
+====== 5. 쿠폰템플릿 유형의 번호를 입력하지않았을경우
+
 include::../../../../target/snippets/coupon_template_create_typeNoIsNull/http-response.adoc[]
 
 

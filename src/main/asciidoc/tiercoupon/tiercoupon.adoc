@@ -1,0 +1,7 @@
+=== 등급 쿠폰
+
+등급쿠폰에대한 생성,조회, 삭제가 가능합니다.
+
+include::tiercoupon-create.adoc[]
+include::tiercoupon-delete.adoc[]
+include::tiercoupon-get.adoc[]

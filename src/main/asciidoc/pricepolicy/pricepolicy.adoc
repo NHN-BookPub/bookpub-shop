@@ -1,0 +1,6 @@
+=== 가격유형
+가격유형에 대한 생성, 수정 조회가 가능합니다.
+
+include::pricepolicy-create.adoc[]
+include::pricepolicy-get.adoc[]
+include::orderViewRequiredPolicy.adoc[]

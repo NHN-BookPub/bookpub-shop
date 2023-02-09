@@ -1,0 +1,7 @@
+=== 이달의쿠폰
+
+이달의 쿠폰의 등록,수정, 조회를 담당합니다.
+
+include::couponmonth-create.adoc[]
+include::couponmonth-modify.adoc[]
+include::couponmonth.adoc[]

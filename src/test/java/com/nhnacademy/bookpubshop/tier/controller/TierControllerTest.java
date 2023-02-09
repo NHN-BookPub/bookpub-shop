@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.tier.controller;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -81,6 +82,7 @@ class TierControllerTest {
                 .andExpect(jsonPath("$[0].message").value("등급의 이름을 기입하여야 합니다."))
                 .andDo(print())
                 .andDo(document("tier-add-name-fail",
+                        preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("[].message").description("등급의 이름을 기입하여야 합니다.")
                         )
@@ -107,6 +109,7 @@ class TierControllerTest {
                 .andExpect(jsonPath("$[0].message").value("등급 값을 기입해야 합니다."))
                 .andDo(print())
                 .andDo(document("tier-add-value-fail",
+                        preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("[].message").description("등급 값을 기입해야 합니다.")
                         )
@@ -133,6 +136,7 @@ class TierControllerTest {
                 .andExpect(jsonPath("$[0].message").value("등급시 필요한 가격을 기입해야합니다."))
                 .andDo(print())
                 .andDo(document("tier-add-price-fail",
+                        preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("[].message").description("등급시 필요한 가격을 기입해야합니다.")
                         )
@@ -159,6 +163,7 @@ class TierControllerTest {
                 .andExpect(jsonPath("$[0].message").value("등급시 필요한 포인트량을 기입해야합니다."))
                 .andDo(print())
                 .andDo(document("tier-add-point-fail",
+                        preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("[].message").description("등급시 필요한 포인트량을 기입해야합니다.")
                         )
@@ -183,6 +188,7 @@ class TierControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
                 .andDo(document("tier-add",
+                        preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("tierName").description("등급명 기입"),
                                 fieldWithPath("tierValue").description("등급 값 기입"),
@@ -206,6 +212,8 @@ class TierControllerTest {
                 .andExpect(jsonPath("$[0].message").value("등급번호는 필수값입니다."))
                 .andDo(print())
                 .andDo(document("tier-modify-fail",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("tierNo").description("등급번호가 기입"),
                                 fieldWithPath("tierName").description("등급명 기입")
@@ -230,6 +238,7 @@ class TierControllerTest {
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
                 .andDo(document("tier-modify",
+                        preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("tierNo").description("등급번호 기입"),
                                 fieldWithPath("tierName").description("등급명 기입")
@@ -257,6 +266,8 @@ class TierControllerTest {
 
                 .andDo(print())
                 .andDo(document("get-tier",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
                         pathParameters(parameterWithName("tierNo").description("Path 로 등급번호 기입")),
                         responseFields(
                                 fieldWithPath("tierName").description("등급의 이름이 반환"),
@@ -279,6 +290,7 @@ class TierControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("get-tier-name",
+                        preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("tierName").description("등급 이름이 기입")
                         )));
@@ -305,6 +317,7 @@ class TierControllerTest {
                 .andExpect(jsonPath("$[0].tierPoint").value(tierResponseDto.getTierPoint()))
                 .andDo(print())
                 .andDo(document("get-tiers",
+                        preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("[].tierNo").description("등급 번호가 반환"),
                                 fieldWithPath("[].tierName").description("등급명이 반환"),

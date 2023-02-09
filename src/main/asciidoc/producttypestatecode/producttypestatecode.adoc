@@ -1,0 +1,7 @@
+=== 상품유형상태코드
+
+상품유형상태코드에 대한 수정과 조회가 가능합니다.
+
+
+include::producttypestatecode-modify.adoc[]
+include::producttypestatecode-get.adoc[]

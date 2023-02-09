@@ -1,0 +1,7 @@
+=== 태그
+태그의 생성, 수정 ,삭제를 다룰수있습니다.
+
+include::tag-create.adoc[]
+include::tag-modify.adoc[]
+include::tag-delete.adoc[]
+include::tag-get.adoc[]

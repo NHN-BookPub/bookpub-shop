@@ -1,0 +1,12 @@
+=== 구독
+
+구독은 생성, 수정, 조회, 삭제 가 가능합니다.
+
+(삭제, 갱신) 은 상태의 변경입니다.
+
+include::subscribe-add.adoc[]
+include::subscribe-modify.adoc[]
+include::subscribe-delete.adoc[]
+include::subscribe-add.adoc[]
+include::subscribe-add.adoc[]
+include::subscribe.adoc[]

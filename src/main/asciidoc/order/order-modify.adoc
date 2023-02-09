@@ -1,35 +1,37 @@
-= Book-Pub
 :toc:
-
-== Api 명세
+==== 주문 수정
 
 주문 (Order) 수정에 관한 Api 명세입니다.
 
-== 주문 상태 코드 수정
-
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/state-code-modify/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 요청 파라미터들
+
+1. Request
+
+include::../../../../target/snippets/state-code-modify/request-parameters.adoc[]
+
+2. PathVariable
 
 include::../../../../target/snippets/state-code-modify/path-parameters.adoc[]
 
-=== 응답구조
+===== 응답구조
 
 include::../../../../target/snippets/state-code-modify/http-response.adoc[]
 
-== 주문 송장 번호 수정
+==== 주문 송장 번호 수정
 
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/invoiceNo-modify/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/invoiceNo-modify/path-parameters.adoc[]
 
-=== 응답구조
+===== 응답구조
 
 include::../../../../target/snippets/invoiceNo-modify/http-response.adoc[]
 
