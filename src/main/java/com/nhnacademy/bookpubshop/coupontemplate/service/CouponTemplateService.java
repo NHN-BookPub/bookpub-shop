@@ -4,6 +4,7 @@ import com.nhnacademy.bookpubshop.coupontemplate.dto.request.CreateCouponTemplat
 import com.nhnacademy.bookpubshop.coupontemplate.dto.request.ModifyCouponTemplateRequestDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetCouponTemplateResponseDto;
 import com.nhnacademy.bookpubshop.coupontemplate.dto.response.GetDetailCouponTemplateResponseDto;
+import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import java.io.IOException;
 import org.springframework.data.domain.Page;
@@ -23,7 +24,15 @@ public interface CouponTemplateService {
      * @param templateNo 조회할 쿠폰템플릿 번호
      * @return GetDetailCouponTemplateResponseDto 쿠폰템플릿 조회 상세정보를 담은 Dto
      */
-    GetDetailCouponTemplateResponseDto getDetailCouponTemplate(Long templateNo) throws IOException;
+    GetDetailCouponTemplateResponseDto getDetailCouponTemplate(Long templateNo);
+
+    /**
+     * 쿠폰템플릿 단건 상세조회를 위한 메서드 --> 쿠폰명으로 조회.
+     *
+     * @param templateName 조회할 쿠폰템플릿 번호
+     * @return GetDetailCouponTemplateResponseDto 쿠폰템플릿 조회 상세정보를 담은 Dto
+     */
+    CouponTemplate getCouponTemplateByName(String templateName);
 
     /**
      * 전체 쿠폰템플릿 조회를 위한 메서드.
@@ -39,14 +48,16 @@ public interface CouponTemplateService {
      * @param createRequestDto 생성할 쿠폰템플릿 정보를 담은 Dto,
      * @param image            쿠폰템플릿에 들어갈 이미지 파일
      */
-    void createCouponTemplate(CreateCouponTemplateRequestDto createRequestDto, MultipartFile image) throws IOException;
+    void createCouponTemplate(CreateCouponTemplateRequestDto createRequestDto,
+                              MultipartFile image) throws IOException;
 
     /**
      * 쿠폰템플릿 수정을 위한 메서드.
      *
      * @param modifyRequestDto 수정할 쿠폰템플릿 정보를 담은 Dto
      */
-    void modifyCouponTemplate(Long templateNo, ModifyCouponTemplateRequestDto modifyRequestDto, MultipartFile image) throws IOException;
+    void modifyCouponTemplate(Long templateNo, ModifyCouponTemplateRequestDto modifyRequestDto,
+                              MultipartFile image) throws IOException;
 
     /**
      * 파일 다운로드를 위한 메서드.

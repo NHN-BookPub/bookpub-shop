@@ -30,6 +30,13 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
         implements CouponTemplateRepositoryCustom {
 
     private static final String TEMPLATE_IMAGE = "templateImage";
+    QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
+    QProduct product = QProduct.product;
+    QCouponPolicy couponPolicy = QCouponPolicy.couponPolicy;
+    QCouponType couponType = QCouponType.couponType;
+    QCategory category = QCategory.category;
+    QCouponStateCode couponStateCode = QCouponStateCode.couponStateCode;
+    QFile file = QFile.file;
 
     public CouponTemplateRepositoryImpl() {
         super(CouponTemplate.class);
@@ -40,14 +47,6 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public Optional<GetDetailCouponTemplateResponseDto> findDetailByTemplateNo(Long templateNo) {
-        QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
-        QProduct product = QProduct.product;
-        QCouponPolicy couponPolicy = QCouponPolicy.couponPolicy;
-        QCouponType couponType = QCouponType.couponType;
-        QCategory category = QCategory.category;
-        QCouponStateCode couponStateCode = QCouponStateCode.couponStateCode;
-        QFile file = QFile.file;
-
         return Optional.of(from(couponTemplate)
                 .where(couponTemplate.templateNo.eq(templateNo))
                 .leftJoin(file).on(couponTemplate.templateNo.eq(file.couponTemplate.templateNo))
@@ -78,15 +77,18 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public Page<GetDetailCouponTemplateResponseDto> findDetailAllBy(Pageable pageable) {
-        QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
-        QProduct product = QProduct.product;
-        QCouponPolicy couponPolicy = QCouponPolicy.couponPolicy;
-        QCouponType couponType = QCouponType.couponType;
-        QCategory category = QCategory.category;
-        QCouponStateCode couponStateCode = QCouponStateCode.couponStateCode;
-        QFile file = QFile.file;
+    public Optional<CouponTemplate> findDetailByTemplateName(String templateName) {
+        return Optional.of(from(couponTemplate)
+                .where(couponTemplate.templateName.eq(templateName))
+                .select(couponTemplate)
+                .fetchOne());
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetDetailCouponTemplateResponseDto> findDetailAllBy(Pageable pageable) {
         JPQLQuery<Long> count = from(couponTemplate)
                 .select(couponTemplate.count());
 
@@ -124,9 +126,6 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public Page<GetCouponTemplateResponseDto> findAllBy(Pageable pageable) {
-        QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
-        QFile file = QFile.file;
-
         JPQLQuery<Long> count = from(couponTemplate)
                 .select(couponTemplate.count());
 
@@ -143,4 +142,6 @@ public class CouponTemplateRepositoryImpl extends QuerydslRepositorySupport
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
+
+
 }
