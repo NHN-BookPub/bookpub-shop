@@ -60,7 +60,7 @@ class SubscribeProductListRepositoryTest {
 
         dateTime = LocalDateTime.of(1999, 10, 22, 13, 30);
 
-        subscribeProductList = new SubscribeProductList(null, subscribe, product, dateTime);
+        subscribeProductList = new SubscribeProductList(null, subscribe, product);
     }
 
     @Test
@@ -72,7 +72,6 @@ class SubscribeProductListRepositoryTest {
 
         assertThat(subscribeProductList).isPresent();
         assertThat(subscribeProductList.get().getListNumber()).isEqualTo(persist.getListNumber());
-        assertThat(subscribeProductList.get().getPublishedAt()).isEqualTo(persist.getPublishedAt());
         assertThat(subscribeProductList.get().getProduct().getProductNo()).isEqualTo(persist.getProduct().getProductNo());
         assertThat(subscribeProductList.get().getSubscribe().getSubscribeNo()).isEqualTo(persist.getSubscribe().getSubscribeNo());
 

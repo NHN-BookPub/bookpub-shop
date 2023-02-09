@@ -1,12 +1,16 @@
 package com.nhnacademy.bookpubshop.subscribe.entity;
 
 import com.nhnacademy.bookpubshop.file.entity.File;
+import com.nhnacademy.bookpubshop.subscribe.relationship.entity.SubscribeProductList;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -32,8 +36,14 @@ public class Subscribe {
     private Long subscribeNo;
 
     @OneToOne(mappedBy = "subscribe", cascade =
-            {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+            {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private File file;
+
+    @OneToMany(mappedBy = "subscribe",
+            cascade = {
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true)
+    List<SubscribeProductList> productrelationList = new ArrayList<>();
 
     @NotNull
     @Column(name = "subscribe_name")
@@ -90,6 +100,15 @@ public class Subscribe {
     }
 
     /**
+     * 갱신 여부 수정.
+     *
+     * @param subscribeRenewed 구독갱신여부 기입.
+     */
+    public void changeIsRenewed(boolean subscribeRenewed) {
+        this.subscribeRenewed = subscribeRenewed;
+    }
+
+    /**
      * 파일을 등록하기위한 메서드입니다.
      *
      * @param file 파일 정보가 기입됩니다.
@@ -109,13 +128,28 @@ public class Subscribe {
                                     Long salesPrice,
                                     Long subscribePrice,
                                     Integer saleRate,
-                                    boolean renewed,
-                                    boolean deleted) {
+                                    boolean renewed) {
         this.subscribeName = name;
         this.salesPrice = salesPrice;
         this.subscribePrice = subscribePrice;
         this.salesRate = saleRate;
         this.subscribeRenewed = renewed;
-        this.subscribeDeleted = deleted;
+    }
+
+    /**
+     * 관련 연관상품을 추가하기위한 메서드입니다.
+     *
+     * @param productList 연관상품리스트 기입.
+     */
+    public void addRelationList(SubscribeProductList productList) {
+        this.productrelationList.add(productList);
+    }
+
+    /**
+     * 구독의 상품관계 비워주는 메서드입니다.
+     */
+    public void removeRelationList(){
+        this.productrelationList.clear();
+
     }
 }

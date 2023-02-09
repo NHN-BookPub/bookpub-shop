@@ -1,0 +1,26 @@
+= Book-Pub
+:toc:left
+
+== Api 명세
+
+== 구독 상품 삭제 요청
+
+=== 요청구조
+
+include::../../../../target/snippets/subscribe-product-list-success/http-request.adoc[]
+
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/subscribe-product-list-success/path-parameters.adoc[]
+include::../../../../target/snippets/subscribe-product-list-success/request-fields.adoc[]
+
+=== 응답 구조
+
+include::../../../../target/snippets/subscribe-product-list-success/http-response.adoc[]
+
+== 예외 사항
+
+=== 구독의 연관상품이 없을경우
+
+include::../../../../target/snippets/subscribe-product-list-fail/http-response.adoc[]

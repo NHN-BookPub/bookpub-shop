@@ -1,0 +1,20 @@
+= Book-Pub
+:toc:left
+
+== Api 명세
+
+== 구독 상품 갱신 요청
+
+=== 요청구조
+
+include::../../../../target/snippets/subscribe-renewed/http-request.adoc[]
+
+
+==== 요청 파라미터들
+
+include::../../../../target/snippets/subscribe-renewed/path-parameters.adoc[]
+include::../../../../target/snippets/subscribe-renewed/request-parameters.adoc[]
+
+=== 응답 구조
+
+include::../../../../target/snippets/subscribe-renewed/http-response.adoc[]
