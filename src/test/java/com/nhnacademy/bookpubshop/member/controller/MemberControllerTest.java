@@ -519,7 +519,7 @@ class MemberControllerTest {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
-                .andDo(document("member-modify-email-valid-fail",
+                .andDo(document("member-modify-email-success",
                         preprocessRequest(prettyPrint()),
                         requestFields(
                                 fieldWithPath("email").description("닉네임"))));
@@ -594,7 +594,7 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.authorities").value(dto.getAuthorities()))
                 .andExpect(status().is2xxSuccessful())
                 .andDo(print())
-                .andDo(document("member-getMember-success",
+                .andDo(document("member-getMember-detail-success",
                         preprocessResponse(prettyPrint()),
                         pathParameters(
                                 parameterWithName("memberNo").description("회원 번호")),
