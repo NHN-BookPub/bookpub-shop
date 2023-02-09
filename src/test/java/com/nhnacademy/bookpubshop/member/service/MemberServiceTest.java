@@ -131,6 +131,8 @@ class MemberServiceTest {
         when(authorityRepository.findByAuthorityName(anyString()))
                 .thenReturn(Optional.of(AuthorityDummy.dummy()));
 
+        when(memberRepository.save(any())).thenReturn(member);
+
         memberService.signup(signUpMemberRequestDto);
 
         verify(memberRepository, times(1))
@@ -173,6 +175,8 @@ class MemberServiceTest {
                 .thenReturn(false);
         when(authorityRepository.findByAuthorityName(anyString()))
                 .thenReturn(Optional.of(AuthorityDummy.dummy()));
+
+        when(memberRepository.save(any())).thenReturn(member);
 
         OauthMemberCreateRequestDto createRequestDto = new OauthMemberCreateRequestDto();
 
