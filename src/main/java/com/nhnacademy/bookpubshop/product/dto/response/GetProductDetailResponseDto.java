@@ -34,7 +34,7 @@ public class GetProductDetailResponseDto {
     private Integer salesRate;
     private Integer productPriority;
     private Integer productStock;
-//    @DateTimeFormat(pattern = "yyyy:MM:dd'T'HH:mm:ss")
+    //    @DateTimeFormat(pattern = "yyyy:MM:dd'T'HH:mm:ss")
     private String publishDate;
     private boolean deleted;
     private boolean productSubscribed;
@@ -93,7 +93,7 @@ public class GetProductDetailResponseDto {
         this.tagsColors = product.getProductTags().stream()
                 .map(m -> m.getTag().getColorCode())
                 .collect(Collectors.toList());
-        
+
         if (!product.getFiles().isEmpty()) {
             inputFiles(product);
         }
@@ -105,7 +105,7 @@ public class GetProductDetailResponseDto {
      * @param product 상품입니다.
      */
     private void inputFiles(Product product) {
-        for (int index = 0; index < product.getFiles().size(); index ++) {
+        for (int index = 0; index < product.getFiles().size(); index++) {
             inputFilesCheckCategory(product, index);
         }
     }
@@ -114,18 +114,16 @@ public class GetProductDetailResponseDto {
      * 상품에 연관된 파일들을 dto로 담습니다.(유형을 확인하여 담아줍니다.)
      *
      * @param product 상품
-     * @param index 리스트 인덱스
+     * @param index   리스트 인덱스
      */
     private void inputFilesCheckCategory(Product product, int index) {
         if (getFile(product, index).getFileCategory()
                 .equals(FileCategory.PRODUCT_THUMBNAIL.getCategory())) {
             this.thumbnail = getFile(product, index).getFilePath();
-        }
-        else if (getFile(product, index).getFileCategory()
+        } else if (getFile(product, index).getFileCategory()
                 .equals(FileCategory.PRODUCT_DETAIL.getCategory())) {
             this.detail = getFile(product, index).getFilePath();
-        }
-        else if (getFile(product, index).getFileCategory()
+        } else if (getFile(product, index).getFileCategory()
                 .equals(FileCategory.PRODUCT_EBOOK.getCategory())) {
             this.ebook = getFile(product, index).getFilePath();
         }
@@ -135,7 +133,7 @@ public class GetProductDetailResponseDto {
      * 상품의 파일 리스트에서 원하는 인덱스의 파일을 반환해줍니다.
      *
      * @param product 상품
-     * @param index 인덱스
+     * @param index   인덱스
      * @return 파일
      */
     private File getFile(Product product, int index) {
