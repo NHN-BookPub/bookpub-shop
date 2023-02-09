@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.product.controller;
 
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
+import com.nhnacademy.bookpubshop.annotation.MemberAndAuth;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
@@ -216,6 +217,25 @@ public class ProductController {
     getEbooks(Pageable pageable) {
         Page<GetProductByCategoryResponseDto> content =
                 productService.getEbooks(pageable);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PageResponse<>(content));
+    }
+
+    /**
+     * 멤버가 구매한 이북이 반환됩니다.
+     *
+     * @param pageable 페이징
+     * @param memberNo 멤버번호
+     * @return
+     */
+    @GetMapping("/api/product/{memberNo}/ebooks/")
+    @MemberAndAuth
+    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
+    getEbooks(Pageable pageable, @PathVariable Long memberNo) {
+        Page<GetProductByCategoryResponseDto> content =
+                productService.getEbooksByMember(pageable, memberNo);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

@@ -34,7 +34,8 @@ public interface ProductService {
      *
      * @param request 상품 생성시 필요한 dto.
      */
-    void createProduct(CreateProductRequestDto request, Map<String, MultipartFile> fileMap) throws IOException;
+    void createProduct(CreateProductRequestDto request,
+                       Map<String, MultipartFile> fileMap) throws IOException;
 
     /**
      * 모든 상품을 페이징 처리하여 조회합니다. 등록기준 asc 입니다.
@@ -93,7 +94,8 @@ public interface ProductService {
      * @param pageable   페이징정보
      * @return 카텍리별 상품들
      */
-    Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo, Pageable pageable);
+    Page<GetProductByCategoryResponseDto> getProductsByCategory(
+            Integer categoryNo, Pageable pageable);
 
     /**
      * 모든 ebook 상품들 조회.
@@ -102,4 +104,12 @@ public interface ProductService {
      * @return 상품이 담긴 페이지 객체
      */
     Page<GetProductByCategoryResponseDto> getEbooks(Pageable pageable);
+
+    /**
+     * 멤버가 구매한 모든 이북이 반환됩니다.
+     * @param pageable 페이징
+     * @param memberNo 멤버번호
+     * @return 이북리스트
+     */
+    Page<GetProductByCategoryResponseDto> getEbooksByMember(Pageable pageable, Long memberNo);
 }

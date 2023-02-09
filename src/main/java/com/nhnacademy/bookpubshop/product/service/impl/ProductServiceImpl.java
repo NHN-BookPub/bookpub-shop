@@ -267,7 +267,18 @@ public class ProductServiceImpl implements ProductService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<GetProductByCategoryResponseDto> getEbooks(Pageable pageable) {
         return productRepository.getEbooks(pageable);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<GetProductByCategoryResponseDto> getEbooksByMember(
+            Pageable pageable, Long memberNo) {
+        return productRepository.getEbooksByMember(pageable, memberNo);
     }
 }
