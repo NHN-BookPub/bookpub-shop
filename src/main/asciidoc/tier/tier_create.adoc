@@ -2,7 +2,7 @@
 
 
 
-==== 태그 등록
+==== 등급 등록
 
 등급(Tier) 등록에 관한 Api 명세입니다.
 
@@ -40,7 +40,7 @@ Response
 
 include::../../../../target/snippets/tier-add-point-fail/http-response.adoc[]
 
-==== 3. 태그 지급 가격이 없을경우
+====== 3. 태그 지급 가격이 없을경우
 
 Request
 
@@ -50,7 +50,7 @@ Response
 
 include::../../../../target/snippets/tier-add-name-fail/http-response.adoc[]
 
-==== 4. 태그 값이 없을경우
+====== 4. 태그 값이 없을경우
 
 Request
 
