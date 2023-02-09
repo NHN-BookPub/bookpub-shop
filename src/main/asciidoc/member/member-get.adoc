@@ -1,0 +1,59 @@
+= Book-Pub
+:toc:
+
+== API 명세
+
+회원(Member) 조회 관한 API 명세
+
+== 회원 단건 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/member-getMember-success/http-request.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/author-getAuthor-success/http-response.adoc[]
+
+== 인증된 멤버 상세 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/member-getMember-detail-success/http-request.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/member-getMember-detail-success/http-response.adoc[]
+
+== 전체 회원 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/member-list-success/http-request.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/member-list-success/http-response.adoc[]
+
+== 회원 통계 조회
+
+=== 요청구조
+
+include::../../../../target/snippets/member-statistics-success/http-request.adoc[]
+
+=== 응답구조
+
+include::../../../../target/snippets/member-statistics-success/response-fields.adoc[]
+
+== 멤버 등급별 통계 조회
+
+=== 응답구조
+
+include::../../../../target/snippets/member-statistics-success-byTier/response-fields.adoc[]
+
+== 로그인 요청한 회원 정보 조회
+
+=== 응답구조
+
+include::../../../../target/snippets/member-login-Member-success/response-fields.adoc[]
+
