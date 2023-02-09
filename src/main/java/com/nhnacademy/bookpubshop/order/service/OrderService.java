@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.order.service;
 
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
@@ -79,4 +80,12 @@ public interface OrderService {
      * @return 멤버의 모든 주문 반환.
      */
     PageResponse<GetOrderListResponseDto> getOrderListByUsers(Pageable pageable, Long memberNo);
+
+    /**
+     * 주문, 결제 최종정보를 반환하는 메소드.
+     *
+     * @param orderId 주문아이디.
+     * @return 주문,결제 정보.
+     */
+    GetOrderAndPaymentResponseDto getOrderAndPaymentInfo(String orderId);
 }

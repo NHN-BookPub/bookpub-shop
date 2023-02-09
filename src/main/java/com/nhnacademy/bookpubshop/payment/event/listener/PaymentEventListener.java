@@ -2,6 +2,9 @@ package com.nhnacademy.bookpubshop.payment.event.listener;
 
 import com.nhnacademy.bookpubshop.card.entity.Card;
 import com.nhnacademy.bookpubshop.card.repository.CardRepository;
+import com.nhnacademy.bookpubshop.delivery.adaptor.DeliveryAdaptor;
+import com.nhnacademy.bookpubshop.delivery.dto.request.CreateDeliveryRequestDto;
+import com.nhnacademy.bookpubshop.delivery.dto.response.CreateDeliveryResponseDto;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.repository.OrderRepository;
 import com.nhnacademy.bookpubshop.orderstatecode.exception.NotFoundOrderStateException;
@@ -12,7 +15,6 @@ import com.nhnacademy.bookpubshop.payment.event.PaymentEvent;
 import com.nhnacademy.bookpubshop.state.CardCompany;
 import com.nhnacademy.bookpubshop.state.OrderState;
 import java.util.Objects;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
@@ -33,6 +35,7 @@ public class PaymentEventListener {
     private final OrderRepository orderRepository;
     private final OrderStateCodeRepository orderStateCodeRepository;
     private final CardRepository cardRepository;
+    private final DeliveryAdaptor deliveryAdaptor;
 
     /**
      * 결제 이벤트 발생시 주문 상태변경, 카드 db저장, 주문에 송장번호가 업데이트 되는 메소드입니다.
@@ -48,9 +51,28 @@ public class PaymentEventListener {
         Payment payment = paymentEvent.getPayment();
 
         changeOrderStateToWaitDelivery(order);
+        CreateDeliveryResponseDto invoiceNumber = sendDelivery(order);
+        order.modifyInvoiceNo(invoiceNumber.getInvoiceNo());
         saveCardPaymentInfo(tossResponseDto, payment);
-        order.modifyInvoiceNo(UUID.randomUUID().toString());
         orderRepository.save(order);
+    }
+
+    /**
+     * 배송서버와 통신하여 배송 db에 저장 하고 송장번호를 받아오는 메소드 입니다.
+     *
+     * @param order 주문.
+     * @return 송장번호.
+     */
+    private CreateDeliveryResponseDto sendDelivery(BookpubOrder order) {
+        return deliveryAdaptor.createDelivery(
+                new CreateDeliveryRequestDto(
+                        order.getOrderNo(),
+                        order.getOrderRequest(),
+                        order.getOrderRecipient(),
+                        order.getRecipientPhone(),
+                        order.getCreatedAt(),
+                        order.getAddressDetail()
+                ));
     }
 
     /**
@@ -73,10 +95,10 @@ public class PaymentEventListener {
     private void saveCardPaymentInfo(TossResponseDto tossResponseDto, Payment payment) {
         if (Objects.nonNull(tossResponseDto.getCard())) {
             cardRepository.save(new Card(
-                            payment.getPaymentNo(),
-                            CardCompany.match(tossResponseDto.getCard().getIssuerCode()).getName(),
-                            tossResponseDto.getCard().getNumber(),
-                            tossResponseDto.getCard().getInstallmentPlanMonths())
+                    payment.getPaymentNo(),
+                    CardCompany.match(tossResponseDto.getCard().getIssuerCode()).getName(),
+                    tossResponseDto.getCard().getNumber(),
+                    tossResponseDto.getCard().getInstallmentPlanMonths())
             );
         }
 

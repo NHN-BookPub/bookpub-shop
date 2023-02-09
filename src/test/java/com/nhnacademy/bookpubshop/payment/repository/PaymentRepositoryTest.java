@@ -51,9 +51,7 @@ class PaymentRepositoryTest {
     PricePolicy pricePolicy;
     PricePolicy packagePricePolicy;
     OrderStateCode orderStateCode;
-
     PaymentStateCode paymentStateCode;
-
     PaymentTypeStateCode paymentTypeStateCode;
 
     @BeforeEach

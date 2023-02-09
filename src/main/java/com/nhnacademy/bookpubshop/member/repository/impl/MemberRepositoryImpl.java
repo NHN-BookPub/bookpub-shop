@@ -12,7 +12,6 @@ import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.relationship.entity.QMemberAuthority;
-import com.nhnacademy.bookpubshop.member.relationship.exception.MemberAuthoritiesNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberCustomRepository;
 import com.nhnacademy.bookpubshop.tier.entity.QBookPubTier;
 import com.querydsl.core.types.ExpressionUtils;
@@ -164,22 +163,21 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                 .where(member.memberId.eq(id))
                 .fetchOne());
 
-        Optional<List<String>> memberAuthorities = Optional.of(from(memberAuthority)
+        List<String> memberAuthorities = from(memberAuthority)
                 .innerJoin(memberAuthority.member, member)
                 .select(memberAuthority.authority.authorityName)
                 .where(member.memberId.eq(id))
-                .fetch());
+                .fetch();
 
-        IdPwdMemberDto responseMember =
-                findMember.orElseThrow(() -> new MemberNotFoundException(id));
-        List<String> authorities =
-                memberAuthorities.orElseThrow(MemberAuthoritiesNotFoundException::new);
+        if (findMember.isEmpty() || memberAuthorities.isEmpty()) {
+            throw new MemberNotFoundException();
+        }
 
         return new LoginMemberResponseDto(
-                responseMember.getMemberNo(),
-                responseMember.getMemberId(),
-                responseMember.getMemberPwd(),
-                authorities);
+                findMember.get().getMemberNo(),
+                findMember.get().getMemberId(),
+                findMember.get().getMemberPwd(),
+                memberAuthorities);
     }
 
     @Override

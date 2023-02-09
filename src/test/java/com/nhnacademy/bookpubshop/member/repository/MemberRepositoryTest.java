@@ -196,7 +196,9 @@ class MemberRepositoryTest {
     void findLoginMemberFailedTest() {
         entityManager.persist(member);
         entityManager.persist(authority);
-        entityManager.persist(memberAuthority);
+        entityManager.persist(new MemberAuthority(
+                new MemberAuthority.Pk(1L, 1), member, authority
+        ));
         entityManager.flush();
         entityManager.clear();
 
