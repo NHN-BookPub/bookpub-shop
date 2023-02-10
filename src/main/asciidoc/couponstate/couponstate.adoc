@@ -1,41 +1,42 @@
 
-= CouponTemplate
-:toc:left
+:toc:
+=== 쿠폰 상태
+쿠폰상태는 조회만 가능합니다.
 
-== 쿠폰상태 리스트 조회
-Coupon-State-list
+==== 쿠폰상태 조회
+쿠폰상태 조회 API 명세 입니다.
 
-=== 요청구조
+===== 요청구조
 include::../../../../target/snippets/coupon-state-list/http-request.adoc[]
 
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/coupon-state-list/request-body.adoc[]
 
 
-=== 응답 구조
+===== 응답 구조
 include::../../../../target/snippets/coupon-state-list/http-response.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터들
 
 include::../../../../target/snippets/coupon-state-list/response-fields.adoc[]
 
-== 쿠폰상태 단일값 조회
+==== 쿠폰상태 단일값 조회
 Coupon-state-detail
 
-=== 요청구조
+===== 요청구조
 include::../../../../target/snippets/coupon-state-detail/http-request.adoc[]
 
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/coupon-state-detail/path-parameters.adoc[]
 
 
-=== 응답 구조
+===== 응답 구조
 include::../../../../target/snippets/coupon-state-detail/http-response.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터들
 
 include::../../../../target/snippets/coupon-state-detail/response-fields.adoc[]

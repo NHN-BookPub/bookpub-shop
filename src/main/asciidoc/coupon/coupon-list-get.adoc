@@ -1,39 +1,42 @@
-= Coupon
+
 :toc:
 
-== 쿠폰 리스트 조회
+==== 쿠폰 리스트 조회
 
-Coupon-List-get
+쿠폰(Coupon) 전체 조회에 관한 API 명세
 
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/couponList-get/http-request.adoc[]
 
-=== 응답 구조
+===== 응답 구조
 
 include::../../../../target/snippets/couponList-get/http-response.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터들
 
-include::../../../../target/snippets/couponList-get/response-body.adoc[]
+include::../../../../target/snippets/couponList-get/response-fields.adoc[]
 
-== 주문에 사용할 쿠폰 리스트 조회
+==== 주문에 사용할 쿠폰 리스트 조회
 
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/couponOrderList-get/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 요청 파라미터들
+
+====== 1. PathVariable
 
 include::../../../../target/snippets/couponOrderList-get/path-parameters.adoc[]
 
+====== 2. RequestParam
 include::../../../../target/snippets/couponOrderList-get/request-parameters.adoc[]
 
-=== 응답구조
+==== 응답구조
 
 include::../../../../target/snippets/couponOrderList-get/http-response.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터들
 
 include::../../../../target/snippets/couponOrderList-get/response-fields.adoc[]
 

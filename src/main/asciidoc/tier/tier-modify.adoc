@@ -1,28 +1,31 @@
-= Book-Pub
 :toc:
 
-== Api 명세
+
+
+==== 태그 수정
 
 등급(Tier) 수정에 관한 Api 명세입니다.
 
-== 태그 수정
-
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/tier-modify/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/tier-modify/request-fields.adoc[]
 
-=== 응답구조
+===== 응답구조
 
 include::../../../../target/snippets/tier-modify/http-response.adoc[]
 
-=== 예외 상황
+===== 예외 상황
 
-==== 1. 등급번호가 들어오지않았을경우
+====== 1. 등급번호가 들어오지않았을경우
+
+Request
 
 include::../../../../target/snippets/tier-modify-fail/http-request.adoc[]
-===== 1.1 응답값
+
+Response
+
 include::../../../../target/snippets/tier-modify-fail/http-response.adoc[]

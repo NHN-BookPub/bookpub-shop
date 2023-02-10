@@ -1,32 +1,41 @@
+:toc:
 
-= CouponTemplate
-:toc:left
+==== 쿠폰탬플릿 수정
 
-== 쿠폰탬플릿 수
-CouponTemplate modify
+쿠폰템플릿(CouponTemplate) 수정 API 명세
 
-=== 요청구조
+===== 요청구조
+
 include::../../../../target/snippets/coupon_template_modify/http-request.adoc[]
 
-
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/coupon_template_modify/request-part-modifyRequestDto-fields.adoc[]
 
-
-=== 응답 구조
+===== 응답 구조
 
 include::../../../../target/snippets/coupon_template_modify/http-response.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터들
 
 include::../../../../target/snippets/coupon_template_modify/response-body.adoc[]
 
-==== 예외 상황
+===== 예외 상황
+
+====== 1. 쿠폰템플릿이름의 길이를 초과했을 경우
 
 include::../../../../target/snippets/coupon_template_modify_nameLongEx/http-response.adoc[]
+
+====== 2. 쿠폰정책 번호를 기입하지않았을 경우
+
 include::../../../../target/snippets/coupon_template_modify_policyEx/http-response.adoc[]
+
+===== 3. 쿠폰템플릿이름을 기입하지 않았을 경우
+
 include::../../../../target/snippets/coupon_template_modify_templateNameEx/http-response.adoc[]
+
+===== 4. 쿠폰유형번호를 기입하지 않았을 경우
+
 include::../../../../target/snippets/coupon_template_modify_typeEx/http-response.adoc[]
 
 

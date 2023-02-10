@@ -1,37 +1,69 @@
-= Book-Pub
-:toc:left
+:toc:
 
-== Api 명세
 
-== 구독 수정
-
-=== 요청구조
+==== 구독 수정
+구독(Subscribe) 수정에대한 API 명세입니다.
+===== 요청구조
 
 include::../../../../target/snippets/subscribe-modify/http-request.adoc[]
 
-
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/subscribe-modify/request-parts.adoc[]
 
-=== 응답 구조
+===== 응답 구조
 
 include::../../../../target/snippets/subscribe-modify/http-response.adoc[]
 
-=== 예외 상황
+===== 예외 상황
 
-==== 이름이 비었을경우
+====== 1. 이름이 비었을경우
+
+Request
+
+include::../../../../target/snippets/subscribe-add-fail-name-blank/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/subscribe-add-fail-name-blank/http-response.adoc[]
 
-==== 가격이 잘못 기입되었을 경우
+====== 2. 가격이 잘못 기입되었을 경우
+
+Request
+
+include::../../../../target/snippets/subscribe-add-fail-price/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/subscribe-add-fail-price/http-response.adoc[]
 
-==== 할인률이 100을넘을경우
+====== 3. 할인률이 100을넘을경우
+
+Request
+
+include::../../../../target/snippets/subscribe-add-fail-saleRate-max/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/subscribe-add-fail-saleRate-max/http-response.adoc[]
 
-==== 할인가격을 잘못 기입했을 경우
+====== 4. 할인가격을 잘못 기입했을 경우
+
+Request
+
+include::../../../../target/snippets/subscribe-add-fail-salePrice/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/subscribe-add-fail-salePrice/http-response.adoc[]
 
-==== 할인률에 음수를 줫을경우
+====== 5. 할인률에 음수를 줫을경우
+
+Request
+
+include::../../../../target/snippets/subscribe-add-fail-saleRate-min/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/subscribe-add-fail-saleRate-min/http-response.adoc[]
 

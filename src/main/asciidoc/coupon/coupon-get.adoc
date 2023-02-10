@@ -1,20 +1,20 @@
-= Coupon
 :toc:
+==== 쿠폰 단건 조회
 
-== 쿠폰 단건 조회
-Coupon-Get
+쿠폰(Coupon) 단건 조회에 대한 API 명세
 
-=== 요청구조
-include::../../../../target/snippets/coupon-get/http-request.adoc
+===== 요청구조
 
+include::../../../../target/snippets/coupon-get.adoc/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
-include::../../../../target/snippets/coupon-get/request-fields.adoc
+include::../../../../target/snippets/coupon-get.adoc/request-body.adoc[]
 
-=== 응답 구조
-include::../../../../target/snippets/coupon-get/http-response.adoc
+===== 응답 구조
 
-==== 응답 파라미터들
+include::../../../../target/snippets/coupon-get.adoc/http-response.adoc[]
 
-include::../../../../target/snippets/coupon-get/response-body.adoc
+===== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-get.adoc/response-fields.adoc[]

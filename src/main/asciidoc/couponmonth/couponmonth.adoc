@@ -1,22 +1,20 @@
+:toc:
 
-= CouponMonth
-:toc:left
+==== 이달의 쿠폰 리스트 조회
+이달의 쿠폰(Coupon-Month) 를 조회하는 API 명세입니다.
 
-== 이달의 쿠폰 리스트 조회
-Coupon-Month-list
-
-=== 요청구조
+===== 요청구조
 include::../../../../target/snippets/coupon-month-list/http-request.adoc[]
 
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/coupon-month-list/request-body.adoc[]
 
 
-=== 응답 구조
+===== 응답 구조
 include::../../../../target/snippets/coupon-month-list/http-response.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터들
 
 include::../../../../target/snippets/coupon-month-list/response-fields.adoc[]

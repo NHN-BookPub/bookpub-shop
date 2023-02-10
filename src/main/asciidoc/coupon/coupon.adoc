@@ -1,0 +1,9 @@
+=== 쿠폰
+쿠폰의 생성, 수정, 조회를담당합니다.
+
+쿠폰은 등급별쿠폰, 이달의쿠폰, 생일쿠폰 등이있습니다.
+
+include::coupon-create.adoc[]
+include::coupon-modify.adoc[]
+include::coupon-get.adoc[]
+include::coupon-list-get.adoc[]

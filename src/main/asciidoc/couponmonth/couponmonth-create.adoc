@@ -1,31 +1,38 @@
+:toc:
 
-= CouponMonth
-:toc:left
+==== 이달의 쿠폰 생성
 
-== 이달의 쿠폰 생성
-Coupon-Month-create
+이달의쿠폰(Coupon-Month) 등록에 관한 API 명세입니다.
 
-=== 요청구조
+===== 요청구조
 include::../../../../target/snippets/coupon-month-create/http-request.adoc[]
 
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/coupon-month-create/request-fields.adoc[]
 
 
-=== 응답 구조
+===== 응답 구조
 include::../../../../target/snippets/coupon-month-create/http-response.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터들
 
 include::../../../../target/snippets/coupon-month-create/response-body.adoc[]
 
 
-==== 예외사항
+===== 예외사항
+
+====== 1. 0이하의 수량을 기입했을경우
 
 include::../../../../target/snippets/coupon-month-create-monthQuantityFail/http-response.adoc[]
+
+====== 2. 오픈시간을 기입하지않을경우
+
 include::../../../../target/snippets/coupon-month-create-openAtFail/http-response.adoc[]
+
+===== 3. 쿠폰템플릿 번호를 기입하지 않았을 경우
+
 include::../../../../target/snippets/coupon-month-create-templateNoFail/http-response.adoc[]
 
 

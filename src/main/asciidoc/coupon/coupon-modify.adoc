@@ -1,20 +1,18 @@
-= Coupon
 :toc:
+==== 쿠폰 수정
+쿠폰(Coupon) 사용여부 수정에 대한 Api 명세입니다.
 
-== 쿠폰 수정
-Coupon-modify
-
-=== 요청구조
-include::../../../../target/snippets/coupon-modify/http-request.adoc
+===== 요청구조
+include::../../../../target/snippets/coupon-modify/http-request.adoc[]
 
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
-include::../../../../target/snippets/coupon-modify/request-fields.adoc
+include::../../../../target/snippets/coupon-modify/path-parameters.adoc[]
 
-=== 응답 구조
-include::../../../../target/snippets/coupon-modify/http-response.adoc
+===== 응답 구조
+include::../../../../target/snippets/coupon-modify/response-body.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터들
 
-include::../../../../target/snippets/coupon-modify/response-body.adoc
+include::../../../../target/snippets/coupon-modify/http-response.adoc[]

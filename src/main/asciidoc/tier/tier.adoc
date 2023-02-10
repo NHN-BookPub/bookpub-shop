@@ -1,0 +1,9 @@
+=== 등급
+
+회원등급을 다룰때 사용됩니다.
+
+등급의 생성,수정 조회가 가능합니다.
+
+include::tier_create.adoc[]
+include::tier-modify.adoc[]
+include::tier-get.adoc[]

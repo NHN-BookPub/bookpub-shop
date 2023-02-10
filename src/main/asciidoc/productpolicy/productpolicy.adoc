@@ -1,0 +1,7 @@
+=== 가격 정책
+
+가격정책의 생성, 수정, 조회를 할수있습니다.
+
+include::productpolicy-create.adoc[]
+include::productpolicy-mnodify.adoc[]
+include::productpolicy-get.adoc[]

@@ -1,0 +1,4 @@
+==== 결제유형
+
+include::payment-type-list.adoc[]
+include::payment-type-get.adoc[]
