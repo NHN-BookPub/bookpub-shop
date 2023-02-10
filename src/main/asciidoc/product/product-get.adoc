@@ -1,129 +1,261 @@
-= Book-Pub
+
 :toc:
 
-== Api 명세
+==== 상품 조회
 
-상품(Product) 조회에 관한 Api 명세입니다.
+상품(Product) 다건 조회에 관한 API 명세입니다.
 
-== 상품 단건 조회
+===== 요청구조
 
-=== 요청구조
+Request
 
-include::../../../../target/snippets/get-product/http-request.adoc[]
+include::../../../../target/snippets/product-getList/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 응답구조
 
-include::../../../../target/snippets/get-product/path-parameters.adoc[]
+Response
 
-=== 응답구조
+include::../../../../target/snippets/product-getList/http-response.adoc[]
 
-include::../../../../target/snippets/get-product/http-response.adoc[]
+===== 요청 파라미터
 
-==== 응답 파라미터들
+Request Parameter
 
-include::../../../../target/snippets/get-product/response-fields.adoc[]
+include::../../../../target/snippets/product-getList/request-parameters.adoc[]
 
-== 상품 리스트 조회
+===== 응답 파라미터
 
-=== 요청구조
+Response Fields
 
-include::../../../../target/snippets/get-products/http-request.adoc[]
+include::../../../../target/snippets/product-getList/response-fields.adoc[]
 
-=== 응답구조
+==== 상품(단건) 조회
 
-include::../../../../target/snippets/get-products/http-response.adoc[]
+상품(Product) 단건 조회에 관한 API
 
-==== 응답 파라미터들
+===== 요청구조
 
-include::../../../../target/snippets/get-products/response-fields.adoc[]
+Request
 
-== 상품 제목을 통한 조회
+include::../../../../target/snippets/product-get/http-request.adoc[]
 
-=== 요청구조
+===== 응답구조
 
-include::../../../../target/snippets/get-titleProducts/http-request.adoc[]
+Response
 
-==== 요청 파라미터들
+include::../../../../target/snippets/product-get/http-response.adoc[]
 
-include::../../../../target/snippets/get-titleProducts/request-parameters.adoc[]
+===== 경로 변수
 
-=== 응답구조
+Path Variable
 
-include::../../../../target/snippets/get-titleProducts/http-response.adoc[]
+include::../../../../target/snippets/product-get/path-parameters.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터
 
-include::../../../../target/snippets/get-titleProducts/response-fields.adoc[]
+Response Fields
 
-== 상품 유형 번호를 통한 조회
+include::../../../../target/snippets/product-get/response-fields.adoc[]
 
-=== 요청구조
+==== 카테고리별 상품 조회
 
-include::../../../../target/snippets/get-typeProducts/http-request.adoc[]
+카테고리별 상품(Product) 조회 API
 
-==== 요청 파라미터들
+===== 요청구조
 
-include::../../../../target/snippets/get-typeProducts/path-parameters.adoc[]
-include::../../../../target/snippets/get-typeProducts/request-parameters.adoc[]
-
-=== 응답구조
-
-include::../../../../target/snippets/get-typeProducts/http-response.adoc[]
-
-==== 응답 파라미터들
-
-include::../../../../target/snippets/get-typeProducts/response-fields.adoc[]
-
-== 카트에 담긴 상품 번호들을 통한 조회
-
-=== 요청구조
-
-include::../../../../target/snippets/get-cartProducts/http-request.adoc[]
-
-==== 요청 파라미터들
-
-include::../../../../target/snippets/get-cartProducts/request-parameters.adoc[]
-
-=== 응답구조
-
-include::../../../../target/snippets/get-cartProducts/http-response.adoc[]
-
-==== 응답 파라미터들
-
-include::../../../../target/snippets/get-cartProducts/response-fields.adoc[]
-
-== 상품의 카테고리 번호를 통한 조회
-
-=== 요청구조
+Request
 
 include::../../../../target/snippets/product-get-category/http-request.adoc[]
 
-=== 요청 파라미터들
+===== 응답구조
 
-include::../../../../target/snippets/product-get-category/request-parameters.adoc[]
-
-=== 응답구조
+Response
 
 include::../../../../target/snippets/product-get-category/http-response.adoc[]
 
-=== 응답 파라미터들
+===== 요청 파라미터
+
+Request Parameter
+
+include::../../../../target/snippets/product-get-category/request-parameters.adoc[]
+
+===== 응답 파라미터
+
+Response Fields
 
 include::../../../../target/snippets/product-get-category/response-fields.adoc[]
 
-== 이북 리스트 조회
+==== E-Book 상품들 조회
 
-=== 요청구조
+상품(Product) 중 E-Book 조회 API
+
+===== 요청 구조
+
+Request
 
 include::../../../../target/snippets/product-get-ebooks/http-request.adoc[]
 
-=== 요청 파라미터들
+===== 응답 구조
 
-include::../../../../target/snippets/product-get-ebooks/http-parameters.adoc[]
-
-=== 응답구조
+Response
 
 include::../../../../target/snippets/product-get-ebooks/http-response.adoc[]
 
-===응답 파라미터들
+===== 요청 파라미터
 
-include::../../../../target/snippets/product-get-ebooks/http-fields.adoc[]
+Request Parameter
+
+include::../../../../target/snippets/product-get-ebooks/request-parameters.adoc[]
+
+===== 응답 파라미터
+
+Response Fields
+
+include::../../../../target/snippets/product-get-ebooks/response-fields.adoc[]
+
+==== E-Book(Download) 정보 조회
+
+E-Book 다운로드를 위한 API
+
+===== 요청 구조
+
+Request
+
+include::../../../../target/snippets/product-get-EBook-success/http-request.adoc[]
+
+===== 응답 구조
+
+Response
+
+include::../../../../target/snippets/product-get-EBook-success/http-response.adoc[]
+
+===== 경로 변수
+
+Path Variable
+
+include::../../../../target/snippets/product-get-EBook-success/path-parameters.adoc[]
+
+===== 응답 파라미터
+
+Response Fields
+
+include::../../../../target/snippets/product-get-EBook-success/response-fields.adoc[]
+
+==== 상품제목별 조회
+
+제목 기준으로 상품(Product) 조회 API
+
+===== 요청 구조
+
+Request
+
+include::../../../../target/snippets/get-titleProducts/http-request.adoc[]
+
+===== 응답 구조
+
+Response
+
+include::../../../../target/snippets/get-titleProducts/http-response.adoc[]
+
+===== 요청 파라미터들
+
+Request Parameter
+
+include::../../../../target/snippets/get-titleProducts/request-parameters.adoc[]
+
+===== 응답 파라미터들
+
+Response Fields
+
+include::../../../../target/snippets/get-titleProducts/response-fields.adoc[]
+
+===== 상품유형별 상품 조회
+
+상품(Product) 유형에 따른 조회 API
+
+===== 요청구조
+
+Request
+
+include::../../../../target/snippets/get-typeProducts/http-request.adoc[]
+
+===== 응답구조
+
+Response
+
+include::../../../../target/snippets/get-typeProducts/http-response.adoc[]
+
+===== 요청 파라미터
+
+Request Parameter
+
+include::../../../../target/snippets/get-typeProducts/path-parameters.adoc[]
+
+include::../../../../target/snippets/get-typeProducts/request-parameters.adoc[]
+
+===== 응답 파라미터들
+
+Response Fields
+
+include::../../../../target/snippets/get-typeProducts/response-fields.adoc[]
+
+==== 장바구니에 담긴 상품 조회
+
+장바구니에 담긴 상품(Product) 조회 API
+
+===== 요청 구조
+
+Request
+
+include::../../../../target/snippets/get-cartProducts/http-request.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/get-cartProducts/http-response.adoc[]
+
+===== 요청 파라미터들
+
+Request Parameter
+
+include::../../../../target/snippets/get-cartProducts/request-parameters.adoc[]
+
+===== 응답 파라미터들
+
+Response Fields
+
+include::../../../../target/snippets/get-cartProducts/response-fields.adoc[]
+
+==== 상품의 카테고리 번호를 통한 조회
+
+카테고리를 기준으로 상품(Product) 조회 API
+
+===== 요청 구조
+
+Request
+
+include::../../../../target/snippets/product-get-category/http-request.adoc[]
+
+===== 응답 구조
+
+Response
+
+include::../../../../target/snippets/product-get-category/http-response.adoc[]
+
+===== 요청 파라미터
+
+Request Parameter
+
+include::../../../../target/snippets/product-get-category/request-parameters.adoc[]
+
+===== 경로 변수
+
+Path Variable
+
+include::../../../../target/snippets/product-get-category/path-parameters.adoc[]
+
+===== 응답 파라미터들
+
+Response Fields
+
+include::../../../../target/snippets/product-get-category/response-fields.adoc[]
+

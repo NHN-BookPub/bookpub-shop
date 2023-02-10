@@ -1,7 +1,10 @@
 package com.nhnacademy.bookpubshop.product.relationship.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.nhnacademy.bookpubshop.product.relationship.dto.GetProductPolicyResponseDto;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,5 +41,30 @@ class ProductPolicyRepositoryTest {
         assertThat(optional.get().getSaveRate()).isEqualTo(persist.getSaveRate());
 
         entityManager.clear();
+    }
+
+    @Test
+    @DisplayName("모든 정책 조회 테스트")
+    void findAllPolicies() {
+        // given
+        ProductPolicy testProductPolicy = new ProductPolicy(null, "실구매가가기준", true, 5);
+        ProductPolicy persist = entityManager.persist(testProductPolicy);
+        GetProductPolicyResponseDto dto =
+                new GetProductPolicyResponseDto(
+                        persist.getPolicyNo(),
+                        persist.getPolicyMethod(),
+                        persist.isPolicySaved(),
+                        persist.getSaveRate());
+        List<GetProductPolicyResponseDto> list = List.of(dto);
+
+        // when
+        List<GetProductPolicyResponseDto> result = productPolicyRepository.findAllPolicies();
+
+        // then
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getPolicyNo()).isEqualTo(persist.getPolicyNo());
+        assertThat(result.get(0).getPolicyMethod()).isEqualTo(persist.getPolicyMethod());
+        assertThat(result.get(0).isPolicySaved()).isEqualTo(persist.isPolicySaved());
+        assertThat(result.get(0).getSaveRate()).isEqualTo(persist.getSaveRate());
     }
 }

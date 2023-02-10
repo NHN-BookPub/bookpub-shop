@@ -7,8 +7,15 @@ import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
 import com.nhnacademy.bookpubshop.file.entity.File;
+import com.nhnacademy.bookpubshop.file.exception.FileNotFoundException;
 import com.nhnacademy.bookpubshop.filemanager.FileManagement;
+import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductAuthorRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductCategoryRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductDescriptionRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductInfoRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductTagRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
@@ -37,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -280,5 +288,272 @@ public class ProductServiceImpl implements ProductService {
     public Page<GetProductByCategoryResponseDto> getEbooksByMember(
             Pageable pageable, Long memberNo) {
         return productRepository.getEbooksByMember(pageable, memberNo);
+    }
+
+    @Override
+    @Transactional
+    public void modifyProductInfo(Long productNo, ModifyProductInfoRequestDto request) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+        product.modifyProductInfo(request);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void modifyProductCategory(Long productNo, ModifyProductCategoryRequestDto request) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+
+        product.initCategory();
+
+        for (Integer categoryNo : request.getCategoriesNo()) {
+            Category category = categoryRepository.findById(categoryNo)
+                    .orElseThrow(CategoryNotFoundException::new);
+            product.getProductCategories()
+                    .add(new ProductCategory(new ProductCategory.Pk(categoryNo, productNo), category, product));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void modifyProductAuthor(Long productNo, ModifyProductAuthorRequestDto request) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+
+        product.initAuthor();
+
+        for (Integer authorNo : request.getAuthors()) {
+            Author author = authorRepository.findById(authorNo)
+                    .orElseThrow(NotFoundAuthorException::new);
+
+            product.getProductAuthors()
+                    .add(new ProductAuthor(new ProductAuthor.Pk(authorNo, productNo), author, product));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void modifyProductTag(Long productNo, ModifyProductTagRequestDto request) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+        product.initTag();
+
+        if (Objects.nonNull(request.getTags())) {
+            for (Integer tagNo : request.getTags()) {
+                Tag tag = tagRepository.findById(tagNo)
+                        .orElseThrow(() -> new TagNotFoundException(tagNo));
+
+                product.getProductTags()
+                        .add(new ProductTag(new ProductTag.Pk(tagNo, productNo), tag, product));
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void modifyProductType(Long productNo, Integer typeStateNo) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+
+        ProductTypeStateCode typeStateCode = typeStateCodeRepository.findById(typeStateNo)
+                .orElseThrow(NotFoundStateCodeException::new);
+
+        product.modifyType(typeStateCode);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void modifyProductSale(Long productNo, Integer saleStateNo) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+        ProductSaleStateCode productSaleStateCode = saleStateCodeRepository.findById(saleStateNo)
+                .orElseThrow(NotFoundStateCodeException::new);
+
+        product.modifySaleType(productSaleStateCode);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void modifyProductPolicy(Long productNo, Integer policyNo) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+        ProductPolicy productPolicy = productPolicyRepository.findById(policyNo)
+                .orElseThrow(NotFoundProductPolicyException::new);
+
+        product.modifyPolicy(productPolicy);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public GetDownloadInfo getEBookInfo(Long productNo) {
+        String filePath = productRepository.getFilePath(productNo);
+
+        return fileManagement.downloadFileInfo(filePath);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void modifyProductDescription(Long productNo, ModifyProductDescriptionRequestDto request) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+
+        product.modifyDescription(request.getDescription());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void modifyProductEBook(Long productNo, MultipartFile eBook) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+
+        try {
+            Optional<File> eBookFile = product.getFiles().stream()
+                    .filter(x -> x.getFileCategory()
+                            .equals(FileCategory.PRODUCT_DETAIL.getCategory()))
+                    .findFirst();
+            if (eBookFile.isEmpty()) {
+                return;
+            }
+            fileManagement.deleteFile(eBookFile.get().getFilePath());
+        } catch (IOException e) {
+            throw new FileNotFoundException();
+        }
+
+        try {
+            File file = fileManagement.saveFile(null, null, product,
+                    null, null, null,
+                    eBook, FileCategory.PRODUCT_EBOOK.getCategory(), FileCategory.PRODUCT_EBOOK.getPath());
+
+            product.modifyEBook(file);
+        } catch (IOException e) {
+            throw new FileNotFoundException();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void modifyProductImage(Long productNo, MultipartFile image) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+
+        try {
+            Optional<File> thumbnailImage = product.getFiles().stream()
+                    .filter(x -> x.getFileCategory()
+                            .equals(FileCategory.PRODUCT_DETAIL.getCategory()))
+                    .findFirst();
+            if (thumbnailImage.isEmpty()) {
+                return;
+            }
+            fileManagement.deleteFile(thumbnailImage.get().getFilePath());
+        } catch (IOException e) {
+            throw new FileNotFoundException();
+        }
+
+        try {
+            File file = fileManagement.saveFile(null, null, product, null, null, null,
+                    image, FileCategory.PRODUCT_THUMBNAIL.getCategory(), FileCategory.PRODUCT_THUMBNAIL.getPath());
+            product.modifyThumbnail(file);
+        } catch (IOException e) {
+            throw new FileNotFoundException();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void modifyProductDetailImage(Long productNo, MultipartFile detail) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+
+        try {
+            Optional<File> detailImage = product.getFiles().stream()
+                    .filter(x -> x.getFileCategory()
+                            .equals(FileCategory.PRODUCT_DETAIL.getCategory()))
+                    .findFirst();
+            if (detailImage.isEmpty()) {
+                return;
+            }
+            fileManagement.deleteFile(detailImage.get().getFilePath());
+        } catch (IOException e) {
+            throw new FileNotFoundException();
+        }
+        try {
+            File file = fileManagement.saveFile(null, null, product, null, null, null,
+                    detail, FileCategory.PRODUCT_DETAIL.getCategory(), FileCategory.PRODUCT_DETAIL.getPath());
+
+            product.modifyDetailImage(file);
+        } catch (IOException e) {
+            throw new FileNotFoundException();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void addProductImage(Long productNo, MultipartFile image) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+
+        try {
+            File file = fileManagement.saveFile(null, null, product, null, null, null,
+                    image, FileCategory.PRODUCT_THUMBNAIL.getCategory(), FileCategory.PRODUCT_THUMBNAIL.getPath());
+
+            product.addFile(file);
+        } catch (IOException e) {
+            throw new FileNotFoundException();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void addProductDetailImage(Long productNo, MultipartFile detailImage) {
+        Product product = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+
+        try {
+            File file = fileManagement.saveFile(null, null, product, null, null, null,
+                    detailImage, FileCategory.PRODUCT_DETAIL.getCategory(), FileCategory.PRODUCT_DETAIL.getPath());
+
+            product.addFile(file);
+        } catch (IOException e) {
+            throw new FileNotFoundException();
+        }
     }
 }

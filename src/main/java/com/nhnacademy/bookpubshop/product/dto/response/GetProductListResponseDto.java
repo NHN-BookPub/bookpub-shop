@@ -18,6 +18,7 @@ public class GetProductListResponseDto {
     private Integer productStock;
     private Long salesPrice;
     private Integer saleRate;
+    private boolean productSubscribed;
     private Long productPrice;
     private boolean deleted;
 }

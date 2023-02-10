@@ -1,25 +1,11 @@
 package com.nhnacademy.bookpubshop.product.controller;
 
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.anyLong;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -34,7 +20,13 @@ import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
+import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductAuthorRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductCategoryRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductDescriptionRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductInfoRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductTagRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
@@ -52,6 +44,7 @@ import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.tag.dummy.TagDummy;
 import com.nhnacademy.bookpubshop.tag.entity.Tag;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -168,6 +161,7 @@ class ProductControllerTest {
                 product.getProductStock(),
                 product.getSalesPrice(),
                 product.getSalesRate(),
+                product.isProductSubscribed(),
                 product.getProductPrice(),
                 product.isProductDeleted());
 
@@ -239,7 +233,7 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.content[0].productPrice").value(listResponseDto.getProductPrice()))
                 .andExpect(jsonPath("$.content[0].deleted").value(listResponseDto.isDeleted()))
                 .andDo(print())
-                .andDo(document("get-products",
+                .andDo(document("product-getList",
                         preprocessResponse(prettyPrint()),
                         requestParameters(
                                 parameterWithName("page").description("조회할 페이지 번호"),
@@ -255,6 +249,7 @@ class ProductControllerTest {
                                 fieldWithPath("content[].productStock").description("상품 재고수량"),
                                 fieldWithPath("content[].salesPrice").description("상품 판매가"),
                                 fieldWithPath("content[].saleRate").description("상품의 할인율"),
+                                fieldWithPath("content[].productSubscribed").description("구독 가능 여부"),
                                 fieldWithPath("content[].productPrice").description("상품 정가"),
                                 fieldWithPath("content[].deleted").description("상품 삭제여부"),
                                 fieldWithPath("content[].thumbnail").description("상품 썸네일")
@@ -264,10 +259,6 @@ class ProductControllerTest {
 
     }
 
-    //this.mockMvc.perform(multipart("/upload").file("file", "example".getBytes()))
-    //	.andExpect(status().isOk())
-
-    //));
     @Test
     @DisplayName("상품 생성 성공")
     void productAddSuccessTest() throws Exception {
@@ -816,7 +807,7 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.tags").value(responseDto.getTags()))
                 .andExpect(jsonPath("$.tagsColors").value(responseDto.getTagsColors()))
                 .andDo(print())
-                .andDo(document("get-product",
+                .andDo(document("product-get",
                         preprocessResponse(prettyPrint()),
                         pathParameters(
                                 parameterWithName("productNo").description("조회할 상품 번호")
@@ -898,6 +889,7 @@ class ProductControllerTest {
                                 fieldWithPath("content[].salesPrice").description("상품 판매가"),
                                 fieldWithPath("content[].saleRate").description("상품 할인율"),
                                 fieldWithPath("content[].productPrice").description("상품 정가"),
+                                fieldWithPath("content[].productSubscribed").description("구독 가능 여부"),
                                 fieldWithPath("content[].deleted").description("상품의 삭제 여부"),
                                 fieldWithPath("content[].thumbnail").description("상품 썸네일")
                         )));
@@ -1128,6 +1120,10 @@ class ProductControllerTest {
                                 parameterWithName("size").description("페이지 사이즈")
                         ),
 
+                        pathParameters(
+                                parameterWithName("categoryNo").description("카테고리 번호")
+                        ),
+
                         responseFields(
                                 fieldWithPath("totalPages").description("총 페이지 개수"),
                                 fieldWithPath("number").description("현재 페이지 번호"),
@@ -1216,4 +1212,863 @@ class ProductControllerTest {
 
         verify(productService, times(1)).getEbooks(pageable);
     }
+
+    @Test
+    @DisplayName("상품 정보 수정 api 테스트")
+    void modifyProductInfo_success_test() throws Exception {
+        // given
+        ModifyProductInfoRequestDto dto = new ModifyProductInfoRequestDto();
+        ReflectionTestUtils.setField(dto, "productIsbn", "12345678910");
+        ReflectionTestUtils.setField(dto, "productPrice", 1000L);
+        ReflectionTestUtils.setField(dto, "salesRate", 10);
+        ReflectionTestUtils.setField(dto, "productPublisher", "출판사");
+        ReflectionTestUtils.setField(dto, "publishedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(dto, "pageCount", 1000);
+        ReflectionTestUtils.setField(dto, "salesPrice", 900L);
+        ReflectionTestUtils.setField(dto, "priority", 5);
+
+        // when
+        doNothing().when(productService).modifyProductInfo(1L, dto);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/info", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("product-modify-info-success",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("productIsbn").description("상품 Isbn"),
+                                fieldWithPath("productPrice").description("정가"),
+                                fieldWithPath("salesRate").description("할인율"),
+                                fieldWithPath("productPublisher").description("출판사"),
+                                fieldWithPath("publishedAt").description("출판일"),
+                                fieldWithPath("pageCount").description("페이지 수"),
+                                fieldWithPath("salesPrice").description("할인가격"),
+                                fieldWithPath("priority").description("우선순위")
+                        )));
+
+        verify(productService, times(1))
+                .modifyProductInfo(anyLong(), any(ModifyProductInfoRequestDto.class));
+    }
+
+    @Test
+    @DisplayName("상품 정보 수정 실패 테스트 (isbn 길이 초과)")
+    void modifyProductInfo_fail_over_isbn_Test() throws Exception {
+        // given
+        ModifyProductInfoRequestDto dto = new ModifyProductInfoRequestDto();
+        ReflectionTestUtils.setField(dto, "productIsbn", "10글자 미만 13글자 이상의 isbn");
+        ReflectionTestUtils.setField(dto, "productPrice", 1000L);
+        ReflectionTestUtils.setField(dto, "salesRate", 10);
+        ReflectionTestUtils.setField(dto, "productPublisher", "출판사");
+        ReflectionTestUtils.setField(dto, "publishedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(dto, "pageCount", 1000);
+        ReflectionTestUtils.setField(dto, "salesPrice", 900L);
+        ReflectionTestUtils.setField(dto, "priority", 5);
+
+        // when
+        doNothing().when(productService).modifyProductInfo(1L, dto);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/info", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(print())
+                .andDo(document("product-modify-info-fail-over-isbn",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("productIsbn").description("상품 Isbn"),
+                                fieldWithPath("productPrice").description("정가"),
+                                fieldWithPath("salesRate").description("할인율"),
+                                fieldWithPath("productPublisher").description("출판사"),
+                                fieldWithPath("publishedAt").description("출판일"),
+                                fieldWithPath("pageCount").description("페이지 수"),
+                                fieldWithPath("salesPrice").description("할인가격"),
+                                fieldWithPath("priority").description("우선순위")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("ISBN은 10자 혹은 13자입니다.")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("상품 정보 수정 실패 테스트 (isbn 빈값)")
+    void modifyProductInfo_fail_test_null_isbn() throws Exception {
+        // given
+        ModifyProductInfoRequestDto dto = new ModifyProductInfoRequestDto();
+        ReflectionTestUtils.setField(dto, "productIsbn", null);
+        ReflectionTestUtils.setField(dto, "productPrice", 1000L);
+        ReflectionTestUtils.setField(dto, "salesRate", 10);
+        ReflectionTestUtils.setField(dto, "productPublisher", "출판사");
+        ReflectionTestUtils.setField(dto, "publishedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(dto, "pageCount", 1000);
+        ReflectionTestUtils.setField(dto, "salesPrice", 900L);
+        ReflectionTestUtils.setField(dto, "priority", 5);
+
+        // when
+        doNothing().when(productService).modifyProductInfo(1L, dto);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/info", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(print())
+                .andDo(document("product-modify-info-fail-null-isbn",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("productIsbn").description("상품 Isbn"),
+                                fieldWithPath("productPrice").description("정가"),
+                                fieldWithPath("salesRate").description("할인율"),
+                                fieldWithPath("productPublisher").description("출판사"),
+                                fieldWithPath("publishedAt").description("출판일"),
+                                fieldWithPath("pageCount").description("페이지 수"),
+                                fieldWithPath("salesPrice").description("할인가격"),
+                                fieldWithPath("priority").description("우선순위")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("ISBN은 필수입니다.")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("상품 정보 수정 실패 테스트 (null price)")
+    void modifyProductInfo_fail_test_null_price() throws Exception {
+        // given
+        ModifyProductInfoRequestDto dto = new ModifyProductInfoRequestDto();
+        ReflectionTestUtils.setField(dto, "productIsbn", "1234561232");
+        ReflectionTestUtils.setField(dto, "productPrice", null);
+        ReflectionTestUtils.setField(dto, "salesRate", 10);
+        ReflectionTestUtils.setField(dto, "productPublisher", "출판사");
+        ReflectionTestUtils.setField(dto, "publishedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(dto, "pageCount", 1000);
+        ReflectionTestUtils.setField(dto, "salesPrice", 900L);
+        ReflectionTestUtils.setField(dto, "priority", 5);
+
+        // when
+        doNothing().when(productService).modifyProductInfo(1L, dto);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/info", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(print())
+                .andDo(document("product-modify-info-fail-null-productPrice",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("productIsbn").description("상품 Isbn"),
+                                fieldWithPath("productPrice").description("정가"),
+                                fieldWithPath("salesRate").description("할인율"),
+                                fieldWithPath("productPublisher").description("출판사"),
+                                fieldWithPath("publishedAt").description("출판일"),
+                                fieldWithPath("pageCount").description("페이지 수"),
+                                fieldWithPath("salesPrice").description("할인가격"),
+                                fieldWithPath("priority").description("우선순위")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("정가는 입력이 필수입니다.")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("상품 정보 수정 실패 테스트 (null productPublisher)")
+    void modifyProductInfo_fail_test_null_productPublisher() throws Exception {
+        // given
+        ModifyProductInfoRequestDto dto = new ModifyProductInfoRequestDto();
+        ReflectionTestUtils.setField(dto, "productIsbn", "1234561232");
+        ReflectionTestUtils.setField(dto, "productPrice", 100L);
+        ReflectionTestUtils.setField(dto, "salesRate", 10);
+        ReflectionTestUtils.setField(dto, "productPublisher", null);
+        ReflectionTestUtils.setField(dto, "publishedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(dto, "pageCount", 1000);
+        ReflectionTestUtils.setField(dto, "salesPrice", 900L);
+        ReflectionTestUtils.setField(dto, "priority", 5);
+
+        // when
+        doNothing().when(productService).modifyProductInfo(1L, dto);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/info", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(print())
+                .andDo(document("product-modify-info-fail-null-productPublisher",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("productIsbn").description("상품 Isbn"),
+                                fieldWithPath("productPrice").description("정가"),
+                                fieldWithPath("salesRate").description("할인율"),
+                                fieldWithPath("productPublisher").description("출판사"),
+                                fieldWithPath("publishedAt").description("출판일"),
+                                fieldWithPath("pageCount").description("페이지 수"),
+                                fieldWithPath("salesPrice").description("할인가격"),
+                                fieldWithPath("priority").description("우선순위")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("출판사 값 입력은 필수입니다.")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("상품 정보 수정 실패 테스트 (over productPublisher)")
+    void modifyProductInfo_fail_test_over_productPublisher() throws Exception {
+        // given
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 20; i++) {
+            sb.append("출판사");
+        }
+
+        ModifyProductInfoRequestDto dto = new ModifyProductInfoRequestDto();
+        ReflectionTestUtils.setField(dto, "productIsbn", "1234561232");
+        ReflectionTestUtils.setField(dto, "productPrice", 100L);
+        ReflectionTestUtils.setField(dto, "salesRate", 10);
+        ReflectionTestUtils.setField(dto, "productPublisher", sb.toString());
+        ReflectionTestUtils.setField(dto, "publishedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(dto, "pageCount", 1000);
+        ReflectionTestUtils.setField(dto, "salesPrice", 900L);
+        ReflectionTestUtils.setField(dto, "priority", 5);
+
+        // when
+        doNothing().when(productService).modifyProductInfo(1L, dto);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/info", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(print())
+                .andDo(document("product-modify-info-fail-over-productPublisher",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("productIsbn").description("상품 Isbn"),
+                                fieldWithPath("productPrice").description("정가"),
+                                fieldWithPath("salesRate").description("할인율"),
+                                fieldWithPath("productPublisher").description("출판사"),
+                                fieldWithPath("publishedAt").description("출판일"),
+                                fieldWithPath("pageCount").description("페이지 수"),
+                                fieldWithPath("salesPrice").description("할인가격"),
+                                fieldWithPath("priority").description("우선순위")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("50자를 넘을 수 없습니다.")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("상품 정보 수정 실패 테스트 (null salesPrice)")
+    void modifyProductInfo_fail_test_null_salesPrice() throws Exception {
+        // given
+        ModifyProductInfoRequestDto dto = new ModifyProductInfoRequestDto();
+        ReflectionTestUtils.setField(dto, "productIsbn", "1234561232");
+        ReflectionTestUtils.setField(dto, "productPrice", 100L);
+        ReflectionTestUtils.setField(dto, "salesRate", 10);
+        ReflectionTestUtils.setField(dto, "productPublisher", "출판사");
+        ReflectionTestUtils.setField(dto, "publishedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(dto, "pageCount", 1000);
+        ReflectionTestUtils.setField(dto, "salesPrice", null);
+        ReflectionTestUtils.setField(dto, "priority", 5);
+
+        // when
+        doNothing().when(productService).modifyProductInfo(1L, dto);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/info", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(print())
+                .andDo(document("product-modify-info-fail-null-salesPrice",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("productIsbn").description("상품 Isbn"),
+                                fieldWithPath("productPrice").description("정가"),
+                                fieldWithPath("salesRate").description("할인율"),
+                                fieldWithPath("productPublisher").description("출판사"),
+                                fieldWithPath("publishedAt").description("출판일"),
+                                fieldWithPath("pageCount").description("페이지 수"),
+                                fieldWithPath("salesPrice").description("할인가격"),
+                                fieldWithPath("priority").description("우선순위")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("판매가는 필수입니다.")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("상품 카테고리 수정 api 성공 테스트")
+    void modifyProductCategory_success_test() throws Exception {
+        // given
+        ModifyProductCategoryRequestDto dto = new ModifyProductCategoryRequestDto();
+        ReflectionTestUtils.setField(dto, "categoriesNo", List.of(1, 2));
+
+        // when
+        doNothing().when(productService)
+                .modifyProductCategory(1L, dto);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/category", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("product-modify-category-success",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("categoriesNo").description("카테고리 번호")
+                        )
+                ));
+
+        verify(productService, times(1))
+                .modifyProductCategory(anyLong(), any(ModifyProductCategoryRequestDto.class));
+    }
+
+    @Test
+    @DisplayName("상품 카테고리 수정 실패 테스트 (null category No) ")
+    void modifyProductCategory_fail_test_null_categoryNos() throws Exception {
+        // given
+        ModifyProductCategoryRequestDto dto = new ModifyProductCategoryRequestDto();
+        ReflectionTestUtils.setField(dto, "categoriesNo", null);
+
+        // when
+        doNothing().when(productService)
+                .modifyProductCategory(1L, dto);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/category", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(print())
+                .andDo(document("product-modify-category-fail-null-categoryNo",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("categoriesNo").description("카테고리 번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("카테고리 번호는 필수입니다.")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("상품 저자 수정 API 성공 테스트")
+    void modifyProductAuthor_success_test() throws Exception {
+        // given
+        ModifyProductAuthorRequestDto dto = new ModifyProductAuthorRequestDto();
+        ReflectionTestUtils.setField(dto, "authors", List.of(1, 2));
+
+        // when
+        doNothing().when(productService).modifyProductAuthor(1L, dto);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/author", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("product-modify-author-success",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("authors").description("저자 번호")
+                        )
+                ));
+
+        verify(productService, times(1))
+                .modifyProductAuthor(anyLong(), any(ModifyProductAuthorRequestDto.class));
+    }
+
+    @Test
+    @DisplayName("상품 저자 수정 실패 테스트 (null authorsNo)")
+    void modifyProductAuthor_fail_test_null_authorsNo() throws Exception {
+        // given
+        ModifyProductAuthorRequestDto dto = new ModifyProductAuthorRequestDto();
+        ReflectionTestUtils.setField(dto, "authors", null);
+
+        // when
+        doNothing().when(productService).modifyProductAuthor(1L, dto);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/author", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(print())
+                .andDo(document("product-modify-author-fail-null-authorNo",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("authors").description("저자 번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("저자 번호는 필수입니다.")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("상품 태그 수정 API 성공 테스트")
+    void modifyProductTag_success_test() throws Exception {
+        // given
+        ModifyProductTagRequestDto dto = new ModifyProductTagRequestDto();
+        ReflectionTestUtils.setField(dto, "tags", List.of(1, 2));
+
+        // when
+        doNothing().when(productService).modifyProductTag(1L, dto);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/tag", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("product-modify-tag-success",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("tags").description("태그 번호")
+                        )
+                ));
+
+        verify(productService, times(1))
+                .modifyProductTag(anyLong(), any(ModifyProductTagRequestDto.class));
+    }
+
+    @Test
+    @DisplayName("상품 태그 수정 실패 테스트 (null tagNo)")
+    void modifyProductTag_fail_test_null_tagNo() throws Exception {
+        // given
+        ModifyProductTagRequestDto dto = new ModifyProductTagRequestDto();
+        ReflectionTestUtils.setField(dto, "tags", null);
+
+        // when
+        doNothing().when(productService).modifyProductTag(1L, dto);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/tag", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(print())
+                .andDo(document("product-modify-tag-fail-null-tagNo",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("tags").description("태그 번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("태그 번호는 필수입니다.")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("상품 유형 수정 API 성공 테스트")
+    void modifyProductType_success_test() throws Exception {
+        // given
+        Integer typeStateNo = 1;
+
+        // when
+        doNothing().when(productService).modifyProductType(1L, 1);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/type", 1)
+                        .param("no", mapper.writeValueAsString(typeStateNo))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("product-modify-type-success",
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestParameters(
+                                parameterWithName("no").description("상품 타입 번호")
+                        )
+                ));
+
+        verify(productService, times(1))
+                .modifyProductType(anyLong(), anyInt());
+    }
+
+    @Test
+    @DisplayName("상품 판매 유형 수정 API 성공 테스트")
+    void modifyProductSale_success_test() throws Exception {
+        // given
+        Integer saleCode = 1;
+
+        // when
+        doNothing().when(productService).modifyProductSale(anyLong(), anyInt());
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/sale", 1)
+                        .param("no", mapper.writeValueAsString(saleCode))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("product-modify-sale-success",
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestParameters(
+                                parameterWithName("no").description("상품 판매 유형 번호")
+                        )
+                ));
+
+        verify(productService, times(1))
+                .modifyProductSale(anyLong(), anyInt());
+    }
+
+    @Test
+    @DisplayName("상품 포인트 정책 수정 API 성공 테스트")
+    void modifyProductPolicy_success_test() throws Exception {
+        // given
+        Integer policyNo = 1;
+
+        // when
+        doNothing().when(productService).modifyProductPolicy(anyLong(), anyInt());
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/policy", 1)
+                        .param("no", mapper.writeValueAsString(policyNo))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("product-modify-policy-success",
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestParameters(
+                                parameterWithName("no").description("상품 포인트 정책 번호")
+                        )
+                ));
+
+        verify(productService, times(1))
+                .modifyProductPolicy(anyLong(), anyInt());
+    }
+
+    @Test
+    @DisplayName("E-Book 정보 조회 성공 API 테스트")
+    void getEBookInfo_success_test() throws Exception {
+        // given
+        GetDownloadInfo info = new GetDownloadInfo("object storage path", "token", "파일 본명", "파일 저장명", "파일 확장자");
+
+        // when
+        when(productService.getEBookInfo(anyLong()))
+                .thenReturn(info);
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/token/downloads/e-book/{productNo}", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("path").value(info.getPath()))
+                .andExpect(jsonPath("token").value(info.getToken()))
+                .andExpect(jsonPath("nameOrigin").value(info.getNameOrigin()))
+                .andExpect(jsonPath("nameSaved").value(info.getNameSaved()))
+                .andExpect(jsonPath("fileExtension").value(info.getFileExtension()))
+                .andDo(print())
+                .andDo(document("product-get-EBook-success",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("path").description("오브젝트 스토리지 경로"),
+                                fieldWithPath("token").description("오브젝트 스토리지 접근 경로"),
+                                fieldWithPath("nameOrigin").description("파일 본명"),
+                                fieldWithPath("nameSaved").description("파일 저장명"),
+                                fieldWithPath("fileExtension").description("파일 확장자")
+                        )
+                ));
+
+        verify(productService, times(1))
+                .getEBookInfo(anyLong());
+    }
+
+    @Test
+    @DisplayName("상품 설명 수정 성공 API 테스트")
+    void modifyProductDescription_success_test() throws Exception {
+        // given
+        ModifyProductDescriptionRequestDto dto = new ModifyProductDescriptionRequestDto();
+        ReflectionTestUtils.setField(dto, "description", "# 설명");
+
+        // when
+        doNothing().when(productService).modifyProductDescription(anyLong(), any(ModifyProductDescriptionRequestDto.class));
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/description", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("product-modify-description-success",
+                        preprocessRequest(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("description").description("상품 설명")
+                        )
+                ));
+
+        verify(productService, times(1))
+                .modifyProductDescription(anyLong(), any(ModifyProductDescriptionRequestDto.class));
+    }
+
+    @Test
+    @DisplayName("상품 설명 수정 실패 테스트 (over description)")
+    void modifyProductDescription_fail_test_over_description() throws Exception {
+        // given
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 1000; i++) {
+            sb.append("초과된 상품 설명");
+        }
+
+        ModifyProductDescriptionRequestDto dto = new ModifyProductDescriptionRequestDto();
+        ReflectionTestUtils.setField(dto, "description", sb.toString());
+
+        // when
+        doNothing().when(productService).modifyProductDescription(anyLong(), any(ModifyProductDescriptionRequestDto.class));
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/description", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(print())
+                .andDo(document("product-modify-description-fail-over-description",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("description").description("상품 설명")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("5000자를 넘길 수 없습니다.")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("상품 설명 수정 실패 테스트 (null description)")
+    void modifyProductDescription_fail_test_null_description() throws Exception {
+        // given
+        ModifyProductDescriptionRequestDto dto = new ModifyProductDescriptionRequestDto();
+        ReflectionTestUtils.setField(dto, "description", null);
+
+        // when
+        doNothing().when(productService).modifyProductDescription(anyLong(), any(ModifyProductDescriptionRequestDto.class));
+
+        // then
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/products/{productNo}/description", 1)
+                        .content(mapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(print())
+                .andDo(document("product-modify-description-fail-null-description",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("productNo").description("상품 번호")
+                        ),
+                        requestFields(
+                                fieldWithPath("description").description("상품 설명")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].message").description("설명은 비어있으면 안됩니다.")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("E-Book 수정 API 테스트")
+    void modifyEBook_success_test() throws Exception {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MockMultipartFile eBook = new MockMultipartFile("eBook", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
+
+        // when
+        doNothing().when(productService).modifyProductEBook(1L, eBook);
+
+        // then
+        mockMvc.perform(multipart("/token/products/{productNo}/e-book", 1)
+                        .file(eBook)
+                        .with(req -> {
+                            req.setMethod("PUT");
+                            return req;
+                        }))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("product-modify-eBook-success",
+                        preprocessRequest(prettyPrint()),
+                        requestParts(
+                                partWithName("eBook").description("E-Book 파일")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("썸네일 파일 수정 API 테스트")
+    void modifyThumbnail_success_test() throws Exception {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MockMultipartFile thumbnail = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
+
+        // when
+        doNothing().when(productService).modifyProductImage(1L, thumbnail);
+
+        // then
+        mockMvc.perform(multipart("/token/products/{productNo}/thumbnail", 1)
+                        .file(thumbnail)
+                        .with(req -> {
+                            req.setMethod("PUT");
+                            return req;
+                        }))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("product-modify-thumbnail-success",
+                        preprocessRequest(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description("썸네일 이미지 파일")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("상품 상세이미지 파일 수정 API 테스트")
+    void modifyDetailImage_success_test() throws Exception {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MockMultipartFile detailImage = new MockMultipartFile("detailImage", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
+
+        // when
+        doNothing().when(productService).modifyProductDetailImage(1L, detailImage);
+
+        // then
+        mockMvc.perform(multipart("/token/products/{productNo}/detail-image", 1)
+                        .file(detailImage)
+                        .with(req -> {
+                            req.setMethod("PUT");
+                            return req;
+                        }))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("product-modify-detail-image-success",
+                        preprocessRequest(prettyPrint()),
+                        requestParts(
+                                partWithName("detailImage").description("상세 이미지 파일")
+                        )
+                ));
+    }
+
+
+    @Test
+    @DisplayName("상품 썸네일 이미지 파일 추가 API 테스트")
+    void addProductImage_success_test() throws Exception {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MockMultipartFile thumbnail = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
+
+        // when
+        doNothing().when(productService).addProductImage(1L, thumbnail);
+
+        // then
+        mockMvc.perform(multipart("/token/products/{productNo}/new-thumbnail", 1)
+                        .file(thumbnail)
+                        .with(req -> {
+                            req.setMethod("PUT");
+                            return req;
+                        }))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("product-modify-new-thumbnail-success",
+                        preprocessRequest(prettyPrint()),
+                        requestParts(
+                                partWithName("image").description("썸네일 이미지 파일")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("상품 상세 이미지 파일 추가 API 테스트")
+    void addProductDetailImage_success_test() throws Exception {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MockMultipartFile detailImage = new MockMultipartFile("detailImage", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
+
+        // when
+        doNothing().when(productService).addProductDetailImage(1L, detailImage);
+
+        // then
+        mockMvc.perform(multipart("/token/products/{productNo}/new-detail-image", 1)
+                        .file(detailImage)
+                        .with(req -> {
+                            req.setMethod("PUT");
+                            return req;
+                        }))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("product-modify-new-detail-image-success",
+                        preprocessRequest(prettyPrint()),
+                        requestParts(
+                                partWithName("detailImage").description("상세 이미지 파일")
+                        )
+                ));
+    }
+
 }

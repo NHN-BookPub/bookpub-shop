@@ -1,36 +1,442 @@
-= Book-Pub
 :toc:
 
-== Api 명세
+==== 상품 저자 수정
 
-상품(Product) 수정에 관한 Api 명세입니다.
+상품(Product) 저자 수정 API.
 
-== 상품 수정
+===== 요청구조
 
-=== 요청구조
+Request
 
-include::../../../../target/snippets/product-modify/http-request.adoc[]
+include::../../../../target/snippets/product-modify-author-success/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 응답구조
 
-include::../../../../target/snippets/product-modify/request-fields.adoc[]
+Response
 
-=== 응답구조
+include::../../../../target/snippets/product-modify-author-success/http-response.adoc[]
 
-include::../../../../target/snippets/product-modify/http-response.adoc[]
+===== 경로 변수
 
-== 상품 삭제 여부 수정
+Path Variable
 
-=== 요청 구조
+include::../../../../target/snippets/product-modify-author-success/path-parameters.adoc[]
+
+===== 요청 파라미터
+
+Request Parameter
+
+include::../../../../target/snippets/product-modify-author-success/request-fields.adoc[]
+
+==== 상품 카테고리 수정
+
+상품(Product) 카테고리 수정 API.
+
+===== 요청구조
+
+Request
+
+include::../../../../target/snippets/product-modify-category-success/http-request.adoc[]
+
+===== 응답구조
+
+Response
+
+include::../../../../target/snippets/product-modify-category-success/http-response.adoc[]
+
+===== 경로 변수
+
+Path Variable
+
+include::../../../../target/snippets/product-modify-category-success/path-parameters.adoc[]
+
+===== 요청 파라미터
+
+Request Parameter
+
+include::../../../../target/snippets/product-modify-category-success/request-fields.adoc[]
+
+==== 상품 설명 수정
+
+상품(Product) 설명 수정 API.
+
+===== 요청구조
+
+Request
+
+include::../../../../target/snippets/product-modify-description-success/http-request.adoc[]
+
+===== 응답구조
+
+Response
+
+include::../../../../target/snippets/product-modify-description-success/http-response.adoc[]
+
+===== 경로 변수
+
+Path Variable
+
+include::../../../../target/snippets/product-modify-description-success/path-parameters.adoc[]
+
+===== 요청 파라미터
+
+Request Parameter
+
+include::../../../../target/snippets/product-modify-description-success/request-fields.adoc[]
+
+==== 상품 상세 이미지 수정
+
+상품(Product) 상세 이미지 수정 API.
+
+===== 요청구조
+
+Request
+
+include::../../../../target/snippets/product-modify-detail-image-success/http-request.adoc[]
+
+===== 응답구조
+
+Response
+
+include::../../../../target/snippets/product-modify-detail-image-success/http-response.adoc[]
+
+===== 요청 파트
+
+Request Part
+
+include::../../../../target/snippets/product-modify-detail-image-success/request-parts.adoc[]
+
+==== 상품(E-Book) 수정
+
+상품(Product) E-Book 수정 API.
+
+===== 요청구조
+
+Request
+
+include::../../../../target/snippets/product-modify-eBook-success/http-request.adoc[]
+
+===== 응답구조
+
+Response
+
+include::../../../../target/snippets/product-modify-eBook-success/http-response.adoc[]
+
+===== 요청 파트
+
+Request Part
+
+include::../../../../target/snippets/product-modify-eBook-success/request-parts.adoc[]
+
+==== 상품 정보 수정
+
+상품(Product) 정보 수정 API.
+
+===== 요청구조
+
+Request
+
+include::../../../../target/snippets/product-modify-info-success/http-request.adoc[]
+
+===== 응답구조
+
+Response
+
+include::../../../../target/snippets/product-modify-info-success/http-response.adoc[]
+
+===== 경로 변수
+
+Path Variable
+
+include::../../../../target/snippets/product-modify-info-success/path-parameters.adoc[]
+
+===== 요청 파라미터
+
+Request Parameter
+
+include::../../../../target/snippets/product-modify-info-success/request-fields.adoc[]
+
+==== 상품 포인트 정책 수정
+
+상품(Product) 포인트 정책 수정 API.
+
+===== 요청구조
+
+Request
+
+include::../../../../target/snippets/product-modify-policy-success/http-request.adoc[]
+
+===== 응답구조
+
+Response
+
+include::../../../../target/snippets/product-modify-policy-success/http-response.adoc[]
+
+===== 경로 변수
+
+Path Variable
+
+include::../../../../target/snippets/product-modify-policy-success/path-parameters.adoc[]
+
+===== 요청 파라미터
+
+Request Parameter
+
+include::../../../../target/snippets/product-modify-policy-success/request-parameters.adoc[]
+
+==== 상품 판매 유형 수정
+
+상품(Product) 판매 유형 수정 API.
+
+===== 요청구조
+
+Request
+
+include::../../../../target/snippets/product-modify-sale-success/http-request.adoc[]
+
+===== 응답구조
+
+Response
+
+include::../../../../target/snippets/product-modify-sale-success/http-response.adoc[]
+
+===== 경로 변수
+
+Path Variable
+
+include::../../../../target/snippets/product-modify-sale-success/path-parameters.adoc[]
+
+===== 요청 파라미터
+
+Request Parameter
+
+include::../../../../target/snippets/product-modify-sale-success/request-parameters.adoc[]
+
+==== 상품 태그 수정
+
+상품(Product) 태그 수정 API.
+
+===== 요청구조
+
+Request
+
+include::../../../../target/snippets/product-modify-tag-success/http-request.adoc[]
+
+===== 응답구조
+
+Response
+
+include::../../../../target/snippets/product-modify-tag-success/http-response.adoc[]
+
+===== 경로 변수
+
+Path Variable
+
+include::../../../../target/snippets/product-modify-tag-success/path-parameters.adoc[]
+
+===== 요청 파라미터
+
+Request Parameter
+
+include::../../../../target/snippets/product-modify-tag-success/request-fields.adoc[]
+
+==== 상품 썸네일 수정
+
+상품(Product) 썸네일 수정 API.
+
+===== 요청구조
+
+Request
+
+include::../../../../target/snippets/product-modify-thumbnail-success/http-request.adoc[]
+
+===== 응답구조
+
+Response
+
+include::../../../../target/snippets/product-modify-thumbnail-success/http-response.adoc[]
+
+===== 요청 파트
+
+Request Part
+
+include::../../../../target/snippets/product-modify-thumbnail-success/request-parts.adoc[]
+
+==== 상품 유형 수정
+
+상품(Product) 유형 수정 API.
+
+===== 요청구조
+
+Request
+
+include::../../../../target/snippets/product-modify-type-success/http-request.adoc[]
+
+===== 응답구조
+
+Response
+
+include::../../../../target/snippets/product-modify-type-success/http-response.adoc[]
+
+===== 경로 변수
+
+Path Variable
+
+include::../../../../target/snippets/product-modify-type-success/path-parameters.adoc[]
+
+===== 요청 파라미터
+
+Request Parameter
+
+include::../../../../target/snippets/product-modify-type-success/request-parameters.adoc[]
+
+==== 상품 삭제 여부 수정
+
+상품(Product) 삭제 여부 수정 API.
+
+===== 요청구조
+
+Request
 
 include::../../../../target/snippets/product-deletedModify/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 응답구조
+
+Response
+
+include::../../../../target/snippets/product-deletedModify/http-response.adoc[]
+
+===== 경로 변수
+
+Path Variable
 
 include::../../../../target/snippets/product-deletedModify/path-parameters.adoc[]
 
+===== 요청 파라미터
+
+Request Parameter
+
 include::../../../../target/snippets/product-deletedModify/request-parameters.adoc[]
 
-=== 응답구조
+===== 예외 사항
 
-include::../../../../target/snippets/product-deletedModify/http-response.adoc[]
+====== 1. 저자 번호를 기입하지 않는 경우
+
+Request
+
+include::../../../../target/snippets/product-modify-author-fail-null-authorNo/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/product-modify-author-fail-null-authorNo/http-response.adoc[]
+
+====== 2. 카테고리 번호를 기입하지 않는 경우
+
+Request
+
+include::../../../../target/snippets/product-modify-category-fail-null-categoryNo/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/product-modify-category-fail-null-categoryNo/http-response.adoc[]
+
+====== 3. 설명을 기입하지 않는 경우
+
+Request
+
+include::../../../../target/snippets/product-modify-description-fail-null-description/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/product-modify-description-fail-null-description/http-response.adoc[]
+
+====== 3.1 설명 길이가 초과한 경우
+
+Request
+
+include::../../../../target/snippets/product-modify-description-fail-over-description/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/product-modify-description-fail-over-description/http-response.adoc[]
+
+====== 4. ISBN을 기입하지 않는 경우
+
+Request
+
+include::../../../../target/snippets/product-modify-info-fail-null-isbn/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/product-modify-info-fail-null-isbn/http-response.adoc[]
+
+====== 4.1 ISBN 길이가 초과한 경우
+
+Request
+
+include::../../../../target/snippets/product-modify-info-fail-over-isbn/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/product-modify-info-fail-over-isbn/http-response.adoc[]
+
+====== 5. 정가를 기입하지 않는 경우
+
+Request
+
+include::../../../../target/snippets/product-modify-info-fail-null-productPrice/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/product-modify-info-fail-null-productPrice/http-response.adoc[]
+
+====== 6. 출판사를 기입하지 않는 경우
+
+Request
+
+include::../../../../target/snippets/product-modify-info-fail-null-productPublisher/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/product-modify-info-fail-null-productPublisher/http-response.adoc[]
+
+====== 6.1 출판사 길이를 초과한 경우
+
+Request
+
+include::../../../../target/snippets/product-modify-info-fail-over-productPublisher/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/product-modify-info-fail-over-productPublisher/http-response.adoc[]
+
+====== 7. 판매가격을 기입하지 않는 경우
+
+Request
+
+include::../../../../target/snippets/product-modify-info-fail-null-salesPrice/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/product-modify-info-fail-null-salesPrice/http-response.adoc[]
+
+====== 8. 상품 설명을 기입하지 않는 경우
+
+Request
+
+include::../../../../target/snippets/product-modify-description-fail-null-description/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/product-modify-description-fail-null-description/http-response.adoc[]
+
+====== 8.1 상품 설명 길이를 초과한 경우
+
+Request
+
+include::../../../../target/snippets/product-modify-description-fail-over-description/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/product-modify-description-fail-over-description/http-response.adoc[]
+
