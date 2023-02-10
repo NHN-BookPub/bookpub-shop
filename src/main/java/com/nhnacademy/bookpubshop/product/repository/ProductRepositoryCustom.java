@@ -85,4 +85,6 @@ public interface ProductRepositoryCustom {
      * @return 페이징 상품들
      */
     Page<GetProductByCategoryResponseDto> getEbooks(Pageable pageable);
+
+    Page<GetProductByCategoryResponseDto> getEbooksByMember(Pageable pageable, Long memberNo);
 }

@@ -20,12 +20,20 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface OrderRepositoryCustom {
     /**
-     * 주문의 상세 정보를 반환합니다.
+     * 주문의 상세 정보를 반환합니다.(주문번호로 조회)
      *
      * @param orderNo 주문번호.
      * @return 주문상세 정보를 반환.
      */
     Optional<GetOrderDetailResponseDto> getOrderDetailById(Long orderNo);
+
+    /**
+     * 주문의 상세 정보를 반환합니다.(주문 Id 조회)
+     *
+     * @param orderId 주문번호.
+     * @return 주문상세 정보를 반환.
+     */
+    Optional<GetOrderDetailResponseDto> getOrderDetailByOrderId(String orderId);
 
     /**
      * 모든 주문을 반환합니다.
