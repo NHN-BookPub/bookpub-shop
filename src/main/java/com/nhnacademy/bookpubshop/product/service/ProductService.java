@@ -1,6 +1,12 @@
 package com.nhnacademy.bookpubshop.product.service;
 
+import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductAuthorRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductCategoryRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductDescriptionRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductInfoRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductTagRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
@@ -102,4 +108,116 @@ public interface ProductService {
      * @return 상품이 담긴 페이지 객체
      */
     Page<GetProductByCategoryResponseDto> getEbooks(Pageable pageable);
+
+    /**
+     * 상품 정보를 수정.
+     *
+     * @param productNo 상품 번호
+     * @param request   수정할 상품 정보
+     */
+    void modifyProductInfo(Long productNo, ModifyProductInfoRequestDto request);
+
+    /**
+     * 상품 카테고리를 수정.
+     *
+     * @param productNo 상품 번호
+     * @param request   수정할 카테고리 번호
+     */
+    void modifyProductCategory(Long productNo, ModifyProductCategoryRequestDto request);
+
+    /**
+     * 상품 저자를 수정.
+     *
+     * @param productNo 상품 번호
+     * @param request   수정할 저자 번호
+     */
+    void modifyProductAuthor(Long productNo, ModifyProductAuthorRequestDto request);
+
+    /**
+     * 상품 태그 수정.
+     *
+     * @param productNo 상품 번호
+     * @param request   수정할 태그 번호
+     */
+    void modifyProductTag(Long productNo, ModifyProductTagRequestDto request);
+
+    /**
+     * 상품 유형 수정.
+     *
+     * @param productNo   상품 번호
+     * @param typeStateNo 상품 유형 번호
+     */
+    void modifyProductType(Long productNo, Integer typeStateNo);
+
+    /**
+     * 상품 판매 유형 수정.
+     *
+     * @param productNo   상품 번호
+     * @param saleStateNo 상품 한매 유형 번호
+     */
+    void modifyProductSale(Long productNo, Integer saleStateNo);
+
+    /**
+     * 상품 포인트 정책 수정.
+     *
+     * @param productNo 상품 번호
+     * @param policyNo  포인트 정책 번호
+     */
+    void modifyProductPolicy(Long productNo, Integer policyNo);
+
+    /**
+     * Ebook 파일 정보를 get.
+     *
+     * @param productNo 상품 번호
+     * @return E-Book 정보
+     */
+    GetDownloadInfo getEBookInfo(Long productNo);
+
+    /**
+     * 상품 설명 수정.
+     *
+     * @param productNo 상품 번호
+     * @param request   상품 설명 정보
+     */
+    void modifyProductDescription(Long productNo, ModifyProductDescriptionRequestDto request);
+
+    /**
+     * E-Book 파일 수정.
+     *
+     * @param productNo 상품 번호
+     * @param eBook     변경할 E-Book
+     */
+    void modifyProductEBook(Long productNo, MultipartFile eBook);
+
+    /**
+     * Image 파일 수정.
+     *
+     * @param productNo 상품 번호
+     * @param image     변경할 Image
+     */
+    void modifyProductImage(Long productNo, MultipartFile image);
+
+    /**
+     * Detail Image 수정.
+     *
+     * @param productNo 상품 번호
+     * @param detail    변경할 Detail Image
+     */
+    void modifyProductDetailImage(Long productNo, MultipartFile detail);
+
+    /**
+     * 상품 Image 추가.
+     *
+     * @param productNo 상품 번호
+     * @param image     추가할 상품 Image
+     */
+    void addProductImage(Long productNo, MultipartFile image);
+
+    /**
+     * 상품 상세 Detail Image 추가.
+     *
+     * @param productNo   상품 번호
+     * @param detailImage 추가할 상품 Detail Image
+     */
+    void addProductDetailImage(Long productNo, MultipartFile detailImage);
 }
