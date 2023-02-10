@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.product.controller;
 
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
+import com.nhnacademy.bookpubshop.annotation.MemberAndAuth;
 import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductAuthorRequestDto;
@@ -234,7 +235,7 @@ public class ProductController {
      *
      * @param pageable 페이징
      * @param memberNo 멤버번호
-     * @return
+     * @return 200 코드
      */
     @GetMapping("/token/product/{memberNo}/ebooks/")
     @MemberAndAuth
