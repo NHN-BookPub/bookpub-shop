@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -424,9 +425,14 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(ProductNotFoundException::new);
 
         try {
-            fileManagement.deleteFile(product.getFiles().stream()
+            Optional<File> eBookFile = product.getFiles().stream()
                     .filter(x -> x.getFileCategory()
-                            .equals(FileCategory.PRODUCT_EBOOK.getCategory())).findFirst().get().getFilePath());
+                            .equals(FileCategory.PRODUCT_DETAIL.getCategory()))
+                    .findFirst();
+            if (eBookFile.isEmpty()) {
+                return;
+            }
+            fileManagement.deleteFile(eBookFile.get().getFilePath());
         } catch (IOException e) {
             throw new FileNotFoundException();
         }
@@ -452,9 +458,14 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(ProductNotFoundException::new);
 
         try {
-            fileManagement.deleteFile(product.getFiles().stream()
+            Optional<File> thumbnailImage = product.getFiles().stream()
                     .filter(x -> x.getFileCategory()
-                            .equals(FileCategory.PRODUCT_THUMBNAIL.getCategory())).findFirst().get().getFilePath());
+                            .equals(FileCategory.PRODUCT_DETAIL.getCategory()))
+                    .findFirst();
+            if (thumbnailImage.isEmpty()) {
+                return;
+            }
+            fileManagement.deleteFile(thumbnailImage.get().getFilePath());
         } catch (IOException e) {
             throw new FileNotFoundException();
         }
@@ -478,9 +489,14 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(ProductNotFoundException::new);
 
         try {
-            fileManagement.deleteFile(product.getFiles().stream()
+            Optional<File> detailImage = product.getFiles().stream()
                     .filter(x -> x.getFileCategory()
-                            .equals(FileCategory.PRODUCT_DETAIL.getCategory())).findFirst().get().getFilePath());
+                            .equals(FileCategory.PRODUCT_DETAIL.getCategory()))
+                    .findFirst();
+            if (detailImage.isEmpty()) {
+                return;
+            }
+            fileManagement.deleteFile(detailImage.get().getFilePath());
         } catch (IOException e) {
             throw new FileNotFoundException();
         }
