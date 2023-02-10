@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.order.dto.response;
 
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderResponseDto;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 
@@ -28,7 +29,7 @@ public class GetOrderListResponseDto {
     }
 
     private Long orderNo;
-    private List<GetProductListForOrderResponseDto> orderProducts;
+    private List<GetProductListForOrderResponseDto> orderProducts = new ArrayList<>();
     private String orderState;
     private LocalDateTime createdAt;
     private LocalDateTime receivedAt;

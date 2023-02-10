@@ -679,7 +679,7 @@ class OrderServiceTest {
 
         when(productRepository.getProductListByOrderNo(order.getOrderNo()))
                 .thenReturn(List.of(productListDto));
-        when(orderRepository.getOrdersList(pageable))
+        when(orderRepository.getOrderList(pageable))
                 .thenReturn(pages);
 
 
