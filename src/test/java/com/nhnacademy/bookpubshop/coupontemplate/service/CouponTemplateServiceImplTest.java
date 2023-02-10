@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
+
 import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
@@ -142,7 +143,7 @@ class CouponTemplateServiceImplTest {
 
     @Test
     @DisplayName("쿠폰템플릿 상세 정보 조회 성공 테스트_이미지가 있는 경우")
-    void restGetDetailCouponTemplateTestWithImage_Success() throws IOException {
+    void restGetDetailCouponTemplateTestWithImage_Success() {
         GetDetailCouponTemplateResponseDto dto =
                 new GetDetailCouponTemplateResponseDto(1L, true, 1L, 1L, 1L, "test_typeName", "test_title", "test_categoryName", "test_target", "test_name", "test_image", LocalDateTime.of(1, 1, 1, 1, 1), true);
 
@@ -179,6 +180,35 @@ class CouponTemplateServiceImplTest {
         assertThatThrownBy(() -> couponTemplateService.getDetailCouponTemplate(1L))
                 .isInstanceOf(CouponTemplateNotFoundException.class)
                 .hasMessageContaining(CouponTemplateNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("쿠폰템플릿 명을 통해 쿠폰템플릿을 가져오는 테스트")
+    void getCouponTemplateByCouponTemplateName() {
+        when(couponTemplateRepository.findDetailByTemplateName(anyString()))
+                .thenReturn(Optional.of(couponTemplate));
+
+        CouponTemplate template
+                = couponTemplateService.getCouponTemplateByName("회원가입 축하 쿠폰");
+
+        assertThat(template.getTemplateNo()).isEqualTo(couponTemplate.getTemplateNo());
+        assertThat(template.getTemplateName()).isEqualTo(couponTemplate.getTemplateName());
+        assertThat(template.getCouponPolicy()).isEqualTo(couponTemplate.getCouponPolicy());
+        assertThat(template.getFinishedAt()).isEqualTo(couponTemplate.getFinishedAt());
+        assertThat(template.getCouponType()).isEqualTo(couponTemplate.getCouponType());
+        assertThat(template.getFile()).isEqualTo(couponTemplate.getFile());
+
+    }
+
+    @Test
+    @DisplayName("쿠폰템플릿 명을 통해 쿠폰템플릿을 가져오는데 실패하는 테스트")
+    void getCouponTemplateByCouponTemplateName_fail() {
+        when(couponTemplateRepository.findDetailByTemplateName(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() ->
+                couponTemplateService.getCouponTemplateByName("회원가입 축하 쿠폰"))
+                .isInstanceOf(CouponTemplateNotFoundException.class);
     }
 
     @Test
@@ -223,7 +253,7 @@ class CouponTemplateServiceImplTest {
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
         MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
 
-        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), any(),any()))
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(file);
         when(couponTypeRepository.findById(anyLong())).
                 thenReturn(Optional.of(couponType));
@@ -415,7 +445,7 @@ class CouponTemplateServiceImplTest {
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
         MultipartFile file = new MockMultipartFile("image", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
         File storeFile = new File(null, null, null, null, null,
-                null, null,"test_category", "test_path", "test_extention", "test_origin", "test_saved");
+                null, null, "test_category", "test_path", "test_extention", "test_origin", "test_saved");
 
         couponTemplate.setFile(storeFile);
         when(couponTemplateRepository.findById(anyLong()))

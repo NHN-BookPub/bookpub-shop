@@ -12,4 +12,6 @@ public class CouponTemplateNotFoundException extends RuntimeException {
     public CouponTemplateNotFoundException(Long templateNo) {
         super(templateNo + MESSAGE);
     }
+
+    public CouponTemplateNotFoundException() {}
 }

@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.coupontemplate.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.couponpolicy.dummy.CouponPolicyDummy;
@@ -198,6 +199,34 @@ class CouponTemplateRepositoryTest {
         assertThat(content.get(0).getTemplateName()).isEqualTo(save.getTemplateName());
         assertThat(content.get(0).getTemplateImage()).isEqualTo(saveFile.getFilePath());
         assertThat(content.get(0).getFinishedAt()).isEqualTo(save.getFinishedAt());
+    }
+
+    @Test
+    @DisplayName("쿠폰템플릿 이름을 가지고 쿠폰템플릿을 가져오는 테스트")
+    void getTemplateByTemplateName() {
+        entityManager.persist(couponPolicy);
+        entityManager.persist(couponType);
+        entityManager.persist(couponStateCode);
+        entityManager.persist(productPolicy);
+        entityManager.persist(productTypeStateCode);
+        entityManager.persist(productSaleStateCode);
+        entityManager.persist(product.getRelationProduct().get(0));
+        entityManager.persist(product);
+        entityManager.persist(category);
+        CouponTemplate save = entityManager.persist(couponTemplate);
+
+        Optional<CouponTemplate> template
+                = couponTemplateRepository.findDetailByTemplateName("test_templateName");
+
+        assertThat(template).isPresent();
+        assertThat(template.get().getTemplateNo()).isEqualTo(save.getTemplateNo());
+        assertThat(template.get().getTemplateName()).isEqualTo(save.getTemplateName());
+        assertThat(template.get().getFile()).isEqualTo(save.getFile());
+        assertThat(template.get().getCouponType()).isEqualTo(save.getCouponType());
+        assertThat(template.get().getCouponPolicy()).isEqualTo(save.getCouponPolicy());
+        assertThat(template.get().getCategory()).isEqualTo(save.getCategory());
+        assertThat(template.get().getCouponStateCode()).isEqualTo(save.getCouponStateCode());
+        assertThat(template.get().getProduct()).isEqualTo(save.getProduct());
     }
 
 }
