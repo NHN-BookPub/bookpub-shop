@@ -1,40 +1,69 @@
-= Coupon-Policy
 :toc:
 
-== 쿠폰 정책 생성
+==== 쿠폰 정책 생성
 
-Coupon-Policy create
+쿠폰 정책(Coupon Policy) 를 생성하는 API 명세입니다.
 
-== 요청 구조
+===== 요청 구조
 
 include::../../../../target/snippets/coupon-policy-add-success/http-request.adoc[]
 
-== 요청 파라미터
+===== 요청 파라미터
 
 include::../../../../target/snippets/coupon-policy-add-success/request-fields.adoc[]
 
-== 응답 구조
+===== 응답 구조
 
 include::../../../../target/snippets/coupon-policy-add-success/http-response.adoc[]
 
-== 예외 사항
+===== 예외 사항
 
-- maxDiscount가 음수 인 경우
+====== 1. 최대할인 가격이 음수 인 경우
+
+Request
+
 include::../../../../target/snippets/coupon-policy-add-maxDiscount-negativeFail/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/coupon-policy-add-maxDiscount-negativeFail/http-response.adoc[]
 
-- policyMinimum이 음수인 경우
+====== 2. 최소주문 금액이 음수인경우
+
+Request
+
 include::../../../../target/snippets/coupon-policy-add-policyMinimum-negativeFail/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/coupon-policy-add-policyMinimum-negativeFail/http-response.adoc[]
 
-- policyMinimum이 null인 경우
+====== 3. 최소주문 금액을 기입하지 않았을경우
+
+Request
+
 include::../../../../target/snippets/coupon-policy-add-policyMinimumFail/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/coupon-policy-add-policyMinimumFail/http-response.adoc[]
 
-- policyMinimum이 음수인 경우
-include::../../../../target/snippets/coupon-policy-add-policyMinimumFail/http-request.adoc[]
-include::../../../../target/snippets/coupon-policy-add-policyMinimumFail/http-response.adoc[]
+====== 4. 할인가격이 음수 일경우
 
-- policyPrice가 null인 경우
+Request
+
+include::../../../../target/snippets/coupon-policy-add-policyPrice-negativeFail/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/coupon-policy-add-policyPrice-negativeFail/http-response.adoc[]
+
+====== 5. 할인 가격이 null 일경우
+
+Request
+
 include::../../../../target/snippets/coupon-policy-add-policyPriceFail/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/coupon-policy-add-policyPriceFail/http-response.adoc[]

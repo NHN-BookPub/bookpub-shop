@@ -1,0 +1,17 @@
+:toc:
+==== 결제 생성
+
+결제(Payment) 생성 API 명세입니다.
+
+===== 요청구조
+include::../../../../target/snippets/create-payment/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::../../../../target/snippets/create-payment/request-parameters.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/create-payment/http-response.adoc[]
+
+

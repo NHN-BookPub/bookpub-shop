@@ -1,20 +1,20 @@
-= Purchase
 :toc:
 
-== 매입이력 생성
-purchase-create
+==== 매입이력 생성
 
-=== 요청구조
-include::../../../../target/snippets/purchase-add/http-request.adoc
+매입(Purchase) 을 생성하는 API 명세입니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/purchase-add/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/purchase-add/request-fields.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/purchase-add/http-response.adoc[]
 
 
-==== 요청 파라미터들
 
-include::../../../../target/snippets/purchase-add/request-fields.adoc
-
-=== 응답 구조
-include::../../../../target/snippets/purchase-add/http-response.adoc
-
-==== 응답 파라미터들
-
-include::../../../../target/snippets/purchase-add/response-body.adoc

@@ -1,5 +1,41 @@
 package com.nhnacademy.bookpubshop.error;
 
+import com.nhnacademy.bookpubshop.address.exception.AddressNotFoundException;
+import com.nhnacademy.bookpubshop.author.exception.NotFoundAuthorException;
+import com.nhnacademy.bookpubshop.card.exception.NotSupportedCompanyException;
+import com.nhnacademy.bookpubshop.category.exception.CategoryAlreadyExistsException;
+import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
+import com.nhnacademy.bookpubshop.coupon.exception.CouponNotFoundException;
+import com.nhnacademy.bookpubshop.coupon.exception.NotFoundCouponException;
+import com.nhnacademy.bookpubshop.couponmonth.exception.CouponMonthNotFoundException;
+import com.nhnacademy.bookpubshop.couponpolicy.exception.CouponPolicyNotFoundException;
+import com.nhnacademy.bookpubshop.couponstatecode.exception.CouponStateCodeNotFoundException;
+import com.nhnacademy.bookpubshop.coupontemplate.exception.CouponTemplateNotFoundException;
+import com.nhnacademy.bookpubshop.coupontype.exception.CouponTypeNotFoundException;
+import com.nhnacademy.bookpubshop.error.dto.response.ErrorResponse;
+import com.nhnacademy.bookpubshop.member.exception.AuthorityNotFoundException;
+import com.nhnacademy.bookpubshop.member.exception.IdAlreadyExistsException;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
+import com.nhnacademy.bookpubshop.member.exception.NicknameAlreadyExistsException;
+import com.nhnacademy.bookpubshop.order.exception.OrderNotFoundException;
+import com.nhnacademy.bookpubshop.orderstatecode.exception.NotFoundOrderStateException;
+import com.nhnacademy.bookpubshop.paymentstatecode.exception.NotFoundPaymentStateException;
+import com.nhnacademy.bookpubshop.paymenttypestatecode.exception.NotFoundPaymentTypeException;
+import com.nhnacademy.bookpubshop.personalinquiry.exception.PersonalInquiryNotFoundException;
+import com.nhnacademy.bookpubshop.pricepolicy.exception.NotFoundPricePolicyException;
+import com.nhnacademy.bookpubshop.product.exception.NotFoundProductPolicyException;
+import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
+import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodesException;
+import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
+import com.nhnacademy.bookpubshop.purchase.exception.NotFoundPurchasesException;
+import com.nhnacademy.bookpubshop.review.exception.ReviewNotFoundException;
+import com.nhnacademy.bookpubshop.reviewpolicy.exception.ReviewPolicyNotFoundException;
+import com.nhnacademy.bookpubshop.reviewpolicy.exception.ReviewPolicyUsedNotFoundException;
+import com.nhnacademy.bookpubshop.subscribe.exception.SubscribeNotFoundException;
+import com.nhnacademy.bookpubshop.tag.exception.TagNameDuplicatedException;
+import com.nhnacademy.bookpubshop.tag.exception.TagNotFoundException;
+import com.nhnacademy.bookpubshop.tier.exception.TierAlreadyExists;
+import com.nhnacademy.bookpubshop.wishlist.exception.WishlistNorFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
@@ -39,5 +75,74 @@ public class ShopAdviceController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(exceptions);
+    }
+
+    @ExceptionHandler(value =
+            {
+                AddressNotFoundException.class, NotFoundAuthorException.class,
+                NotSupportedCompanyException.class, CategoryNotFoundException.class,
+                CouponNotFoundException.class, NotFoundCouponException.class,
+                CouponMonthNotFoundException.class, CouponTemplateNotFoundException.class,
+                MemberNotFoundException.class, NicknameAlreadyExistsException.class,
+                PersonalInquiryNotFoundException.class, ProductNotFoundException.class,
+                ReviewNotFoundException.class, SubscribeNotFoundException.class,
+                TagNotFoundException.class, OrderNotFoundException.class,
+
+            })
+    public ResponseEntity<ErrorResponse> errorhandler() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("MAIN", "MAIN"));
+    }
+
+    @ExceptionHandler(value =
+            {
+                IdAlreadyExistsException.class,
+                NotFoundOrderStateException.class, NotFoundPaymentStateException.class,
+                NotFoundPaymentTypeException.class, NotFoundProductPolicyException.class,
+                NotFoundPricePolicyException.class, NotFoundStateCodeException.class,
+                NotFoundStateCodesException.class, CouponTypeNotFoundException.class,
+                CouponStateCodeNotFoundException.class, CouponPolicyNotFoundException.class,
+                ReviewPolicyNotFoundException.class, ReviewPolicyUsedNotFoundException.class,
+                WishlistNorFoundException.class
+            })
+    public ResponseEntity<Void> badRequest() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .build();
+    }
+
+    @ExceptionHandler(value = CategoryAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> categoryError() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(CategoryAlreadyExistsException.MESSAGE, "CATEGORY"));
+    }
+
+    @ExceptionHandler(value = AuthorityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> authority() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(AddressNotFoundException.MESSAGE, "AUTHORITY"));
+    }
+
+    @ExceptionHandler(value = NotFoundPurchasesException.class)
+    public ResponseEntity<ErrorResponse> adminException() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(NotFoundPurchasesException.MESSAGE, "ADMIN"));
+    }
+
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<Void> error() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .build();
+    }
+
+    @ExceptionHandler(value = TagNameDuplicatedException.class)
+    public ResponseEntity<ErrorResponse> tagError() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(TagNameDuplicatedException.ERROR_MESSAGE, "TAG"));
+    }
+
+    @ExceptionHandler(value = TierAlreadyExists.class)
+    public ResponseEntity<ErrorResponse> tierError() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(TierAlreadyExists.MESSAGE, "TIER"));
     }
 }

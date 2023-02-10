@@ -22,6 +22,7 @@ import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDt
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.SignUpMemberResponseDto;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.member.event.SignupEvent;
 import com.nhnacademy.bookpubshop.member.exception.AuthorityNotFoundException;
 import com.nhnacademy.bookpubshop.member.exception.IdAlreadyExistsException;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
@@ -36,19 +37,22 @@ import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 멤버를 서비스레이어에서 사용하기위한 구현클래스입니다.
+ * 멤버 서비스 구현.
  *
  * @author : 임태원, 유호철
  * @since : 1.0
  **/
 @Slf4j
 @Service
+@EnableAsync
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberServiceImpl implements MemberService {
@@ -56,6 +60,7 @@ public class MemberServiceImpl implements MemberService {
     private final TierRepository tierRepository;
     private final AuthorityRepository authorityRepository;
     private final AddressRepository addressRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     private static final String TIER_NAME = "basic";
     private static final String AUTHORITY_NAME = "ROLE_MEMBER";
@@ -67,41 +72,68 @@ public class MemberServiceImpl implements MemberService {
      */
     @Transactional
     @Override
-    public SignUpMemberResponseDto signup(SignupDto signUpMemberRequestDto) {
-        BookPubTier tier = tierRepository.findByTierName(TIER_NAME)
-                .orElseThrow(TierNotFoundException::new);
+    public SignUpMemberResponseDto signup(SignupDto signupDto) {
+        duplicateCheck(signupDto);
+        Member member = signupDto.createMember(defaultTier());
 
-        Authority authority = authorityRepository.findByAuthorityName(AUTHORITY_NAME)
-                .orElseThrow(() -> new AuthorityNotFoundException(AUTHORITY_NAME));
+        updateMemberAuthority(defaultAuthority(), member);
+        updateMemberAddress(member, true, signupDto.getAddress(), signupDto.getDetailAddress());
 
-        duplicateCheck(signUpMemberRequestDto);
+        if (isOauthSignup(signupDto)) {
+            member.oauthMember();
+        }
 
-        Member member = signUpMemberRequestDto.createMember(tier);
+        Member saveMember = memberRepository.save(member);
+        eventPublisher.publishEvent(new SignupEvent(saveMember));
 
+        return new SignUpMemberResponseDto(
+                saveMember.getMemberId(),
+                saveMember.getMemberNickname(),
+                saveMember.getMemberEmail(),
+                saveMember.getTier().getTierName()
+        );
+    }
+
+    /**
+     * oauth로 회원가입 한 유저인지 아닌지 판별하는 메소드.
+     *
+     * @param signupDto 회원가입 정보.
+     * @return true, false.
+     */
+    private static boolean isOauthSignup(SignupDto signupDto) {
+        return signupDto instanceof OauthMemberCreateRequestDto;
+    }
+
+    /**
+     * 회원의 권한을 기본 권한으로 지정해주는 메소드.
+     *
+     * @param authority 권한.
+     * @param member    회원.
+     */
+    private static void updateMemberAuthority(Authority authority, Member member) {
         member.addMemberAuthority(new MemberAuthority(
                 new MemberAuthority.Pk(member.getMemberNo(), authority.getAuthorityNo()),
                 member,
                 authority)
         );
+    }
+
+    /**
+     * 회원의 등급을 기본 등급으로 지정해주는 메소드.
+     *
+     * @param member        저장하려는 정보.
+     * @param base          기준주소지.
+     * @param roadAddress   회원가입할때 입력받은 도로명주소 정보 dto.
+     * @param detailAddress 회원가입할때 입력받은 상세주소.
+     */
+    private static void updateMemberAddress(Member member, boolean base,
+                                            String roadAddress, String detailAddress) {
         member.getMemberAddress().add(Address.builder()
-                .addressMemberBased(true)
-                .roadAddress(signUpMemberRequestDto.getAddress())
-                .addressDetail(signUpMemberRequestDto.getDetailAddress())
+                .addressMemberBased(base)
+                .roadAddress(roadAddress)
+                .addressDetail(detailAddress)
                 .member(member)
                 .build());
-
-        if (signUpMemberRequestDto instanceof OauthMemberCreateRequestDto) {
-            member.oauthMember();
-        }
-
-        memberRepository.save(member);
-
-        return new SignUpMemberResponseDto(
-                member.getMemberId(),
-                member.getMemberNickname(),
-                member.getMemberEmail(),
-                member.getTier().getTierName()
-        );
     }
 
     /**
@@ -321,12 +353,11 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(MemberNotFoundException::new);
 
         if (member.getMemberAddress().size() < 10) {
-            member.getMemberAddress().add(Address.builder()
-                    .addressMemberBased(false)
-                    .roadAddress(requestDto.getAddress())
-                    .addressDetail(requestDto.getAddressDetail())
-                    .member(member)
-                    .build());
+            updateMemberAddress(
+                    member,
+                    false,
+                    requestDto.getAddress(),
+                    requestDto.getAddressDetail());
         }
     }
 
@@ -354,6 +385,26 @@ public class MemberServiceImpl implements MemberService {
         if (memberRepository.existsByMemberId(member.getMemberId())) {
             throw new IdAlreadyExistsException(member.getMemberId());
         }
+    }
+
+    /**
+     * 기본 등급을 불러오는 메소드.
+     *
+     * @return tier.
+     */
+    private BookPubTier defaultTier() {
+        return tierRepository.findByTierName(TIER_NAME)
+                .orElseThrow(TierNotFoundException::new);
+    }
+
+    /**
+     * 기본 권한을 불러오는 메소드.
+     *
+     * @return authority.
+     */
+    private Authority defaultAuthority() {
+        return authorityRepository.findByAuthorityName(AUTHORITY_NAME)
+                .orElseThrow(() -> new AuthorityNotFoundException(AUTHORITY_NAME));
     }
 
 }

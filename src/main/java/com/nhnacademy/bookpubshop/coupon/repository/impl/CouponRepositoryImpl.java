@@ -129,16 +129,22 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                 .on(coupon.couponTemplate.category.eq(category))
                 .where(coupon.member.memberNo.eq(memberNo)
                         .and(coupon.couponUsed.isFalse())
-                        .and(couponType.typeName.in(CouponType.COMMON.getName(), CouponType.DUPLICATE.getName()))
-                        .and(coupon.couponTemplate.finishedAt.coalesce(LocalDateTime.now().plusDays(1)).after(LocalDateTime.now()))
+                        .and(couponType.typeName
+                                .in(CouponType.COMMON.getName(), CouponType.DUPLICATE.getName()))
+                        .and(coupon.couponTemplate.finishedAt
+                                .coalesce(LocalDateTime.now().plusDays(1))
+                                .after(LocalDateTime.now()))
                         .and((product.productNo.eq(productNo))
                                 .or(coupon.couponTemplate.category.categoryNo
                                         .in(JPAExpressions.select(category.categoryNo)
                                                 .from(category)
                                                 .join(productCategory)
-                                                .on(category.categoryNo.eq(productCategory.category.categoryNo))
-                                                .where(productCategory.product.productNo.eq(productNo))))
-                                .or(coupon.couponTemplate.couponStateCode.codeTarget.eq(CouponState.COUPON_ALL.getName()))
+                                                .on(category.categoryNo
+                                                        .eq(productCategory.category.categoryNo))
+                                                .where(productCategory.product.productNo
+                                                        .eq(productNo))))
+                                .or(coupon.couponTemplate.couponStateCode.codeTarget
+                                        .eq(CouponState.COUPON_ALL.getName()))
                         )
                 )
                 .select(Projections.constructor(GetOrderCouponResponseDto.class,
@@ -149,7 +155,7 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                         couponPolicy.policyFixed,
                         couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
-                        couponPolicy.maxDiscount,
+                        couponPolicy.maxDiscount.coalesce((long) Integer.MAX_VALUE),
                         coupon.couponTemplate.templateBundled))
                 .fetch();
     }
@@ -158,8 +164,21 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
+    public boolean existsMonthCouponsByMemberNo(Long memberNo, Long templateNo) {
+        Long monthCoupon = from(coupon)
+                .select(coupon.couponNo)
+                .where(coupon.member.memberNo.eq(memberNo)
+                        .and(coupon.couponTemplate.templateNo.eq(templateNo))).fetchOne();
+
+        return !Objects.isNull(monthCoupon);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Page<GetCouponResponseDto> findPositiveCouponByMemberNo(Pageable pageable,
-            Long memberNo) {
+                                                                   Long memberNo) {
         JPQLQuery<Long> count = from(coupon).select(coupon.count())
                 .where(coupon.member.memberNo.eq(memberNo)
                         .and(coupon.couponUsed.isFalse())
@@ -200,7 +219,7 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public Page<GetCouponResponseDto> findNegativeCouponByMemberNo(Pageable pageable,
-            Long memberNo) {
+                                                                   Long memberNo) {
 
         JPQLQuery<Long> count = from(coupon).select(coupon.count())
                 .where(coupon.member.memberNo.eq(memberNo)

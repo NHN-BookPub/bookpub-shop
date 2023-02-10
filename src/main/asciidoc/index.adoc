@@ -1,0 +1,136 @@
+= Book Pub REST-API docs
+Book-Pub <유호철, 임태원, 정유진, 박경서, 여운석, 김서현>
+v2023.02.13
+:doctype: book
+:icons: font
+:source-highlighter: coderay
+:toc: left
+:toc-title: 목차
+:toclevels: 3
+:sectlinks:
+:sectnums:
+
+== 개요
+
+이 API 문서는 Book-Pub 팀의 Api 문서를 유용하게 볼수있게 도와줍니다.
+
+[NOTE]
+====
+해당 프로젝트는 API 문서는 개발환경까지 노출합니다.
+
+기본적인 API 구성은
+
+    | 1. /token/ ** |
+
+    |  2. /api/ ** |
+
+총 2가지로 구성되어 있습니다.
+====
+
+=== API 서버 경로
+
+[col="2,5,3"]
+|====
+|환경         | DNS|비고
+|SHOP 개발(dev)    | |
+|SHOP 운영(prod)   | |
+|====
+
+[WARNING]
+====
+운영환경에서 노출의 경우 보안 관련 문제가 발생할수 있습니다.
+====
+
+|====
+|응답데이터가 없는 경우|
+|응답데이터가 있는 경우|
+|====
+
+==== 상태코드
+
+아직 에러페이지가 나올시 처리
+
+== API
+
+//저자
+include::author/author.adoc[]
+
+//카테고리
+include::category/category.adoc[]
+
+//쿠폰
+include::coupon/coupon.adoc[]
+
+//이달의쿠폰
+include::couponmonth/couponmonth-main.adoc[]
+
+//쿠폰 정책
+include::couponpolicy/couponpolicy.adoc[]
+
+//쿠폰 상태
+include::couponstate/couponstate.adoc[]
+
+//쿠폰 템플릿
+include::coupontemplate/coupontemplate-main.adoc[]
+
+//쿠폰 유형
+include::coupontype/coupontype.adoc[]
+
+//주문
+include::order/order.adoc[]
+
+//주문상품상태코드
+include::orderProductStateCode/order-product-state-code.adoc[]
+
+//주문상태코드
+include::orderStateCode/order-state-code.adoc[]
+
+//결제
+include::payment/payment.adoc[]
+
+//결제상태
+include::paymentState/payment-state.adoc[]
+
+//결제유형
+include::paymentType/payment-type.adoc[]
+
+//가격유형
+include::pricepolicy/pricepolicy.adoc[]
+
+//상품정책
+include::productpolicy/productpolicy.adoc[]
+
+//상품가격정책
+include::orderProductStateCode/order-product-state-code.adoc[]
+
+//상품유형상태
+include::productsalestatecode/productsalestatecode.adoc[]
+
+//매입
+include::purchase/purchase.adoc[]
+
+
+//리뷰
+include::review/review.adoc[]
+
+//리뷰 정책
+include::reviewpolicy/reviewpolicy.adoc[]
+
+//구독
+include::subscribe/subscribe-main.adoc[]
+
+
+//태그
+include::tag/tag.adoc[]
+
+//등급
+include::tier/tier.adoc[]
+
+//등급 쿠폰
+include::tiercoupon/tiercoupon.adoc[]
+
+
+
+
+
+

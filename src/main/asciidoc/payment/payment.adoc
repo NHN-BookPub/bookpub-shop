@@ -1,0 +1,8 @@
+=== 결제
+
+결제에대한 취소내역, 생성, 검증을 할수있습니다.
+결제는 더미입니다.
+
+include::create-payment.adoc[]
+include::verify.adoc[]
+include::verify-failed.adoc[]

@@ -1,0 +1,34 @@
+:toc:
+==== 구독 상품 삭제 요청
+
+구독연관상품 에 대한 삭제요청 API 입니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/subscribe-product-list-success/http-request.adoc[]
+
+===== 요청 파라미터들
+
+PathVariable
+
+include::../../../../target/snippets/subscribe-product-list-success/path-parameters.adoc[]
+
+RequestFields
+
+include::../../../../target/snippets/subscribe-product-list-success/request-fields.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/subscribe-product-list-success/http-response.adoc[]
+
+===== 예외 사항
+
+====== 1.구독의 연관상품이 없을경우
+
+Request
+
+include::../../../../target/snippets/subscribe-product-list-fail/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/subscribe-product-list-fail/http-response.adoc[]

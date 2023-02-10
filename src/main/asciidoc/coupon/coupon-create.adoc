@@ -1,26 +1,26 @@
-= Coupon
 :toc:
 
-== 쿠폰 생성
-Coupon-create
+==== 쿠폰 생성
+쿠폰(Coupon) 등록에 관한 Api 명세입니다.
 
-=== 요청구조
-include::../../../../target/snippets/coupon-add/http-request.adoc
-
-
-==== 요청 파라미터들
-
-include::../../../../target/snippets/coupon-add/request-fields.adoc
-
-=== 응답 구조
-include::../../../../target/snippets/coupon-add/http-response.adoc
-
-==== 응답 파라미터들
-
-include::../../../../target/snippets/coupon-add/response-body.adoc
+===== 요청구조
+include::../../../../target/snippets/coupon-add/http-request.adoc[]
 
 
-==== 예외사항
+===== 요청 파라미터들
 
-include::../../../../target/snippets/coupon-add-no-memberId-validation/response-body.adoc
-include::../../../../target/snippets/coupon-add-no-templateNo-validation/response-body.adoc
+include::../../../../target/snippets/coupon-add/request-fields.adoc[]
+
+===== 응답 구조
+include::../../../../target/snippets/coupon-add/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-add/response-body.adoc[]
+
+
+===== 예외사항
+====== 1. 멤버 아이디를 입력하지않았을경우
+include::../../../../target/snippets/coupon-add-no-memberId-validation/http-response.adoc[]
+====== 2. 쿠폰 템플릿 번호를 입력하지않았을경우
+include::../../../../target/snippets/coupon-add-no-templateNo-validation/http-response.adoc[]

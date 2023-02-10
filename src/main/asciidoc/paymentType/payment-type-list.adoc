@@ -1,0 +1,21 @@
+:toc:
+
+==== 결제타입 리스트 조회
+
+결제유형(Payment-Type) 조회 API 명세입니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/paymentTypeList-get/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/paymentTypeList-get/httpie-request.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/paymentTypeList-get/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/paymentTypeList-get/response-fields.adoc[]

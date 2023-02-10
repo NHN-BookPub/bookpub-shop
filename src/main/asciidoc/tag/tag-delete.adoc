@@ -1,20 +1,16 @@
-= Book-Pub
 :toc:
-
-== Api 명세
+==== 태그 삭제
 
 태그(Tag) 삭제 관한 Api 명세입니다.
 
-== 태그 삭제
-
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/tag-delete/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/tag-delete/path-parameters.adoc[]
 
-=== 응답구조
+===== 응답구조
 
 include::../../../../target/snippets/tag-delete/http-response.adoc[]

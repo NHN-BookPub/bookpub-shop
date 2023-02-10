@@ -1,62 +1,76 @@
-= Book-Pub
 :toc:
 
-== Api 명세
+
+==== 상품평 수정
 
 상품평(Review) 수정에 관한 Api 명세입니다.
 
-== 상품평 수정
-
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/review-modify/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
-include::../../../../target/snippets/review-modify/path-parameters.adoc[]
+Parts
+
 include::../../../../target/snippets/review-modify/request-parts.adoc[]
+
+RequestFields
+
 include::../../../../target/snippets/review-modify/request-part-modifyRequestDto-fields.adoc[]
 
-=== 응답구조
+===== 응답구조
 
 include::../../../../target/snippets/review-modify/http-response.adoc[]
 
-=== 예외 상황
+===== 예외 상황
 
-==== 1. 수정할 상품평 별점을 기입하지 않은 경우
+====== 1. 수정할 상품평 별점을 기입하지 않은 경우
+
+Request
 
 include::../../../../target/snippets/review-modify-fail-reviewStar-null/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/review-modify-fail-reviewStar-null/http-response.adoc[]
 
-==== 2. 수정할 상품평 내용을 기입하지 않은 경우
+====== 2. 수정할 상품평 내용을 기입하지 않은 경우
+
+Request
 
 include::../../../../target/snippets/review-modify-fail-reviewContent-null/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/review-modify-fail-reviewContent-null/http-response.adoc[]
 
-== 상품평 이미지 삭제
+===== 상품평 이미지 삭제
 
-=== 요청구조
+====== 요청구조
 
 include::../../../../target/snippets/review-modify-image-delete/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 요청 파라미터들
+
+PathVariable
 
 include::../../../../target/snippets/review-modify-image-delete/path-parameters.adoc[]
 
-=== 응답구조
+====== 응답구조
 
 include::../../../../target/snippets/review-modify-image-delete/http-response.adoc[]
 
-== 상품평 삭제 (soft delete)
+===== 상품평 삭제 (soft delete)
 
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/review-modify-delete/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/review-modify-delete/path-parameters.adoc[]
 
-=== 응답구조
+===== 응답구조
 
 include::../../../../target/snippets/review-modify-delete/http-response.adoc[]

@@ -1,0 +1,8 @@
+=== 매입
+
+매입은 생성, 수정 ,조회가 가능합니다.
+
+include::purchase-create.adoc[]
+include::purchase-modify.adoc[]
+include::purchase-list.adoc[]
+include::purchase-get.adoc[]

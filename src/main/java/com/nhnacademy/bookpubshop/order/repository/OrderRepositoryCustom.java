@@ -1,8 +1,11 @@
 package com.nhnacademy.bookpubshop.order.repository;
 
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderVerifyResponseDto;
+import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -40,4 +43,28 @@ public interface OrderRepositoryCustom {
      * @return 멤버의 모든 주문 반환.
      */
     Page<GetOrderListResponseDto> getOrdersListByUser(Pageable pageable, Long memberNo);
+
+    /**
+     * 주문과 결제생성의 요청금액이 같은지 검사하기 위해 주문 테이블에 기입된 amount를 가져옵니다.
+     *
+     * @param orderId 주문아이디.
+     * @return amount 정보가 담겨있는 dto.
+     */
+    Optional<GetOrderVerifyResponseDto> verifyPayment(String orderId);
+
+    /**
+     * order의 unique한 아이디로 주문을 가져옵니다.
+     *
+     * @param orderId 주문아이디.
+     * @return amount 정보가 담겨있는 dto.
+     */
+    Optional<BookpubOrder> getOrderByOrderKey(String orderId);
+
+    /**
+     * 최종 결제 성공 후 메인화면에서 띄워줄 정보.
+     *
+     * @param orderId 주문아이디.
+     * @return 주문,결제 정보.
+     */
+    Optional<GetOrderAndPaymentResponseDto> getOrderAndPayment(String orderId);
 }

@@ -7,6 +7,9 @@ import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
 import com.nhnacademy.bookpubshop.coupon.exception.CouponNotFoundException;
 import com.nhnacademy.bookpubshop.coupon.repository.CouponRepository;
 import com.nhnacademy.bookpubshop.coupon.service.CouponService;
+import com.nhnacademy.bookpubshop.couponmonth.entity.CouponMonth;
+import com.nhnacademy.bookpubshop.couponmonth.exception.CouponMonthNotFoundException;
+import com.nhnacademy.bookpubshop.couponmonth.repository.CouponMonthRepository;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.coupontemplate.exception.CouponTemplateNotFoundException;
 import com.nhnacademy.bookpubshop.coupontemplate.repository.CouponTemplateRepository;
@@ -15,13 +18,13 @@ import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
-import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * CouponService 구현체.
@@ -38,6 +41,7 @@ public class CouponServiceImpl implements CouponService {
     private final MemberRepository memberRepository;
     private final CouponTemplateRepository couponTemplateRepository;
     private final ProductRepository productRepository;
+    private final CouponMonthRepository couponMonthRepository;
 
     /**
      * {@inheritDoc}
@@ -95,26 +99,10 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
-    public Page<GetCouponResponseDto> getCoupons(Pageable pageable, String searchKey, String search)
-            throws IOException {
-
-//        Page<GetCouponResponseDto> dto =
-//        couponRepository.findAllBy(pageable, searchKey, URLDecoder.decode(search, StandardCharsets.UTF_8));
-//
-//        List<GetCouponResponseDto> dtoList = dto.getContent();
-//        List<GetCouponResponseDto> transformList = new ArrayList<>();
-//
-//        for (GetCouponResponseDto tmpDto : dtoList) {
-//            if (Objects.nonNull(tmpDto.getTemplateImage())) {
-//                transformList.add(tmpDto.transform(
-//                        fileManagement.loadFile(tmpDto.getTemplateImage()
-//                        )));
-//            } else
-//                transformList.add(tmpDto.transform(null));
-//        }
+    public Page<GetCouponResponseDto> getCoupons(Pageable pageable, String searchKey,
+            String search) {
         return couponRepository.findAllBy(pageable, searchKey, search);
 
-//        return new PageImpl<>(transformList, pageable, dto.getTotalElements());
     }
 
     /**
@@ -132,7 +120,6 @@ public class CouponServiceImpl implements CouponService {
         if (!productRepository.existsById(productNo)) {
             throw new ProductNotFoundException();
         }
-
 
         return couponRepository.findByProductNo(memberNo, productNo);
     }
@@ -190,5 +177,40 @@ public class CouponServiceImpl implements CouponService {
             couponRepository.save(coupon);
         }
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean checkedMonthCouponByMemberNo(Long memberNo, Long templateNo) {
+        return couponRepository.existsMonthCouponsByMemberNo(memberNo, templateNo);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void issueMonthCouponByMemberNo(@RequestParam("memberNo") Long memberNo,
+            @RequestParam("templateNo") Long templateNo) {
+
+        CouponTemplate couponTemplate = couponTemplateRepository.findById(templateNo)
+                .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
+
+        CouponMonth couponMonth = couponMonthRepository.findByCouponTemplate(couponTemplate)
+                .orElseThrow(() -> new CouponMonthNotFoundException(templateNo));
+
+        couponMonth.minusCouponMonthQuantity();
+
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+
+        Coupon coupon = Coupon.builder()
+                .couponTemplate(couponTemplate)
+                .member(member)
+                .build();
+
+        couponRepository.save(coupon);
     }
 }

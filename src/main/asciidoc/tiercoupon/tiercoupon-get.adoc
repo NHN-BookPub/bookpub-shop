@@ -1,0 +1,35 @@
+:toc:
+
+==== 등급쿠폰 조회
+
+등급쿠폰(TierCoupon) 조회에 관한 Api 명세입니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/tier-Coupon-findAll/http-request.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/tier-Coupon-findAll/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/tier-Coupon-findAll/response-body.adoc[]
+
+==== 등급별 쿠폰 리스트 조회
+
+===== 요청 구조
+
+include::../../../../target/snippets/tier-Coupon-find-by-tierNo/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/tier-Coupon-find-by-tierNo/path-parameters.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/tier-Coupon-find-by-tierNo/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/tier-Coupon-find-by-tierNo/response-body.adoc[]

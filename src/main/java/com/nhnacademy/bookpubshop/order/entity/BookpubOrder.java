@@ -88,6 +88,9 @@ public class BookpubOrder extends BaseCreateTimeEntity {
     @Column(name = "order_point_amount")
     private Long pointAmount;
 
+    @Column(name = "order_point_save")
+    private Long pointSave;
+
     @Column(name = "order_packaged")
     private boolean orderPackaged;
 
@@ -124,6 +127,7 @@ public class BookpubOrder extends BaseCreateTimeEntity {
                         String invoiceNumber,
                         Long orderPrice,
                         Long pointAmount,
+                        Long pointSave,
                         boolean orderPackaged,
                         String orderRequest,
                         Long couponDiscount,
@@ -144,6 +148,7 @@ public class BookpubOrder extends BaseCreateTimeEntity {
         this.invoiceNumber = invoiceNumber;
         this.orderPrice = orderPrice;
         this.pointAmount = pointAmount;
+        this.pointSave = pointSave;
         this.orderPackaged = orderPackaged;
         this.orderRequest = orderRequest;
         this.couponDiscount = couponDiscount;

@@ -72,6 +72,15 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
      * {@inheritDoc}
      */
     @Override
+    public CouponTemplate getCouponTemplateByName(String templateName) {
+        return couponTemplateRepository.findDetailByTemplateName(templateName)
+                .orElseThrow(CouponTemplateNotFoundException::new);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Page<GetCouponTemplateResponseDto> getCouponTemplates(Pageable pageable) {
         return couponTemplateRepository.findAllBy(pageable);
     }
@@ -103,7 +112,8 @@ public class CouponTemplateServiceImpl implements CouponTemplateService {
      */
     @Override
     @Transactional
-    public void modifyCouponTemplate(Long templateNo, ModifyCouponTemplateRequestDto modifyRequestDto,
+    public void modifyCouponTemplate(Long templateNo,
+                                     ModifyCouponTemplateRequestDto modifyRequestDto,
                                      MultipartFile image) throws IOException {
 
 

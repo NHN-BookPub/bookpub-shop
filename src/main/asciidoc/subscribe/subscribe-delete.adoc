@@ -1,0 +1,16 @@
+:toc:
+==== 구독 상품 삭제 요청
+
+구독(Subscribe) 삭제 요청에대한 API 명세입니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/subscribe-delete/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/subscribe-delete/path-parameters.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/subscribe-delete/http-response.adoc[]

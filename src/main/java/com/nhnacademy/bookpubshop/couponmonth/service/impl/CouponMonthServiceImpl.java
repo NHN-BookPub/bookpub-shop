@@ -30,8 +30,6 @@ public class CouponMonthServiceImpl implements CouponMonthService {
     private final CouponMonthRepository couponMonthRepository;
     private final CouponTemplateRepository couponTemplateRepository;
 
-    //private final FileManagement fileManagement;
-
     /**
      * {@inheritDoc}
      */
@@ -41,7 +39,8 @@ public class CouponMonthServiceImpl implements CouponMonthService {
         CouponTemplate couponTemplate =
                 couponTemplateRepository.findById(createRequestDto.getTemplateNo())
                         .orElseThrow(() ->
-                                new CouponTemplateNotFoundException(createRequestDto.getTemplateNo()));
+                                new CouponTemplateNotFoundException(
+                                        createRequestDto.getTemplateNo()));
 
         couponMonthRepository.save(new CouponMonth(
                 null,
@@ -93,19 +92,6 @@ public class CouponMonthServiceImpl implements CouponMonthService {
      */
     @Override
     public List<GetCouponMonthResponseDto> getCouponMonths() {
-//        List<GetCouponMonthResponseDto> dtoList = couponMonthRepository.getCouponMonths();
-//        List<GetCouponMonthResponseDto> transformList = new ArrayList<>();
-//
-//        for (GetCouponMonthResponseDto tmpDto : dtoList) {
-//            if (Objects.nonNull(tmpDto.getTemplateImage())) {
-//                transformList.add(tmpDto.transform(
-//                        fileManagement.loadFile(tmpDto.getTemplateImage()
-//                        )));
-//            } else
-//                transformList.add(tmpDto.transform(null));
-//        }
-//
-//        return transformList;
 
         return couponMonthRepository.getCouponMonths();
     }

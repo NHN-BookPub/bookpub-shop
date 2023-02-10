@@ -1,13 +1,18 @@
 package com.nhnacademy.bookpubshop.order.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.nhnacademy.bookpubshop.card.dummy.CardDummy;
+import com.nhnacademy.bookpubshop.card.entity.Card;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderVerifyResponseDto;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.exception.OrderNotFoundException;
@@ -15,6 +20,12 @@ import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProductStateCode;
 import com.nhnacademy.bookpubshop.orderstatecode.dummy.OrderStateCodeDummy;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
+import com.nhnacademy.bookpubshop.payment.dummy.PaymentDummy;
+import com.nhnacademy.bookpubshop.payment.entity.Payment;
+import com.nhnacademy.bookpubshop.paymentstatecode.dummy.PaymentStateCodeDummy;
+import com.nhnacademy.bookpubshop.paymentstatecode.entity.PaymentStateCode;
+import com.nhnacademy.bookpubshop.paymenttypestatecode.dummy.PaymentTypeStateCodeDummy;
+import com.nhnacademy.bookpubshop.paymenttypestatecode.entity.PaymentTypeStateCode;
 import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderResponseDto;
@@ -73,6 +84,10 @@ class OrderRepositoryTest {
     OrderProduct orderProduct;
     OrderProductStateCode orderProductStateCode;
     File file;
+    PaymentStateCode paymentStateCode;
+    PaymentTypeStateCode paymentTypeStateCode;
+    Payment payment;
+    Card card;
 
 
     @BeforeEach
@@ -105,6 +120,17 @@ class OrderRepositoryTest {
         order = OrderDummy.dummy(member, pricePolicy, packagePricePolicy, orderStateCode);
         order = entityManager.persist(order);
 
+        paymentStateCode = PaymentStateCodeDummy.dummy();
+        paymentTypeStateCode = PaymentTypeStateCodeDummy.dummy();
+        payment = PaymentDummy.dummy(order, paymentStateCode, paymentTypeStateCode);
+
+        card = CardDummy.dummy();
+
+        entityManager.persist(paymentStateCode);
+        entityManager.persist(paymentTypeStateCode);
+        entityManager.persist(payment);
+        entityManager.persist(card);
+
         orderProductStateCode = new OrderProductStateCode(
                 null,
                 OrderProductState.COMPLETE_PAYMENT.getName(),
@@ -123,6 +149,7 @@ class OrderRepositoryTest {
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
                 3, 1000L, 30000L, "reason");
         orderProduct = entityManager.persist(orderProduct);
+
 
     }
 
@@ -255,5 +282,43 @@ class OrderRepositoryTest {
                 .isEqualTo(orderProduct.getProductAmount());
         assertThat(response.get(0).getSalesPrice())
                 .isEqualTo(product.getSalesPrice());
+    }
+
+    @Test
+    @DisplayName("주문 아이디로 검증 성공")
+    void verifyOrder() {
+        Optional<GetOrderVerifyResponseDto> getOrderVerifyResponseDto
+                = orderRepository.verifyPayment(order.getOrderId());
+
+        assertThat(getOrderVerifyResponseDto).isPresent();
+        assertThat(getOrderVerifyResponseDto.get().getAmount()).isEqualTo(10000L);
+    }
+
+    @Test
+    @DisplayName("주문 아이디로 주문 불러오기")
+    void getOrderByOrderKey() {
+        Optional<BookpubOrder> orderByOrderKey
+                = orderRepository.getOrderByOrderKey(order.getOrderId());
+
+        assertThat(orderByOrderKey).isPresent();
+    }
+
+    @Test
+    @DisplayName("주문번호로 결제, 주문 정보 불러오기")
+    void getOrderAndPayment() {
+        BookpubOrder orderPersist = order;
+        Payment paymentPersist = payment;
+
+        GetOrderAndPaymentResponseDto result =
+                orderRepository.getOrderAndPayment(orderPersist.getOrderId())
+                        .orElseThrow(OrderNotFoundException::new);
+
+        assertThat(result.getOrderName()).isEqualTo(orderPersist.getOrderName());
+        assertThat(result.getReceiptUrl()).isEqualTo(paymentPersist.getReceipt());
+        assertThat(result.getAddress()).isEqualTo(
+                orderPersist.getRoadAddress() + " " + orderPersist.getAddressDetail());
+        assertThat(result.getReceiveDate()).isEqualTo(orderPersist.getReceivedAt());
+        assertThat(result.getRecipient()).isEqualTo(orderPersist.getOrderRecipient());
+        assertThat(result.getSavePoint()).isEqualTo(orderPersist.getPointSave());
     }
 }

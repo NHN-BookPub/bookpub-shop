@@ -1,7 +1,9 @@
 package com.nhnacademy.bookpubshop.purchase.service.impl;
 
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
+import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.purchase.dto.CreatePurchaseRequestDto;
 import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseListResponseDto;
@@ -9,6 +11,7 @@ import com.nhnacademy.bookpubshop.purchase.entity.Purchase;
 import com.nhnacademy.bookpubshop.purchase.exception.NotFoundPurchasesException;
 import com.nhnacademy.bookpubshop.purchase.repository.PurchaseRepository;
 import com.nhnacademy.bookpubshop.purchase.service.PurchaseService;
+import com.nhnacademy.bookpubshop.state.ProductSaleState;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PurchaseServiceImpl implements PurchaseService {
     private final PurchaseRepository purchaseRepository;
     private final ProductRepository productRepository;
+    private final ProductSaleStateCodeRepository productSaleStateCodeRepository;
 
     /**
      * {@inheritDoc}
@@ -37,10 +41,6 @@ public class PurchaseServiceImpl implements PurchaseService {
             Long productNo, Pageable pageable) {
         Page<GetPurchaseListResponseDto> response =
                 purchaseRepository.findByProductNumberWithPage(productNo, pageable);
-
-        if (response.getContent().isEmpty()) {
-            throw new NotFoundPurchasesException();
-        }
 
         return new PageResponse<>(response);
     }
@@ -85,14 +85,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     @Transactional(readOnly = true)
     public PageResponse<GetPurchaseListResponseDto> getPurchaseListDesc(Pageable pageable) {
-        PageResponse<GetPurchaseListResponseDto> result =
-                new PageResponse<>(purchaseRepository.getPurchaseListDesc(pageable));
-
-        if (result.getContent().isEmpty()) {
-            throw new NotFoundPurchasesException();
-        }
-
-        return result;
+        return new PageResponse<>(purchaseRepository.getPurchaseListDesc(pageable));
     }
 
     /**
@@ -108,6 +101,32 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         product.plusStock(request.getPurchaseAmount());
 
+        if (isSoldOutState(product)) {
+            updateProductStateToSale(product);
+        }
+
         productRepository.save(product);
+    }
+
+    /**
+     * 재고를 업데이트한 상품이 품절상태인지 확인합니다.
+     *
+     * @param product 업데이트 할 상품
+     */
+    private boolean isSoldOutState(Product product) {
+        return product.getProductSaleStateCode().getCodeCategory()
+                .equals(ProductSaleState.SOLD_OUT.getName());
+    }
+
+    /**
+     * 상품의 상태를 판매중으로 변경합니다.
+     *
+     * @param product 업데이트 할 상품
+     */
+    private void updateProductStateToSale(Product product) {
+        product.modifySaleStateCode(
+                productSaleStateCodeRepository
+                        .findByCodeCategory(ProductSaleState.SALE.name())
+                        .orElseThrow(NotFoundStateCodeException::new));
     }
 }

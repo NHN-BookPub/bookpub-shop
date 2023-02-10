@@ -1,51 +1,65 @@
-= Book-Pub
 :toc:
 
-== Api 명세
+
+
+==== 상품평정책 수정
 
 상품평정책(ReviewPolicy) 수정에 관한 Api 명세입니다.
 
-== 상품평정책 수정
-
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/review-policy-modify-point/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/review-policy-modify-point/request-fields.adoc[]
 
-=== 응답구조
+===== 응답구조
 
 include::../../../../target/snippets/review-policy-modify-point/http-response.adoc[]
 
-=== 예외 상황
+===== 예외 상황
 
-==== 1. 수정할 상품평정책 번호를 기입하지 않은 경우
+====== 1. 수정할 상품평정책 번호를 기입하지 않은 경우
+
+Request
 
 include::../../../../target/snippets/review-policy-modify-policyNo-failNull/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/review-policy-modify-policyNo-failNull/http-response.adoc[]
 
-==== 2. 지급 포인트를 기입하지 않은 경우
+====== 2. 지급 포인트를 기입하지 않은 경우
+
+Request
 
 include::../../../../target/snippets/review-policy-modify-point-failNull/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/review-policy-modify-point-failNull/http-response.adoc[]
 
-==== 2-2. 지급포인트를 음수로 기입했을 경우
+====== 2-2. 지급포인트를 음수로 기입했을 경우
+
+Request
 
 include::../../../../target/snippets/review-policy-modify-point-failNegative/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/review-policy-modify-point-failNegative/http-response.adoc[]
 
-== 상품평 정책 현재 사용여부 수정
+==== 상품평 정책 현재 사용여부 수정
 
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/review-policy-modify-used/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/review-policy-modify-used/path-parameters.adoc[]
 
-=== 응답구조
+===== 응답구조
 
 include::../../../../target/snippets/review-policy-modify-used/http-response.adoc[]

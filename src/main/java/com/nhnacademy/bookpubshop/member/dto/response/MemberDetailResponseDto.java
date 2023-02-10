@@ -26,10 +26,14 @@ public class MemberDetailResponseDto {
     private String phone;
     private String email;
     private Long point;
-
     private List<String> authorities = new ArrayList<>();
-
     private List<MemberAddressResponseDto> addresses = new ArrayList<>();
+
+    /**
+     * 멤버정보를 반환하는 dto의 생성자 입니다. (entitiy to dto)
+     *
+     * @param member member 엔티티.
+     */
     public MemberDetailResponseDto(Member member) {
         this.memberNo = member.getMemberNo();
         this.memberName = member.getMemberName();

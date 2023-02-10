@@ -68,7 +68,6 @@ class PurchaseControllerTest {
     Purchase purchase;
     CreatePurchaseRequestDto request;
     GetPurchaseListResponseDto listResponse;
-    String url = "/api/purchases";
     String tokenUrl="/token/purchases";
 
 
@@ -87,10 +86,13 @@ class PurchaseControllerTest {
         ReflectionTestUtils.setField(request, "purchasePrice", purchase.getPurchasePrice());
         ReflectionTestUtils.setField(request, "purchaseAmount", purchase.getPurchaseAmount());
 
-        listResponse = new GetPurchaseListResponseDto(product.getProductNo(),
+        listResponse = new GetPurchaseListResponseDto(
+                product.getProductNo(),
+                product.getTitle(),
                 purchase.getPurchaseNo(),
                 purchase.getPurchaseAmount(),
-                purchase.getPurchasePrice());
+                purchase.getPurchasePrice(),
+                purchase.getCreatedAt());
     }
 
     @Test
@@ -121,6 +123,8 @@ class PurchaseControllerTest {
                                 fieldWithPath("content[].purchaseAmount").description("매입 수량이 반환됩니다."),
                                 fieldWithPath("content[].purchasePrice").description("매입한 금액이 반환됩니다."),
                                 fieldWithPath("content[].productNo").description("매입한 상품의 고유번호가 반환됩니다."),
+                                fieldWithPath("content[].productTitle").description("상품명입니다."),
+                                fieldWithPath("content[].createdAt").description("등록시간입니다."),
                                 fieldWithPath("totalPages").description("총 페이지 수 입니다."),
                                 fieldWithPath("number").description("현재 페이지 입니다."),
                                 fieldWithPath("previous").description("이전페이지 존재 여부 입니다."),
@@ -159,7 +163,7 @@ class PurchaseControllerTest {
         when(purchaseService.getPurchaseByProductNo(product.getProductNo(), pageable))
                 .thenReturn(pageResult);
 
-        mockMvc.perform(get(url + "/{productNo}?page=0&size=5",
+        mockMvc.perform(get(tokenUrl + "/{productNo}?page=0&size=5",
                         product.getProductNo().intValue())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pageResult)))
@@ -169,10 +173,12 @@ class PurchaseControllerTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         responseFields(
+                                fieldWithPath("content[].productNo").description("상품 번호입니다."),
+                                fieldWithPath("content[].productTitle").description("상품 제목입니다."),
                                 fieldWithPath("content[].purchaseNo").description("매입이력의 고유 number가 반환됩니다."),
                                 fieldWithPath("content[].purchaseAmount").description("매입 수량이 반환됩니다."),
                                 fieldWithPath("content[].purchasePrice").description("매입한 금액이 반환됩니다."),
-                                fieldWithPath("content[].productNo").description("매입한 상품의 고유번호가 반환됩니다."),
+                                fieldWithPath("content[].createdAt").description("등록 시간입니다."),
                                 fieldWithPath("totalPages").description("총 페이지 수 입니다."),
                                 fieldWithPath("number").description("현재 페이지 입니다."),
                                 fieldWithPath("previous").description("이전페이지 존재 여부 입니다."),
@@ -227,7 +233,7 @@ class PurchaseControllerTest {
         doNothing().when(purchaseService)
                 .createPurchase(request);
 
-        mockMvc.perform(post(url)
+        mockMvc.perform(post(tokenUrl)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())

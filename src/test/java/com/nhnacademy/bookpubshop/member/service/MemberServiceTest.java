@@ -34,6 +34,7 @@ import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDt
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.member.exception.AuthorityNotFoundException;
 import com.nhnacademy.bookpubshop.member.exception.IdAlreadyExistsException;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.exception.NicknameAlreadyExistsException;
@@ -130,6 +131,8 @@ class MemberServiceTest {
         when(authorityRepository.findByAuthorityName(anyString()))
                 .thenReturn(Optional.of(AuthorityDummy.dummy()));
 
+        when(memberRepository.save(any())).thenReturn(member);
+
         memberService.signup(signUpMemberRequestDto);
 
         verify(memberRepository, times(1))
@@ -138,6 +141,25 @@ class MemberServiceTest {
         Member result = captor.getValue();
         assertThat(signUpMemberRequestDto.getMemberId())
                 .isEqualTo(result.getMemberId());
+    }
+
+    @Test
+    @DisplayName("멤버 생성 실패 테스트")
+    void memberCreateFailed() {
+        when(tierRepository.findByTierName(anyString()))
+                .thenReturn(Optional.of(tier));
+        when(memberRepository.existsByMemberEmail(anyString()))
+                .thenReturn(false);
+        when(memberRepository.existsByMemberId(anyString()))
+                .thenReturn(false);
+        when(memberRepository.existsByMemberNickname(anyString()))
+                .thenReturn(false);
+        when(authorityRepository.findByAuthorityName(anyString()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> memberService.signup(signUpMemberRequestDto))
+                .isInstanceOf(AuthorityNotFoundException.class)
+                .hasMessageContaining(AuthorityNotFoundException.MESSAGE);
     }
 
     @Test
@@ -153,6 +175,8 @@ class MemberServiceTest {
                 .thenReturn(false);
         when(authorityRepository.findByAuthorityName(anyString()))
                 .thenReturn(Optional.of(AuthorityDummy.dummy()));
+
+        when(memberRepository.save(any())).thenReturn(member);
 
         OauthMemberCreateRequestDto createRequestDto = new OauthMemberCreateRequestDto();
 

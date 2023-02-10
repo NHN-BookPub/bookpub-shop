@@ -1,50 +1,61 @@
-= Book-Pub
 :toc:
 
-== Api 명세
+
+
+==== 등급 등록
 
 등급(Tier) 등록에 관한 Api 명세입니다.
 
-== 태그 등록
-
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/tier-add/http-request.adoc[]
 
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/tier-add/request-fields.adoc[]
 
-=== 응답구조
+===== 응답구조
 
 include::../../../../target/snippets/tier-add/http-response.adoc[]
 
-=== 예외 상황
+===== 예외 상황
 
-==== 1. 태그 이름이 없을경우
+====== 1. 태그 이름이 없을경우
+
+Request
 
 include::../../../../target/snippets/tier-add-name-fail/http-request.adoc[]
 
-===== 1-1. 응답값
+Response
+
 include::../../../../target/snippets/tier-add-name-fail/http-response.adoc[]
 
-==== 2. 태그 포인트가없을경우
+====== 2. 태그 포인트가없을경우
+
+Request
 
 include::../../../../target/snippets/tier-add-point-fail/http-request.adoc[]
 
-===== 2-1. 응답값
+Response
+
 include::../../../../target/snippets/tier-add-point-fail/http-response.adoc[]
 
-==== 3. 태그 지급 가격이 없을경우
+====== 3. 태그 지급 가격이 없을경우
+
+Request
 
 include::../../../../target/snippets/tier-add-price-fail/http-request.adoc[]
 
-===== 3-1. 응답값
+Response
+
 include::../../../../target/snippets/tier-add-name-fail/http-response.adoc[]
 
-==== 4. 태그 값이 없을경우
+====== 4. 태그 값이 없을경우
+
+Request
 
 include::../../../../target/snippets/tier-add-value-fail/http-request.adoc[]
 
-===== 1-1. 응답값
+Response
+
 include::../../../../target/snippets/tier-add-value-fail/http-response.adoc[]

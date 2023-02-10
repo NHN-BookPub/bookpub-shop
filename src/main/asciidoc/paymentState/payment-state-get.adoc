@@ -1,0 +1,15 @@
+:toc:
+
+==== 결제상태 단건 조회
+
+===== 요청구조
+
+include::../../../../target/snippets/paymentState-get/http-request.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/paymentState-get/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/paymentState-get/response-fields.adoc[]

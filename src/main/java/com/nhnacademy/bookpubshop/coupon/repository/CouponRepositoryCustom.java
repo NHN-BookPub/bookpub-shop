@@ -66,4 +66,13 @@ public interface CouponRepositoryCustom {
      * @return 주문에 사용될 쿠폰들의 정보를 담은 Dto 리스트
      */
     List<GetOrderCouponResponseDto> findByProductNo(Long memberNo, Long productNoList);
+
+    /**
+     * 멤버의 이달의 쿠폰 발급 여부를 확인하는 메서드입니다.
+     *
+     * @param memberNo   멤버 번호
+     * @param templateNo 쿠폰 템플릿 번호
+     * @return 발급 유무
+     */
+    boolean existsMonthCouponsByMemberNo(Long memberNo, Long templateNo);
 }

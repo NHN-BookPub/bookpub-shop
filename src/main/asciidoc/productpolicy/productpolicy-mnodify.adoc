@@ -1,25 +1,29 @@
-= Product-Policy
 :toc:
 
-== 상품 정책 수정
+==== 상품 정책 수정
 
-Product-Policy modify
+상품정책(ProductPolicy) 수정에관한 API 명세입니다.
 
-== 요청 구조
+===== 요청 구조
 
 include::../../../../target/snippets/product-policy-modify-success/http-request.adoc[]
 
-== 요청 파라미터
+===== 요청 파라미터
 
 include::../../../../target/snippets/product-policy-modify-success/request-fields.adoc[]
 
-== 응답 구조
+===== 응답 구조
 
 include::../../../../target/snippets/product-policy-modify-success/http-response.adoc[]
 
-== 예외 사항
+===== 예외 사항
 
-- policyMethod가 10글자 넘는 경우
+====== 1. policyMethod 가 10글자 넘는 경우
+
+Request
 
 include::../../../../target/snippets/product-policy-modify-fail/http-request.adoc[]
+
+Response
+
 include::../../../../target/snippets/product-policy-modify-fail/http-response.adoc[]

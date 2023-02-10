@@ -1,0 +1,9 @@
+=== 쿠폰 템플릿
+
+쿠폰 템플릿의 등록,수정, 조회를 담당합니다.
+
+
+include::coupontemplate-create.adoc[]
+include::coupontemplate-modify.adoc[]
+include::coupontemplate.adoc[]
+

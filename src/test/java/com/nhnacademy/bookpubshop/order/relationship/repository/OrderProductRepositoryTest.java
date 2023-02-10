@@ -80,6 +80,7 @@ class OrderProductRepositoryTest {
                 null,
                 10000L,
                 100L,
+                1500L,
                 true,
                 null,
                 1000L,

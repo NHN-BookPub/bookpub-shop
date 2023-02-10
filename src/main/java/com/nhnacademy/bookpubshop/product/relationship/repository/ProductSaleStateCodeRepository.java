@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.product.relationship.repository;
 
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -11,5 +12,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
  **/
 public interface ProductSaleStateCodeRepository
         extends JpaRepository<ProductSaleStateCode, Integer>, ProductSaleStateCodeRepositoryCustom {
-
+    /**
+     * 상태코드명으로 상태코드를 조회합니다.
+     *
+     * @param codeCategory 코드명
+     * @return 상태코드
+     */
+    Optional<ProductSaleStateCode> findByCodeCategory(String codeCategory);
 }

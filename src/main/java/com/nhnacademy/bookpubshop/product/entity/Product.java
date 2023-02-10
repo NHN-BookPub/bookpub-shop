@@ -211,8 +211,12 @@ public class Product extends BaseCreateTimeEntity {
     /**
      * 주문 시 상품의 수량을 1개 빼주는 메소드.
      */
-    public void minusStock() {
-        this.productStock -= 1;
+    public void minusStock(Integer amount) {
+        this.productStock -= amount;
+    }
+
+    public void modifySaleStateCode(ProductSaleStateCode saleStateCode) {
+        this.productSaleStateCode = saleStateCode;
     }
 
     /**

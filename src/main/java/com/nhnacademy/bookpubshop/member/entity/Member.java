@@ -214,8 +214,21 @@ public class Member extends BaseCreateTimeEntity {
         this.socialJoined = true;
     }
 
-    public void saveMemberPoint(Long savePoint, Long usePoint) {
-        this.memberPoint += savePoint;
+    /**
+     * 주문 시 사용 한 포인트 차감.
+     *
+     * @param usePoint 사용한 포인트.
+     */
+    public void decreaseMemberPoint(Long usePoint) {
         this.memberPoint -= usePoint;
+    }
+
+    /**
+     * 구매 확정 시 상품 금액 % 대로 포인트 증가.
+     *
+     * @param savePoint 적립 포인트.
+     */
+    public void increaseMemberPoint(Long savePoint) {
+        this.memberPoint += savePoint;
     }
 }

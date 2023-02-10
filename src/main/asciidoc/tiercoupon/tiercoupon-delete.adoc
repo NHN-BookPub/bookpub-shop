@@ -1,0 +1,18 @@
+:toc:
+==== 등급 쿠폰 삭제
+
+등급쿠폰(TierCoupon) 삭제에 관한 Api 명세입니다.
+
+===== 요청 구조
+
+include::../../../../target/snippets/tier-coupon-delete/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/tier-coupon-delete/request-parameters.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/tier-coupon-delete/http-response.adoc[]
+
+

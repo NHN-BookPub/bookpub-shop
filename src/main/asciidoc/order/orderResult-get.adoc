@@ -1,0 +1,41 @@
+:toc:
+
+==== 주문 리스트 조회
+
+주문(Order) 전체 조회를 위한 API 명세입니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/order-payment-info/http-request.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/order-payment-info/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/order-payment-info/response-fields.adoc[]
+
+===== 주문(결제된) 단건 조회
+
+주문(Order) 단건 조회를 위한 API 명세입니다.
+
+====== 요청구조
+
+include::../../../../target/snippets/order-payment-info/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/order-payment-info/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/order-payment-info/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/order-payment-info/response-fields.adoc[]
+
+
+
+

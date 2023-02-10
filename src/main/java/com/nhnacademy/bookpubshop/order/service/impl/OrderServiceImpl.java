@@ -7,6 +7,7 @@ import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
@@ -26,15 +27,19 @@ import com.nhnacademy.bookpubshop.pricepolicy.repository.PricePolicyRepository;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
+import com.nhnacademy.bookpubshop.product.exception.SoldOutException;
+import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.state.OrderState;
+import com.nhnacademy.bookpubshop.state.ProductSaleState;
 import com.nhnacademy.bookpubshop.state.anno.StateCode;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -48,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
  **/
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
@@ -57,6 +63,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final OrderProductStateCodeRepository orderProductStateCodeRepository;
     private final CouponRepository couponRepository;
+    private final ProductSaleStateCodeRepository productSaleStateCodeRepository;
 
     /**
      * {@inheritDoc}
@@ -113,6 +120,7 @@ public class OrderServiceImpl implements OrderService {
                 .receivedAt(request.getReceivedAt())
                 .orderPrice(request.getTotalAmount())
                 .pointAmount(request.getPointAmount())
+                .pointSave(request.getSavePoint())
                 .orderPackaged(request.isPackaged())
                 .orderRequest(request.getOrderRequest())
                 .couponDiscount(request.getCouponAmount())
@@ -123,7 +131,7 @@ public class OrderServiceImpl implements OrderService {
         createOrderProduct(request, order, request.getProductCoupon());
 
         if (Objects.nonNull(member)) {
-            updateMemberPoint(member.getMemberNo(), request.getSavePoint(), request.getPointAmount());
+            updateMemberPoint(member.getMemberNo(), request.getPointAmount());
         }
 
         return order.getOrderNo();
@@ -145,6 +153,8 @@ public class OrderServiceImpl implements OrderService {
             Product product = productRepository.findById(productNo)
                     .orElseThrow(ProductNotFoundException::new);
 
+            updateProductInventory(productNo, request.getProductCount().get(productNo));
+
             OrderProduct orderProduct = orderProductRepository.save(
                     OrderProduct.builder()
                             .product(product)
@@ -152,12 +162,11 @@ public class OrderServiceImpl implements OrderService {
                             .orderProductStateCode(orderProductStateCode)
                             .productAmount(request.getProductCount().get(productNo))
                             .couponAmount(request.getProductSaleAmount().get(productNo))
-                            .productPrice(request.getProductSaleAmount().get(productNo))
+                            .productPrice(request.getProductAmount().get(productNo))
                             .reasonName(OrderState.WAITING_PAYMENT.getReason())
                             .build());
 
             updateCoupon(order, orderProduct, productCoupon.get(productNo));
-            updateProductInventory(productNo);
         }
     }
 
@@ -169,6 +178,9 @@ public class OrderServiceImpl implements OrderService {
      * @param couponNo     사용한 쿠폰
      */
     public void updateCoupon(BookpubOrder order, OrderProduct orderProduct, Long couponNo) {
+        if (Objects.isNull(couponNo)) {
+            return;
+        }
         Coupon coupon = couponRepository.findById(couponNo)
                 .orElseThrow(() -> new NotFoundCouponException(couponNo));
         coupon.modifyOrder(order);
@@ -179,14 +191,13 @@ public class OrderServiceImpl implements OrderService {
     /**
      * 회원의 상태를 변경시키는 메소드 입니다.
      *
-     * @param memberNo  회원번호.
-     * @param savePoint 적립될 포인트.
-     * @param usePoint  사용한 포인트.
+     * @param memberNo 회원번호.
+     * @param usePoint 사용한 포인트.
      */
-    public void updateMemberPoint(Long memberNo, Long savePoint, Long usePoint) {
+    public void updateMemberPoint(Long memberNo, Long usePoint) {
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(MemberNotFoundException::new);
-        member.saveMemberPoint(savePoint, usePoint);
+        member.decreaseMemberPoint(usePoint);
     }
 
     /**
@@ -194,11 +205,45 @@ public class OrderServiceImpl implements OrderService {
      *
      * @param productNo 상품번호.
      */
-    public void updateProductInventory(Long productNo) {
+    public void updateProductInventory(Long productNo, Integer productAmount) {
         Product product = productRepository.findById(productNo)
                 .orElseThrow(ProductNotFoundException::new);
 
-        product.minusStock();
+        isSoldOut(productAmount, product);
+
+        makeSoldOut(productAmount, product);
+
+        product.minusStock(productAmount);
+    }
+
+    /**
+     * 주문시 상품의 재고가 부족한지 체크하는 메소드입니다.
+     * 재고가 부족할 시 품절 예외가 발생합니다.
+     *
+     * @param productAmount 주문 할 상품의 양
+     * @param product 주문 할 상품
+     */
+    private void isSoldOut(Integer productAmount, Product product) {
+        if (product.getProductSaleStateCode()
+                .getCodeCategory().equals(ProductSaleState.SOLD_OUT.getName())
+                || product.getProductStock() - productAmount < 0) {
+            throw new SoldOutException();
+        }
+    }
+
+    /**
+     * 상품의 재고가 주문한 양과 동일하면 상품을 품절상태로 변경합니다.
+     *
+     * @param productAmount 주문 할 상품의 양
+     * @param product 주문 할 상품
+     */
+    private void makeSoldOut(Integer productAmount, Product product) {
+        if (product.getProductStock() - productAmount == 0) {
+            product.modifySaleStateCode(
+                    productSaleStateCodeRepository
+                            .findByCodeCategory(ProductSaleState.STOP.name())
+                            .orElseThrow(NotFoundStateCodeException::new));
+        }
     }
 
     /**
@@ -254,9 +299,23 @@ public class OrderServiceImpl implements OrderService {
                 orderRepository.getOrdersListByUser(pageable, memberNo);
 
         for (GetOrderListResponseDto response : returns.getContent()) {
-            response.addOrderProducts(productRepository.getProductListByOrderNo(response.getOrderNo()));
+            response.addOrderProducts(
+                    productRepository.getProductListByOrderNo(response.getOrderNo()));
         }
 
         return new PageResponse<>(returns);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return 주문, 결제 정보.
+     * @throws OrderNotFoundException 주문정보가 없습니다.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public GetOrderAndPaymentResponseDto getOrderAndPaymentInfo(String orderId) {
+        return orderRepository.getOrderAndPayment(orderId)
+                .orElseThrow(OrderNotFoundException::new);
     }
 }

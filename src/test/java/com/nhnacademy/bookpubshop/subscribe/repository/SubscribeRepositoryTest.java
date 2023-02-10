@@ -3,9 +3,20 @@ package com.nhnacademy.bookpubshop.subscribe.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
+import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
+import com.nhnacademy.bookpubshop.product.entity.Product;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.state.FileCategory;
+import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeDetailResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.dto.response.GetSubscribeResponseDto;
 import com.nhnacademy.bookpubshop.subscribe.dummy.SubscribeDummy;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
+import com.nhnacademy.bookpubshop.subscribe.relationship.entity.SubscribeProductList;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,13 +42,31 @@ class SubscribeRepositoryTest {
     SubscribeRepository subscribeRepository;
 
     Subscribe subscribe;
+    Product product;
+    ProductPolicy productPolicy;
+    ProductTypeStateCode typeStateCode;
+    ProductSaleStateCode saleStateCode;
 
     File file;
-
+    File productFile;
     @BeforeEach
     void setUp() {
+        productPolicy = ProductPolicyDummy.dummy();
+        typeStateCode = ProductTypeStateCodeDummy.dummy();
+        saleStateCode = ProductSaleStateCodeDummy.dummy();
+
+        entityManager.persist(productPolicy);
+        entityManager.persist(typeStateCode);
+        entityManager.persist(saleStateCode);
+        product = ProductDummy.dummy(productPolicy, typeStateCode, saleStateCode);
+
+        entityManager.persist(product);
         subscribe = SubscribeDummy.dummy();
         file = FileDummy.dummy(null, null, null, null, null, subscribe);
+        entityManager.persist(file.getSubscribe());
+        entityManager.persist(file);
+        entityManager.persist(product.getRelationProduct().get(0));
+
     }
 
     @Test
@@ -62,8 +91,6 @@ class SubscribeRepositoryTest {
     @DisplayName("구독 조회 테스트")
     void subscribeInfo() {
         PageRequest page = PageRequest.of(0, 10);
-        entityManager.persist(file.getSubscribe());
-        entityManager.persist(file);
         Subscribe persist = file.getSubscribe();
         Page<GetSubscribeResponseDto> result = subscribeRepository.getSubscribes(page);
 
@@ -77,6 +104,29 @@ class SubscribeRepositoryTest {
         assertThat(result.getContent().get(0).getSalePrice()).isEqualTo(persist.getSalesPrice());
         assertThat(result.getContent().get(0).isDeleted()).isEqualTo(persist.isSubscribeDeleted());
         assertThat(result.getContent().get(0).isRenewed()).isEqualTo(persist.isSubscribeRenewed());
+
+    }
+
+    @Test
+    @DisplayName("구독 연관 상품 조회 테스트")
+    void subscribeRelationProductTest(){
+        productFile = entityManager.persist(
+                FileDummy.dummy(null, null,
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL, null));
+        entityManager.persist(product);
+        subscribe.addRelationList(new SubscribeProductList(null, subscribe, product));
+
+        Optional<GetSubscribeDetailResponseDto> result = subscribeRepository.getSubscribeDetail(subscribe.getSubscribeNo());
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getImagePath()).isEqualTo(file.getFilePath());
+        assertThat(result.get().getSubscribeName()).isEqualTo(subscribe.getSubscribeName());
+        assertThat(result.get().getSubscribeNo()).isEqualTo(subscribe.getSubscribeNo());
+        assertThat(result.get().getPrice()).isEqualTo(subscribe.getSubscribePrice());
+        assertThat(result.get().getSalePrice()).isEqualTo(subscribe.getSalesPrice());
+        assertThat(result.get().getViewCnt()).isEqualTo(subscribe.getViewCount());
+        assertThat(result.get().getProductLists().get(0).getProductNo()).isEqualTo(product.getProductNo());
+        assertThat(result.get().getProductLists().get(0).getTitle()).isEqualTo(product.getTitle());
 
     }
 }

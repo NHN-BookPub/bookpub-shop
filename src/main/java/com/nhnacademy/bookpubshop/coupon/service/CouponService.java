@@ -90,4 +90,21 @@ public interface CouponService {
      * @param tierCoupons 등급 쿠폰 리스트
      */
     void issueTierCouponsByMemberNo(Long memberNo, List<Long> tierCoupons);
+
+    /**
+     * 멤버의 이달의 쿠폰 발급 유무를 확인하는 메서드입니다.
+     *
+     * @param memberNo   멤버 번호
+     * @param templateNo 쿠폰 템플릿 번호
+     * @return 이달의 쿠폰 발급 유무
+     */
+    boolean checkedMonthCouponByMemberNo(Long memberNo, Long templateNo);
+
+    /**
+     * 이달의 쿠폰 발급을 위한 메서드입니다.
+     *
+     * @param memberNo   멤버 번호
+     * @param templateNo 쿠폰 템플릿 번호
+     */
+    void issueMonthCouponByMemberNo(Long memberNo, Long templateNo);
 }

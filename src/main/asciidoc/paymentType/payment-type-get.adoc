@@ -1,0 +1,25 @@
+:toc:
+
+==== 결제타입 단건 조회
+
+Payment Get
+
+===== 요청구조
+
+include::../../../../target/snippets/paymentType-get/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::../../../../target/snippets/paymentType-get/httpie-request.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/paymentType-get/http-response.adoc[]
+
+====== 응답 파라미터들
+
+include::../../../../target/snippets/paymentType-get/response-fields.adoc[]
+
+
+
+

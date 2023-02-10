@@ -1,41 +1,44 @@
+:toc:
+=== 쿠폰유형
 
-= CouponTemplate
-:toc:left
+쿠폰유형(Coupon Type)은 조회만 가능합니다.
 
-== 쿠폰유형 리스트 조회
+==== 쿠폰유형 리스트 조회
+
 Coupon-template-list
 
-=== 요청구조
+===== 요청구조
+
 include::../../../../target/snippets/coupon-type-list/http-request.adoc[]
 
-
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/coupon-type-list/request-body.adoc[]
 
+===== 응답 구조
 
-=== 응답 구조
 include::../../../../target/snippets/coupon-type-list/http-response.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터들
 
 include::../../../../target/snippets/coupon-type-list/response-fields.adoc[]
 
-== 쿠폰유형 단일값 조회
+==== 쿠폰유형 단일값 조회
+
 Coupon-template-detail
 
-=== 요청구조
+===== 요청구조
+
 include::../../../../target/snippets/coupon-type-detail/http-request.adoc[]
 
-
-==== 요청 파라미터들
+===== 요청 파라미터들
 
 include::../../../../target/snippets/coupon-type-detail/path-parameters.adoc[]
 
+===== 응답 구조
 
-=== 응답 구조
 include::../../../../target/snippets/coupon-type-detail/http-response.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터들
 
 include::../../../../target/snippets/coupon-type-detail/response-fields.adoc[]

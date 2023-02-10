@@ -1,20 +1,16 @@
-= Book-Pub
 :toc:
-
-== Api 명세
+==== 상품평 정책 리스트 조회
 
 상품평정책(ReviewPolicy) 조회에 관한 Api 명세입니다.
 
-== 상품평 정책 리스트 조회
-
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/get-review-policies/http-request.adoc[]
 
-=== 응답구조
+===== 응답구조
 
 include::../../../../target/snippets/get-review-policies/http-response.adoc[]
 
-==== 응답 파라미터들
+===== 응답 파라미터들
 
 include::../../../../target/snippets/get-review-policies/response-fields.adoc[]

@@ -1,0 +1,38 @@
+:toc:
+==== 등급쿠폰 등록
+
+등급쿠폰(TierCoupon) 등록에 관한 Api 명세입니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/tier-coupon-create-success/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/tier-coupon-create-success/request-body.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/tier-coupon-create-success/http-response.adoc[]
+
+===== 예외 상황
+
+====== 1. 쿠폰 템플릿 번호가 입력되지 않은 경우
+
+Request
+
+include::../../../../target/snippets/tier-coupon-create-templateNo-null-fail/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/tier-coupon-create-templateNo-null-fail/http-response.adoc[]
+
+====== 2. 등급 번호가 입력되지 않은 경우
+
+Request
+
+include::../../../../target/snippets/tier-coupon-create-tierNo-null-fail/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/tier-coupon-create-tierNo-null-fail/http-response.adoc[]

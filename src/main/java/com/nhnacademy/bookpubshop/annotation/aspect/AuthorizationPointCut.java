@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.annotation.aspect;
 
 import static com.nhnacademy.bookpubshop.auth.Authorization.ROLE_ADMIN;
 import static com.nhnacademy.bookpubshop.auth.Authorization.ROLE_MEMBER;
+
 import com.nhnacademy.bookpubshop.auth.Authorization;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
@@ -92,8 +93,41 @@ public class AuthorizationPointCut {
     }
 
     /**
-     * RequestContextHolder 에서 현재의 요청을받아
-     * HttpServletRequest 반환해주는 메소드
+     * 회원과 관리자 권한이 둘다 통과시키는 메서드입니다.
+     *
+     * @param pjp the pjp
+     * @return the object
+     */
+    @Around(value = "@annotation(com.nhnacademy.bookpubshop.annotation.MemberAndAuth)")
+    public Object checkAdminAndMemberAuthorization(ProceedingJoinPoint pjp) {
+        HttpServletRequest request = getRequest();
+        try {
+            if (getHeader(request, AUTH_HEADER, ROLE_ADMIN)) {
+                return pjp.proceed(pjp.getArgs());
+            }
+
+            if (getHeader(request, AUTH_MEMBER_INFO, null)) {
+                log.error("헤더가 없음");
+                return httpResponse(HttpStatus.UNAUTHORIZED);
+            }
+
+            if (!request.getRequestURI().contains(request.getHeader(AUTH_MEMBER_INFO))) {
+                log.error("Url path 에 멤버 no 가 없음");
+                return httpResponse(HttpStatus.UNAUTHORIZED);
+            }
+            if (getHeader(request, AUTH_HEADER, ROLE_MEMBER)) {
+                return pjp.proceed(pjp.getArgs());
+
+            }
+        } catch (Throwable e) {
+            httpResponse(HttpStatus.NOT_IMPLEMENTED);
+        }
+        return httpResponse(HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * RequestContextHolder 에서 현재의 요청을받아.
+     * HttpServletRequest 반환해주는 메소드.
      *
      * @return httpServletRequest 가 반환된다.
      */
@@ -107,8 +141,8 @@ public class AuthorizationPointCut {
     /**
      * 특정 헤더값을 통해 그 헤더에가 있는지를 확인하기위한 메서드입니다.
      *
-     * @param request httpServletRequest 가 들어온다.
-     * @param header 어떤 헤더종류
+     * @param request       httpServletRequest 가 들어온다.
+     * @param header        어떤 헤더종류
      * @param authorization Enum 타입의 어떠한 값 (MEMBER, ADMIN)
      * @return boolean
      */

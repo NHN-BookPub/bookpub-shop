@@ -1,0 +1,31 @@
+:toc:
+==== 구독 전체 조회
+
+구독(Subscribe)조회에대한 API 명세입니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/subscribe-getList/http-request.adoc[]
+
+
+===== 응답 구조
+
+include::../../../../target/snippets/subscribe-getList/http-response.adoc[]
+
+==== 구독 단건 조회
+
+===== 요청구조
+
+include::../../../../target/snippets/subscribe-detail/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/subscribe-detail/path-parameters.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/subscribe-detail/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::../../../../target/snippets/subscribe-detail/response-fields.adoc[]

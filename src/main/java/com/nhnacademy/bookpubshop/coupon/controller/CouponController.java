@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 쿠폰 RestController 입니다.
  *
- * @author : 정유진
+ * @author : 정유진, 김서현
  * @since : 1.0
  **/
 @RestController
@@ -180,8 +180,45 @@ public class CouponController {
     @MemberAuth
     @PostMapping("/token/coupons/{memberNo}/tier-coupons")
     public ResponseEntity<Void> issueTierCoupons(@PathVariable Long memberNo,
-                                                 @RequestParam List<Long> tierCoupons) {
+            @RequestParam List<Long> tierCoupons) {
         couponService.issueTierCouponsByMemberNo(memberNo, tierCoupons);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .contentType(MediaType.APPLICATION_JSON)
+                .build();
+
+    }
+
+    /**
+     * 멤버의 이달의 쿠폰 발급 유무를 확인하는 메서드입니다.
+     *
+     * @param memberNo   멤버 번호
+     * @param templateNo 쿠폰 템플릿 번호
+     * @return 발급 여부
+     */
+    @MemberAuth
+    @GetMapping("/token/coupons/{memberNo}/month-coupon")
+    public ResponseEntity<Boolean> checkIssuedMonthCouponByMemberNo(@PathVariable Long memberNo,
+            @RequestParam Long templateNo) {
+
+        boolean check = couponService.checkedMonthCouponByMemberNo(memberNo, templateNo);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(check);
+    }
+
+    /**
+     * 이달의 쿠폰 발급을 위한 메서드입니다.
+     *
+     * @param memberNo   멤버 번호
+     * @param templateNo 쿠폰 템플릿 번호
+     * @return 성공일 경우 201반환.
+     */
+    @MemberAuth
+    @PostMapping("/token/coupons/{memberNo}/month-coupon")
+    public ResponseEntity<Void> issueMonthCoupon(@PathVariable Long memberNo,
+            @RequestParam Long templateNo) {
+        couponService.issueMonthCouponByMemberNo(memberNo, templateNo);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)

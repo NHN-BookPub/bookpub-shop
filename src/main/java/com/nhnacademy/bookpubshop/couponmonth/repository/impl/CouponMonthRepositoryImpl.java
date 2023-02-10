@@ -19,18 +19,20 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
  **/
 public class CouponMonthRepositoryImpl extends QuerydslRepositorySupport
         implements CouponMonthRepositoryCustom {
+
     public CouponMonthRepositoryImpl() {
         super(CouponMonth.class);
     }
+
+    QCouponMonth couponMonth = QCouponMonth.couponMonth;
+    QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
+    QFile file = QFile.file;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Optional<GetCouponMonthResponseDto> getCouponMonth(Long monthNo) {
-        QCouponMonth couponMonth = QCouponMonth.couponMonth;
-        QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
-        QFile file = QFile.file;
 
         return Optional.ofNullable(from(couponMonth)
                 .join(couponMonth.couponTemplate, couponTemplate)
@@ -51,9 +53,6 @@ public class CouponMonthRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public List<GetCouponMonthResponseDto> getCouponMonths() {
-        QCouponMonth couponMonth = QCouponMonth.couponMonth;
-        QCouponTemplate couponTemplate = QCouponTemplate.couponTemplate;
-        QFile file = QFile.file;
 
         return from(couponMonth)
                 .join(couponMonth.couponTemplate, couponTemplate)

@@ -1,0 +1,24 @@
+:toc:
+
+
+==== 구독 상품 갱신 요청
+
+구독(Subscribe) 갱신 API 명세입니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/subscribe-renewed/http-request.adoc[]
+
+===== 요청 파라미터들
+
+PathVariable
+
+include::../../../../target/snippets/subscribe-renewed/path-parameters.adoc[]
+
+RequestParam
+
+include::../../../../target/snippets/subscribe-renewed/request-parameters.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/subscribe-renewed/http-response.adoc[]

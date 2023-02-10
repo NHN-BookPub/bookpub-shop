@@ -1,0 +1,23 @@
+:toc:
+
+==== 결제 검증 단건 조회
+
+결제(Payment) 에대한 조회 API 명세입니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/verify/http-request.adoc[]
+
+===== 요청 파라미터
+
+RequestParam
+
+include::../../../../target/snippets/verify/request-parameters.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/verify/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/verify/response-body.adoc[]
