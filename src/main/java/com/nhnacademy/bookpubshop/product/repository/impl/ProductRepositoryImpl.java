@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.product.repository.impl;
 import com.nhnacademy.bookpubshop.author.entity.QAuthor;
 import com.nhnacademy.bookpubshop.category.entity.QCategory;
 import com.nhnacademy.bookpubshop.file.entity.QFile;
+import com.nhnacademy.bookpubshop.member.entity.QMember;
 import com.nhnacademy.bookpubshop.order.entity.QBookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProductStateCode;
@@ -286,20 +287,75 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                                 product.salesRate))
                         .innerJoin(product.productSaleStateCode, productSaleStateCode)
                         .on(productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
-
-                        .innerJoin(product.productCategories, productCategory)
-                        .on(productCategory.product.productNo.eq(product.productNo))
-
                         .innerJoin(file).on(product.productNo.eq(file.product.productNo)
                                 .and(file.fileCategory.eq(FileCategory.PRODUCT_EBOOK.getCategory())))
-
                         .orderBy(product.productPriority.asc())
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
 
         setCategoryAndAuthors(content);
+        setProductThumbnails(content);
 
+        JPQLQuery<Long> count = from(product)
+                .innerJoin(product.productSaleStateCode, productSaleStateCode)
+                .on(productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
+                .innerJoin(file).on(product.productNo.eq(file.product.productNo)
+                        .and(file.fileCategory.eq(FileCategory.PRODUCT_EBOOK.getCategory())))
+                .select(product.count())
+                .where(product.productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()));
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetProductByCategoryResponseDto> getEbooksByMember(Pageable pageable, Long memberNo) {
+        QMember member = QMember.member;
+
+        List<GetProductByCategoryResponseDto> content =
+                from(orderProduct)
+                        .select(Projections.fields(GetProductByCategoryResponseDto.class,
+                                product.productNo,
+                                product.title,
+                                file.filePath.as(FileCategory.PRODUCT_EBOOK.getCategory()),
+                                product.salesPrice,
+                                product.salesRate))
+                        .innerJoin(order).on(orderProduct.order.orderNo.eq(order.orderNo))
+                        .innerJoin(product).on(product.productNo.eq(orderProduct.product.productNo))
+                        .innerJoin(member).on(order.member.memberNo.eq(member.memberNo)
+                                .and(member.memberNo.eq(memberNo)))
+                        .innerJoin(file).on(file.product.productNo.eq(product.productNo))
+                        .where(file.fileCategory.eq(FileCategory.PRODUCT_EBOOK.getCategory()))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
+
+        setProductThumbnails(content);
+        setCategoryAndAuthors(content);
+
+        JPQLQuery<Long> count = from(orderProduct)
+                .innerJoin(order).on(orderProduct.order.orderNo.eq(order.orderNo))
+                .innerJoin(product).on(product.productNo.eq(orderProduct.product.productNo))
+                .innerJoin(member).on(order.member.memberNo.eq(member.memberNo)
+                        .and(member.memberNo.eq(memberNo)))
+                .innerJoin(file).on(file.product.productNo.eq(product.productNo)
+                        .and(file.fileCategory.eq(FileCategory.PRODUCT_EBOOK.getCategory())))
+                .select(product.count())
+                .where(member.memberNo.eq(memberNo));
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+
+    /**
+     * 상품리스트에 썸네일을 각각 꽂아줍니다.
+     *
+     * @param content 상품 Dto 리스트
+     */
+    private void setProductThumbnails(List<GetProductByCategoryResponseDto> content) {
         for (GetProductByCategoryResponseDto getProductByCategoryResponseDto : content) {
             getProductByCategoryResponseDto.setThumbnail(
                     from(file)
@@ -310,18 +366,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                                     .and(file.product.productNo.eq(getProductByCategoryResponseDto.getProductNo())))
                             .fetchOne());
         }
-
-        JPQLQuery<Long> count = from(product)
-                .leftJoin(product.productCategories)
-                .leftJoin(product.productAuthors)
-                .leftJoin(product.productTags)
-                .leftJoin(product.productSaleStateCode)
-                .innerJoin(file).on(product.productNo.eq(file.product.productNo))
-                .select(product.count())
-                .where(file.fileCategory.eq(FileCategory.PRODUCT_EBOOK.getCategory()))
-                .where(product.productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()));
-
-        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 
     /**

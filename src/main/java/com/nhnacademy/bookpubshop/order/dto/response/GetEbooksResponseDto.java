@@ -1,25 +1,21 @@
-package com.nhnacademy.bookpubshop.product.dto.response;
+package com.nhnacademy.bookpubshop.order.dto.response;
 
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
- * 카테고리로 상품을 조회하는 dto.
+ * 마이페이지에서 이북 리스트를 보여주기 위한 dto 입니다.
  *
- * @author : 박경서
+ * @author : 여운석
  * @since : 1.0
  **/
-@Getter
-@NoArgsConstructor
-public class GetProductByCategoryResponseDto {
+public class GetEbooksResponseDto {
     private Long productNo;
     private String title;
     private String thumbnail;
-    private String ebook;
     private Long salesPrice;
     private Integer salesRate;
+    private String ebook;
     private List<String> categories = new ArrayList<>();
     private List<String> authors = new ArrayList<>();
 

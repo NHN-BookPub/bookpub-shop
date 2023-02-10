@@ -79,6 +79,17 @@ public class OrderServiceImpl implements OrderService {
         return response;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public GetOrderDetailResponseDto getOrderDetailByOrderId(String orderId) {
+        GetOrderDetailResponseDto response = orderRepository.getOrderDetailByOrderId(orderId)
+                .orElseThrow(OrderNotFoundException::new);
+
+        response.addProducts(productRepository.getProductListByOrderNo(response.getOrderNo()));
+
+        return response;
+    }
+
     /**
      * {@inheritDoc}
      */

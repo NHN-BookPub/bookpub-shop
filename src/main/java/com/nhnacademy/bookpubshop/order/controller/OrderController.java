@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.order.controller;
 
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
+import com.nhnacademy.bookpubshop.annotation.MemberAndAuth;
 import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
@@ -52,7 +53,7 @@ public class OrderController {
     /**
      * 주문을 등록합니다.
      *
-     * @param request 등록을 위한 Dto객체를 받습니다.
+     * @param request 등록을 위한 Dto 객체를 받습니다.
      * @return 201 반환.
      */
     @PostMapping("/api/orders")
@@ -111,17 +112,39 @@ public class OrderController {
     }
 
     /**
-     * 주문 상세 정보를 반환합니다.
+     * 주문 상세 정보를 반환합니다. (주문 번호로 조회)
      *
      * @param orderNo 주문번호입니다.
-     * @return 200, 주문상세정보 Dto를 반환합니다.
+     * @return 200, 주문상세정보 Dto 를 반환합니다.
      */
-    @GetMapping("/api/orders/{orderNo}")
+    @GetMapping("/token/orders/{orderNo}")
+    @MemberAndAuth
     public ResponseEntity<GetOrderDetailResponseDto> getOrderDetailByOrderNo(
             @PathVariable Long orderNo) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(orderService.getOrderDetailById(orderNo));
+    }
+
+    /**
+     * 주문 상세 정보를 반환합니다. (주문 Id 조회)
+     *
+     * @param orderId 주문 Id 입니다.
+     * @return 200, 주문상세정보 Dto 를 반환합니다.
+     */
+    @GetMapping("/api/orders/non/{orderId}")
+    public ResponseEntity<GetOrderDetailResponseDto> getOrderDetailByOrderId(
+            @PathVariable String orderId,
+            @RequestParam String phoneNo) {
+        GetOrderDetailResponseDto response = orderService.getOrderDetailByOrderId(orderId);
+
+        if(!response.getBuyerNumber().equals(phoneNo)) {
+            response = null;
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(response);
     }
 
     /**

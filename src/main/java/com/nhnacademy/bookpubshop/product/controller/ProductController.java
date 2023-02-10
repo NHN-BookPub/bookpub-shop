@@ -172,7 +172,7 @@ public class ProductController {
      */
     @GetMapping("/api/products/types/{typeNo}")
     public ResponseEntity<List<GetProductByTypeResponseDto>>
-    getProductsByType(@PathVariable Integer typeNo,
+        getProductsByType(@PathVariable Integer typeNo,
                       @RequestParam(name = "limit") Integer limit) {
 
         return ResponseEntity.ok()
@@ -203,7 +203,7 @@ public class ProductController {
      */
     @GetMapping("/api/products/product/categories/{categoryNo}")
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-    getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
+        getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
         Page<GetProductByCategoryResponseDto> content =
                 productService.getProductsByCategory(categoryNo, pageable);
 
@@ -228,6 +228,26 @@ public class ProductController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new PageResponse<>(content));
     }
+
+    /**
+     * 멤버가 구매한 이북이 반환됩니다.
+     *
+     * @param pageable 페이징
+     * @param memberNo 멤버번호
+     * @return
+     */
+    @GetMapping("/token/product/{memberNo}/ebooks/")
+    @MemberAndAuth
+    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
+        getEbooks(Pageable pageable, @PathVariable Long memberNo) {
+        Page<GetProductByCategoryResponseDto> content =
+                productService.getEbooksByMember(pageable, memberNo);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PageResponse<>(content));
+    }
+
 
     /**
      * 상품 정보 수정 API.

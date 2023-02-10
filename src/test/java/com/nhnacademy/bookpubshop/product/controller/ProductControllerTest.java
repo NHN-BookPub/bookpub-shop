@@ -1136,7 +1136,8 @@ class ProductControllerTest {
                                 fieldWithPath("content[].title").description("상품 제목"),
                                 fieldWithPath("content[].categories").description("카테고리"),
                                 fieldWithPath("content[].authors").description("저자"),
-                                fieldWithPath("content[].thumbnail").description("상품 썸네일")
+                                fieldWithPath("content[].thumbnail").description("상품 썸네일"),
+                                fieldWithPath("content[].ebook").description("상품 이북")
                         )
                 ));
 
@@ -1203,7 +1204,8 @@ class ProductControllerTest {
                                 fieldWithPath("content[].title").description("상품 제목"),
                                 fieldWithPath("content[].categories").description("카테고리"),
                                 fieldWithPath("content[].authors").description("저자"),
-                                fieldWithPath("content[].thumbnail").description("상품 썸네일")
+                                fieldWithPath("content[].thumbnail").description("상품 썸네일"),
+                                fieldWithPath("content[].ebook").description("상품 이북")
                         )
                 ));
 

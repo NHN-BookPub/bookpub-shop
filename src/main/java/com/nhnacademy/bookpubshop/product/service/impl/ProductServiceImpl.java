@@ -44,7 +44,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -257,7 +256,6 @@ public class ProductServiceImpl implements ProductService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(readOnly = true)
     public List<GetProductDetailResponseDto> getProductsInCart(List<Long> productsNo) {
         return productRepository.getProductsInCart(productsNo);
     }
@@ -279,6 +277,16 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public Page<GetProductByCategoryResponseDto> getEbooks(Pageable pageable) {
         return productRepository.getEbooks(pageable);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Page<GetProductByCategoryResponseDto> getEbooksByMember(
+            Pageable pageable, Long memberNo) {
+        return productRepository.getEbooksByMember(pageable, memberNo);
     }
 
     @Override
