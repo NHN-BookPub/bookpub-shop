@@ -230,7 +230,7 @@ class OrderRepositoryTest {
 
         Pageable pageable = PageRequest.of(0, 10);
 
-        Page<GetOrderListForAdminResponseDto> result = orderRepository.getOrdersList(pageable);
+        Page<GetOrderListForAdminResponseDto> result = orderRepository.getOrderList(pageable);
 
         assertThat(result.getContent().get(0).getOrderNo())
                 .isEqualTo(persist.getOrderNo());

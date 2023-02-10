@@ -294,7 +294,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public PageResponse<GetOrderListForAdminResponseDto> getOrderList(Pageable pageable) {
         Page<GetOrderListForAdminResponseDto> returns =
-                orderRepository.getOrdersList(pageable);
+                orderRepository.getOrderList(pageable);
 
         return new PageResponse<>(returns);
     }

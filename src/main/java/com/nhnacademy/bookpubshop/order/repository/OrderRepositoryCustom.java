@@ -41,7 +41,7 @@ public interface OrderRepositoryCustom {
      * @param pageable 페이징을 위해 받습니다.
      * @return 모든 주문을 반환.
      */
-    Page<GetOrderListForAdminResponseDto> getOrdersList(Pageable pageable);
+    Page<GetOrderListForAdminResponseDto> getOrderList(Pageable pageable);
 
     /**
      * 멤버의 모든 주문을 반환합니다.
