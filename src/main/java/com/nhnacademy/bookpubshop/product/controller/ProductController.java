@@ -1,7 +1,13 @@
 package com.nhnacademy.bookpubshop.product.controller;
 
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
+import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductAuthorRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductCategoryRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductDescriptionRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductInfoRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductTagRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
@@ -39,6 +45,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequiredArgsConstructor
 public class ProductController {
+
     private final ProductService productService;
 
     /**
@@ -165,7 +172,7 @@ public class ProductController {
      */
     @GetMapping("/api/products/types/{typeNo}")
     public ResponseEntity<List<GetProductByTypeResponseDto>>
-        getProductsByType(@PathVariable Integer typeNo,
+    getProductsByType(@PathVariable Integer typeNo,
                       @RequestParam(name = "limit") Integer limit) {
 
         return ResponseEntity.ok()
@@ -196,7 +203,7 @@ public class ProductController {
      */
     @GetMapping("/api/products/product/categories/{categoryNo}")
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-        getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
+    getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
         Page<GetProductByCategoryResponseDto> content =
                 productService.getProductsByCategory(categoryNo, pageable);
 
@@ -220,5 +227,242 @@ public class ProductController {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new PageResponse<>(content));
+    }
+
+    /**
+     * 상품 정보 수정 API.
+     *
+     * @param productNo 상품 번호
+     * @param request   상품 수정 정보
+     * @return 201 코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/info")
+    public ResponseEntity<Void> modifyProductInfo(@PathVariable("productNo") Long productNo,
+                                                  @Valid @RequestBody ModifyProductInfoRequestDto request) {
+        productService.modifyProductInfo(productNo, request);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 상품 카테고리 수정 API.
+     *
+     * @param productNo 상품 번호
+     * @param request   카테고리 수정 정보
+     * @return 201 코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/category")
+    public ResponseEntity<Void> modifyProductCategory(@PathVariable("productNo") Long productNo,
+                                                      @Valid @RequestBody ModifyProductCategoryRequestDto request) {
+        productService.modifyProductCategory(productNo, request);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 상품 저자 수정 API.
+     *
+     * @param productNo 상품 번호
+     * @param request   상품 저자 정보
+     * @return 201 코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/author")
+    public ResponseEntity<Void> modifyProductAuthor(@PathVariable("productNo") Long productNo,
+                                                    @Valid @RequestBody ModifyProductAuthorRequestDto request) {
+        productService.modifyProductAuthor(productNo, request);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 상품 태그 수정 API.
+     *
+     * @param productNo 상품 번호
+     * @param request   상품 태그 정보
+     * @return 201 코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/tag")
+    public ResponseEntity<Void> modifyProductTag(@PathVariable("productNo") Long productNo,
+                                                 @Valid @RequestBody ModifyProductTagRequestDto request) {
+        productService.modifyProductTag(productNo, request);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 상품 유형 수정 API.
+     *
+     * @param productNo   상품 번호
+     * @param typeStateNo 상품 유형 번호
+     * @return 201 코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/type")
+    public ResponseEntity<Void> modifyProductType(@PathVariable("productNo") Long productNo,
+                                                  @RequestParam("no") Integer typeStateNo) {
+        productService.modifyProductType(productNo, typeStateNo);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 상품 판매 유형 수정 API.
+     *
+     * @param productNo   상품 번호
+     * @param saleStateNo 상품 판매 유형 번호
+     * @return 201 코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/sale")
+    public ResponseEntity<Void> modifyProductSale(@PathVariable("productNo") Long productNo,
+                                                  @RequestParam("no") Integer saleStateNo) {
+        productService.modifyProductSale(productNo, saleStateNo);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 상품 포인트 정책 수정 API.
+     *
+     * @param productNo 상품 번호
+     * @param policyNo  포인트 정책 번호
+     * @return 201코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/policy")
+    public ResponseEntity<Void> modifyProductPolicy(@PathVariable("productNo") Long productNo,
+                                                    @RequestParam("no") Integer policyNo) {
+        productService.modifyProductPolicy(productNo, policyNo);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * E-Book 파일 다운로드 API.
+     *
+     * @param productNo 상품 번호
+     * @return 200 코드
+     */
+    @AdminAuth
+    @GetMapping("/token/downloads/e-book/{productNo}")
+    public ResponseEntity<GetDownloadInfo> eBookDownload(@PathVariable("productNo") Long productNo) {
+        GetDownloadInfo eBookInfo = productService.getEBookInfo(productNo);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(eBookInfo);
+    }
+
+    /**
+     * 상품 설명 수정 API.
+     *
+     * @param productNo 상품 번호
+     * @param request   상품 설명
+     * @return 201 코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/description")
+    public ResponseEntity<Void> modifyProductDescription(@PathVariable("productNo") Long productNo,
+                                                         @Valid @RequestBody ModifyProductDescriptionRequestDto request) {
+        productService.modifyProductDescription(productNo, request);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * E-Book File 변경 API.
+     *
+     * @param productNo 상품 번호
+     * @param eBook     E-Book
+     * @return 201 코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/e-book")
+    public ResponseEntity<Void> modifyProductEBook(@PathVariable("productNo") Long productNo,
+                                                   @RequestPart MultipartFile eBook) {
+        productService.modifyProductEBook(productNo, eBook);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 썸네일 Image File 변경 API.
+     *
+     * @param productNo 상품 번호
+     * @param image     Image
+     * @return 201 코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/thumbnail")
+    public ResponseEntity<Void> modifyProductImage(@PathVariable("productNo") Long productNo,
+                                                   @RequestPart("image") MultipartFile image) {
+        productService.modifyProductImage(productNo, image);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 상품 상세 File 이미지 변경 API.
+     *
+     * @param productNo   상품 번호
+     * @param detailImage Image
+     * @return 201 코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/detail-image")
+    public ResponseEntity<Void> modifyProductDetailImage(@PathVariable("productNo") Long productNo,
+                                                         @RequestPart MultipartFile detailImage) {
+        productService.modifyProductDetailImage(productNo, detailImage);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 상품 Image 추가 API.
+     *
+     * @param productNo 상품 번호
+     * @param image     Image
+     * @return 201 코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/new-thumbnail")
+    public ResponseEntity<Void> addProductImage(@PathVariable("productNo") Long productNo,
+                                                @RequestPart("image") MultipartFile image) {
+        productService.addProductImage(productNo, image);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 상품 상세 File 이미지 추가 API.
+     *
+     * @param productNo   상품 번호
+     * @param detailImage Image
+     * @return 201 코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/new-detail-image")
+    public ResponseEntity<Void> addProductDetailImage(@PathVariable("productNo") Long productNo,
+                                                      @RequestPart MultipartFile detailImage) {
+        productService.addProductDetailImage(productNo, detailImage);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
     }
 }
