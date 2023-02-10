@@ -22,7 +22,6 @@ import com.nhnacademy.bookpubshop.state.ProductSaleState;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -67,7 +66,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
     public Page<GetProductListResponseDto> getAllProducts(Pageable pageable) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
-        JPAQuery<GetProductListResponseDto> query = queryFactory
+        List<GetProductListResponseDto> query = queryFactory
                 .from(product)
                 .select(Projections.constructor(GetProductListResponseDto.class,
                         product.productNo,
@@ -76,16 +75,18 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         product.productStock,
                         product.salesPrice,
                         product.salesRate,
+                        product.productSubscribed,
                         product.productPrice,
                         product.productDeleted))
                 .leftJoin(product.files, file)
                 .on(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                 .offset(pageable.getOffset())
-                .limit(pageable.getPageSize());
+                .limit(pageable.getPageSize())
+                .fetch();
 
         Long count = queryFactory.select(product.count()).from(product).fetchOne();
 
-        return new PageImpl<>(query.fetch(), pageable, count);
+        return new PageImpl<>(query, pageable, count);
     }
 
     /**
@@ -106,6 +107,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         product.productStock,
                         product.salesPrice,
                         product.salesRate,
+                        product.productSubscribed,
                         product.productPrice,
                         product.productDeleted))
                 .leftJoin(product.files, file)
@@ -343,5 +345,19 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                             .select(author.authorName)
                             .where(productAuthor.product.productNo.eq(getProductByCategoryResponseDto.getProductNo())).fetch());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getFilePath(Long productNo) {
+        return from(product)
+                .leftJoin(file)
+                .on(file.product.productNo.eq(productNo))
+                .where(product.productNo.eq(productNo)
+                        .and(file.fileCategory.eq(FileCategory.PRODUCT_EBOOK.getCategory())))
+                .select(file.filePath)
+                .fetchOne();
     }
 }

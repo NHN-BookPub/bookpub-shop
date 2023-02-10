@@ -85,4 +85,12 @@ public interface ProductRepositoryCustom {
      * @return 페이징 상품들
      */
     Page<GetProductByCategoryResponseDto> getEbooks(Pageable pageable);
+
+    /**
+     * E-book 파일 경로 조회.
+     *
+     * @param productNo 상품 번호
+     * @return E-Book 파일 경로
+     */
+    String getFilePath(Long productNo);
 }
