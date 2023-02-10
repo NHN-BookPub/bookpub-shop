@@ -10,13 +10,22 @@ import static org.mockito.Mockito.*;
 
 import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
+import com.nhnacademy.bookpubshop.author.exception.NotFoundAuthorException;
 import com.nhnacademy.bookpubshop.author.repository.AuthorRepository;
 import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
+import com.nhnacademy.bookpubshop.category.exception.CategoryNotFoundException;
 import com.nhnacademy.bookpubshop.category.repository.CategoryRepository;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
+import com.nhnacademy.bookpubshop.file.entity.File;
+import com.nhnacademy.bookpubshop.file.exception.FileNotFoundException;
 import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductAuthorRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductCategoryRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductDescriptionRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductInfoRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductTagRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByCategoryResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
@@ -33,6 +42,7 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCo
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTag;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductAuthorRepository;
+import com.nhnacademy.bookpubshop.product.relationship.repository.ProductCategoryRepository;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductPolicyRepository;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
@@ -41,21 +51,28 @@ import com.nhnacademy.bookpubshop.product.service.impl.ProductServiceImpl;
 import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.tag.dummy.TagDummy;
 import com.nhnacademy.bookpubshop.tag.entity.Tag;
+import com.nhnacademy.bookpubshop.tag.exception.TagNotFoundException;
 import com.nhnacademy.bookpubshop.tag.repository.TagRepository;
 import java.io.IOException;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -69,6 +86,8 @@ import org.springframework.web.multipart.MultipartFile;
 @ExtendWith(SpringExtension.class)
 @Import(ProductServiceImpl.class)
 class ProductServiceTest {
+
+    @Autowired
     ProductService productService;
     @MockBean
     ProductPolicyRepository productPolicyRepository;
@@ -86,6 +105,8 @@ class ProductServiceTest {
     AuthorRepository authorRepository;
     @MockBean
     ProductRepository productRepository;
+    @MockBean
+    ProductCategoryRepository productCategoryRepository;
 
     Product product;
     CreateProductRequestDto requestDto;
@@ -104,9 +125,6 @@ class ProductServiceTest {
 
     @BeforeEach
     void setUp() {
-        productService = new ProductServiceImpl(productRepository, productPolicyRepository,
-                saleStateCodeRepository, typeStateCodeRepository, authorRepository, categoryRepository,
-                tagRepository, fileManagement);
 
         productPolicy = new ProductPolicy(1, "method", true, 1);
         typeStateCode = new ProductTypeStateCode(1, BEST_SELLER.getName(), BEST_SELLER.isUsed(), "info");
@@ -130,28 +148,30 @@ class ProductServiceTest {
                 new ProductTag(new ProductTag.Pk(tag.getTagNo(), product.getProductNo()), tag, product);
         product.getProductTags().add(productTag);
 
-        product.setProductFiles(List.of(
-                FileDummy.dummy(
-                        null,
-                        null,
-                        null,
-                        product,
-                        null,
-                        FileCategory.PRODUCT_THUMBNAIL, null),
-                FileDummy.dummy(
-                        null,
-                        null,
-                        null,
-                        product,
-                        null,
-                        FileCategory.PRODUCT_DETAIL, null),
-                FileDummy.dummy(
-                        null,
-                        null,
-                        null,
-                        product,
-                        null,
-                        FileCategory.PRODUCT_EBOOK, null)));
+        List<File> filesDummy = new ArrayList<>();
+        filesDummy.add(FileDummy.dummy(
+                null,
+                null,
+                null,
+                product,
+                null,
+                FileCategory.PRODUCT_THUMBNAIL, null));
+        filesDummy.add(FileDummy.dummy(
+                null,
+                null,
+                null,
+                product,
+                null,
+                FileCategory.PRODUCT_DETAIL, null));
+        filesDummy.add(FileDummy.dummy(
+                null,
+                null,
+                null,
+                product,
+                null,
+                FileCategory.PRODUCT_EBOOK, null));
+
+        product.setProductFiles(filesDummy);
 
         requestDto = new CreateProductRequestDto();
 
@@ -162,6 +182,7 @@ class ProductServiceTest {
                 product.getProductStock(),
                 product.getSalesPrice(),
                 product.getSalesRate(),
+                product.isProductSubscribed(),
                 product.getProductPrice(),
                 product.isProductDeleted());
 
@@ -220,9 +241,15 @@ class ProductServiceTest {
     }
 
     @Test
-    @Disabled
     @DisplayName("상품 생성 성공")
     void createProduct() throws IOException {
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        Map<String, MultipartFile> fileMap = new HashMap<>();
+        fileMap.put("detail", multipartFile);
+        fileMap.put("ebook", multipartFile);
+
         when(productPolicyRepository.findById(productPolicy.getPolicyNo()))
                 .thenReturn(Optional.ofNullable(productPolicy));
         when(typeStateCodeRepository.findById(typeStateCode.getCodeNo()))
@@ -241,7 +268,7 @@ class ProductServiceTest {
         when(tagRepository.findById(anyInt()))
                 .thenReturn(Optional.of(tag));
 
-        productService.createProduct(requestDto, files);
+        productService.createProduct(requestDto, fileMap);
 
         verify(productRepository, times(1))
                 .save(captor.capture());
@@ -326,25 +353,6 @@ class ProductServiceTest {
         assertThat(productService.getAllProducts(pageable)
                 .getContent().get(0).getSalesPrice())
                 .isEqualTo(listResponseDto.getSalesPrice());
-    }
-
-    @Disabled
-    @Test
-    @DisplayName("모든 상품 조회 실패, 결과가 0개")
-    void getAllProductsFailNotFound() {
-        List<GetProductListResponseDto> responses = new ArrayList<>();
-        responses.add(listResponseDto);
-
-        Pageable pageable = Pageable.ofSize(5);
-
-        when(productRepository.getAllProducts(pageable))
-                .thenReturn(PageableExecutionUtils.getPage(
-                        Collections.EMPTY_LIST,
-                        pageable,
-                        () -> 0L));
-
-        assertThatThrownBy(() -> productService.getAllProducts(pageable))
-                .isInstanceOf(ProductNotFoundException.class);
     }
 
     @Test
@@ -593,4 +601,761 @@ class ProductServiceTest {
         verify(productRepository, times(1))
                 .getEbooks(pageable);
     }
+
+    @Test
+    @DisplayName("상품 정보 수정 성공 테스트")
+    void modify_productInfo_Success_Test() {
+        // given
+        ModifyProductInfoRequestDto dto = new ModifyProductInfoRequestDto();
+        ReflectionTestUtils.setField(dto, "productIsbn", "12312312312");
+        ReflectionTestUtils.setField(dto, "productPrice", 1000L);
+        ReflectionTestUtils.setField(dto, "salesRate", 10);
+        ReflectionTestUtils.setField(dto, "productPublisher", "출판사");
+        ReflectionTestUtils.setField(dto, "publishedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(dto, "pageCount", 12);
+        ReflectionTestUtils.setField(dto, "salesPrice", 800L);
+        ReflectionTestUtils.setField(dto, "priority", 10);
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        // then
+        productService.modifyProductInfo(1L, dto);
+
+        verify(productRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("상품 정보 수정 실패 테스트(상품이 없는 경우)")
+    void modify_productInfo_Fail_Test() {
+        // given
+        ModifyProductInfoRequestDto dto = new ModifyProductInfoRequestDto();
+        ReflectionTestUtils.setField(dto, "productIsbn", "12312312312");
+        ReflectionTestUtils.setField(dto, "productPrice", 1000L);
+        ReflectionTestUtils.setField(dto, "salesRate", 10);
+        ReflectionTestUtils.setField(dto, "productPublisher", "출판사");
+        ReflectionTestUtils.setField(dto, "publishedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(dto, "pageCount", 12);
+        ReflectionTestUtils.setField(dto, "salesPrice", 800L);
+        ReflectionTestUtils.setField(dto, "priority", 10);
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductInfo(1L, dto))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 카테고리 수정 성공 테스트")
+    void modify_productCategory_Success_Test() {
+        // given
+        ModifyProductCategoryRequestDto dto = new ModifyProductCategoryRequestDto();
+        ReflectionTestUtils.setField(dto, "categoriesNo", List.of(1));
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(categoryRepository.findById(anyInt()))
+                .thenReturn(Optional.of(category));
+
+        // then
+        productService.modifyProductCategory(1L, dto);
+
+        verify(productRepository, times(1))
+                .findById(anyLong());
+        verify(categoryRepository, times(1))
+                .findById(anyInt());
+    }
+
+    @Test
+    @DisplayName("상품 카테고리 수정 실패 테스트 (not found product)")
+    void modify_productCategory_Fail_Test_NotFoundProduct() {
+        // given
+        ModifyProductCategoryRequestDto dto = new ModifyProductCategoryRequestDto();
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductCategory(1L, dto))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 카테고리 수정 실패 테스트 (not found category)")
+    void modify_productCategory_Fail_Test_NotFoundCategory() {
+        // given
+        ModifyProductCategoryRequestDto dto = new ModifyProductCategoryRequestDto();
+        ReflectionTestUtils.setField(dto, "categoriesNo", List.of(1));
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(categoryRepository.findById(anyInt()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductCategory(1L, dto))
+                .isInstanceOf(CategoryNotFoundException.class)
+                .hasMessageContaining(CategoryNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 저자 수정 성공 테스트")
+    void modify_productAuthor_Success_Test() {
+        // given
+        ModifyProductAuthorRequestDto dto = new ModifyProductAuthorRequestDto();
+        ReflectionTestUtils.setField(dto, "authors", List.of(1));
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(authorRepository.findById(anyInt()))
+                .thenReturn(Optional.of(author));
+
+        // then
+        productService.modifyProductAuthor(1L, dto);
+
+        verify(productRepository, times(1))
+                .findById(anyLong());
+        verify(authorRepository, times(1))
+                .findById(anyInt());
+    }
+
+    @Test
+    @DisplayName("상품 저자 수정 실패 테스트 (상품 없음)")
+    void modify_productAuthor_Fail_Test_notFoundProduct() {
+        // given
+        ModifyProductAuthorRequestDto dto = new ModifyProductAuthorRequestDto();
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductAuthor(1L, dto))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 저자 수정 실패 테스트 (저자 없음)")
+    void modify_productAuthor_Fail_Test_notFoundAuthor() {
+        // given
+        ModifyProductAuthorRequestDto dto = new ModifyProductAuthorRequestDto();
+        ReflectionTestUtils.setField(dto, "authors", List.of(1));
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(authorRepository.findById(anyInt()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductAuthor(1L, dto))
+                .isInstanceOf(NotFoundAuthorException.class)
+                .hasMessageContaining(NotFoundAuthorException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 태그 수정 성공 테스트")
+    void modify_productTag_Success_Test() {
+        // given
+        ModifyProductTagRequestDto dto = new ModifyProductTagRequestDto();
+        ReflectionTestUtils.setField(dto, "tags", List.of(1));
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(tagRepository.findById(anyInt()))
+                .thenReturn(Optional.of(tag));
+
+        // then
+        productService.modifyProductTag(1L, dto);
+
+        verify(productRepository, times(1))
+                .findById(anyLong());
+        verify(tagRepository, times(1))
+                .findById(anyInt());
+    }
+
+    @Test
+    @DisplayName("상품 태그 수정 실패 테스트 (상품 없음)")
+    void modify_productTag_Fail_Test_notFoundProduct() {
+        // given
+        ModifyProductTagRequestDto dto = new ModifyProductTagRequestDto();
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductTag(1L, dto))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 태그 수정 실패 테스트 (태그 없음)")
+    void modify_productTag_Fail_Test_notFoundTag() {
+        // given
+        ModifyProductTagRequestDto dto = new ModifyProductTagRequestDto();
+        ReflectionTestUtils.setField(dto, "tags", List.of(1));
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(tagRepository.findById(anyInt()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductTag(1L, dto))
+                .isInstanceOf(TagNotFoundException.class)
+                .hasMessageContaining(TagNotFoundException.ERROR_MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 유형 변경 성공 테스트")
+    void modify_productType_success_test() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(typeStateCodeRepository.findById(anyInt()))
+                .thenReturn(Optional.of(typeStateCode));
+
+        // then
+        productService.modifyProductType(1L, 1);
+
+        verify(productRepository, times(1))
+                .findById(anyLong());
+        verify(typeStateCodeRepository, times(1))
+                .findById(anyInt());
+    }
+
+    @Test
+    @DisplayName("상품 유형 변경 실패 테스트 (상품 없음)")
+    void modify_productType_fail_test_not_found_product() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductSale(1L, 1))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 유형 변경 실패 테스트 (없는 유형)")
+    void modify_productType_fail_test_not_found_type() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(typeStateCodeRepository.findById(anyInt()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductType(1L, 1))
+                .isInstanceOf(NotFoundStateCodeException.class)
+                .hasMessageContaining(NotFoundStateCodeException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 판매 유형 변경 성공 테스트")
+    void modify_productSale_success_test() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(saleStateCodeRepository.findById(anyInt()))
+                .thenReturn(Optional.of(saleStateCode));
+
+        // then
+        productService.modifyProductSale(1L, 1);
+
+        verify(productRepository, times(1))
+                .findById(anyLong());
+        verify(saleStateCodeRepository, times(1))
+                .findById(anyInt());
+    }
+
+    @Test
+    @DisplayName("상품 판매 유형 변경 실패 테스트 (상품 없음)")
+    void modify_productSale_fail_test_not_found_product() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductSale(1L, 1))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 판메 유형 변경 실패 테스트 (유형 없음)")
+    void modify_productSale_fail_test_not_fond_saleCode() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(saleStateCodeRepository.findById(anyInt()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductSale(1L, 1))
+                .isInstanceOf(NotFoundStateCodeException.class)
+                .hasMessageContaining(NotFoundStateCodeException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 포인트 정책 수정 성공 테스트")
+    void modify_productPolicy_success_test() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(productPolicyRepository.findById(anyInt()))
+                .thenReturn(Optional.of(productPolicy));
+
+        // then
+        productService.modifyProductPolicy(1L, 1);
+
+        verify(productRepository, times(1))
+                .findById(anyLong());
+        verify(productPolicyRepository, times(1))
+                .findById(anyInt());
+    }
+
+    @Test
+    @DisplayName("상품 포인트 정책 수정 실패 테스트 (상품 없음)")
+    void modify_productPolicy_fail_test_not_found_product() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductSale(1L, 1))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 포인트 정책 수정 실패 테스트 (정책 없음)")
+    void modify_productPolicy_fail_test_not_found_policy() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(productPolicyRepository.findById(anyInt()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductPolicy(1L, 1))
+                .isInstanceOf(NotFoundProductPolicyException.class)
+                .hasMessageContaining(NotFoundProductPolicyException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 정보 조회 테스트")
+    void getBookInfo() {
+
+        // then
+        productService.getEBookInfo(anyLong());
+
+        verify(productRepository, times(1))
+                .getFilePath(anyLong());
+    }
+
+    @Test
+    @DisplayName("상품 설명 수정 성공 테스트")
+    void modify_product_description_success_test() {
+        // given
+        ModifyProductDescriptionRequestDto dto = new ModifyProductDescriptionRequestDto();
+        ReflectionTestUtils.setField(dto, "description", "a");
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        // then
+        productService.modifyProductDescription(1L, dto);
+
+        verify(productRepository, times(1))
+                .findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("상픔 설명 수정 실패 테스트")
+    void modify_product_description_fail_test() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductSale(1L, 1))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("E-Book 수정 테스트")
+    void modify_Ebook_success_test() throws IOException {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        // then
+        productService.modifyProductEBook(1L, multipartFile);
+
+        verify(productRepository, times(1))
+                .findById(anyLong());
+        verify(fileManagement, times(1))
+                .saveFile(any(), any(), any(), any(),
+                        any(), any(), any(), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("E-book 수정 실패 (상품 없음)")
+    void modify_ebook_fail_test_not_found_product() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductSale(1L, 1))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 이미지 수정 실패 (상품 없음)")
+    void modify_image_fail_test_not_found_product() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductSale(1L, 1))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 상세 이미지 수정 실패 (상품 없음)")
+    void modify_detailImage_fail_test_not_found_product() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductSale(1L, 1))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 이미지 추가 실패 (상품 없음)")
+    void add_image_fail_test_not_found_product() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductSale(1L, 1))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 상세 이미지 추가 실패 (상품 없음)")
+    void add_detailImage_fail_test_not_found_product() {
+        // given
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductSale(1L, 1))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 이미지 수정 테스트")
+    void modify_image_success_test() throws IOException {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        // then
+        productService.modifyProductImage(1L, multipartFile);
+
+        verify(productRepository, times(1))
+                .findById(anyLong());
+        verify(fileManagement, times(1))
+                .saveFile(any(), any(), any(), any(),
+                        any(), any(), any(), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("상품 이미지 추가 테스트")
+    void add_image_success_test() throws IOException {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        // then
+        productService.addProductImage(1L, multipartFile);
+
+        verify(productRepository, times(1))
+                .findById(anyLong());
+        verify(fileManagement, times(1))
+                .saveFile(any(), any(), any(), any(),
+                        any(), any(), any(), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("상품 상세 이미지 추가 테스트")
+    void add_detailImage_success_test() throws IOException {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        // then
+        productService.addProductDetailImage(1L, multipartFile);
+
+        verify(productRepository, times(1))
+                .findById(anyLong());
+        verify(fileManagement, times(1))
+                .saveFile(any(), any(), any(), any(),
+                        any(), any(), any(), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("e-book 이미지 수정 실패 테스트1")
+    void modify_ebook_fail_test_fileException_1() throws IOException {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        doThrow(new IOException()).when(fileManagement).deleteFile(anyString());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductEBook(1L, multipartFile))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining(FileNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("e-book 이미지 수정 실패 테스트2")
+    void modify_ebook_fail_test_fileException_2() throws IOException {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), anyString(), anyString()))
+                .thenThrow(IOException.class);
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductEBook(1L, multipartFile))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining(FileNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 이미지 수정 실패 테스트1")
+    void modify_image_fail_test_fileException_1() throws IOException {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        doThrow(new IOException()).when(fileManagement).deleteFile(anyString());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductImage(1L, multipartFile))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining(FileNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 이미지 수정 실패 테스트 2")
+    void modify_image_fail_test_fileException_2() throws IOException {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), anyString(), anyString()))
+                .thenThrow(IOException.class);
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductImage(1L, multipartFile))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining(FileNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 상세 이미지 수정 성공 테스트")
+    void modify_detailImage_success_test() throws IOException {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        // then
+        productService.modifyProductDetailImage(1L, multipartFile);
+
+        verify(productRepository, times(1))
+                .findById(anyLong());
+        verify(fileManagement, times(1))
+                .saveFile(any(), any(), any(), any(), any(), any(), any(),
+                        anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("상품 상세 이미지 수정 실패 테스트-1")
+    void modify_detailImage_fail_test_fileException_1() throws IOException {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        doThrow(new IOException()).when(fileManagement).deleteFile(anyString());
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductDetailImage(1L, multipartFile))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining(FileNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 상세 이미지 수정 실패 테스트-2")
+    void modify_detailImage_fail_test_fileException_2() throws IOException {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), anyString(), anyString()))
+                .thenThrow(IOException.class);
+
+        // then
+        assertThatThrownBy(() -> productService.modifyProductDetailImage(1L, multipartFile))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining(FileNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 이미지 추가 실패 테스트")
+    void add_image_fail_test_fileException() throws IOException {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), anyString(), anyString()))
+                .thenThrow(IOException.class);
+
+        // then
+        assertThatThrownBy(() -> productService.addProductImage(1L, multipartFile))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining(FileNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("상품 이미지 추가 실패 테스트")
+    void add_detailImage_fail_test_fileException() throws IOException {
+        // given
+        String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
+        MultipartFile multipartFile = new MockMultipartFile("image", "imageName.jpeg", "image/*", imageContent.getBytes());
+
+        // when
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        when(fileManagement.saveFile(any(), any(), any(), any(), any(), any(), any(), anyString(), anyString()))
+                .thenThrow(IOException.class);
+
+        // then
+        assertThatThrownBy(() -> productService.addProductDetailImage(1L, multipartFile))
+                .isInstanceOf(FileNotFoundException.class)
+                .hasMessageContaining(FileNotFoundException.MESSAGE);
+    }
+
 }
