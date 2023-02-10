@@ -2,18 +2,30 @@ package com.nhnacademy.bookpubshop.product.entity;
 
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
 import com.nhnacademy.bookpubshop.file.entity.File;
+import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductInfoRequestDto;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductAuthor;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductCategory;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTag;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.state.FileCategory;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -105,15 +117,18 @@ public class Product extends BaseCreateTimeEntity {
     private boolean productSubscribed;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            orphanRemoval = true)
     private final Set<ProductCategory> productCategories = new HashSet<>();
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            orphanRemoval = true)
     private final Set<ProductAuthor> productAuthors = new HashSet<>();
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            orphanRemoval = true)
     private final Set<ProductTag> productTags = new HashSet<>();
 
     @OneToMany(mappedBy = "product",
@@ -124,6 +139,7 @@ public class Product extends BaseCreateTimeEntity {
     public void setProductFiles(List<File> files) {
         this.files = files;
     }
+
     public void modifyProductDeleted() {
         this.productDeleted = !this.productDeleted;
     }
@@ -197,5 +213,112 @@ public class Product extends BaseCreateTimeEntity {
      */
     public void minusStock() {
         this.productStock -= 1;
+    }
+
+    /**
+     * 상품 정보를 수정하는 메서드.
+     *
+     * @param request 상품 수정 정보
+     */
+    public void modifyProductInfo(ModifyProductInfoRequestDto request) {
+        this.productIsbn = request.getProductIsbn();
+        this.productPrice = request.getProductPrice();
+        this.salesRate = request.getSalesRate();
+        this.productPublisher = request.getProductPublisher();
+        this.publishDate = request.getPublishedAt();
+        this.pageCount = request.getPageCount();
+        this.salesPrice = request.getSalesPrice();
+        this.productPriority = request.getPriority();
+    }
+
+    /**
+     * 카테고리들을 전부 지우는 메서드.
+     */
+    public void initCategory() {
+        this.productCategories.clear();
+    }
+
+    /**
+     * 저자들을 전부 지우는 메서드.
+     */
+    public void initAuthor() {
+        this.productAuthors.clear();
+    }
+
+    /**
+     * 태그들을 전부 지우는 메서드.
+     */
+    public void initTag() {
+        this.productTags.clear();
+    }
+
+    /**
+     * 상품 유형을 변경하는 메서드.
+     *
+     * @param productTypeStateCode 변경할 상품 유형
+     */
+    public void modifyType(ProductTypeStateCode productTypeStateCode) {
+        this.productTypeStateCode = productTypeStateCode;
+    }
+
+    /**
+     * 상품 판매 유형을 변경하는 메서드.
+     *
+     * @param productSaleStateCode 변경할 판매 유형
+     */
+    public void modifySaleType(ProductSaleStateCode productSaleStateCode) {
+        this.productSaleStateCode = productSaleStateCode;
+    }
+
+    /**
+     * 상품 포인트 정책을 변경하는 메서드.
+     *
+     * @param productPolicy 변경할 포인트 정책
+     */
+    public void modifyPolicy(ProductPolicy productPolicy) {
+        this.productPolicy = productPolicy;
+    }
+
+    /**
+     * 상품 설명을 변경하는 메서드.
+     *
+     * @param changeDescription 변경할 상품 설명
+     */
+    public void modifyDescription(String changeDescription) {
+        this.productDescription = changeDescription;
+    }
+
+    /**
+     * E-Book 파일을 변경하는 메서드.
+     *
+     * @param file 변경할 파일
+     */
+    public void modifyEBook(File file) {
+        this.getFiles().removeIf(tmp -> tmp.getFileCategory().equals(FileCategory.PRODUCT_EBOOK.getCategory()));
+        this.getFiles().add(file);
+    }
+
+    /**
+     * 썸네일 이미지를 변경하는 메서드.
+     *
+     * @param file 변경할 파일
+     */
+    public void modifyThumbnail(File file) {
+        this.getFiles().removeIf(x -> x.getFileCategory().equals(FileCategory.PRODUCT_THUMBNAIL.getCategory()));
+        this.getFiles().add(file);
+    }
+
+    /**
+     * 상품 상세 이미지를 변경하는 메서드.
+     *
+     * @param file 변경할 파일
+     */
+    public void modifyDetailImage(File file) {
+        this.getFiles().removeIf(x -> x.getFileCategory().equals(FileCategory.PRODUCT_DETAIL.getCategory()));
+        this.getFiles().add(file);
+    }
+
+    public void addFile(File file) {
+        this.getFiles().add(file);
     }
 }
