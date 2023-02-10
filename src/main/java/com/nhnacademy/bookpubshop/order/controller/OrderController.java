@@ -117,7 +117,7 @@ public class OrderController {
      * @param orderNo 주문번호입니다.
      * @return 200, 주문상세정보 Dto 를 반환합니다.
      */
-    @GetMapping("/api/orders/{orderNo}")
+    @GetMapping("/token/orders/{orderNo}")
     @MemberAndAuth
     public ResponseEntity<GetOrderDetailResponseDto> getOrderDetailByOrderNo(
             @PathVariable Long orderNo) {

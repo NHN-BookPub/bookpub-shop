@@ -230,7 +230,7 @@ public class ProductController {
      * @param memberNo 멤버번호
      * @return
      */
-    @GetMapping("/api/product/{memberNo}/ebooks/")
+    @GetMapping("/token/product/{memberNo}/ebooks/")
     @MemberAndAuth
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
     getEbooks(Pageable pageable, @PathVariable Long memberNo) {
