@@ -1,0 +1,7 @@
+=== 상품(Product)
+
+상품 등록, 수정, 조회 API.
+
+include::product-create.adoc[]
+include::product-modify.adoc[]
+include::product-get.adoc[]
