@@ -4,6 +4,7 @@ import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.annotation.MemberAndAuth;
 import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.CreateRelationProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductAuthorRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductCategoryRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductDescriptionRequestDto;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -43,6 +45,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author : 여운석, 박경서
  * @since : 1.0
  */
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ProductController {
@@ -173,7 +176,7 @@ public class ProductController {
      */
     @GetMapping("/api/products/types/{typeNo}")
     public ResponseEntity<List<GetProductByTypeResponseDto>>
-        getProductsByType(@PathVariable Integer typeNo,
+    getProductsByType(@PathVariable Integer typeNo,
                       @RequestParam(name = "limit") Integer limit) {
 
         return ResponseEntity.ok()
@@ -204,7 +207,7 @@ public class ProductController {
      */
     @GetMapping("/api/products/product/categories/{categoryNo}")
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-        getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
+    getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
         Page<GetProductByCategoryResponseDto> content =
                 productService.getProductsByCategory(categoryNo, pageable);
 
@@ -240,7 +243,7 @@ public class ProductController {
     @GetMapping("/token/product/{memberNo}/ebooks/")
     @MemberAndAuth
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-        getEbooks(Pageable pageable, @PathVariable Long memberNo) {
+    getEbooks(Pageable pageable, @PathVariable Long memberNo) {
         Page<GetProductByCategoryResponseDto> content =
                 productService.getEbooksByMember(pageable, memberNo);
 
@@ -484,6 +487,38 @@ public class ProductController {
         productService.addProductDetailImage(productNo, detailImage);
 
         return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 연관관계 상품을 등록하는 API.
+     *
+     * @param productNo 상품 번호
+     * @param request   연관관계 상품들
+     * @return 201 코드
+     */
+    @AdminAuth
+    @PutMapping("/token/products/{productNo}/relation")
+    public ResponseEntity<Void> addRelationProduct(@PathVariable("productNo") Long productNo,
+                                                   @Valid @RequestBody CreateRelationProductRequestDto request) {
+        productService.addRelationProduct(productNo, request);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 연관관계 삭제 API.
+     *
+     * @param childNo 자식 상풍 번호
+     * @return 200 코드
+     */
+    @AdminAuth
+    @DeleteMapping("/token/products/{childNo}/relation")
+    public ResponseEntity<Void> disconnectRelation(@PathVariable("childNo") Long childNo) {
+        productService.deleteRelationProduct(childNo);
+
+        return ResponseEntity.ok()
                 .build();
     }
 }
