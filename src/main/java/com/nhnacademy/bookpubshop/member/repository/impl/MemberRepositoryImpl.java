@@ -72,18 +72,15 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                                         JPAExpressions.select(member.memberNo.count())
                                                 .where(member.memberBlocked.ne(true)
                                                         .and(member.memberDeleted.ne(true)))
-                                                .from(member)
-                                        , "currentMemberCnt"),
+                                                .from(member), "currentMemberCnt"),
                                 ExpressionUtils.as(
                                         JPAExpressions.select(member.memberNo.count())
                                                 .where(member.memberDeleted.eq(true))
-                                                .from(member)
-                                        , "deleteMemberCnt"),
+                                                .from(member), "deleteMemberCnt"),
                                 ExpressionUtils.as(
                                         JPAExpressions.select(member.memberNo.count())
                                                 .where(member.memberBlocked.eq(true))
-                                                .from(member)
-                                        , "blockMemberCnt")))
+                                                .from(member), "blockMemberCnt")))
                 .fetchOne();
     }
 
@@ -160,13 +157,17 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                         member.memberNo,
                         member.memberId,
                         member.memberPwd))
-                .where(member.memberId.eq(id))
+                .where(member.memberId.eq(id)
+                        .and(member.memberBlocked.isFalse())
+                        .and(member.memberDeleted.isFalse()))
                 .fetchOne());
 
         List<String> memberAuthorities = from(memberAuthority)
                 .innerJoin(memberAuthority.member, member)
                 .select(memberAuthority.authority.authorityName)
-                .where(member.memberId.eq(id))
+                .where(member.memberId.eq(id)
+                        .and(member.memberDeleted.isFalse()
+                                .and(member.memberBlocked.isFalse())))
                 .fetch();
 
         if (findMember.isEmpty() || memberAuthorities.isEmpty()) {
