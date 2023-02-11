@@ -93,7 +93,7 @@ class InquiryRepositoryTest {
     @DisplayName(value = "상품문의(inquiry) 레포지토리 save 테스트")
     void inquirySaveTest() {
         LocalDateTime now = LocalDateTime.now();
-        Inquiry inquiry = new Inquiry(null, null, member, product, inquiryStateCode, "content", false, false);
+        Inquiry inquiry = new Inquiry(null, null, member, product, inquiryStateCode, "title", "content", false, false, null);
         inquiryRepository.save(inquiry);
 
         Optional<Inquiry> optional = inquiryRepository.findById(inquiry.getInquiryNo());
