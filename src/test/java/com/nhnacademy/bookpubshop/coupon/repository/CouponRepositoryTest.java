@@ -1,7 +1,6 @@
 package com.nhnacademy.bookpubshop.coupon.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
@@ -19,14 +18,16 @@ import com.nhnacademy.bookpubshop.customersupport.dummy.CustomerServiceDummy;
 import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
+import com.nhnacademy.bookpubshop.inquiry.dummy.InquiryDummy;
+import com.nhnacademy.bookpubshop.inquiry.entity.Inquiry;
+import com.nhnacademy.bookpubshop.inquirystatecode.dummy.InquiryCodeDummy;
+import com.nhnacademy.bookpubshop.inquirystatecode.entity.InquiryStateCode;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProductStateCode;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
-import com.nhnacademy.bookpubshop.personalinquiry.dummy.PersonalInquiryDummy;
-import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
@@ -89,11 +90,12 @@ class CouponRepositoryTest {
     CouponStateCode couponStateCode;
     CouponTemplate couponTemplate;
     Coupon coupon;
-    PersonalInquiry inquiry;
+    Inquiry inquiry;
     Review review;
     ReviewPolicy reviewPolicy;
     CustomerService customerService;
     CustomerServiceStateCode customerServiceStateCode;
+    InquiryStateCode inquiryStateCode;
     File file;
     OrderProduct orderProduct;
 
@@ -206,8 +208,8 @@ class CouponRepositoryTest {
                 orderProduct,
                 member
         );
-
-        inquiry = PersonalInquiryDummy.dummy(member);
+        inquiryStateCode = InquiryCodeDummy.dummy();
+        inquiry = InquiryDummy.dummy(null, member, product, inquiryStateCode);
         reviewPolicy = ReviewPolicyDummy.dummy();
         review = ReviewDummy.dummy(member, product, reviewPolicy);
         customerServiceStateCode = CustomerServiceStateCodeDummy.dummy();
@@ -236,6 +238,7 @@ class CouponRepositoryTest {
         entityManager.persist(order);
         entityManager.persist(orderProduct);
         entityManager.persist(couponTemplate);
+        entityManager.persist(inquiryStateCode);
         entityManager.persist(inquiry);
         entityManager.persist(reviewPolicy);
         entityManager.persist(review);
