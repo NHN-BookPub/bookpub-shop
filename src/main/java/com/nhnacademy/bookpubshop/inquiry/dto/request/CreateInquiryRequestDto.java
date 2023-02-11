@@ -1,6 +1,10 @@
 package com.nhnacademy.bookpubshop.inquiry.dto.request;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Some description here.
@@ -9,14 +13,24 @@ import lombok.Getter;
  * @since : 1.0
  **/
 @Getter
+@NoArgsConstructor
 public class CreateInquiryRequestDto {
     Long inquiryParentNo;
-    Long productNo;
-    Integer inquiryStateCodeNo;
-    String inquiryContent;
-    boolean inquiryDisplayed;
-    boolean inquiryAnswered;
 
-    //문의 일시, 문의 번호, 회원 번호 제거됨
-    //회원번호는 pathvariable 로 받아 넣고 문의 번호 및 일시는 자동 default값 insert
+    @NotNull(message = "상품번호를 입력해주세요.")
+    Long productNo;
+
+    @NotNull(message = "문의코드번호를 입력해주세요.")
+    Integer inquiryStateCodeNo;
+
+    @NotBlank(message = "문의 제목을 입력해주세요.")
+    @Size(max = 50, message = "문의 제목은 최대 50자입니다.")
+    String inquiryTitle;
+
+    @NotBlank(message = "문의 내용을 입력해주세요.")
+    @Size(max = 1000, message = "문의 내용은 최대 1000자입니다.")
+    String inquiryContent;
+
+    @NotNull(message = "문의 공개 여부를 입력해주세요.")
+    boolean inquiryDisplayed;
 }
