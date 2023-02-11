@@ -11,6 +11,7 @@ import com.nhnacademy.bookpubshop.file.exception.FileNotFoundException;
 import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.CreateRelationProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductAuthorRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductCategoryRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductDescriptionRequestDto;
@@ -40,7 +41,6 @@ import com.nhnacademy.bookpubshop.tag.entity.Tag;
 import com.nhnacademy.bookpubshop.tag.exception.TagNotFoundException;
 import com.nhnacademy.bookpubshop.tag.repository.TagRepository;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -53,8 +53,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 상품 서비스의 구현체입니다.
- */
+ * 상품 서비스 구현체.
+ *
+ * @author : 여운석, 박경서, 정유진
+ * @since : 1.0
+ **/
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
@@ -205,16 +208,13 @@ public class ProductServiceImpl implements ProductService {
         ProductTypeStateCode typeStateCode = typeStateCodeRepository
                 .findById(request.getTypeCodeNo())
                 .orElseThrow(NotFoundStateCodeException::new);
-
-        List<Product> relationProducts = new ArrayList<>();
-
+        
         productRepository.save(new Product(
                 product.getProductNo(),
                 productPolicy,
-
                 typeStateCode,
                 saleStateCode,
-                relationProducts,
+                null,
                 request.getProductIsbn(),
                 request.getTitle(),
                 request.getProductPublisher(),
@@ -436,7 +436,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             Optional<File> eBookFile = product.getFiles().stream()
                     .filter(x -> x.getFileCategory()
-                            .equals(FileCategory.PRODUCT_DETAIL.getCategory()))
+                            .equals(FileCategory.PRODUCT_EBOOK.getCategory()))
                     .findFirst();
             if (eBookFile.isEmpty()) {
                 return;
@@ -451,7 +451,7 @@ public class ProductServiceImpl implements ProductService {
                     null, null, null,
                     eBook, FileCategory.PRODUCT_EBOOK.getCategory(), FileCategory.PRODUCT_EBOOK.getPath());
 
-            product.modifyEBook(file);
+            product.modifyEbook(file);
         } catch (IOException e) {
             throw new FileNotFoundException();
         }
@@ -469,7 +469,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             Optional<File> thumbnailImage = product.getFiles().stream()
                     .filter(x -> x.getFileCategory()
-                            .equals(FileCategory.PRODUCT_DETAIL.getCategory()))
+                            .equals(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                     .findFirst();
             if (thumbnailImage.isEmpty()) {
                 return;
@@ -555,5 +555,34 @@ public class ProductServiceImpl implements ProductService {
         } catch (IOException e) {
             throw new FileNotFoundException();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void addRelationProduct(Long productNo, CreateRelationProductRequestDto request) {
+        Product parentProduct = productRepository.findById(productNo)
+                .orElseThrow(ProductNotFoundException::new);
+
+        for (Long relationProductNo : request.getRelationProducts()) {
+            Product product = productRepository.findById(relationProductNo)
+                    .orElseThrow(ProductNotFoundException::new);
+
+            product.addParentProduct(parentProduct);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void deleteRelationProduct(Long childNo) {
+        Product childProduct = productRepository.findById(childNo)
+                .orElseThrow(ProductNotFoundException::new);
+
+        childProduct.deleteParentProduct();
     }
 }
