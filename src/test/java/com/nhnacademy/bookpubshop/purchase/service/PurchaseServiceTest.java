@@ -5,6 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
@@ -71,7 +72,7 @@ class PurchaseServiceTest {
                 productPolicy,
                 typeStateCode,
                 saleStateCode,
-                Collections.EMPTY_LIST,
+                null,
                 "1231231233",
                 "test",
                 "test_publisher",

@@ -34,7 +34,6 @@ public class GetProductDetailResponseDto {
     private Integer salesRate;
     private Integer productPriority;
     private Integer productStock;
-    //    @DateTimeFormat(pattern = "yyyy:MM:dd'T'HH:mm:ss")
     private String publishDate;
     private boolean deleted;
     private boolean productSubscribed;
@@ -52,6 +51,7 @@ public class GetProductDetailResponseDto {
     private List<String> categories = new ArrayList<>();
     private List<String> tags = new ArrayList<>();
     private List<String> tagsColors = new ArrayList<>();
+    private List<GetRelationProductInfoResponseDto> info;
 
     /**
      * 상품 등록을 위한 DTO 다대다 관계까지 한번에 save.
@@ -93,6 +93,8 @@ public class GetProductDetailResponseDto {
         this.tagsColors = product.getProductTags().stream()
                 .map(m -> m.getTag().getColorCode())
                 .collect(Collectors.toList());
+
+        this.info = new ArrayList<>();
 
         if (!product.getFiles().isEmpty()) {
             inputFiles(product);
@@ -138,5 +140,14 @@ public class GetProductDetailResponseDto {
      */
     private File getFile(Product product, int index) {
         return product.getFiles().get(index);
+    }
+
+    /**
+     * 연관관계 상품 정보 저장 메서드.
+     *
+     * @param info 연관관계 상품 정보
+     */
+    public void addRelationInfo(List<GetRelationProductInfoResponseDto> info) {
+        this.info = info;
     }
 }

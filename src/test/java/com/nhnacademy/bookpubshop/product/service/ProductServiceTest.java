@@ -189,10 +189,6 @@ class ProductServiceTest {
 
         List<Long> relation = new ArrayList<>();
 
-        for (Product relationProduct : product.getRelationProduct()) {
-            relation.add(relationProduct.getProductNo());
-        }
-
         ReflectionTestUtils.setField(requestDto, "productIsbn", product.getProductIsbn());
         ReflectionTestUtils.setField(requestDto, "title", product.getTitle());
         ReflectionTestUtils.setField(requestDto, "productPublisher", product.getProductPublisher());
@@ -211,7 +207,6 @@ class ProductServiceTest {
         ReflectionTestUtils.setField(requestDto, "authorsNo", List.of(1));
         ReflectionTestUtils.setField(requestDto, "categoriesNo", List.of(1));
         ReflectionTestUtils.setField(requestDto, "tagsNo", List.of(1));
-        ReflectionTestUtils.setField(requestDto, "relationProducts", relation);
 
         responseDto = new GetProductDetailResponseDto(product);
 

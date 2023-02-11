@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.review.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
@@ -102,7 +103,6 @@ class ReviewRepositoryTest {
         entityManager.persist(productTypeStateCode);
         entityManager.persist(productSaleStateCode);
         entityManager.persist(reviewPolicy);
-        entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(productAuthor);
         entityManager.persist(file);
@@ -166,7 +166,7 @@ class ReviewRepositoryTest {
                 author, reviewProduct);
 
         entityManager.persist(review);
-        entityManager.persist(reviewProduct.getRelationProduct().get(0));
+//        entityManager.persist(reviewProduct.getRelationProduct().get(0));
         entityManager.persist(reviewProduct);
         entityManager.persist(reviewProductFile);
         entityManager.persist(reviewProductAuthor);
@@ -215,7 +215,7 @@ class ReviewRepositoryTest {
         ProductAuthor reviewProductAuthor = new ProductAuthor(new ProductAuthor.Pk(author.getAuthorNo(), reviewProduct.getProductNo()),
                 author, reviewProduct);
 
-        entityManager.persist(reviewProduct.getRelationProduct().get(0));
+//        entityManager.persist(reviewProduct.getRelationProduct().get(0));
         entityManager.persist(reviewProduct);
         entityManager.persist(reviewProductFile);
         entityManager.persist(reviewOrderStateCode);

@@ -155,7 +155,6 @@ class WishlistRepositoryTest {
         entityManager.persist(productTypeStateCode);
         entityManager.persist(productSaleStateCode);
         entityManager.persist(product);
-        entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(personalInquiry);
         entityManager.persist(reviewPolicy);
         entityManager.persist(review);

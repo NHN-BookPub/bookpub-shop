@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.author.repository;
 import static com.nhnacademy.bookpubshop.state.ProductTypeState.BEST_SELLER;
 import static com.nhnacademy.bookpubshop.state.ProductTypeState.NEW;
 import static org.assertj.core.api.Assertions.assertThat;
+
 import com.nhnacademy.bookpubshop.author.dto.response.GetAuthorResponseDto;
 import com.nhnacademy.bookpubshop.author.dummy.AuthorDummy;
 import com.nhnacademy.bookpubshop.author.entity.Author;
@@ -13,7 +14,6 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCo
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -97,7 +97,7 @@ class AuthorRepositoryTest {
                 policyPersist,
                 typePersist,
                 salePersist,
-                Collections.EMPTY_LIST,
+                null,
                 "1231231233",
                 "test",
                 "publisher",

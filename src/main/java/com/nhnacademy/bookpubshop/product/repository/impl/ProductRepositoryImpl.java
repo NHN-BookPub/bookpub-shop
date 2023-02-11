@@ -12,6 +12,7 @@ import com.nhnacademy.bookpubshop.product.dto.response.GetProductByTypeResponseD
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductDetailResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderResponseDto;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductListResponseDto;
+import com.nhnacademy.bookpubshop.product.dto.response.GetRelationProductInfoResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductAuthor;
@@ -129,10 +130,11 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public Optional<GetProductDetailResponseDto> getProductDetailById(Long id) {
+    public Optional<GetProductDetailResponseDto> getProductDetailById(Long productNo) {
+        QProduct childProduct = new QProduct("child");
 
         Optional<Product> content = Optional.ofNullable(from(product)
-                .where(product.productNo.eq(id))
+                .where(product.productNo.eq(productNo))
                 .leftJoin(product.productPolicy)
                 .leftJoin(product.productSaleStateCode)
                 .leftJoin(product.productTypeStateCode)
@@ -140,10 +142,30 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .leftJoin(product.productTags)
                 .leftJoin(file).on(product.productNo.eq(file.product.productNo))
                 .select(product)
-                .where(product.productNo.eq(id))
+                .where(product.productNo.eq(productNo))
                 .fetchOne());
 
-        return content.map(GetProductDetailResponseDto::new);
+        Optional<GetProductDetailResponseDto> getProductDetailResponseDto =
+                content.map(GetProductDetailResponseDto::new);
+
+        List<GetRelationProductInfoResponseDto> relationInfo = from(childProduct)
+                .leftJoin(childProduct.files, file)
+                .innerJoin(childProduct.parentProduct, product)
+                .select(Projections.fields(GetRelationProductInfoResponseDto.class,
+                        childProduct.productNo,
+                        childProduct.title,
+                        file.filePath,
+                        childProduct.salesPrice))
+                .where(childProduct.parentProduct.productNo.eq(productNo)
+                        .and(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())
+                                .or(file.fileCategory.isNull())))
+                .fetch();
+
+        assert getProductDetailResponseDto.isPresent();
+        getProductDetailResponseDto.get().addRelationInfo(relationInfo);
+
+
+        return getProductDetailResponseDto;
     }
 
     /**
