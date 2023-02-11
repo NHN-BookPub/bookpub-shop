@@ -1,16 +1,21 @@
 package com.nhnacademy.bookpubshop.inquiry.entity;
 
 import com.nhnacademy.bookpubshop.base.BaseCreateTimeEntity;
+import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.inquirystatecode.entity.InquiryStateCode;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.product.entity.Product;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -36,24 +41,28 @@ public class Inquiry extends BaseCreateTimeEntity {
     @Column(name = "inquiry_number")
     private Long inquiryNo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inquiry_parent_number")
     private Inquiry parentInquiry;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "member_number")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @NotNull
     @JoinColumn(name = "product_number")
     private Product product;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inquiry_state_code_number")
     private InquiryStateCode inquiryStateCode;
+
+    @NotNull
+    @Column(name = "inquiry_title")
+    private String inquiryTitle;
 
     @NotNull
     @Column(name = "inquiry_content")
@@ -65,16 +74,23 @@ public class Inquiry extends BaseCreateTimeEntity {
     @Column(name = "inquiry_answered")
     private boolean inquiryAnswered;
 
+    @OneToMany(mappedBy = "inquiry", fetch = FetchType.LAZY)
+    private List<File> inquiryImages = new ArrayList<>();
+
     @Builder
     public Inquiry(Inquiry parentInquiry, Member member, Product product,
-                   InquiryStateCode inquiryStateCode, String inquiryContent,
-                   boolean inquiryDisplayed, boolean inquiryAnswered) {
+                   InquiryStateCode inquiryStateCode, String inquiryTitle,
+                   String inquiryContent, boolean inquiryDisplayed) {
         this.parentInquiry = parentInquiry;
         this.member = member;
         this.product = product;
         this.inquiryStateCode = inquiryStateCode;
+        this.inquiryTitle = inquiryTitle;
         this.inquiryContent = inquiryContent;
         this.inquiryDisplayed = inquiryDisplayed;
-        this.inquiryAnswered = inquiryAnswered;
+    }
+
+    public void modifyAnswered() {
+        this.inquiryAnswered = !this.isInquiryAnswered();
     }
 }
