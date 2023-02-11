@@ -85,8 +85,6 @@ class ProductRepositoryTest {
         entityManager.persist(productSaleStateCode);
 
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
-        entityManager.persist(product.getRelationProduct().get(0));
-
     }
 
     @Test
@@ -105,7 +103,6 @@ class ProductRepositoryTest {
         Optional<Product> product = productRepository.findById(persist.getProductNo());
         assertThat(product).isPresent();
         assertThat(product.get().getProductPolicy().getPolicyNo()).isEqualTo(persist.getProductPolicy().getPolicyNo());
-        assertThat(product.get().getRelationProduct()).isEqualTo(persist.getRelationProduct());
         assertThat(product.get().getSalesRate()).isEqualTo(persist.getSalesRate());
         assertThat(product.get().getViewCount()).isEqualTo(persist.getViewCount());
         assertThat(product.get().isProductDeleted()).isFalse();

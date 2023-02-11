@@ -6,7 +6,6 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCo
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,7 +26,7 @@ public class ProductDummy {
                 productPolicy,
                 productTypeStateCode,
                 productSaleStateCode,
-                Collections.EMPTY_LIST,
+                null,
                 "1111111111",
                 "title",
                 "publisher",
@@ -49,7 +48,7 @@ public class ProductDummy {
                 productPolicy,
                 productTypeStateCode,
                 productSaleStateCode,
-                relation,
+                null,
                 "1111111111",
                 "title",
                 "publisher",
@@ -78,7 +77,7 @@ public class ProductDummy {
                 productPolicy,
                 productTypeStateCode,
                 productSaleStateCode,
-                Collections.EMPTY_LIST,
+                null,
                 "1111111111",
                 "title",
                 "publisher",
@@ -100,7 +99,7 @@ public class ProductDummy {
                 productPolicy,
                 productTypeStateCode,
                 productSaleStateCode,
-                relation,
+                null,
                 "1111111111",
                 "title",
                 "publisher",
@@ -128,7 +127,7 @@ public class ProductDummy {
                 productPolicy,
                 productTypeStateCode,
                 productSaleStateCode,
-                relations,
+                null,
                 "1111111111",
                 "title",
                 "publisher",

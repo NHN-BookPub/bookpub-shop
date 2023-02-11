@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.purchase.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
@@ -16,7 +17,6 @@ import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseListResponseDto;
 import com.nhnacademy.bookpubshop.purchase.dummy.PurchaseDummy;
 import com.nhnacademy.bookpubshop.purchase.entity.Purchase;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -74,7 +74,7 @@ class PurchaseRepositoryTest {
                 productPolicy,
                 productTypeStateCode,
                 productSaleStateCode,
-                Collections.EMPTY_LIST,
+                null,
                 "1231231233",
                 "test",
                 "publisher",

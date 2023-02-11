@@ -225,7 +225,6 @@ class CouponRepositoryTest {
         entityManager.persist(productTypeStateCode);
         entityManager.persist(deliveryPricePolicy);
         entityManager.persist(packagePricePolicy);
-        entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(orderProductStateCode);
         entityManager.persist(orderStateCode);
