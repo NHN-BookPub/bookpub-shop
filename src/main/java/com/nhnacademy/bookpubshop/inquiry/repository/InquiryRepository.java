@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.inquiry.repository;
 
 import com.nhnacademy.bookpubshop.inquiry.entity.Inquiry;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -10,4 +11,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since : 1.0
  **/
 public interface InquiryRepository extends JpaRepository<Inquiry, Long>, InquiryRepositoryCustom {
+    List<Inquiry> findByParentInquiry_InquiryNo(Long inquiryNo);
+
 }
