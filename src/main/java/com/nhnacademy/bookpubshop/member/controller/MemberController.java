@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.member.controller;
 import static com.nhnacademy.bookpubshop.annotation.aspect.AuthorizationPointCut.AUTH_MEMBER_INFO;
 
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
+import com.nhnacademy.bookpubshop.annotation.MemberAndAuth;
 import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.IdRequestDto;
@@ -255,7 +256,7 @@ public class MemberController {
      * @return 성공시 201
      */
     @PutMapping("/token/members/{memberNo}")
-    @MemberAuth
+    @MemberAndAuth
     public ResponseEntity<Void> memberDelete(@PathVariable("memberNo") Long memberNo) {
         memberService.deleteMember(memberNo);
         return ResponseEntity.status(HttpStatus.CREATED)
