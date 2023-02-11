@@ -4,7 +4,7 @@ import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
-import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
+import com.nhnacademy.bookpubshop.inquiry.entity.Inquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.review.entity.Review;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
@@ -24,7 +24,7 @@ public interface FileManagement {
     /**
      * 파일을 저장하는 메서드입니다.
      *
-     * @param personalInquiry the personal inquiry
+     * @param inquiry         the inquiry
      * @param couponTemplate  the coupon template
      * @param product         the product
      * @param review          the review
@@ -35,7 +35,7 @@ public interface FileManagement {
      * @return the file
      * @throws IOException the io exception
      */
-    File saveFile(PersonalInquiry personalInquiry,
+    File saveFile(Inquiry inquiry,
                   CouponTemplate couponTemplate,
                   Product product, Review review,
                   CustomerService customerService,

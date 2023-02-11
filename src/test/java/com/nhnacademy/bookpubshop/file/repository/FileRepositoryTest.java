@@ -15,14 +15,16 @@ import com.nhnacademy.bookpubshop.customersupport.dummy.CustomerServiceDummy;
 import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
+import com.nhnacademy.bookpubshop.inquiry.dummy.InquiryDummy;
+import com.nhnacademy.bookpubshop.inquiry.entity.Inquiry;
+import com.nhnacademy.bookpubshop.inquirystatecode.dummy.InquiryCodeDummy;
+import com.nhnacademy.bookpubshop.inquirystatecode.entity.InquiryStateCode;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.orderstatecode.dummy.OrderStateCodeDummy;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
-import com.nhnacademy.bookpubshop.personalinquiry.dummy.PersonalInquiryDummy;
-import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
 import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
@@ -92,7 +94,8 @@ class FileRepositoryTest {
     CouponPolicy couponPolicy;
     CustomerServiceStateCode customerServiceStateCode;
     CustomerService customerService;
-    PersonalInquiry personalInquiry;
+    InquiryStateCode inquiryStateCode;
+    Inquiry inquiry;
     CouponType couponType;
 
     @BeforeEach
@@ -118,9 +121,10 @@ class FileRepositoryTest {
         review = ReviewDummy.dummy(member, product, reviewPolicy);
         customerServiceStateCode = CustomerServiceStateCodeDummy.dummy();
         customerService = CustomerServiceDummy.dummy(customerServiceStateCode, member);
-        personalInquiry = PersonalInquiryDummy.dummy(member);
+        inquiryStateCode = InquiryCodeDummy.dummy();
+        inquiry = InquiryDummy.dummy(null, member, product, inquiryStateCode);
 
-        file = FileDummy.dummy(personalInquiry, review, couponTemplate, product, customerService, null);
+        file = FileDummy.dummy(inquiry, review, couponTemplate, product, customerService, null);
 
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);
@@ -141,7 +145,8 @@ class FileRepositoryTest {
         entityManager.persist(review);
         entityManager.persist(customerServiceStateCode);
         entityManager.persist(customerService);
-        entityManager.persist(personalInquiry);
+        entityManager.persist(inquiryStateCode);
+        entityManager.persist(inquiry);
     }
 
     @DisplayName("파일 Repo save 테스트")
@@ -158,8 +163,8 @@ class FileRepositoryTest {
         assertThat(result.get().getFilePath()).isEqualTo(persist.getFilePath());
         assertThat(result.get().getFileExtension()).isEqualTo(persist.getFileExtension());
         assertThat(result.get().getNameSaved()).isEqualTo(persist.getNameSaved());
-        assertThat(result.get().getPersonalInquiry().getPersonalInquiryNo())
-                .isEqualTo(persist.getPersonalInquiry().getPersonalInquiryNo());
+        assertThat(result.get().getInquiry().getInquiryNo())
+                .isEqualTo(persist.getInquiry().getInquiryNo());
         assertThat(result.get().getCustomerService().getServiceNo())
                 .isEqualTo(persist.getCustomerService().getServiceNo());
         assertThat(result.get().getProduct().getProductNo()).isEqualTo(persist.getProduct().getProductNo());

@@ -6,7 +6,7 @@ import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.file.exception.FileNotFoundException;
 import com.nhnacademy.bookpubshop.file.repository.FileRepository;
 import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
-import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
+import com.nhnacademy.bookpubshop.inquiry.entity.Inquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.review.entity.Review;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
@@ -42,7 +42,7 @@ public class FileUtils implements FileManagement {
      *
      * @param file 파일
      */
-    public File saveFile(PersonalInquiry personalInquiry,
+    public File saveFile(Inquiry inquiry,
                          CouponTemplate couponTemplate,
                          Product product,
                          Review review,
@@ -72,7 +72,7 @@ public class FileUtils implements FileManagement {
                 null,
                 review,
                 subscribe,
-                personalInquiry,
+                inquiry,
                 couponTemplate,
                 product,
                 customerService,
