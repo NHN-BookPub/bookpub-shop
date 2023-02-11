@@ -217,10 +217,14 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .select(Projections.fields(GetProductDetailResponseDto.class,
                         product.productNo,
                         product.title,
-                        file.filePath,
+                        file.filePath.as(FileCategory.PRODUCT_THUMBNAIL.getCategory()),
                         product.productPublisher,
                         product.productPrice,
-                        product.salesPrice))
+                        product.salesPrice,
+                        product.productPolicy.policyMethod,
+                        product.productPolicy.policySaved,
+                        product.productPolicy.saveRate.as("policySaveRate")
+                        ))
                 .leftJoin(file).on(product.productNo.eq(file.product.productNo)
                         .and(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
                 .where(product.productNo.in(productsNo))
