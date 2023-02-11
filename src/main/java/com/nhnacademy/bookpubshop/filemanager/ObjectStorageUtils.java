@@ -9,7 +9,7 @@ import com.nhnacademy.bookpubshop.file.repository.FileRepository;
 import com.nhnacademy.bookpubshop.filemanager.dto.request.TokenRequest;
 import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.filemanager.dto.response.TokenResponse;
-import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
+import com.nhnacademy.bookpubshop.inquiry.entity.Inquiry;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.review.entity.Review;
 import com.nhnacademy.bookpubshop.subscribe.entity.Subscribe;
@@ -53,7 +53,7 @@ public class ObjectStorageUtils implements FileManagement {
 
     private final ObjectStorageProperties properties;
     private static final String X_AUTH_TOKEN = "X-Auth-Token";
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
     private final FileRepository fileRepository;
 
     private String requestToken() {
@@ -98,7 +98,7 @@ public class ObjectStorageUtils implements FileManagement {
 
 
     @Override
-    public File saveFile(PersonalInquiry personalInquiry,
+    public File saveFile(Inquiry inquiry,
                          CouponTemplate couponTemplate,
                          Product product,
                          Review review,
@@ -151,7 +151,7 @@ public class ObjectStorageUtils implements FileManagement {
                 null,
                 review,
                 subscribe,
-                personalInquiry,
+                inquiry,
                 couponTemplate,
                 product,
                 customerService,
