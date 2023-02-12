@@ -20,7 +20,7 @@ import com.nhnacademy.bookpubshop.order.repository.OrderRepository;
 import com.nhnacademy.bookpubshop.orderstatecode.dummy.OrderStateCodeDummy;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.payment.adaptor.TossAdaptor;
-import com.nhnacademy.bookpubshop.payment.dto.TossResponseDto;
+import com.nhnacademy.bookpubshop.payment.dto.response.TossResponseDto;
 import com.nhnacademy.bookpubshop.payment.dummy.PaymentDummy;
 import com.nhnacademy.bookpubshop.payment.entity.Payment;
 import com.nhnacademy.bookpubshop.payment.repository.PaymentRepository;
