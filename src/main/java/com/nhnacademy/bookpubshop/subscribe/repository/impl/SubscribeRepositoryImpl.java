@@ -96,6 +96,7 @@ public class SubscribeRepositoryImpl extends QuerydslRepositorySupport
                 .innerJoin(productList.subscribe, subscribe)
                 .leftJoin(product.files, file)
                 .where(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())
+                        .or(file.fileCategory.isNull())
                         .and(subscribe.subscribeNo.eq(subscribeNo))
                         .and(product.productDeleted.isFalse()))
                 .fetch();
