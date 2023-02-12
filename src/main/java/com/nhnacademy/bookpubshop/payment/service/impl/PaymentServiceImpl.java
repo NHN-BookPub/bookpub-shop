@@ -68,8 +68,6 @@ public class PaymentServiceImpl implements PaymentService {
     private final OrderProductStateCodeRepository orderProductStateRepository;
     private final ProductRepository productRepository;
     private final CouponRepository couponRepository;
-
-
     private final TossAdaptor tossAdaptor;
     private final ApplicationEventPublisher eventPublisher;
 

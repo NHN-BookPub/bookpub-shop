@@ -10,15 +10,19 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.nhnacademy.bookpubshop.coupon.repository.CouponRepository;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderVerifyResponseDto;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.exception.OrderNotFoundException;
+import com.nhnacademy.bookpubshop.order.relationship.repository.OrderProductRepository;
+import com.nhnacademy.bookpubshop.order.relationship.repository.OrderProductStateCodeRepository;
 import com.nhnacademy.bookpubshop.order.repository.OrderRepository;
 import com.nhnacademy.bookpubshop.orderstatecode.dummy.OrderStateCodeDummy;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
+import com.nhnacademy.bookpubshop.orderstatecode.repository.OrderStateCodeRepository;
 import com.nhnacademy.bookpubshop.payment.adaptor.TossAdaptor;
 import com.nhnacademy.bookpubshop.payment.dto.response.TossResponseDto;
 import com.nhnacademy.bookpubshop.payment.dummy.PaymentDummy;
@@ -39,12 +43,14 @@ import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCod
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
@@ -75,6 +81,16 @@ class PaymentServiceImplTest {
     TossAdaptor tossAdaptor;
     @MockBean
     ApplicationEventPublisher applicationEventPublisher;
+    @MockBean
+    OrderProductStateCodeRepository orderProductStateCodeRepository;
+    @MockBean
+    OrderProductRepository orderProductRepository;
+    @MockBean
+    CouponRepository couponRepository;
+    @MockBean
+    OrderStateCodeRepository orderStateCodeRepository;
+    @MockBean
+    ProductRepository productRepository;
 
     GetOrderVerifyResponseDto getOrderVerifyResponseDto;
     TossResponseDto tossResponseDto;

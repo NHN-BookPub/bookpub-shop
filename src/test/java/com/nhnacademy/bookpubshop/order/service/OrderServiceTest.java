@@ -231,8 +231,12 @@ class OrderServiceTest {
                 order.getOrderId());
 
         productListDto = new GetProductListForOrderResponseDto(1L,
-                product.getTitle(), product.getFiles().get(0).getFilePath(), product.getSalesPrice(),
-                orderProduct.getProductAmount(), orderProductStateCode.getCodeName());
+                orderProduct.getOrderProductNo(),
+                product.getTitle(),
+                product.getFiles().get(0).getFilePath(),
+                product.getSalesPrice(),
+                orderProduct.getProductAmount(),
+                orderProductStateCode.getCodeName());
 
         productList.add(productListDto);
 
