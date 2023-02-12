@@ -53,6 +53,4 @@ public class CreateProductRequestDto {
     private List<Integer> authorsNo;
     private List<Integer> categoriesNo;
     private List<Integer> tagsNo;
-
-    private List<Long> relationProducts;
 }

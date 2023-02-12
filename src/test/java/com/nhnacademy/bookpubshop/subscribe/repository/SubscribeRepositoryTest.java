@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.subscribe.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
@@ -65,7 +66,6 @@ class SubscribeRepositoryTest {
         file = FileDummy.dummy(null, null, null, null, null, subscribe);
         entityManager.persist(file.getSubscribe());
         entityManager.persist(file);
-        entityManager.persist(product.getRelationProduct().get(0));
 
     }
 

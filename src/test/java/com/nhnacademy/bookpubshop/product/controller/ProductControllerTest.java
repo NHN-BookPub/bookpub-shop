@@ -167,9 +167,6 @@ class ProductControllerTest {
 
         List<Long> relation = new ArrayList<>();
 
-        for (Product relationProduct : product.getRelationProduct()) {
-            relation.add(relationProduct.getProductNo());
-        }
 
         ReflectionTestUtils.setField(requestDto, "productIsbn", product.getProductIsbn());
         ReflectionTestUtils.setField(requestDto, "title", product.getTitle());
@@ -189,7 +186,6 @@ class ProductControllerTest {
         ReflectionTestUtils.setField(requestDto, "authorsNo", List.of(1));
         ReflectionTestUtils.setField(requestDto, "categoriesNo", List.of(1));
         ReflectionTestUtils.setField(requestDto, "tagsNo", List.of(1));
-        ReflectionTestUtils.setField(requestDto, "relationProducts", relation);
 
         thumbnail = new MockMultipartFile("thumbnail",
                 "thumbnail.jpeg",
@@ -839,7 +835,8 @@ class ProductControllerTest {
                                 fieldWithPath("categoriesNo[]").description("상품 카테고리 번호 리스트"),
                                 fieldWithPath("thumbnail").description("상품 썸네일"),
                                 fieldWithPath("detail").description("상품 상세이미지"),
-                                fieldWithPath("ebook").description("상품 이북")
+                                fieldWithPath("ebook").description("상품 이북"),
+                                fieldWithPath("info").description("연관상품 정보")
                         )));
 
     }
@@ -932,8 +929,7 @@ class ProductControllerTest {
                                 fieldWithPath("typeCodeNo").description("상품 유형 코드 번호"),
                                 fieldWithPath("authorsNo[]").description("상품(도서) 저자 리스트"),
                                 fieldWithPath("categoriesNo[]").description("상품 카테고리 리스트"),
-                                fieldWithPath("tagsNo[]").description("상품 태그 리스트"),
-                                fieldWithPath("relationProducts[]").description("연관 관계 리스트")
+                                fieldWithPath("tagsNo[]").description("상품 태그 리스트")
                         )));
 
         verify(productService, times(1))
@@ -1072,7 +1068,8 @@ class ProductControllerTest {
                                 fieldWithPath("[].categoriesNo[]").description("상품 카테고리 번호 리스트"),
                                 fieldWithPath("[].thumbnail").description("상품 썸네일"),
                                 fieldWithPath("[].detail").description("상품 상세이미지"),
-                                fieldWithPath("[].ebook").description("상품 이북")
+                                fieldWithPath("[].ebook").description("상품 이북"),
+                                fieldWithPath("[].info").description("상품 이북")
                         )));
     }
 

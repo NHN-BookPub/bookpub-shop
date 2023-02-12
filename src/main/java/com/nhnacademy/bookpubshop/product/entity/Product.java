@@ -63,9 +63,9 @@ public class Product extends BaseCreateTimeEntity {
     @JoinColumn(name = "product_sale_code_number")
     private ProductSaleStateCode productSaleStateCode;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_relation_number")
-    private List<Product> relationProduct = new ArrayList<>();
+    private Product parentProduct;
 
     @NotNull
     @Column(name = "product_isbn")
@@ -151,7 +151,7 @@ public class Product extends BaseCreateTimeEntity {
      * @param productPolicy        성품 정책
      * @param productTypeStateCode 상품 종류 유형 코드
      * @param productSaleStateCode 상품 판매 유형 코드
-     * @param relationProduct      연관관계 상품
+     * @param parentProduct        부모 상품
      * @param productIsbn          ISBN
      * @param title                제목
      * @param productPublisher     출판사
@@ -170,7 +170,7 @@ public class Product extends BaseCreateTimeEntity {
     public Product(Long productNo, ProductPolicy productPolicy,
                    ProductTypeStateCode productTypeStateCode,
                    ProductSaleStateCode productSaleStateCode,
-                   List<Product> relationProduct,
+                   Product parentProduct,
                    String productIsbn, String title,
                    String productPublisher, Integer pageCount,
                    String productDescription, Long salesPrice,
@@ -182,7 +182,7 @@ public class Product extends BaseCreateTimeEntity {
         this.productPolicy = productPolicy;
         this.productTypeStateCode = productTypeStateCode;
         this.productSaleStateCode = productSaleStateCode;
-        this.relationProduct = relationProduct;
+        this.parentProduct = parentProduct;
         this.productIsbn = productIsbn;
         this.title = title;
         this.productPublisher = productPublisher;
@@ -297,8 +297,9 @@ public class Product extends BaseCreateTimeEntity {
      *
      * @param file 변경할 파일
      */
-    public void modifyEBook(File file) {
-        this.getFiles().removeIf(tmp -> tmp.getFileCategory().equals(FileCategory.PRODUCT_EBOOK.getCategory()));
+    public void modifyEbook(File file) {
+        this.getFiles().removeIf(tmp -> tmp.getFileCategory()
+                .equals(FileCategory.PRODUCT_EBOOK.getCategory()));
         this.getFiles().add(file);
     }
 
@@ -308,7 +309,8 @@ public class Product extends BaseCreateTimeEntity {
      * @param file 변경할 파일
      */
     public void modifyThumbnail(File file) {
-        this.getFiles().removeIf(x -> x.getFileCategory().equals(FileCategory.PRODUCT_THUMBNAIL.getCategory()));
+        this.getFiles().removeIf(x -> x.getFileCategory()
+                .equals(FileCategory.PRODUCT_THUMBNAIL.getCategory()));
         this.getFiles().add(file);
     }
 
@@ -318,11 +320,34 @@ public class Product extends BaseCreateTimeEntity {
      * @param file 변경할 파일
      */
     public void modifyDetailImage(File file) {
-        this.getFiles().removeIf(x -> x.getFileCategory().equals(FileCategory.PRODUCT_DETAIL.getCategory()));
+        this.getFiles().removeIf(x -> x.getFileCategory()
+                .equals(FileCategory.PRODUCT_DETAIL.getCategory()));
         this.getFiles().add(file);
     }
 
+    /**
+     * 상품에 파일을 추가하는 메서드.
+     * (썸네일, 상세이미지, E-Book).
+     *
+     * @param file 추가할 파일
+     */
     public void addFile(File file) {
         this.getFiles().add(file);
+    }
+
+    /**
+     * 자식 상품에서 부모 상품을 연관관계로 추가하는 메서드.
+     *
+     * @param parentProduct 부모 상품
+     */
+    public void addParentProduct(Product parentProduct) {
+        this.parentProduct = parentProduct;
+    }
+
+    /**
+     * 자식 상품에서 부모 상품을 연관관계를 삭제하는 메서드.
+     */
+    public void deleteParentProduct() {
+        this.parentProduct = null;
     }
 }

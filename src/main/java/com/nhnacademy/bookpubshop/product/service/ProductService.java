@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.product.service;
 
 import com.nhnacademy.bookpubshop.filemanager.dto.response.GetDownloadInfo;
 import com.nhnacademy.bookpubshop.product.dto.request.CreateProductRequestDto;
+import com.nhnacademy.bookpubshop.product.dto.request.CreateRelationProductRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductAuthorRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductCategoryRequestDto;
 import com.nhnacademy.bookpubshop.product.dto.request.ModifyProductDescriptionRequestDto;
@@ -230,4 +231,19 @@ public interface ProductService {
      * @param detailImage 추가할 상품 Detail Image
      */
     void addProductDetailImage(Long productNo, MultipartFile detailImage);
+
+    /**
+     * 연관 관계 등록 추가.
+     *
+     * @param productNo 상품 번호
+     * @param request   연관 관계 상품 번
+     */
+    void addRelationProduct(Long productNo, CreateRelationProductRequestDto request);
+
+    /**
+     * 연관 관계 삭제 메서드.
+     *
+     * @param childNo 자식 상품 번호
+     */
+    void deleteRelationProduct(Long childNo);
 }

@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.couponmonth.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.couponmonth.dto.response.GetCouponMonthResponseDto;
@@ -84,7 +85,6 @@ class CouponMonthRepositoryTest {
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);
         entityManager.persist(productSaleStateCode);
-        entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(file);
     }

@@ -113,7 +113,6 @@ class CouponTemplateRepositoryTest {
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);
         entityManager.persist(productSaleStateCode);
-        entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(category);
         CouponTemplate save = entityManager.persist(couponTemplate);
@@ -146,7 +145,7 @@ class CouponTemplateRepositoryTest {
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);
         entityManager.persist(productSaleStateCode);
-        entityManager.persist(product.getRelationProduct().get(0));
+//        entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(category);
         CouponTemplate save = entityManager.persist(couponTemplate);
@@ -183,7 +182,7 @@ class CouponTemplateRepositoryTest {
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);
         entityManager.persist(productSaleStateCode);
-        entityManager.persist(product.getRelationProduct().get(0));
+//        entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(category);
         CouponTemplate save = entityManager.persist(couponTemplate);
@@ -210,7 +209,7 @@ class CouponTemplateRepositoryTest {
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);
         entityManager.persist(productSaleStateCode);
-        entityManager.persist(product.getRelationProduct().get(0));
+//        entityManager.persist(product.getRelationProduct().get(0));
         entityManager.persist(product);
         entityManager.persist(category);
         CouponTemplate save = entityManager.persist(couponTemplate);
