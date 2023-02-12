@@ -1,20 +1,22 @@
 package com.nhnacademy.bookpubshop.payment.controller;
 
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
+import com.nhnacademy.bookpubshop.payment.dto.request.OrderProductRefundRequestDto;
+import com.nhnacademy.bookpubshop.payment.dto.request.RefundRequestDto;
 import com.nhnacademy.bookpubshop.payment.service.PaymentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +28,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -44,12 +48,13 @@ class PaymentControllerTest {
 
     @MockBean
     PaymentService paymentService;
+    ObjectMapper objectMapper;
 
     String url = "/api/payment";
 
     @BeforeEach
     void setup() {
-
+        objectMapper = new ObjectMapper();
     }
 
     @Test
@@ -110,6 +115,178 @@ class PaymentControllerTest {
                         requestParameters(
                                 parameterWithName("orderId").description("주문의 고유번호 입니다."),
                                 parameterWithName("amount").description("결제 할 금액입니다.")
+                        )));
+    }
+
+    @Test
+    @DisplayName("주문환불 validation orderNo 없음")
+    void refundOrderFailTest() throws Exception {
+        doNothing().when(paymentService).refundOrder(any());
+        RefundRequestDto dto = new RefundRequestDto(null, "resson");
+        mockMvc.perform(post("/token/payment/order")
+                        .content(objectMapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(document("payment-refund-Fail-orderNo",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].message").description("주문번호는 null 이 될수없습니다.")
+                        )));
+    }
+
+    @Test
+    @DisplayName("주문환불 validation cancelReason 없음")
+    void refundOrderFailTest2() throws Exception {
+        doNothing().when(paymentService).refundOrder(any());
+        RefundRequestDto dto = new RefundRequestDto(1L, null);
+        mockMvc.perform(post("/token/payment/order")
+                        .content(objectMapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(document("payment-refund-Fail-cancel-reason",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].message").description("cancelReason 은 null 이 될수없습니다.")
+                        )));
+    }
+
+    @Test
+    @DisplayName("주문환불 validation cancelReason 없음")
+    void refundOrderFailTest3() throws Exception {
+        doNothing().when(paymentService).refundOrder(any());
+        RefundRequestDto dto = new RefundRequestDto(1L, "");
+        mockMvc.perform(post("/token/payment/order")
+                        .content(objectMapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andDo(document("payment-refund-Fail-cancel-reason-size",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].message").description("사이즈는 1부터 200 안에 되어야합니다.")
+                        )));
+    }
+
+    @Test
+    @DisplayName("주문환불 validation cancelReason 없음")
+      void refundOrderSuccess() throws Exception {
+        doNothing().when(paymentService).refundOrder(any());
+        RefundRequestDto dto = new RefundRequestDto(1L, "sadfsafdf");
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/token/payment/order")
+                        .content(objectMapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(document("payment-refund-request",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("orderNo").description("주문번호가 기입됩니다."),
+                                fieldWithPath("cancelReason").description("취소사유가 기입됩니다.")
+                        )));
+
+    }
+
+    @Test
+    @DisplayName("주문상품 환불 validation orderNo 실패")
+    void refundOrderProductFailTest() throws Exception {
+        doNothing().when(paymentService).refundOrderProduct(any());
+        OrderProductRefundRequestDto dto = new OrderProductRefundRequestDto();
+        ReflectionTestUtils.setField(dto, "orderNo", null);
+        ReflectionTestUtils.setField(dto, "orderProductNo", 1L);
+        ReflectionTestUtils.setField(dto, "cancelReason", "cancelReason");
+
+        mockMvc.perform(post("/token/payment/order-product")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andDo(document("payment-refundProduct-fail-orderNo",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].message").description("주문번호는 null 될수 없습니다.")
+                        )));
+    }
+
+    @Test
+    @DisplayName("주문상품 환불 validation orderNo 실패")
+    void refundOrderProductFailOrderNoFail2() throws Exception {
+        doNothing().when(paymentService).refundOrderProduct(any());
+        OrderProductRefundRequestDto dto = new OrderProductRefundRequestDto();
+        ReflectionTestUtils.setField(dto, "orderNo", 1L);
+        ReflectionTestUtils.setField(dto, "orderProductNo", null);
+        ReflectionTestUtils.setField(dto, "cancelReason", "cancelReason");
+
+        mockMvc.perform(post("/token/payment/order-product")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andDo(document("payment-refundProduct-fail-orderProductNo",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].message").description("주문상품번호는 null 이 될 수 없습니다.")
+                        )));
+    }
+
+    @Test
+    @DisplayName("주문상품 환불 validation cancelReason 실패")
+    void refundOrderProductFailOrderNoFail3() throws Exception {
+        doNothing().when(paymentService).refundOrderProduct(any());
+        OrderProductRefundRequestDto dto = new OrderProductRefundRequestDto();
+        ReflectionTestUtils.setField(dto, "orderNo", 1L);
+        ReflectionTestUtils.setField(dto, "orderProductNo", 1L);
+        ReflectionTestUtils.setField(dto, "cancelReason", null);
+
+        mockMvc.perform(post("/token/payment/order-product")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andDo(document("payment-refundProduct-fail-cancelReason-null",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].message").description("취소사유는 null 이 될 수 없습니다.")
+                        )));
+    }
+
+    @Test
+    @DisplayName("주문상품 환불 validation cancelReason 실패")
+    void refundOrderProductFailOrderNoFail4() throws Exception {
+        doNothing().when(paymentService).refundOrderProduct(any());
+        OrderProductRefundRequestDto dto = new OrderProductRefundRequestDto();
+        ReflectionTestUtils.setField(dto, "orderNo", 1L);
+        ReflectionTestUtils.setField(dto, "orderProductNo", 1L);
+        ReflectionTestUtils.setField(dto, "cancelReason", "");
+
+        mockMvc.perform(post("/token/payment/order-product")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is4xxClientError())
+                .andDo(document("payment-refundProduct-fail-cancelReason-size",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].message").description("취소이유는 1~200 자 내외여야 합니다.")
+                        )));
+    }
+
+    @Test
+    @DisplayName("주문상품 환불성공")
+    void refundOrderProductSuccess() throws Exception {
+        doNothing().when(paymentService).refundOrderProduct(any());
+        OrderProductRefundRequestDto dto = new OrderProductRefundRequestDto();
+        ReflectionTestUtils.setField(dto, "orderNo", 1L);
+        ReflectionTestUtils.setField(dto, "orderProductNo", 1L);
+        ReflectionTestUtils.setField(dto, "cancelReason", "취소사유");
+
+        mockMvc.perform(post("/token/payment/order-product")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(document("payment-refundProduct",
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("orderNo").description("주문번호가 기입"),
+                                fieldWithPath("orderProductNo").description("주문상품번호 기입"),
+                                fieldWithPath("cancelReason").description("취소사유가")
                         )));
     }
 }
