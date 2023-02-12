@@ -6,14 +6,21 @@ import com.nhnacademy.bookpubshop.delivery.adaptor.DeliveryAdaptor;
 import com.nhnacademy.bookpubshop.delivery.dto.request.CreateDeliveryRequestDto;
 import com.nhnacademy.bookpubshop.delivery.dto.response.CreateDeliveryResponseDto;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
+import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
+import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProductStateCode;
+import com.nhnacademy.bookpubshop.order.relationship.exception.NotFoundOrderProductStateException;
+import com.nhnacademy.bookpubshop.order.relationship.repository.OrderProductRepository;
+import com.nhnacademy.bookpubshop.order.relationship.repository.OrderProductStateCodeRepository;
 import com.nhnacademy.bookpubshop.order.repository.OrderRepository;
 import com.nhnacademy.bookpubshop.orderstatecode.exception.NotFoundOrderStateException;
 import com.nhnacademy.bookpubshop.orderstatecode.repository.OrderStateCodeRepository;
-import com.nhnacademy.bookpubshop.payment.dto.TossResponseDto;
+import com.nhnacademy.bookpubshop.payment.dto.response.TossResponseDto;
 import com.nhnacademy.bookpubshop.payment.entity.Payment;
 import com.nhnacademy.bookpubshop.payment.event.PaymentEvent;
 import com.nhnacademy.bookpubshop.state.CardCompany;
+import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.state.OrderState;
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +40,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Slf4j
 public class PaymentEventListener {
     private final OrderRepository orderRepository;
+    private final OrderProductRepository orderProductRepository;
+    private final OrderProductStateCodeRepository orderProductStateRepository;
     private final OrderStateCodeRepository orderStateCodeRepository;
     private final CardRepository cardRepository;
     private final DeliveryAdaptor deliveryAdaptor;
@@ -55,6 +64,27 @@ public class PaymentEventListener {
         order.modifyInvoiceNo(invoiceNumber.getInvoiceNo());
         saveCardPaymentInfo(tossResponseDto, payment);
         orderRepository.save(order);
+        updateOrderProductState(order);
+    }
+
+    /**
+     * 주문상품의 상태를 변경해주는 메소드 입니다.
+     *
+     * @param order 주문.
+     */
+    private void updateOrderProductState(BookpubOrder order) {
+        List<OrderProduct> orderProductList
+                = orderProductRepository.getOrderProductList(order.getOrderNo());
+
+        orderProductList.forEach(op -> {
+            OrderProductStateCode orderProductState =
+                    orderProductStateRepository
+                            .findByCodeName(OrderProductState.WAITING_DELIVERY.getName())
+                            .orElseThrow(NotFoundOrderProductStateException::new);
+
+            op.modifyOrderProductState(orderProductState);
+            orderProductRepository.save(op);
+        });
     }
 
     /**
