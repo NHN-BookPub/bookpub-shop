@@ -1,0 +1,104 @@
+:toc:
+==== 결제 (주문 환불)
+
+결제(Payment) 주문환불 명세입니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/payment-refund-request/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::../../../../target/snippets/payment-refund-request/request-fields.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/payment-refund-request/http-response.adoc[]
+
+===== 예외 사항
+
+====== 1. 주문번호가 null 일경우
+
+Request
+
+include::../../../../target/snippets/payment-refund-Fail-orderNo/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/payment-refund-Fail-orderNo/http-response.adoc[]
+
+====== 2. 취소사유가 null 일경우
+
+Request
+
+include::../../../../target/snippets/payment-refund-Fail-cancel-reason/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/payment-refund-Fail-cancel-reason/http-response.adoc[]
+
+====== 3. 취소사유의 길이가 맞지않을 경우
+
+Request
+
+include::../../../../target/snippets/payment-refund-Fail-cancel-reason-size/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/payment-refund-Fail-cancel-reason-size/http-response.adoc[]
+
+==== 결제 (주문 상품 환불)
+
+===== 요청구조
+
+include::../../../../target/snippets/payment-refundProduct/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::../../../../target/snippets/payment-refundProduct/request-fields.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/payment-refundProduct/http-response.adoc[]
+
+===== 예외 사항
+
+====== 1. 주문번호가 null 일경우
+
+Request
+
+include::../../../../target/snippets/payment-refundProduct-fail-orderNo/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/payment-refundProduct-fail-orderNo/http-response.adoc[]
+
+====== 2. 주문상품번호가 null 일경우
+
+Request
+
+include::../../../../target/snippets/payment-refundProduct-fail-orderProductNo/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/payment-refundProduct-fail-orderProductNo/http-response.adoc[]
+
+====== 4. 취소사유가 null 일경우
+
+Request
+
+include::../../../../target/snippets/payment-refundProduct-fail-cancelReason-null/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/payment-refundProduct-fail-cancelReason-null/http-response.adoc[]
+
+====== 5. 취소사유의 길이가 안맞을경우
+
+Request
+
+include::../../../../target/snippets/payment-refundProduct-fail-cancelReason-size/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/payment-refundProduct-fail-cancelReason-size/http-response.adoc[]

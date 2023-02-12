@@ -1,0 +1,7 @@
+=== 회원(Product)
+
+회원 등록, 수정, 조회 API.
+
+include::member-create.adoc[]
+include::member-modify.adoc[]
+include::member-get.adoc[]
