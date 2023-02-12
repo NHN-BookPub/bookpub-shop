@@ -5,6 +5,7 @@ import com.nhnacademy.bookpubshop.annotation.MemberAndAuth;
 import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderConfirmResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
@@ -12,6 +13,7 @@ import com.nhnacademy.bookpubshop.order.service.OrderService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class OrderController {
     private final OrderService orderService;
 
@@ -127,6 +130,20 @@ public class OrderController {
     }
 
     /**
+     * 주문 한 정보를 확인시키는 dto를 반환합니다.
+     *
+     * @param orderNo 주문번호.
+     * @return 주문정보.
+     */
+    @GetMapping("/api/orders/{orderNo}")
+    public ResponseEntity<GetOrderConfirmResponseDto> getOrderConfirmInfo(
+            @PathVariable Long orderNo) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(orderService.getOrderConfirmInfo(orderNo));
+    }
+
+    /**
      * 주문 상세 정보를 반환합니다. (주문 Id 조회)
      *
      * @param orderId 주문 Id 입니다.
@@ -138,7 +155,7 @@ public class OrderController {
             @RequestParam String phoneNo) {
         GetOrderDetailResponseDto response = orderService.getOrderDetailByOrderId(orderId);
 
-        if(!response.getBuyerNumber().equals(phoneNo)) {
+        if (!response.getBuyerNumber().equals(phoneNo)) {
             response = null;
         }
 
