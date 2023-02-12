@@ -11,6 +11,8 @@ import com.nhnacademy.bookpubshop.coupontemplate.entity.QCouponTemplate;
 import com.nhnacademy.bookpubshop.coupontype.entity.QCouponType;
 import com.nhnacademy.bookpubshop.file.entity.QFile;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
+import com.nhnacademy.bookpubshop.order.entity.QBookpubOrder;
+import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
 import com.nhnacademy.bookpubshop.state.CouponState;
@@ -49,6 +51,10 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
     QCategory category = QCategory.category;
     QProductCategory productCategory = QProductCategory.productCategory;
     QCouponType couponType = QCouponType.couponType;
+    QBookpubOrder order = QBookpubOrder.bookpubOrder;
+    QOrderProduct orderProduct = QOrderProduct.orderProduct;
+
+    private static final String TEMPLATE_IMAGE  = "templateImage";
 
     /**
      * {@inheritDoc}
@@ -68,7 +74,7 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                         coupon.couponNo,
                         member.memberId,
                         couponTemplate.templateName,
-                        file.filePath.as("templateImage"),
+                        file.filePath.as(TEMPLATE_IMAGE),
                         couponPolicy.policyFixed,
                         couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
@@ -82,7 +88,8 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public Page<GetCouponResponseDto> findAllBy(Pageable pageable, String searchKey, String search) {
+    public Page<GetCouponResponseDto> findAllBy(
+            Pageable pageable, String searchKey, String search) {
 
         JPQLQuery<Long> count = from(coupon).select(coupon.count());
 
@@ -97,7 +104,7 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                         coupon.couponNo,
                         member.memberId,
                         couponTemplate.templateName,
-                        file.filePath.as("templateImage"),
+                        file.filePath.as(TEMPLATE_IMAGE),
                         couponPolicy.policyFixed,
                         couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
@@ -177,6 +184,29 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
+    public List<Coupon> findByCouponByOrderNo(Long orderNo) {
+        return from(coupon)
+                .innerJoin(coupon.order, order)
+                .select(coupon)
+                .where(coupon.couponUsed.isTrue()
+                        .and(coupon.order.orderNo.eq(orderNo)))
+                .fetch();
+    }
+
+    @Override
+    public List<Coupon> findByCouponByOrderProductNo(Long orderProductNo) {
+        return from(coupon)
+                .innerJoin(coupon.orderProduct, orderProduct)
+                .select(coupon)
+                .where(coupon.couponUsed.isTrue()
+                        .and(coupon.orderProduct.orderProductNo.eq(orderProductNo)))
+                .fetch();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Page<GetCouponResponseDto> findPositiveCouponByMemberNo(Pageable pageable,
                                                                    Long memberNo) {
         JPQLQuery<Long> count = from(coupon).select(coupon.count())
@@ -200,7 +230,7 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                         coupon.couponNo,
                         member.memberId,
                         couponTemplate.templateName,
-                        file.filePath.as("templateImage"),
+                        file.filePath.as(TEMPLATE_IMAGE),
                         couponPolicy.policyFixed,
                         couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
@@ -240,7 +270,7 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                         coupon.couponNo,
                         member.memberId,
                         couponTemplate.templateName,
-                        file.filePath.as("templateImage"),
+                        file.filePath.as(TEMPLATE_IMAGE),
                         couponPolicy.policyFixed,
                         couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
