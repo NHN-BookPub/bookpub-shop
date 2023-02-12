@@ -15,7 +15,7 @@
     <description>bookpub-shop</description>
     <properties>
         <sonar.issue.ignore.multicriteria>e1,e2,e3</sonar.issue.ignore.multicriteria>
-        <sonar.issue.ignore.multicriteria.e1.ruleKey>java:S6212</sonar.issue.ignore.multicriteria.e1.ruleKey>
+        <sonar.iss1ue.ignore.multicriteria.e1.ruleKey>java:S6212</sonar.iss1ue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>
             **/*.java
         </sonar.issue.ignore.multicriteria.e1.resourceKey>
@@ -30,6 +30,7 @@
         <sonar.java.libraries>target</sonar.java.libraries>
         <sonar.exclusions>target/generated-sources/**</sonar.exclusions>
         <sonar.exclusions>**/*Config.java</sonar.exclusions>
+        <sonar.exclusions>**/*Adaptor.java</sonar.exclusions>
         <java.version>11</java.version>
         <jacoco.version>0.8.6</jacoco.version>
     </properties>
