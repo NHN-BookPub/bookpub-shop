@@ -76,12 +76,12 @@ public class PaymentEventListener {
         List<OrderProduct> orderProductList
                 = orderProductRepository.getOrderProductList(order.getOrderNo());
 
-        orderProductList.forEach(op -> {
-            OrderProductStateCode orderProductState =
-                    orderProductStateRepository
-                            .findByCodeName(OrderProductState.WAITING_DELIVERY.getName())
-                            .orElseThrow(NotFoundOrderProductStateException::new);
+        OrderProductStateCode orderProductState =
+                orderProductStateRepository
+                        .findByCodeName(OrderProductState.WAITING_DELIVERY.getName())
+                        .orElseThrow(NotFoundOrderProductStateException::new);
 
+        orderProductList.forEach(op -> {
             op.modifyOrderProductState(orderProductState);
             orderProductRepository.save(op);
         });
