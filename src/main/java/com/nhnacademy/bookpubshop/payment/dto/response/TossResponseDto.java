@@ -12,7 +12,6 @@ import lombok.ToString;
  */
 @Getter
 @Setter
-@ToString
 public class TossResponseDto {
     private String paymentKey;
     private String orderId;
@@ -75,7 +74,6 @@ public class TossResponseDto {
      */
     @Getter
     @Setter
-    @ToString
     public static class Cancel {
         private String cancelReason;
         private String canceledAt;

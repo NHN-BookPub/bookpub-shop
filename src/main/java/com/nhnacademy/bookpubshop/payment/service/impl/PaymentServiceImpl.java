@@ -56,7 +56,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @EnableAsync
-@Slf4j
 @Transactional(readOnly = true)
 public class PaymentServiceImpl implements PaymentService {
     private final OrderProductRepository orderProductRepository;
@@ -179,6 +178,12 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    /**
+     * 주문 상품이 전부 환불되었는지에 따라 결제, 주문의 상태도 변경하기 위한 로직이 담겨있는 메소드 입니다.
+     *
+     * @param requestDto 환불dto.
+     * @return 전부 상태가 바껴야하는지 아닌지.
+     */
     private boolean allUpdateState(OrderProductRefundRequestDto requestDto) {
         List<OrderProduct> orderProductList
                 = orderProductRepository.getOrderProductList(requestDto.getOrderNo());

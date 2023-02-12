@@ -52,6 +52,9 @@ public class TossAdaptorImpl implements TossAdaptor {
         ).getBody();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TossResponseDto requestRefund(String paymentKey, String cancelReason) {
         final String url = UriComponentsBuilder.newInstance()
@@ -73,6 +76,11 @@ public class TossAdaptorImpl implements TossAdaptor {
         ).getBody();
     }
 
+    /**
+     * 토스 요청에 필요한 header를 만드는 메소드.
+     *
+     * @return header.
+     */
     private HttpHeaders tossVersionMakeHeader() {
         HttpHeaders headers = new HttpHeaders();
         String encodeAuth =

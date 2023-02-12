@@ -193,6 +193,9 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                 .fetch();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Coupon> findByCouponByOrderProductNo(Long orderProductNo) {
         return from(coupon)

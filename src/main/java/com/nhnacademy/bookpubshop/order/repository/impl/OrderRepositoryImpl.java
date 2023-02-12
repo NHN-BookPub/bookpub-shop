@@ -34,7 +34,6 @@ import org.springframework.data.support.PageableExecutionUtils;
  * @author : 여운석
  * @since : 1.0
  **/
-@Slf4j
 public class OrderRepositoryImpl extends QuerydslRepositorySupport
         implements OrderRepositoryCustom {
     QBookpubOrder order = QBookpubOrder.bookpubOrder;
@@ -205,6 +204,9 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                 .where(order.orderId.eq(orderId)).fetchOne());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<GetOrderConfirmResponseDto> getOrderConfirmInfo(Long orderNo) {
         return Optional.of(from(order)
