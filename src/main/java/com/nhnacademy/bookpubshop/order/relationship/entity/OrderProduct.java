@@ -63,4 +63,14 @@ public class OrderProduct {
 
     @Column(name = "order_product_reason_name")
     private String reasonName;
+
+    /**
+     * 주문상품의 상태를 변경하는 메소드 입니다.
+     *
+     * @param orderProductStateCode 주문상태코드.
+     */
+    public void modifyOrderProductState(
+            OrderProductStateCode orderProductStateCode) {
+        this.orderProductStateCode = orderProductStateCode;
+    }
 }

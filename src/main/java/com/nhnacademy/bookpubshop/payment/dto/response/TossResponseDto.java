@@ -1,4 +1,4 @@
-package com.nhnacademy.bookpubshop.payment.dto;
+package com.nhnacademy.bookpubshop.payment.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -42,7 +42,6 @@ public class TossResponseDto {
      */
     @Getter
     @Setter
-    @ToString
     public static class Card {
         private String issuerCode;
         private String number;

@@ -202,7 +202,12 @@ class OrderControllerTest {
                 3, 1000L, 30000L, "reason");
 
         productDto = new GetProductListForOrderResponseDto(1L,
-                product.getTitle(), product.getFiles().get(0).getFilePath(), product.getSalesPrice(), orderProduct.getProductAmount(), orderProductStateCode.getCodeName());
+                orderProduct.getOrderProductNo(),
+                product.getTitle(),
+                product.getFiles().get(0).getFilePath(),
+                product.getSalesPrice(),
+                orderProduct.getProductAmount(),
+                orderProductStateCode.getCodeName());
 
         products.add(productDto);
 
@@ -447,6 +452,8 @@ class OrderControllerTest {
                         ),
                         responseFields(
                                 fieldWithPath("content[].orderNo").description("주문번호"),
+                                fieldWithPath("content[].orderProducts[].orderProductNo").description(
+                                        "주문상품의 주문상품 번호"),
                                 fieldWithPath("content[].orderProducts[].productNo").description(
                                         "주문상품의 상품 주문 번호"),
                                 fieldWithPath("content[].orderProducts[].title").description(

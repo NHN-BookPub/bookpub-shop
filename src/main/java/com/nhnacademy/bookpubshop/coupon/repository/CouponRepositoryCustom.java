@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.coupon.repository;
 
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
+import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 /**
  * CouponRepository custom 을 위한 레포.
  *
- * @author : 정유진
+ * @author : 정유진, 임태원
  * @since : 1.0
  **/
 @NoRepositoryBean
@@ -75,4 +76,18 @@ public interface CouponRepositoryCustom {
      * @return 발급 유무
      */
     boolean existsMonthCouponsByMemberNo(Long memberNo, Long templateNo);
+
+    /**
+     * 주문번호로 해당 주문에 사용 된 쿠폰을 가져오는 메소드.
+     *
+     * @return 해당 주문에 사용 된 쿠폰.
+     */
+    List<Coupon> findByCouponByOrderNo(Long orderNo);
+
+    /**
+     * 주문 상품번호로 해당 주문상품에 사용 된 쿠폰을 가져오는 메소드.
+     *
+     * @return 해당 주문상품에 사용 된 쿠폰.
+     */
+    List<Coupon> findByCouponByOrderProductNo(Long orderProductNo);
 }

@@ -1,11 +1,14 @@
 package com.nhnacademy.bookpubshop.order.repository;
 
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderConfirmResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderVerifyResponseDto;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
+import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,10 +72,26 @@ public interface OrderRepositoryCustom {
     Optional<BookpubOrder> getOrderByOrderKey(String orderId);
 
     /**
+     * 결제창에서 주문 정보를 최종적으로 확인하기 위한 메소드.
+     *
+     * @param orderNo 주문번호.
+     * @return 주문정보.
+     */
+    Optional<GetOrderConfirmResponseDto> getOrderConfirmInfo(Long orderNo);
+
+    /**
      * 최종 결제 성공 후 메인화면에서 띄워줄 정보.
      *
      * @param orderId 주문아이디.
      * @return 주문,결제 정보.
      */
     Optional<GetOrderAndPaymentResponseDto> getOrderAndPayment(String orderId);
+
+    /**
+     * 주문 번호로 주문상품들을 가져오는 메소드.
+     *
+     * @param orderNo 주문번호.
+     * @return 주문상품들.
+     */
+    List<OrderProduct> getOrderProductList(Long orderNo);
 }
