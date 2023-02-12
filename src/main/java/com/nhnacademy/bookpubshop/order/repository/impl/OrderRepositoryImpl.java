@@ -5,18 +5,22 @@ import static com.querydsl.jpa.JPAExpressions.select;
 import com.nhnacademy.bookpubshop.card.entity.QCard;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderConfirmResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderVerifyResponseDto;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.entity.QBookpubOrder;
+import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
+import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
 import com.nhnacademy.bookpubshop.order.repository.OrderRepositoryCustom;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.QOrderStateCode;
 import com.nhnacademy.bookpubshop.payment.entity.QPayment;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.QPricePolicy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
+import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -40,6 +44,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
     QMember member = QMember.member;
     QPayment payment = QPayment.payment;
     QCard card = QCard.card;
+    QOrderProduct orderProduct = QOrderProduct.orderProduct;
 
     public OrderRepositoryImpl() {
         super(BookpubOrder.class);
@@ -190,11 +195,32 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<BookpubOrder> getOrderByOrderKey(String orderId) {
         return Optional.of(from(order)
                 .select(order)
                 .where(order.orderId.eq(orderId)).fetchOne());
+    }
+
+    @Override
+    public Optional<GetOrderConfirmResponseDto> getOrderConfirmInfo(Long orderNo) {
+        return Optional.of(from(order)
+                .innerJoin(order.orderStateCode, orderStateCode)
+                .select(Projections.constructor(GetOrderConfirmResponseDto.class,
+                        order.orderName,
+                        order.orderBuyer.as("buyerName"),
+                        order.orderRecipient.as("recipientName"),
+                        order.roadAddress.as("addressBase"),
+                        order.addressDetail,
+                        order.receivedAt,
+                        order.orderRequest,
+                        order.orderPrice.as("totalAmount"),
+                        order.orderId,
+                        orderStateCode.codeName.as("orderState")
+                )).where(order.orderNo.eq(orderNo)).fetchOne());
     }
 
     /**
@@ -223,4 +249,18 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                                 payment.receipt))
                         .where(order.orderId.eq(orderId)).fetchOne());
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<OrderProduct> getOrderProductList(Long orderNo) {
+        return from(order)
+                .innerJoin(orderProduct)
+                .on(order.orderNo.eq(orderProduct.order.orderNo))
+                .select(orderProduct)
+                .where(order.orderNo.eq(orderNo)).fetch();
+    }
+
+
 }
