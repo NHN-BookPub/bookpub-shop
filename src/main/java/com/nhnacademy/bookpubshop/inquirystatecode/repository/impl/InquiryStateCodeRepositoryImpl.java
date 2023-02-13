@@ -23,6 +23,9 @@ public class InquiryStateCodeRepositoryImpl extends QuerydslRepositorySupport
         super(InquiryStateCode.class);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<GetInquiryStateCodeResponseDto> findUsedCodeForMember() {
         return from(inquiryStateCode)
@@ -38,6 +41,9 @@ public class InquiryStateCodeRepositoryImpl extends QuerydslRepositorySupport
                 .fetch();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<GetInquiryStateCodeResponseDto> findUsedCodeForAdmin() {
         return from(inquiryStateCode)

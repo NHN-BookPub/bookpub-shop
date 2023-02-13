@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Some description here.
+ * 모든 상품문의 조회 시, 간단한 상품문의 정보를 담기 위한 dto.
  *
  * @author : 정유진
  * @since : 1.0
@@ -30,8 +30,4 @@ public class GetInquirySummaryResponseDto {
     private boolean inquiryDisplayed;
     private boolean inquiryAnswered;
     private LocalDateTime createdAt;
-
-    public void addCategories(List<String> categories) {
-        this.productCategories = categories;
-    }
 }

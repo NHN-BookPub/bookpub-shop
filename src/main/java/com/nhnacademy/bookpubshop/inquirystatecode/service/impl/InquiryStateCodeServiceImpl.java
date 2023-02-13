@@ -20,11 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class InquiryStateCodeServiceImpl implements InquiryStateCodeService {
     private final InquiryStateCodeRepository inquiryStateCodeRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<GetInquiryStateCodeResponseDto> getUsedCodeForMember() {
         return inquiryStateCodeRepository.findUsedCodeForMember();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<GetInquiryStateCodeResponseDto> getUsedCodeForAdmin() {
         return inquiryStateCodeRepository.findUsedCodeForAdmin();
