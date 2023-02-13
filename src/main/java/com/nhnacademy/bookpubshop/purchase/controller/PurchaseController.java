@@ -35,6 +35,7 @@ public class PurchaseController {
      * 최신순으로 매입 이력을 반환합니다.
      * 페이징.
      *
+     *
      * @return 200, 최신순으로 매입 이력을 반환합니다.
      */
     @GetMapping("/token/purchases")
