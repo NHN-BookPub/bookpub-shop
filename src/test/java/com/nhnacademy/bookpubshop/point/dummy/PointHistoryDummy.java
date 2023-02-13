@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.point.dummy;
 
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.point.entity.PointHistory;
+import java.time.LocalDateTime;
 
 /**
  * 포인트내역 더미 클래스
