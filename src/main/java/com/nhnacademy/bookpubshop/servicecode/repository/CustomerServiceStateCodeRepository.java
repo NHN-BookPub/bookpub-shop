@@ -10,5 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @since : 1.0
  **/
 public interface CustomerServiceStateCodeRepository
-        extends JpaRepository<CustomerServiceStateCode, Integer> {
+        extends JpaRepository<CustomerServiceStateCode, Integer>,
+        CustomerServiceStateCodeRepositoryCustom {
+
 }
