@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -26,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
  * @author : 여운석, 박경서
  * @since : 1.0
  */
-@Service
 public interface ProductService {
     /**
      * 상품의 번호로 상품을 조회하는 메서드입니다.
