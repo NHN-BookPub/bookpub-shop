@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author : 유호철
  * @since : 1.0
  **/
-public interface CustomerServiceRepository extends JpaRepository<CustomerService, Integer> {
+public interface CustomerServiceRepository extends JpaRepository<CustomerService, Integer>, CustomerServiceRepositoryCustom {
 }
