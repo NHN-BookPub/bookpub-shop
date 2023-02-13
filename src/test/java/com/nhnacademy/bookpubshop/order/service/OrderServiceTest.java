@@ -45,6 +45,7 @@ import com.nhnacademy.bookpubshop.order.service.impl.OrderServiceImpl;
 import com.nhnacademy.bookpubshop.orderstatecode.dummy.OrderStateCodeDummy;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.orderstatecode.repository.OrderStateCodeRepository;
+import com.nhnacademy.bookpubshop.point.repository.PointHistoryRepository;
 import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.pricepolicy.exception.NotFoundPricePolicyException;
@@ -100,6 +101,7 @@ class OrderServiceTest {
     OrderProductStateCodeRepository orderProductStateCodeRepository;
     CouponRepository couponRepository;
     ProductSaleStateCodeRepository productSaleStateCodeRepository;
+    PointHistoryRepository pointHistoryRepository;
 
     Member member;
     BookPubTier bookPubTier;
@@ -138,6 +140,8 @@ class OrderServiceTest {
         orderProductStateCodeRepository = Mockito.mock(OrderProductStateCodeRepository.class);
         couponRepository = Mockito.mock(CouponRepository.class);
         productSaleStateCodeRepository = Mockito.mock(ProductSaleStateCodeRepository.class);
+        pointHistoryRepository = Mockito.mock(PointHistoryRepository.class);
+
 
 
         orderService = new OrderServiceImpl(
@@ -149,7 +153,8 @@ class OrderServiceTest {
                 productRepository,
                 orderProductStateCodeRepository,
                 couponRepository,
-                productSaleStateCodeRepository
+                productSaleStateCodeRepository,
+                pointHistoryRepository
         );
 
         bookPubTier = TierDummy.dummy();

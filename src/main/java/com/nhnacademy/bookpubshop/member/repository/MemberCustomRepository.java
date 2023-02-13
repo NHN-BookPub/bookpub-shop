@@ -6,6 +6,7 @@ import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberStatisticsResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberTierStatisticsResponseDto;
+import com.nhnacademy.bookpubshop.member.entity.Member;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -73,4 +74,12 @@ public interface MemberCustomRepository {
      * @return 등급 번호
      */
     Integer findTierNoByMemberNo(Long memberNo);
+
+    /**
+     * 멤버 닉네임으로 멤버를 조회하는 메소드.
+     *
+     * @param nickname 닉네임.
+     * @return 멤버.
+     */
+    Optional<Member> findMemberByMemberNickname(String nickname);
 }

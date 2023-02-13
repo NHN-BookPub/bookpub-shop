@@ -34,18 +34,21 @@ import org.springframework.data.support.PageableExecutionUtils;
 public class MemberRepositoryImpl extends QuerydslRepositorySupport
         implements MemberCustomRepository {
 
+    QMember member = QMember.member;
+    QMemberAuthority memberAuthority = QMemberAuthority.memberAuthority;
+    QBookPubTier tier = QBookPubTier.bookPubTier;
+    QAuthority authority = QAuthority.authority;
+
+
     public MemberRepositoryImpl() {
         super(Member.class);
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<MemberDetailResponseDto> findByMemberDetails(Long memberNo) {
-        QMember member = QMember.member;
-        QBookPubTier tier = QBookPubTier.bookPubTier;
-        QMemberAuthority memberAuthority = QMemberAuthority.memberAuthority;
-        QAuthority authority = QAuthority.authority;
-
         Optional<Member> content = Optional.ofNullable(from(member)
                 .leftJoin(memberAuthority)
                 .on(member.memberNo.eq(memberAuthority.member.memberNo))
@@ -58,11 +61,11 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
         return content.map(MemberDetailResponseDto::new);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MemberStatisticsResponseDto memberStatistics() {
-        QMember member = QMember.member;
-        QBookPubTier tier = QBookPubTier.bookPubTier;
-
         return from(member)
                 .leftJoin(member.tier, tier)
                 .select(
@@ -90,9 +93,6 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public List<MemberTierStatisticsResponseDto> memberTierStatistics() {
-        QMember member = QMember.member;
-        QBookPubTier tier = QBookPubTier.bookPubTier;
-
         return from(member)
                 .leftJoin(member.tier, tier)
                 .select(Projections.constructor(
@@ -112,9 +112,6 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public Page<MemberResponseDto> findMembers(Pageable pageable) {
-        QMember member = QMember.member;
-        QBookPubTier tier = QBookPubTier.bookPubTier;
-
         JPQLQuery<Long> count = from(member)
                 .select(member.count())
                 .innerJoin(member.tier, tier);
@@ -149,9 +146,6 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public LoginMemberResponseDto findByMemberLoginInfo(String id) {
-        QMember member = QMember.member;
-        QMemberAuthority memberAuthority = QMemberAuthority.memberAuthority;
-
         Optional<IdPwdMemberDto> findMember = Optional.ofNullable(from(member)
                 .select(Projections.constructor(IdPwdMemberDto.class,
                         member.memberNo,
@@ -181,11 +175,11 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                 memberAuthorities);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MemberAuthResponseDto findByAuthMemberInfo(Long memberNo) {
-        QMember member = QMember.member;
-        QMemberAuthority memberAuthority = QMemberAuthority.memberAuthority;
-
         Optional<IdPwdMemberDto> findMember = Optional.ofNullable(from(member)
                 .select(Projections.constructor(IdPwdMemberDto.class,
                         member.memberNo,
@@ -214,14 +208,23 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public Integer findTierNoByMemberNo(Long memberNo) {
-        QMember member = QMember.member;
-        QBookPubTier tier = QBookPubTier.bookPubTier;
-
         return from(member)
                 .join(member.tier, tier)
                 .where(member.memberNo.eq(memberNo))
                 .select(tier.tierNo)
                 .fetchOne();
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Member> findMemberByMemberNickname(String nickname) {
+        return Optional.of(from(member)
+                .select(member)
+                .where(member.memberNickname.eq(nickname))
+                .fetchOne()
+        );
     }
 }

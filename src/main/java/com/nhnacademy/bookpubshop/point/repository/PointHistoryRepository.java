@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author : 임태원
  * @since : 1.0
  **/
-public interface PointHistoryRepository extends JpaRepository<PointHistory, Long> {
+public interface PointHistoryRepository
+        extends JpaRepository<PointHistory, Long>, PointHistoryRepositoryCustom {
 
 }
