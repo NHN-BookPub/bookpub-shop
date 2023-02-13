@@ -44,6 +44,7 @@ public class PurchaseController {
             Pageable pageable) {
         Page<GetPurchaseListResponseDto> content = purchaseService.getPurchaseListDesc(pageable);
 
+
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new PageResponse<>(content));
