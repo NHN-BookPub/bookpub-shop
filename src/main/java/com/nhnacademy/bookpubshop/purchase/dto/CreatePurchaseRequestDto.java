@@ -18,6 +18,7 @@ public class CreatePurchaseRequestDto {
     private Long productNo;
     private Long purchasePrice;
     private Integer purchaseAmount;
+    private Integer productType;
 
     /**
      * Dto to Entity 메서드입니다.
