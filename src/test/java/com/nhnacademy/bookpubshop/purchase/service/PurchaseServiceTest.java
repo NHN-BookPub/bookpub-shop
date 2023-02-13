@@ -6,12 +6,14 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
+import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.purchase.dto.CreatePurchaseRequestDto;
 import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseListResponseDto;
@@ -20,6 +22,7 @@ import com.nhnacademy.bookpubshop.purchase.exception.NotFoundPurchasesException;
 import com.nhnacademy.bookpubshop.purchase.repository.PurchaseRepository;
 import com.nhnacademy.bookpubshop.purchase.service.impl.PurchaseServiceImpl;
 import com.nhnacademy.bookpubshop.state.ProductSaleState;
+import com.nhnacademy.bookpubshop.wishlist.repository.WishlistRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,11 +31,15 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -41,10 +48,22 @@ import org.springframework.test.util.ReflectionTestUtils;
  * @author : 여운석
  * @since : 1.0
  **/
+@ExtendWith(SpringExtension.class)
+@Import(PurchaseServiceImpl.class)
 class PurchaseServiceTest {
+    @MockBean
     ProductRepository productRepository;
+    @MockBean
     PurchaseRepository purchaseRepository;
+    @MockBean
     ProductSaleStateCodeRepository productSaleStateCodeRepository;
+    @MockBean
+    ProductTypeStateCodeRepository productTypeStateCodeRepository;
+    @MockBean
+    WishlistRepository wishlistRepository;
+    @MockBean
+    MemberRepository memberRepository;
+    @Autowired
     PurchaseService purchaseService;
     Product product;
     ProductPolicy productPolicy;
@@ -58,12 +77,6 @@ class PurchaseServiceTest {
 
     @BeforeEach
     void setUp() {
-        productRepository = Mockito.mock(ProductRepository.class);
-        purchaseRepository = Mockito.mock(PurchaseRepository.class);
-        productSaleStateCodeRepository = Mockito.mock(ProductSaleStateCodeRepository.class);
-
-        purchaseService = new PurchaseServiceImpl(purchaseRepository, productRepository, productSaleStateCodeRepository);
-
         productPolicy = new ProductPolicy(1, "method", true, 1);
         typeStateCode = new ProductTypeStateCode(1, BEST_SELLER.getName(), BEST_SELLER.isUsed(), "info");
         saleStateCode = new ProductSaleStateCode(1, ProductSaleState.SALE.name(), ProductSaleState.SALE.isUsed(), "info");
@@ -111,6 +124,7 @@ class PurchaseServiceTest {
         ReflectionTestUtils.setField(request, "productNo", product.getProductNo());
         ReflectionTestUtils.setField(request, "purchasePrice", purchase.getPurchasePrice());
         ReflectionTestUtils.setField(request, "purchaseAmount", purchase.getPurchaseAmount());
+        ReflectionTestUtils.setField(request, "productType", 1);
     }
 
     @Test
@@ -256,6 +270,8 @@ class PurchaseServiceTest {
                 .thenReturn(Optional.of(product));
         when(productSaleStateCodeRepository.findByCodeCategory(ProductSaleState.SALE.getName()))
                 .thenReturn(Optional.of(saleStateCode));
+        when(productTypeStateCodeRepository.findById(anyInt()))
+                .thenReturn(Optional.of(typeStateCode));
         when(purchaseRepository.save(any()))
                 .thenReturn(purchase);
         when(productRepository.save(any()))
@@ -263,8 +279,11 @@ class PurchaseServiceTest {
 
         purchaseService.createPurchaseMerged(request);
 
-        verify(purchaseRepository, times(1))
-                .save(any());
+        verify(productRepository, times(1))
+                .findById(anyLong());
+        verify(productTypeStateCodeRepository, times(1))
+                .findById(anyInt());
+
     }
 
     @Test

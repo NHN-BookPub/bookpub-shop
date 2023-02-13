@@ -40,8 +40,6 @@ public class GetProductDetailResponseDto {
     private String saleStateCodeCategory;
     private String typeStateCodeName;
 
-    // TODO: 매입이력 추가
-
     private String policyMethod;
     private boolean policySaved;
     private Integer policySaveRate;

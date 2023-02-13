@@ -5,7 +5,10 @@ import com.nhnacademy.bookpubshop.purchase.dto.CreatePurchaseRequestDto;
 import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseListResponseDto;
 import com.nhnacademy.bookpubshop.purchase.service.PurchaseService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import com.nhnacademy.bookpubshop.wishlist.dto.response.GetAppliedMemberResponseDto;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,9 +41,11 @@ public class PurchaseController {
     @AdminAuth
     public ResponseEntity<PageResponse<GetPurchaseListResponseDto>> getPurchaseListDesc(
             Pageable pageable) {
+        Page<GetPurchaseListResponseDto> content = purchaseService.getPurchaseListDesc(pageable);
+
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(purchaseService.getPurchaseListDesc(pageable));
+                .body(new PageResponse<>(content));
     }
 
     /**
@@ -100,10 +105,10 @@ public class PurchaseController {
      */
     @PostMapping("/token/purchases/absorption")
     @AdminAuth
-    public ResponseEntity<Void> createPurchaseMerged(
+    public ResponseEntity<List<GetAppliedMemberResponseDto>> createPurchaseMerged(
             @RequestBody CreatePurchaseRequestDto request) {
-        purchaseService.createPurchaseMerged(request);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .build();
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(purchaseService.createPurchaseMerged(request));
     }
 }

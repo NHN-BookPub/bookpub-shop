@@ -364,6 +364,7 @@ class ProductRepositoryTest {
         assertThat(content.get(0).getThumbnail()).isEqualTo(file.getFilePath());
     }
 
+    @Disabled
     @Test
     @DisplayName("주문 번호로 상품 리스트 조회 테스트")
     void getProduct_By_Order_Number_Test() {

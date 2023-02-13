@@ -128,6 +128,7 @@ class WishlistControllerTest {
         ReflectionTestUtils.setField(dto, "title", "제목");
         ReflectionTestUtils.setField(dto, "productPublisher", "출판사");
         ReflectionTestUtils.setField(dto, "thumbnail", "Image");
+        ReflectionTestUtils.setField(dto, "codeCategory", "판매중");
         ReflectionTestUtils.setField(dto, "wishlistApplied", false);
 
         List<GetWishlistResponseDto> list = List.of(dto);
@@ -162,6 +163,7 @@ class WishlistControllerTest {
                                 fieldWithPath("content[].title").description("상품 제목"),
                                 fieldWithPath("content[].productPublisher").description("출판사"),
                                 fieldWithPath("content[].thumbnail").description("썸네일 이미지 경로"),
+                                fieldWithPath("content[].codeCategory").description("상품 판매 코드 유형"),
                                 fieldWithPath("content[].wishlistApplied").description("재고 알림 여부"),
                                 fieldWithPath("totalPages").description("총 페이지 수 반환"),
                                 fieldWithPath("number").description("현재 페이지 반환"),

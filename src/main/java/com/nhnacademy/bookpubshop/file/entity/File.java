@@ -84,6 +84,11 @@ public class File extends BaseCreateTimeEntity {
     @Column(name = "file_name_saved")
     private String nameSaved;
 
+    /**
+     * 파일에 문의를 저장 메서드.
+     *
+     * @param inquiry 문의
+     */
     public void addInquiry(Inquiry inquiry) {
         this.inquiry = inquiry;
     }
