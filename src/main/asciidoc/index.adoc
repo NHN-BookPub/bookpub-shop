@@ -51,6 +51,8 @@ v2023.02.13
 아직 에러페이지가 나올시 처리
 
 == API
+//회원
+include::member/member.adoc[]
 
 //저자
 include::author/author.adoc[]

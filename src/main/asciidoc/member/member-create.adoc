@@ -1,37 +1,105 @@
-= Book-Pub
 :toc:
 
-== API 명세
+
+
+==== 회원등록
 
 회원(Member) 등록에 관한 API 명세
 
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/member-create-success/http-request.adoc[]
 
-=== 요청 파라미터
+===== 요청 파라미터
 
 include::../../../../target/snippets/member-create-success/request-fields.adoc[]
 
-=== 응답구조
+===== 응답구조
+
+include::../../../../target/snippets/member-create-success/http-response.adoc[]
+
+===== 응답 파라미터
 
 include::../../../../target/snippets/member-create-success/response-fields.adoc[]
 
-=== 예외사항
+===== 예외사항
 
-====1. 이름 길이 검증 실패
+====== 1. 이름 길이 검증 실패
+
+Request
+
 include::../../../../target/snippets/member-create-memberName-valid-fail/http-request.adoc[]
-====2. 닉네임 영어, 숫자 조건 검증 실패
+
+Response
+
+include::../../../../target/snippets/member-create-memberName-valid-fail/http-response.adoc[]
+
+====== 2. 닉네임 영어, 숫자 조건 검증 실패
+
+Request
+
 include::../../../../target/snippets/member-create-memberNickname-valid-fail/http-request.adoc[]
-====3. 성별 검증 실패
+
+Response
+
+include::../../../../target/snippets/member-create-memberNickname-valid-fail/http-response.adoc[]
+
+====== 3. 성별 검증 실패
+
+Request
+
 include::../../../../target/snippets/member-create-gender-valid-fail/http-request.adoc[]
-====4. 생일 6자 숫자 검증 실패
+
+Response
+
+include::../../../../target/snippets/member-create-gender-valid-fail/http-response.adoc[]
+
+====== 4. 생일 6자 숫자 검증 실패
+
+Request
+
 include::../../../../target/snippets/member-create-birthDate-valid-fail/http-request.adoc[]
-====5. 아이디 영어 숫자 및 길이 검증 실패
+
+Response
+
+include::../../../../target/snippets/member-create-birthDate-valid-fail/http-response.adoc[]
+
+====== 5. 아이디 영어 숫자 및 길이 검증 실패
+
+Request
+
 include::../../../../target/snippets/member-create-memberId-valid-fail/http-request.adoc[]
-====6. 전화번호 숫자 11글자 검증 실패
+
+Response
+
+include::../../../../target/snippets/member-create-memberId-valid-fail/http-response.adoc[]
+
+====== 6. 전화번호 숫자 11글자 검증 실패
+
+Request
+
 include::../../../../target/snippets/member-create-phoneNumber-valid-fail/http-request.adoc[]
-====1. 주소 null 검증 실패
+
+Response
+
+include::../../../../target/snippets/member-create-phoneNumber-valid-fail/http-response.adoc[]
+
+====== 7. 주소 null 검증 실패
+
+Request
+
 include::../../../../target/snippets/address-create-valid-fail/http-request.adoc[]
-====2. 주소 상세주소 null 검증 실패
+
+Response
+
+include::../../../../target/snippets/address-create-valid-fail/http-response.adoc[]
+
+====== 8. 주소 상세주소 null 검증 실패
+
+Request
+
 include::../../../../target/snippets/address-create-valid-detail-fail/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/address-create-valid-detail-fail/http-response.adoc[]

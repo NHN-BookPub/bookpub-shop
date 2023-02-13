@@ -1,141 +1,158 @@
-= Book-Pub
 :toc:
-
-== API 명세
+==== 회원 닉네임 수정
 
 회원(Member) 수정 관한 API 명세
 
-== 회원 닉네임 수정
-
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/member-modify-nickname-success/http-request.adoc[]
 
-=== 요청 파라미터
+===== 요청 파라미터
 
 include::../../../../target/snippets/member-modify-nickname-success/request-fields.adoc[]
 
-=== 응답구조
+===== 응답구조
 
-include::../../../../target/snippets/member-modify-nickname-success/response-fields.adoc[]
+include::../../../../target/snippets/member-modify-nickname-success/http-response.adoc[]
 
-=== 예외사항
+===== 예외사항
 
-====1. 닉네임 null 검증 실패
+====== 1. 닉네임 null 검증 실패
+
 include::../../../../target/snippets/member-modify-memberNickname-valid-fail/http-request.adoc[]
 
-====2. 닉네임 문법 검증 실패
+====== 2. 닉네임 문법 검증 실패
+
 include::../../../../target/snippets/member-modify-memberNickname-expression-valid-fail/http-request.adoc[]
 
-== 회원 이메일 수정
+==== 회원 이메일 수정
 
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/member-modify-email-success/http-request.adoc[]
 
-=== 요청 파라미터
+===== 요청 파라미터
 
 include::../../../../target/snippets/member-modify-email-success/request-fields.adoc[]
 
-=== 응답구조
+===== 응답구조
 
-include::../../../../target/snippets/member-modify-email-success/response-fields.adoc[]
+include::../../../../target/snippets/member-modify-email-success/http-response.adoc[]
 
-=== 예외사항
+===== 예외사항
 
-====1. 이메일 형식 검증 실패
+====== 1. 이메일 형식 검증 실패
+
 include::../../../../target/snippets/member-modify-email-valid-fail/http-request.adoc[]
 
-== 회원 차단 및 복구
+==== 회원 차단 및 복구
 
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/member-block-success/http-request.adoc[]
 
-=== 요청 파라미터
+===== 요청 파라미터
 
-include::../../../../target/snippets/member-block-success/request-fields.adoc[]
+include::../../../../target/snippets/member-block-success/path-parameters.adoc[]
 
-=== 응답구조
+===== 응답구조
 
-include::../../../../target/snippets/member-block-success/response-fields.adoc[]
+include::../../../../target/snippets/member-block-success/http-response.adoc[]
 
-== 회원 전화번호 수정
+==== 회원 전화번호 수정
 
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/member-modify-phone-success/http-request.adoc[]
 
-=== 요청 파라미터
+===== 요청 파라미터
 
 include::../../../../target/snippets/member-modify-phone-success/request-fields.adoc[]
 
-=== 응답구조
+===== 응답구조
 
-include::../../../../target/snippets/member-modify-phone-success/response-fields.adoc[]
+include::../../../../target/snippets/member-modify-phone-success/path-parameters.adoc[]
 
-=== 예외사항
+===== 예외사항
 
-====1. 전화번호 형식 검증 실패
+====== 1. 전화번호 형식 검증 실패
+
+Request
+
 include::../../../../target/snippets/member-modify-phone-valid-fail/http-request.adoc[]
 
-====2. 전화번호 null 검증 실패
-include::../../../../target/snippets/member-modify-phone-null-valid-fail/http-request.adoc[]
+Response
 
-== 회원 이름 수정
+include::../../../../target/snippets/member-modify-phone-valid-fail/http-response.adoc[]
 
-=== 요청구조
+====== 2. 전화번호 null 검증 실패
+
+Request
+
+include::../../../../target/snippets/member-modify-phone-null-fail/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/member-modify-phone-null-fail/http-response.adoc[]
+
+==== 회원 이름 수정
+
+===== 요청구조
 
 include::../../../../target/snippets/member-modify-name-success/http-request.adoc[]
 
-=== 요청 파라미터
+===== 요청 파라미터
 
 include::../../../../target/snippets/member-modify-name-success/request-fields.adoc[]
 
-=== 응답구조
+===== 응답구조
 
-include::../../../../target/snippets/member-modify-name-success/response-fields.adoc[]
+include::../../../../target/snippets/member-modify-name-success/path-parameters.adoc[]
 
-== 회원 탈퇴
+==== 회원 탈퇴
 
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/member-delete-success/http-request.adoc[]
 
-=== 요청 파라미터
+===== 요청 파라미터
 
-include::../../../../target/snippets/member-delete-success/request-fields.adoc[]
+include::../../../../target/snippets/member-delete-success/path-parameters.adoc[]
 
-== 비밀번호 체킹
+==== 비밀번호 체킹
 
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/password-check/http-request.adoc[]
 
-=== 요청 파라미터
+===== 요청 파라미터
 
-include::../../../../target/snippets/password-check/request-fields.adoc[]
+include::../../../../target/snippets/password-check/path-parameters.adoc[]
 
-=== 응답구조
+===== 응답구조
 
 include::../../../../target/snippets/password-check/response-fields.adoc[]
 
-== 비밀번호 변경
+==== 비밀번호 변경
 
-=== 요청구조
+===== 요청구조
 
 include::../../../../target/snippets/password-modify-success/http-request.adoc[]
 
-=== 요청 파라미터
+===== 요청 파라미터
 
 include::../../../../target/snippets/password-modify-success/request-fields.adoc[]
 
-== 기준주소지 변경
+==== 기준주소지 변경
 
-=== 요청구조
+===== 요청구조
 
-include::../../../../target/snippets/aseAddress-modify-success/http-request.adoc[]
+include::../../../../target/snippets/baseAddress-modify-success/http-request.adoc[]
 
-=== 요청 파라미터
+===== 요청 파라미터
 
-include::../../../../target/snippets/aseAddress-modify-success/request-fields.adoc[]
+include::../../../../target/snippets/baseAddress-modify-success/path-parameters.adoc[]
+
+===== 응답 구조
+include::../../../../target/snippets/baseAddress-modify-success/http-response.adoc[]
+

@@ -16,10 +16,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RefundRequestDto {
-    @NotNull
+    @NotNull(message = "주문번호는 null 이 될수없습니다.")
     private Long orderNo;
 
-    @NotNull
-    @Size(min = 1, max = 200)
+    @NotNull(message = "cancelReason 은 null이 될수없습니다.")
+    @Size(min = 1, max = 200, message = "사이즈는 1부터 200 안에 되어야합니다.")
     private String cancelReason;
 }
