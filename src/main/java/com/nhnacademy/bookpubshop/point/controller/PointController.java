@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,10 +36,10 @@ public class PointController {
      * @param memberNo 유저번호.
      * @return 포인트 사용내역.
      */
-    @GetMapping("/token/point")
+    @GetMapping("/token/point/{memberNo}")
     @MemberAndAuth
     public ResponseEntity<PageResponse<GetPointResponseDto>> getPointHistory(
-            Pageable pageable, @RequestParam String type, @RequestParam Long memberNo) {
+            Pageable pageable, @RequestParam String type, @PathVariable Long memberNo) {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -51,10 +52,11 @@ public class PointController {
      * @param giftRequestDto 요청 dto.
      * @return 성공 status.
      */
-    @PostMapping("/token/point")
+    @PostMapping("/token/point/{memberNo}")
     @MemberAndAuth
-    public ResponseEntity<Void> giftPoint(@RequestBody PointGiftRequestDto giftRequestDto) {
-        pointService.giftPoint(giftRequestDto);
+    public ResponseEntity<Void> giftPoint(@RequestBody PointGiftRequestDto giftRequestDto,
+                                          @PathVariable Long memberNo) {
+        pointService.giftPoint(memberNo, giftRequestDto);
         return ResponseEntity.status(HttpStatus.OK)
                 .build();
     }

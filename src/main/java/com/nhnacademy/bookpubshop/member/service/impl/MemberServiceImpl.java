@@ -62,7 +62,7 @@ public class MemberServiceImpl implements MemberService {
     private final AddressRepository addressRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    private static final String TIER_NAME = "basic";
+    private static final String TIER_NAME = "BASIC";
     private static final String AUTHORITY_NAME = "ROLE_MEMBER";
 
     /**

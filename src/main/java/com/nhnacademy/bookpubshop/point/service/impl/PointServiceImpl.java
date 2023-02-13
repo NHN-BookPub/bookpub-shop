@@ -43,9 +43,9 @@ public class PointServiceImpl implements PointService {
      */
     @Override
     @Transactional
-    public void giftPoint(PointGiftRequestDto giftRequestDto) {
+    public void giftPoint(Long memberNo, PointGiftRequestDto giftRequestDto) {
         Member giveMember =
-                memberRepository.findById(giftRequestDto.getMemberNo())
+                memberRepository.findById(memberNo)
                 .orElseThrow(MemberNotFoundException::new);
         Member receiveMember =
                 memberRepository.findMemberByMemberNickname(giftRequestDto.getNickname())
