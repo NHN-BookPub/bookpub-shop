@@ -26,7 +26,8 @@ public interface PointService {
     /**
      * 포인트 선물 메소드.
      *
+     * @param memberNo 멤버 no.
      * @param giftRequestDto 선물정보 dto.
      */
-    void giftPoint(PointGiftRequestDto giftRequestDto);
+    void giftPoint(Long memberNo, PointGiftRequestDto giftRequestDto);
 }
