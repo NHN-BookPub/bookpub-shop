@@ -11,7 +11,7 @@ import com.nhnacademy.bookpubshop.wishlist.dto.request.DeleteWishlistRequestDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.request.ModifyWishlistAlarmRequestDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistResponseDto;
 import com.nhnacademy.bookpubshop.wishlist.entity.Wishlist;
-import com.nhnacademy.bookpubshop.wishlist.exception.WishlistNotFoundException;
+import com.nhnacademy.bookpubshop.wishlist.exception.WishlistNorFoundException;
 import com.nhnacademy.bookpubshop.wishlist.repository.WishlistRepository;
 import com.nhnacademy.bookpubshop.wishlist.service.WishlistService;
 import lombok.RequiredArgsConstructor;
@@ -81,7 +81,7 @@ public class WishlistServiceImpl implements WishlistService {
     @Transactional
     public void modifyWishlistAlarm(Long memberNo, ModifyWishlistAlarmRequestDto request) {
         Wishlist wishlist = wishlistRepository.findById(new Wishlist.Pk(memberNo, request.getProductNo()))
-                .orElseThrow(WishlistNotFoundException::new);
+                .orElseThrow(WishlistNorFoundException::new);
 
         wishlist.modifyWishlistAlarm();
     }

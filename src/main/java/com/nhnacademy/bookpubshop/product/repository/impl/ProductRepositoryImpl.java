@@ -114,8 +114,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         product.productDeleted))
                 .leftJoin(product.files, file)
                 .on(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
-                .where(product.title.like(title)
-                        .and(product.productDeleted.isFalse()))
+                .where(product.title.like(title))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -189,23 +188,21 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         product.salesPrice,
                         product.productPrice,
                         product.salesRate))
-                .where(product.productTypeStateCode.codeNo.eq(typeNo)
-                        .and(product.productDeleted.isFalse())
-                        .and(productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName())))
+                .where(product.productTypeStateCode.codeNo.eq(typeNo))
+                .where(product.productSaleStateCode.codeCategory.eq("판매중"))
                 .distinct()
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(limit)
                 .fetch();
 
-        result.stream()
-                .map(m -> m.getProductCategories().add(
-                        String.valueOf(
-                                from(category)
-                                        .leftJoin(productCategory)
-                                        .on(productCategory.category.categoryNo.eq(category.categoryNo))
-                                        .select(category.categoryName)
-                                        .where(productCategory.product.productNo.eq(m.getProductNo())).fetch())
-                )).collect(Collectors.toList());
+        // TODO: 쿼리 수정 (Check)
+        result.stream().map(m -> m.getProductCategories().add(
+                String.valueOf(from(category)
+                        .leftJoin(productCategory)
+                        .on(productCategory.category.categoryNo.eq(category.categoryNo))
+                        .select(category.categoryName)
+                        .where(productCategory.product.productNo.eq(m.getProductNo())).fetch())
+        )).collect(Collectors.toList());
 
         return result;
     }
@@ -262,7 +259,8 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo, Pageable pageable) {
+    public Page<GetProductByCategoryResponseDto> getProductsByCategory(
+            Integer categoryNo, Pageable pageable) {
 
         List<GetProductByCategoryResponseDto> content =
                 from(product)
@@ -273,15 +271,17 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                                 product.salesPrice,
                                 product.salesRate))
                         .innerJoin(product.productSaleStateCode, productSaleStateCode)
-                        .on(productSaleStateCode.codeCategory.notIn(ProductSaleState.STOP.getName()))
+                        .on(productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
+
                         .innerJoin(product.productCategories, productCategory)
-                        .on(productCategory.product.productNo.eq(product.productNo)
-                                .and(productCategory.category.categoryNo.eq(categoryNo)))
+                        .on(productCategory.product.productNo.eq(product.productNo))
+
                         .leftJoin(file).on(product.productNo.eq(file.product.productNo)
-                                .and((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
-                                        .or(file.fileCategory.isNull())))
+                                .and(file.fileCategory
+                                        .eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
+
                         .orderBy(product.productPriority.asc())
-                        .where(product.productDeleted.isFalse())
+                        .where(productCategory.category.categoryNo.eq(categoryNo))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
@@ -289,17 +289,14 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
         setCategoryAndAuthors(content);
 
         JPQLQuery<Long> count = from(product)
-                .innerJoin(product.productSaleStateCode, productSaleStateCode)
-                .on(productSaleStateCode.codeCategory.notIn(ProductSaleState.STOP.getName()))
-                .innerJoin(product.productCategories, productCategory)
-                .on(productCategory.product.productNo.eq(product.productNo)
-                        .and(productCategory.category.categoryNo.eq(categoryNo)))
-                .leftJoin(file).on(product.productNo.eq(file.product.productNo)
-                        .and((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
-                                .or(file.fileCategory.isNull())))
-                .orderBy(product.productPriority.asc())
-                .where(product.productDeleted.isFalse())
-                .select(product.count());
+                .leftJoin(product.productCategories)
+                .leftJoin(product.productAuthors)
+                .leftJoin(product.productTags)
+                .leftJoin(product.productSaleStateCode)
+                .select(product.count())
+                .where(category.categoryNo.eq(categoryNo))
+                .where(product.productSaleStateCode.codeCategory
+                        .eq(ProductSaleState.SALE.getName()));
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }

@@ -3,9 +3,6 @@ package com.nhnacademy.bookpubshop.purchase.service;
 import com.nhnacademy.bookpubshop.purchase.dto.CreatePurchaseRequestDto;
 import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseListResponseDto;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
-import com.nhnacademy.bookpubshop.wishlist.dto.response.GetAppliedMemberResponseDto;
-import java.util.List;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
@@ -45,13 +42,12 @@ public interface PurchaseService {
      * @param pageable 페이징.
      * @return 페이징된 매입이력들을 반환합니디.
      */
-    Page<GetPurchaseListResponseDto> getPurchaseListDesc(Pageable pageable);
+    PageResponse<GetPurchaseListResponseDto> getPurchaseListDesc(Pageable pageable);
 
     /**
      * 매입이력 등록시 상품의 재고가 함께 증가됩니다.
      *
      * @param request 생성시 dto 입니다.
-     * @return 위시리스트에서 알림을 등록한 사용ㅇ자 리스트
      */
-    List<GetAppliedMemberResponseDto> createPurchaseMerged(CreatePurchaseRequestDto request);
+    void createPurchaseMerged(CreatePurchaseRequestDto request);
 }
