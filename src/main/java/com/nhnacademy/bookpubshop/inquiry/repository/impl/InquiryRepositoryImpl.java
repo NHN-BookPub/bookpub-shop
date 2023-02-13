@@ -18,8 +18,10 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
 import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.InquiryState;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -48,32 +50,19 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
     QCategory category = QCategory.category;
     QInquiryStateCode inquiryStateCode = QInquiryStateCode.inquiryStateCode;
 
+    private static final String PRODUCT_TITLE = "productTitle";
+    private static final String INQUIRY_STATE_CODE_NAME = "inquiryStateCodeName";
+    private static final String PRODUCT_IMAGE_PATH = "productImagePath";
+
 
     public InquiryRepositoryImpl() {
         super(Inquiry.class);
     }
 
-    //문의 관련 -> 모두 회원만 가능함,,? 1:1채팅 제외??
-    // 상품문의(문의하기, 문의 내역 보기)
-    // 불량상품 신고(신고하기, 신고 내역 보기)
-    // 1:1 문의(문의하기, 문의 내역 보기)
-    // 1:1 채팅(메인페이지에서 채팅하기, 채팅 내역 보기?)
 
-    // 구매한 회원만 문의 가능, 비공개 및 공개 선택, tui editor 사용
-    // 문의는 여러번 가능하며 depth는 한개만
-
-    //관리자 -> 문의글 20개 페이징, 전체문의글 카운팅 및 답변완료 카운팅, 미완료된 문의글 부터 보이게,
-    //문의 완료처리
-    //문의 검색 가능 -> 상품 카테고리 + (상품명 + 상품코드 + 질문)
-
-    // 회원 구현 ->
-    // 문의 하기
-    // 문의 내역 보기
-    //
-
-    // 관리자 구현 ->
-
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean existsPurchaseHistoryByMemberNo(Long memberNo, Long productNo) {
         return from(order)
@@ -85,10 +74,14 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                 .fetchFirst() != null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<GetInquirySummaryProductResponseDto> findSummaryInquiriesByProduct(Pageable pageable, Long productNo) {
         JPQLQuery<Long> count = from(inquiry)
                 .innerJoin(inquiry.member, member)
+                .on(inquiry.member.memberNo.eq(member.memberNo))
                 .innerJoin(inquiry.product, product)
                 .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
                 .where(inquiry.inquiryStateCode.inquiryCodeName.notIn(
@@ -100,6 +93,7 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
         List<GetInquirySummaryProductResponseDto> inquiries =
                 from(inquiry)
                         .innerJoin(inquiry.member, member)
+                        .on(inquiry.member.memberNo.eq(member.memberNo))
                         .innerJoin(inquiry.product, product)
                         .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
                         .where(inquiry.inquiryStateCode.inquiryCodeName.notIn(
@@ -130,40 +124,111 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public Page<GetInquirySummaryResponseDto> findSummaryInquiries(Pageable pageable) {
+    public Page<GetInquirySummaryResponseDto> findSummaryErrorInquiries(Pageable pageable) {
         JPQLQuery<Long> count = from(inquiry)
                 .innerJoin(inquiry.product, product)
                 .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
+                .innerJoin(inquiry.member, member)
+                .on(inquiry.member.memberNo.eq(member.memberNo))
                 .leftJoin(file)
                 .on(inquiry.product.productNo.eq(file.product.productNo))
                 .where(((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                         .or(file.fileCategory.isNull()))
                         .and(inquiry.parentInquiry.isNull())
-                        .and(inquiry.inquiryStateCode.inquiryCodeName.notIn(
-                                InquiryState.ANSWER.getName(), InquiryState.ERROR.getName())))
+                        .and(inquiry.inquiryStateCode.inquiryCodeName.eq(InquiryState.ERROR.getName())))
                 .select(inquiry.count());
 
         List<GetInquirySummaryResponseDto> inquiries =
                 from(inquiry)
                         .innerJoin(inquiry.product, product)
                         .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
+                        .innerJoin(inquiry.member, member)
+                        .on(inquiry.member.memberNo.eq(member.memberNo))
+                        .leftJoin(file)
+                        .on(inquiry.product.productNo.eq(file.product.productNo))
+                        .where(((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                                .or(file.fileCategory.isNull()))
+                                .and(inquiry.parentInquiry.isNull())
+                                .and(inquiry.inquiryStateCode.inquiryCodeName.eq(InquiryState.ERROR.getName())))
+                        .select(Projections.fields(
+                                GetInquirySummaryResponseDto.class,
+                                inquiry.inquiryNo,
+                                inquiry.product.productNo,
+                                member.memberNo,
+                                inquiry.inquiryStateCode.inquiryCodeName.as(INQUIRY_STATE_CODE_NAME),
+                                member.memberNickname,
+                                product.title.as(PRODUCT_TITLE),
+                                product.productIsbn,
+                                file.filePath.as(PRODUCT_IMAGE_PATH),
+                                inquiry.inquiryTitle,
+                                inquiry.inquiryDisplayed,
+                                inquiry.inquiryAnswered,
+                                inquiry.createdAt))
+                        .orderBy(inquiry.inquiryAnswered.asc())
+                        .orderBy(inquiry.createdAt.desc())
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
+
+        return PageableExecutionUtils.getPage(inquiries, pageable, count::fetchOne);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetInquirySummaryResponseDto> findSummaryInquiries(Pageable pageable,
+                                                                   String searchKeyFir, String searchValueFir,
+                                                                   String searchKeySec, String searchValueSec) {
+        JPQLQuery<Long> count = from(inquiry)
+                .innerJoin(inquiry.product, product)
+                .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
+                .innerJoin(inquiry.member, member)
+                .on(inquiry.member.memberNo.eq(member.memberNo))
+//                        .leftJoin(productCategory)
+//                        .on(inquiry.product.productNo.eq(productCategory.product.productNo))
+//                        .leftJoin(category)
+//                        .on(productCategory.category.categoryNo.eq(category.categoryNo))
+                .leftJoin(file)
+                .on(inquiry.product.productNo.eq(file.product.productNo))
+                .where(((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                        .or(file.fileCategory.isNull()))
+                        .and(inquiry.parentInquiry.isNull())
+                        .and(inquiry.inquiryStateCode.inquiryCodeName.notIn(
+                                InquiryState.ANSWER.getName(), InquiryState.ERROR.getName()))
+                        .and(searchFirEq(searchKeyFir, searchValueFir))
+                        .and(searchSecEq(searchKeySec, searchValueSec)))
+                .select(inquiry.count());
+
+        List<GetInquirySummaryResponseDto> inquiries =
+                from(inquiry)
+                        .innerJoin(inquiry.product, product)
+                        .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
+                        .innerJoin(inquiry.member, member)
+                        .on(inquiry.member.memberNo.eq(member.memberNo))
+//                        .leftJoin(productCategory)
+//                        .on(inquiry.product.productNo.eq(productCategory.product.productNo))
+//                        .leftJoin(category)
+//                        .on(productCategory.category.categoryNo.eq(category.categoryNo))
                         .leftJoin(file)
                         .on(inquiry.product.productNo.eq(file.product.productNo))
                         .where(((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                                 .or(file.fileCategory.isNull()))
                                 .and(inquiry.parentInquiry.isNull())
                                 .and(inquiry.inquiryStateCode.inquiryCodeName.notIn(
-                                        InquiryState.ANSWER.getName(), InquiryState.ERROR.getName())))
+                                        InquiryState.ANSWER.getName(), InquiryState.ERROR.getName()))
+                                .and(searchFirEq(searchKeyFir, searchValueFir))
+                                .and(searchSecEq(searchKeySec, searchValueSec)))
                         .select(Projections.fields(
                                 GetInquirySummaryResponseDto.class,
                                 inquiry.inquiryNo,
                                 inquiry.product.productNo,
                                 inquiry.member.memberNo,
-                                inquiry.inquiryStateCode.inquiryCodeName.as("inquiryStateCodeName"),
-                                inquiry.member.memberNickname,
-                                product.title.as("productTitle"),
+                                inquiry.inquiryStateCode.inquiryCodeName.as(INQUIRY_STATE_CODE_NAME),
+                                member.memberNickname,
+                                product.title.as(PRODUCT_TITLE),
                                 product.productIsbn,
-                                file.filePath.as("productImagePath"),
+                                file.filePath.as(PRODUCT_IMAGE_PATH),
                                 inquiry.inquiryTitle,
                                 inquiry.inquiryDisplayed,
                                 inquiry.inquiryAnswered,
@@ -187,6 +252,9 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
         return PageableExecutionUtils.getPage(inquiries, pageable, count::fetchOne);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<GetInquirySummaryMemberResponseDto> findMemberInquiries(Pageable pageable, Long memberNo) {
         JPQLQuery<Long> count = from(inquiry)
@@ -220,8 +288,8 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                                 inquiry.product.productNo,
                                 inquiry.member.memberNo,
                                 inquiry.inquiryStateCode.inquiryCodeName,
-                                product.title.as("productTitle"),
-                                file.filePath.as("productImagePath"),
+                                product.title.as(PRODUCT_TITLE),
+                                file.filePath.as(PRODUCT_IMAGE_PATH),
                                 inquiry.inquiryTitle,
                                 inquiry.inquiryDisplayed,
                                 inquiry.inquiryAnswered,
@@ -234,12 +302,16 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
         return PageableExecutionUtils.getPage(inquiries, pageable, count::fetchOne);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<GetInquiryResponseDto> findInquiry(Long inquiryNo) {
         QInquiry childInquiry = QInquiry.inquiry;
 
         GetInquiryResponseDto parent = from(inquiry)
                 .innerJoin(inquiry.member, member)
+                .on(inquiry.member.memberNo.eq(member.memberNo))
                 .innerJoin(inquiry.product, product)
                 .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
                 .where(inquiry.inquiryNo.eq(inquiryNo))
@@ -248,9 +320,9 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                         inquiry.inquiryNo,
                         inquiry.member.memberNo,
                         inquiry.product.productNo,
-                        inquiryStateCode.inquiryCodeName.as("inquiryStateCodeName"),
+                        inquiryStateCode.inquiryCodeName.as(INQUIRY_STATE_CODE_NAME),
                         member.memberNickname,
-                        product.title.as("productTitle"),
+                        product.title.as(PRODUCT_TITLE),
                         inquiry.inquiryTitle,
                         inquiry.inquiryContent,
                         inquiry.inquiryDisplayed,
@@ -261,6 +333,7 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
 
         parent.addChild(from(childInquiry)
                 .innerJoin(childInquiry.member, member)
+                .on(inquiry.member.memberNo.eq(member.memberNo))
                 .innerJoin(childInquiry.product, product)
                 .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
                 .where(childInquiry.parentInquiry.inquiryNo.eq(parent.getInquiryNo()))
@@ -269,9 +342,9 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                         inquiry.inquiryNo,
                         inquiry.member.memberNo,
                         inquiry.product.productNo,
-                        inquiryStateCode.inquiryCodeName.as("inquiryStateCodeName"),
+                        inquiryStateCode.inquiryCodeName.as(INQUIRY_STATE_CODE_NAME),
                         member.memberNickname,
-                        product.title.as("productTitle"),
+                        product.title.as(PRODUCT_TITLE),
                         inquiry.inquiryTitle,
                         inquiry.inquiryContent,
                         inquiry.inquiryDisplayed,
@@ -280,5 +353,47 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                 ).fetch());
 
         return Optional.of(parent);
+    }
+
+    /**
+     * 상품문의 검색 시 키, 값으로 검색해오기 위한 메서드입니다.
+     *
+     * @param searchKeyFir   검색 조건
+     * @param searchValueFir 검색 값
+     * @return querydsl 조건절
+     */
+    private BooleanExpression searchFirEq(String searchKeyFir, String searchValueFir) {
+        if (Objects.isNull(searchKeyFir) || Objects.isNull(searchValueFir) ||
+                (searchKeyFir.isBlank()) || (searchValueFir.isBlank())) {
+            return null;
+        }
+        if (searchKeyFir.equals("category")) {
+            return productCategory.category.categoryName.eq(searchKeyFir);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 상품문의 검색 시 키, 값으로 검색해오기 위한 메서드입니다.
+     *
+     * @param searchKeySec   검색 조건 두번째
+     * @param searchValueSec 검색 값 두번째
+     * @return querydsl 조건절
+     */
+    private BooleanExpression searchSecEq(String searchKeySec, String searchValueSec) {
+        if (Objects.isNull(searchKeySec) || Objects.isNull(searchValueSec) ||
+                (searchKeySec.isBlank()) || (searchValueSec.isBlank())) {
+            return null;
+        }
+        if (searchKeySec.equals(PRODUCT_TITLE)) {
+            return inquiry.product.title.contains(searchValueSec);
+        } else if (searchKeySec.equals("productIsbn")) {
+            return inquiry.product.productIsbn.eq(searchValueSec);
+        } else if (searchKeySec.equals("inquiryTitle")) {
+            return inquiry.inquiryTitle.contains(searchValueSec);
+        } else {
+            return null;
+        }
     }
 }
