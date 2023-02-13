@@ -35,7 +35,7 @@ import com.nhnacademy.bookpubshop.subscribe.exception.SubscribeNotFoundException
 import com.nhnacademy.bookpubshop.tag.exception.TagNameDuplicatedException;
 import com.nhnacademy.bookpubshop.tag.exception.TagNotFoundException;
 import com.nhnacademy.bookpubshop.tier.exception.TierAlreadyExists;
-import com.nhnacademy.bookpubshop.wishlist.exception.WishlistNorFoundException;
+import com.nhnacademy.bookpubshop.wishlist.exception.WishlistNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
@@ -103,7 +103,7 @@ public class ShopAdviceController {
                 NotFoundStateCodesException.class, CouponTypeNotFoundException.class,
                 CouponStateCodeNotFoundException.class, CouponPolicyNotFoundException.class,
                 ReviewPolicyNotFoundException.class, ReviewPolicyUsedNotFoundException.class,
-                WishlistNorFoundException.class
+                    WishlistNotFoundException.class
             })
     public ResponseEntity<Void> badRequest() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
