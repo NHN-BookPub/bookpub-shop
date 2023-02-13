@@ -6,7 +6,6 @@ import com.nhnacademy.bookpubshop.member.entity.QMember;
 import com.nhnacademy.bookpubshop.order.entity.QBookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProductStateCode;
-import com.nhnacademy.bookpubshop.orderstatecode.entity.QOrderStateCode;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductSimpleResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductAuthor;
@@ -18,7 +17,6 @@ import com.nhnacademy.bookpubshop.review.entity.Review;
 import com.nhnacademy.bookpubshop.review.repository.ReviewRepositoryCustom;
 import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
-import com.nhnacademy.bookpubshop.state.OrderState;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -148,24 +146,20 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
             Pageable pageable, Long memberNo) {
         QBookpubOrder order = QBookpubOrder.bookpubOrder;
         QOrderProduct orderProduct = QOrderProduct.orderProduct;
-        QOrderStateCode orderStateCode = QOrderStateCode.orderStateCode;
         QOrderProductStateCode orderProductStateCode = QOrderProductStateCode.orderProductStateCode;
 
         JPQLQuery<Long> count = from(orderProduct)
                 .leftJoin(productFile)
                 .on(orderProduct.product.productNo.eq(productFile.product.productNo))
-                .select(orderProduct.count())
                 .join(orderProduct.order, order)
                 .join(orderProduct.orderProductStateCode, orderProductStateCode)
                 .join(orderProduct.product, product)
-                .join(orderStateCode)
-                .on(orderProduct.order.orderStateCode.codeNo.eq(orderStateCode.codeNo))
                 .leftJoin(review)
-                .on(orderProduct.product.productNo.eq(review.product.productNo))
+                .on((orderProduct.product.productNo.eq(review.product.productNo)).and(
+                        orderProduct.order.member.memberNo.eq(review.member.memberNo)))
                 .where(order.member.memberNo.eq(memberNo)
                         .and(orderProduct.orderProductStateCode.codeName
                                 .eq(OrderProductState.CONFIRMED.getName()))
-                        .and(orderStateCode.codeName.eq(OrderState.COMPLETE_DELIVERY.getName()))
                         .and((review.product.isNull()).or(product.productNo.notIn(
                                 JPAExpressions.select(product.productNo)
                                         .from(review)
@@ -176,7 +170,8 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                         )))
                         .and((productFile.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                                 .or(productFile.fileCategory.isNull())))
-                .distinct();
+                .distinct()
+                .select(orderProduct.count());
 
         List<GetProductSimpleResponseDto> content = from(orderProduct)
                 .leftJoin(productFile)
@@ -184,15 +179,12 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                 .join(orderProduct.order, order)
                 .join(orderProduct.orderProductStateCode, orderProductStateCode)
                 .join(orderProduct.product, product)
-                .join(orderStateCode)
-                .on(orderProduct.order.orderStateCode.codeNo.eq(orderStateCode.codeNo))
                 .leftJoin(review)
                 .on((orderProduct.product.productNo.eq(review.product.productNo)).and(
                         orderProduct.order.member.memberNo.eq(review.member.memberNo)))
                 .where(order.member.memberNo.eq(memberNo)
                         .and(orderProduct.orderProductStateCode.codeName
                                 .eq(OrderProductState.CONFIRMED.getName()))
-                        .and(orderStateCode.codeName.eq(OrderState.COMPLETE_DELIVERY.getName()))
                         .and((review.product.isNull()).or(product.productNo.notIn(
                                 JPAExpressions.select(product.productNo)
                                         .from(review)
