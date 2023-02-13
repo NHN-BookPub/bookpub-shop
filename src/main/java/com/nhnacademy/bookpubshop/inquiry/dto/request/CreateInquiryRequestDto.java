@@ -1,5 +1,7 @@
 package com.nhnacademy.bookpubshop.inquiry.dto.request;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -7,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Some description here.
+ * 상품문의를 등록하기 위해 사용되는 dto.
  *
  * @author : 정유진
  * @since : 1.0
@@ -33,4 +35,6 @@ public class CreateInquiryRequestDto {
 
     @NotNull(message = "문의 공개 여부를 입력해주세요.")
     boolean inquiryDisplayed;
+
+    List<String> imagePaths = new ArrayList<>();
 }
