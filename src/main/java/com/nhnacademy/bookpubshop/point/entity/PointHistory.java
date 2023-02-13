@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,7 +29,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class PointHistory extends BaseCreateTimeEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "point_history_number")
@@ -50,4 +50,14 @@ public class PointHistory extends BaseCreateTimeEntity {
     @NotNull
     @Column(name = "point_history_reason")
     private String pointHistoryReason;
+    @Builder
+    public PointHistory(Member member,
+                        Long pointHistoryAmount,
+                        boolean pointHistoryIncreased,
+                        String pointHistoryReason) {
+        this.member = member;
+        this.pointHistoryAmount = pointHistoryAmount;
+        this.pointHistoryIncreased = pointHistoryIncreased;
+        this.pointHistoryReason = pointHistoryReason;
+    }
 }
