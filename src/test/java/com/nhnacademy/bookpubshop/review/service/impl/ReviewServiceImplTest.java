@@ -12,6 +12,7 @@ import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
+import com.nhnacademy.bookpubshop.point.repository.PointHistoryRepository;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductSimpleResponseDto;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
@@ -81,6 +82,8 @@ class ReviewServiceImplTest {
     ReviewPolicyRepository reviewPolicyRepository;
     @MockBean
     FileManagement fileManagement;
+    @MockBean
+    PointHistoryRepository pointHistoryRepository;
 
     Member member;
     Product product;
