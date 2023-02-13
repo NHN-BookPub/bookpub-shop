@@ -36,6 +36,8 @@ public class CustomerServiceServiceImpl implements CustomerServiceService {
 
     /**
      * {@inheritDoc}
+     *
+     * @throws IOException 파일을 등록할 때 발생할 수 있는 예외
      */
     @Override
     public void createCustomerService(CreateCustomerServiceRequestDto request, MultipartFile image) throws IOException {

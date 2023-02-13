@@ -13,6 +13,13 @@ import org.springframework.data.repository.NoRepositoryBean;
  **/
 @NoRepositoryBean
 public interface CustomerServiceRepositoryCustom {
+
+    /**
+     * 전체 고객서비스를 조회합니다.
+     *
+     * @param pageable 페이징
+     * @return 고객서비스
+     */
     Page<GetCustomerServiceListResponseDto> getCustomerServices(Pageable pageable);
 
     /**

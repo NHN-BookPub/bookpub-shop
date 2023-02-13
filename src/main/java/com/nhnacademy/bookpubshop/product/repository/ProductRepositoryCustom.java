@@ -86,6 +86,13 @@ public interface ProductRepositoryCustom {
      */
     Page<GetProductByCategoryResponseDto> getEbooks(Pageable pageable);
 
+    /**
+     * 회원이 구매한 이북들을 조회합니다.
+     *
+     * @param pageable 페이징
+     * @param memberNo 회원번호
+     * @return 이북
+     */
     Page<GetProductByCategoryResponseDto> getEbooksByMember(Pageable pageable, Long memberNo);
 
     /**
@@ -96,5 +103,12 @@ public interface ProductRepositoryCustom {
      */
     String getFilePath(Long productNo);
 
+    /**
+     * 상품유형으로 상품들을 조회합니다.
+     *
+     * @param typeNo 유형번호
+     * @param pageable 페이징
+     * @return 상품
+     */
     Page<GetProductByCategoryResponseDto> getProductsByTypes(Integer typeNo, Pageable pageable);
 }

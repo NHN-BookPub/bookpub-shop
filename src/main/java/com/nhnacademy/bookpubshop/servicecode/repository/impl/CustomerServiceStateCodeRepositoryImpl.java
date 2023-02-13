@@ -27,7 +27,7 @@ public class CustomerServiceStateCodeRepositoryImpl extends QuerydslRepositorySu
     getCustomerServiceStateCodeByName(String codeName) {
         QCustomerServiceStateCode customerServiceStateCode = QCustomerServiceStateCode.customerServiceStateCode;
 
-        return Optional.ofNullable(
+        return Optional.of(
                 from(customerServiceStateCode)
                 .select(customerServiceStateCode)
                 .where(customerServiceStateCode.serviceCodeName.eq(codeName))

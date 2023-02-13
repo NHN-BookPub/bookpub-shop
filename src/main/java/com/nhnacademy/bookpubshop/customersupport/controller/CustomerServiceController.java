@@ -23,10 +23,17 @@ import org.springframework.web.multipart.MultipartFile;
  **/
 @RestController
 @RequiredArgsConstructor
-@RequestMapping
 public class CustomerServiceController {
     private final CustomerServiceService customerServiceService;
 
+    /**
+     * 고객서비스를 생성합니다.
+     *
+     * @param requestDto 생성시 필요한 dto
+     * @param image 이미지
+     * @return 성공시 201
+     * @throws IOException 파일 등록시 발생할 수 있는 예외
+     */
     @PostMapping("/token/services")
     @AdminAuth
     public ResponseEntity<Void> createCustomerService(
@@ -38,6 +45,12 @@ public class CustomerServiceController {
                 .build();
     }
 
+    /**
+     * 전체 고객서비스를 조회합니다.
+     *
+     * @param pageable 페이징
+     * @return 성공시 200, 고객서비스
+     */
     @GetMapping("/token/services")
     @AdminAuth
     public ResponseEntity<PageResponse<GetCustomerServiceListResponseDto>>
@@ -47,6 +60,13 @@ public class CustomerServiceController {
                 .body(customerServiceService.getCustomerServices(pageable));
     }
 
+    /**
+     * 코드명으로 고객서비스를 조회합니다.
+     *
+     * @param codeName 코드명
+     * @param pageable 페이징
+     * @return 성공시 200
+     */
     @GetMapping("/api/services/{codeName}")
     public ResponseEntity<PageResponse<GetCustomerServiceListResponseDto>>
     getCustomerServicesByCodeName(@PathVariable String codeName, Pageable pageable) {
@@ -55,6 +75,13 @@ public class CustomerServiceController {
                 .body(customerServiceService.getCustomerServicesByCodeName(codeName, pageable));
     }
 
+    /**
+     * 카테고리로 고객서비스를 조회합니다.
+     *
+     * @param category 카테고리
+     * @param pageable 페이징
+     * @return 성공시 200
+     */
     @GetMapping("/api/services/category/{category}")
     public ResponseEntity<PageResponse<GetCustomerServiceListResponseDto>>
     getCustomerServicesByCategory(@PathVariable String category, Pageable pageable) {

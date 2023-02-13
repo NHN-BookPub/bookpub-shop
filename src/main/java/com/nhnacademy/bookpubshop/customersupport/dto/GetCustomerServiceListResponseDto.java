@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.customersupport.dto;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * 고객서비스 리스트를 위한 dto 입니다.
@@ -10,6 +11,7 @@ import lombok.AllArgsConstructor;
  * @since : 1.0
  **/
 @AllArgsConstructor
+@Getter
 public class GetCustomerServiceListResponseDto {
     private Integer customerServiceNo;
     private String customerServiceStateCode;
