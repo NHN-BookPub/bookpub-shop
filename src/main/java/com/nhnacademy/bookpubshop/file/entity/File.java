@@ -49,7 +49,7 @@ public class File extends BaseCreateTimeEntity {
     private Subscribe subscribe;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "personal_inquiry_number")
+    @JoinColumn(name = "inquiry_number")
     private Inquiry inquiry;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -83,4 +83,8 @@ public class File extends BaseCreateTimeEntity {
     @NotNull
     @Column(name = "file_name_saved")
     private String nameSaved;
+
+    public void addInquiry(Inquiry inquiry) {
+        this.inquiry = inquiry;
+    }
 }
