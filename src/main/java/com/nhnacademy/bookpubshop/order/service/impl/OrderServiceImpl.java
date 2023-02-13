@@ -8,6 +8,7 @@ import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderConfirmResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
@@ -48,7 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 멤버 서비스의 구현체.
  *
- * @author : 여운석
+ * @author : 여운석, 임태원
  * @since : 1.0
  **/
 @Service
@@ -73,7 +74,6 @@ public class OrderServiceImpl implements OrderService {
     public GetOrderDetailResponseDto getOrderDetailById(Long orderNo) {
         GetOrderDetailResponseDto response = orderRepository.getOrderDetailById(orderNo)
                 .orElseThrow(OrderNotFoundException::new);
-
         response.addProducts(productRepository.getProductListByOrderNo(orderNo));
 
         return response;
@@ -194,9 +194,8 @@ public class OrderServiceImpl implements OrderService {
         }
         Coupon coupon = couponRepository.findById(couponNo)
                 .orElseThrow(() -> new NotFoundCouponException(couponNo));
-        coupon.modifyOrder(order);
-        coupon.modifyOrderProduct(orderProduct);
-        coupon.couponUsed();
+
+        coupon.updateUsed(order, orderProduct);
     }
 
     /**
@@ -329,4 +328,17 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.getOrderAndPayment(orderId)
                 .orElseThrow(OrderNotFoundException::new);
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws  OrderNotFoundException 주문정보가 없습니다.
+     */
+    @Override
+    public GetOrderConfirmResponseDto getOrderConfirmInfo(Long orderNo) {
+        return orderRepository.getOrderConfirmInfo(orderNo)
+                .orElseThrow(OrderNotFoundException::new);
+    }
+
+
 }

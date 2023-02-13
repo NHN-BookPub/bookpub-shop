@@ -30,6 +30,7 @@
         <sonar.java.libraries>target</sonar.java.libraries>
         <sonar.exclusions>target/generated-sources/**</sonar.exclusions>
         <sonar.exclusions>**/*Config.java</sonar.exclusions>
+        <sonar.exclusions>**/*Adaptor.java</sonar.exclusions>
         <java.version>11</java.version>
         <jacoco.version>0.8.6</jacoco.version>
     </properties>

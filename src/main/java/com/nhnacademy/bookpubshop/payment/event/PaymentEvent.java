@@ -1,7 +1,7 @@
 package com.nhnacademy.bookpubshop.payment.event;
 
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
-import com.nhnacademy.bookpubshop.payment.dto.TossResponseDto;
+import com.nhnacademy.bookpubshop.payment.dto.response.TossResponseDto;
 import com.nhnacademy.bookpubshop.payment.entity.Payment;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

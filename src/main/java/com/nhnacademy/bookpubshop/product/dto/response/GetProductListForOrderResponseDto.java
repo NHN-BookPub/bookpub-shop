@@ -12,6 +12,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GetProductListForOrderResponseDto {
+    private Long orderProductNo;
     private Long productNo;
     private String title;
     private String thumbnail;

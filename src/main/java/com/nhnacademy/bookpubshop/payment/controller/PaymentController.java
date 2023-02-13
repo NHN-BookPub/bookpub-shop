@@ -1,10 +1,15 @@
 package com.nhnacademy.bookpubshop.payment.controller;
 
+import com.nhnacademy.bookpubshop.annotation.MemberAndAuth;
+import com.nhnacademy.bookpubshop.payment.dto.request.OrderProductRefundRequestDto;
+import com.nhnacademy.bookpubshop.payment.dto.request.RefundRequestDto;
 import com.nhnacademy.bookpubshop.payment.service.PaymentService;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,5 +54,32 @@ public class PaymentController {
                                           @RequestParam Long amount) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(paymentService.verifyPayment(orderId, amount));
+    }
+
+    /**
+     * 주문 환불 신청하는 api.
+     *
+     * @return void
+     */
+    @PostMapping("/token/payment/order")
+    @MemberAndAuth
+    public ResponseEntity<Void> refundOrder(@Valid @RequestBody RefundRequestDto refundRequestDto) {
+        paymentService.refundOrder(refundRequestDto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .build();
+    }
+
+    /**
+     * 주문 상품 환불 신청하는 api.
+     *
+     * @return void
+     */
+    @PostMapping("/token/payment/order-product")
+    @MemberAndAuth
+    public ResponseEntity<Void> refundOrderProduct(
+            @Valid @RequestBody OrderProductRefundRequestDto refundRequestDto) {
+        paymentService.refundOrderProduct(refundRequestDto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .build();
     }
 }

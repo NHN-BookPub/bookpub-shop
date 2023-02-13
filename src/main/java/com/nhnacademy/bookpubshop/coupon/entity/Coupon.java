@@ -84,15 +84,25 @@ public class Coupon {
         this.usedAt = null;
     }
 
-    public void modifyOrder(BookpubOrder order) {
+
+    /**
+     * 주문에 사용 된 쿠폰을 사용 된 상태로 만드는 메소드 입니다.
+     *
+     * @param order 주문.
+     * @param orderProduct 주문상품.
+     */
+    public void updateUsed(BookpubOrder order, OrderProduct orderProduct) {
         this.order = order;
-    }
-
-    public void modifyOrderProduct(OrderProduct orderProduct) {
         this.orderProduct = orderProduct;
+        this.couponUsed = true;
     }
 
-    public void couponUsed() {
-        this.couponUsed = true;
+    /**
+     * 주문에 사용 된 쿠폰을 다시 미사용 쿠폰으로 돌려놓는 메소드 입니다.
+     */
+    public void modifyNotUsedCoupon() {
+        this.order = null;
+        this.orderProduct = null;
+        this.couponUsed = false;
     }
 }

@@ -1,5 +1,8 @@
 package com.nhnacademy.bookpubshop.payment.service;
 
+import com.nhnacademy.bookpubshop.payment.dto.request.OrderProductRefundRequestDto;
+import com.nhnacademy.bookpubshop.payment.dto.request.RefundRequestDto;
+
 /**
  * 결제 서비스 입니다.
  *
@@ -24,4 +27,18 @@ public interface PaymentService {
      * @param amount 주문 금액.
      */
     void createPayment(String paymentKey, String orderId, Long amount);
+
+    /**
+     * 주문 결제 취소하는 메소드.
+     *
+     * @param refundRequestDto 환불 dto.
+     */
+    void refundOrder(RefundRequestDto refundRequestDto);
+
+    /**
+     * 주문상품 결제 취소하는 메소드.
+     *
+     * @param refundRequestDto 환불 dto.
+     */
+    void refundOrderProduct(OrderProductRefundRequestDto refundRequestDto);
 }

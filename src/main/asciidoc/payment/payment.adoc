@@ -6,3 +6,4 @@
 include::create-payment.adoc[]
 include::verify.adoc[]
 include::verify-failed.adoc[]
+include::payment-refund.adoc[]

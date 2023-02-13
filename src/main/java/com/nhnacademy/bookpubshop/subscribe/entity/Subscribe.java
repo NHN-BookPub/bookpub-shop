@@ -41,7 +41,7 @@ public class Subscribe {
 
     @OneToMany(mappedBy = "subscribe",
             cascade = {
-            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+                    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
             orphanRemoval = true)
     List<SubscribeProductList> productrelationList = new ArrayList<>();
 
@@ -148,7 +148,7 @@ public class Subscribe {
     /**
      * 구독의 상품관계 비워주는 메서드입니다.
      */
-    public void removeRelationList(){
+    public void removeRelationList() {
         this.productrelationList.clear();
 
     }
