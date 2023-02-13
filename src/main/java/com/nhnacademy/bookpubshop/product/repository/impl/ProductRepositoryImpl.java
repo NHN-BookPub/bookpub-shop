@@ -222,6 +222,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
         return from(orderProduct)
                 .select(Projections.constructor(
                         GetProductListForOrderResponseDto.class,
+                        orderProduct.orderProductNo,
                         product.productNo,
                         product.title,
                         file.filePath,
@@ -231,9 +232,9 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .innerJoin(orderProduct.product, product)
                 .innerJoin(orderProduct.orderProductStateCode, orderProductStateCode)
                 .innerJoin(orderProduct.order, order)
-                .leftJoin(file).on(product.productNo.eq(file.product.productNo)
+                .leftJoin(file)
+                .on(product.productNo.eq(file.product.productNo)
                         .and(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
-                .on(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                 .where(order.orderNo.eq(orderNo))
                 .fetch();
     }
