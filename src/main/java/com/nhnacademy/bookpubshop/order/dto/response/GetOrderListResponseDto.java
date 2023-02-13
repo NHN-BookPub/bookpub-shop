@@ -29,7 +29,7 @@ public class GetOrderListResponseDto {
     }
 
     private Long orderNo;
-    private List<GetProductListForOrderResponseDto> orderProducts = new ArrayList<>();
+    private List<GetProductListForOrderResponseDto> orderProducts;
     private String orderState;
     private LocalDateTime createdAt;
     private LocalDateTime receivedAt;
