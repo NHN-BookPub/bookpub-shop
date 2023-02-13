@@ -6,11 +6,11 @@ package com.nhnacademy.bookpubshop.wishlist.exception;
  * @author : 박경서
  * @since : 1.0
  **/
-public class WishlistNotFoundException extends RuntimeException {
+public class WishlistNorFoundException extends RuntimeException {
 
     public static final String MESSAGE = "첮을 수 없는 위시리스트입니다.";
 
-    public WishlistNotFoundException() {
+    public WishlistNorFoundException() {
         super(MESSAGE);
     }
 }

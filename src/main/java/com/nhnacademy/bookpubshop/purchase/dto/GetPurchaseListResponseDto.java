@@ -3,7 +3,6 @@ package com.nhnacademy.bookpubshop.purchase.dto;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * 구매이력 조회시 사용되는 dto class.
@@ -12,7 +11,6 @@ import lombok.NoArgsConstructor;
  * @since : 1.0
  **/
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class GetPurchaseListResponseDto {
     private Long productNo;

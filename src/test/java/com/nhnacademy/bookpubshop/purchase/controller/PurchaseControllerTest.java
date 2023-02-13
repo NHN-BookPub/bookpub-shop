@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -26,11 +27,9 @@ import com.nhnacademy.bookpubshop.purchase.dummy.PurchaseDummy;
 import com.nhnacademy.bookpubshop.purchase.entity.Purchase;
 import com.nhnacademy.bookpubshop.purchase.service.PurchaseService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
-import com.nhnacademy.bookpubshop.wishlist.dto.response.GetAppliedMemberResponseDto;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +85,6 @@ class PurchaseControllerTest {
         ReflectionTestUtils.setField(request, "productNo", product.getProductNo());
         ReflectionTestUtils.setField(request, "purchasePrice", purchase.getPurchasePrice());
         ReflectionTestUtils.setField(request, "purchaseAmount", purchase.getPurchaseAmount());
-        ReflectionTestUtils.setField(request, "productType", 1);
 
         listResponse = new GetPurchaseListResponseDto(
                 product.getProductNo(),
@@ -97,7 +95,6 @@ class PurchaseControllerTest {
                 purchase.getCreatedAt());
     }
 
-    @Disabled
     @Test
     @DisplayName("최신순 전체 매입이력 조회 성공")
     void getPurchaseListDesc() throws Exception {
@@ -110,8 +107,8 @@ class PurchaseControllerTest {
         PageResponse<GetPurchaseListResponseDto> pageResult =
                 new PageResponse<>(page);
 
-//        when(purchaseService.getPurchaseListDesc(pageable))
-//                .thenReturn(pageResult);
+        when(purchaseService.getPurchaseListDesc(pageable))
+                .thenReturn(pageResult);
 
         mockMvc.perform(get(tokenUrl + "?page=0&size=5")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -222,8 +219,7 @@ class PurchaseControllerTest {
                         requestFields(
                                 fieldWithPath("productNo").description("변경하려는 매입이력의 상품번호를 기입합니다."),
                                 fieldWithPath("purchasePrice").description("변경하려는 매입이력의 가격입니다."),
-                                fieldWithPath("purchaseAmount").description("변경하려는 매입이력의 양입니다."),
-                                fieldWithPath("productType").description("변경하려는 상품 유형 타입 번호입니다.")
+                                fieldWithPath("purchaseAmount").description("변경하려는 매입이력의 양입니다.")
                         )
                 ));
 
@@ -248,8 +244,7 @@ class PurchaseControllerTest {
                         requestFields(
                                 fieldWithPath("productNo").description("구매한 상품의 번호가 기입됩니다."),
                                 fieldWithPath("purchasePrice").description("상품의 매입 가격이 기입됩니다."),
-                                fieldWithPath("purchaseAmount").description("상품의 매입 수량이 기입됩니다."),
-                                fieldWithPath("productType").description("변경하고자하는 상품 유형이 기입됩니다.")
+                                fieldWithPath("purchaseAmount").description("상품의 매입 수량이 기입됩니다.")
                         )
                 ));
 
@@ -260,17 +255,8 @@ class PurchaseControllerTest {
     @Test
     @DisplayName("매입이력 등록시 상품재고 증가 성공")
     void createPurchaseMerged() throws Exception {
-        GetAppliedMemberResponseDto responseDto = new GetAppliedMemberResponseDto();
-        ReflectionTestUtils.setField(responseDto, "memberNo", 1L);
-        ReflectionTestUtils.setField(responseDto, "memberNickname", "닉네임");
-        ReflectionTestUtils.setField(responseDto, "memberPhone", "01012341234");
-        ReflectionTestUtils.setField(responseDto, "productNo", 1L);
-        ReflectionTestUtils.setField(responseDto, "title", "책 제목");
-
-        List<GetAppliedMemberResponseDto> list = List.of(responseDto);
-
-        when(purchaseService.createPurchaseMerged(request))
-                .thenReturn(list);
+        doNothing().when(purchaseService)
+                .createPurchaseMerged(request);
 
         mockMvc.perform(post(tokenUrl + "/absorption")
                         .content(objectMapper.writeValueAsString(request))
