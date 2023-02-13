@@ -5,6 +5,8 @@ import com.nhnacademy.bookpubshop.filemanager.FileManagement;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
+import com.nhnacademy.bookpubshop.point.entity.PointHistory;
+import com.nhnacademy.bookpubshop.point.repository.PointHistoryRepository;
 import com.nhnacademy.bookpubshop.product.dto.response.GetProductSimpleResponseDto;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
@@ -41,10 +43,12 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ReviewServiceImpl implements ReviewService {
+    private static final String REVIEW = "리뷰 작성";
     private final ReviewRepository reviewRepository;
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
     private final ReviewPolicyRepository reviewPolicyRepository;
+    private final PointHistoryRepository pointHistoryRepository;
     private final FileManagement fileManagement;
 
     /**
@@ -121,6 +125,13 @@ public class ReviewServiceImpl implements ReviewService {
                 .reviewPolicy(reviewPolicy)
                 .reviewStar(createRequestDto.getReviewStar())
                 .reviewContent(createRequestDto.getReviewContent())
+                .build());
+
+        pointHistoryRepository.save(PointHistory.builder()
+                .member(member)
+                .pointHistoryIncreased(true)
+                .pointHistoryReason(REVIEW)
+                .pointHistoryAmount(reviewPolicy.getSendPoint())
                 .build());
 
         try {

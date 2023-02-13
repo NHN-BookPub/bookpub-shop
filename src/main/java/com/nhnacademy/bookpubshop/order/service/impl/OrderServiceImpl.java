@@ -22,6 +22,8 @@ import com.nhnacademy.bookpubshop.order.repository.OrderRepository;
 import com.nhnacademy.bookpubshop.order.service.OrderService;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
 import com.nhnacademy.bookpubshop.orderstatecode.repository.OrderStateCodeRepository;
+import com.nhnacademy.bookpubshop.point.entity.PointHistory;
+import com.nhnacademy.bookpubshop.point.repository.PointHistoryRepository;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.pricepolicy.exception.NotFoundPricePolicyException;
 import com.nhnacademy.bookpubshop.pricepolicy.repository.PricePolicyRepository;
@@ -56,6 +58,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class OrderServiceImpl implements OrderService {
+    private static final String BUY_BOOK = "책 구매";
+
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
     private final PricePolicyRepository pricePolicyRepository;
@@ -65,6 +69,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderProductStateCodeRepository orderProductStateCodeRepository;
     private final CouponRepository couponRepository;
     private final ProductSaleStateCodeRepository productSaleStateCodeRepository;
+    private final PointHistoryRepository pointHistoryRepository;
 
     /**
      * {@inheritDoc}
@@ -208,6 +213,14 @@ public class OrderServiceImpl implements OrderService {
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(MemberNotFoundException::new);
         member.decreaseMemberPoint(usePoint);
+
+        pointHistoryRepository.save(
+                PointHistory.builder()
+                        .pointHistoryReason(BUY_BOOK)
+                        .member(member)
+                        .pointHistoryAmount(usePoint)
+                        .pointHistoryIncreased(false)
+                        .build());
     }
 
     /**
