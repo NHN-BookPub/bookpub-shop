@@ -63,10 +63,10 @@ public class InquiryServiceImpl implements InquiryService {
     /**
      * {@inheritDoc}
      *
-     * @@throws InquiryNotFoundException 상품문의를 찾지 못했을 때 나는 에러
-     * @@throws MemberNotFoundException 회원을 찾지 못했을 때 나는 에러
-     * @@throws ProductNotFoundException 상품을 찾지 못했을 때 나는 에러
-     * @@throws InquiryStateCodeNotFoundException 상품문의상태코드를 찾지 못했을 때 나는 에러
+     * @throws InquiryNotFoundException          상품문의를 찾지 못했을 때 나는 에러
+     * @throws MemberNotFoundException           회원을 찾지 못했을 때 나는 에러
+     * @throws ProductNotFoundException          상품을 찾지 못했을 때 나는 에러
+     * @throws InquiryStateCodeNotFoundException 상품문의상태코드를 찾지 못했을 때 나는 에러
      */
     @Transactional
     @Override
