@@ -83,4 +83,8 @@ public class File extends BaseCreateTimeEntity {
     @NotNull
     @Column(name = "file_name_saved")
     private String nameSaved;
+
+    public void addInquiry(Inquiry inquiry) {
+        this.inquiry = inquiry;
+    }
 }

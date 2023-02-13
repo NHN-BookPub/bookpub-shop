@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
  *
  * @author : 박경서
  * @since : 1.0
- **/
+ */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -77,6 +77,17 @@ public class Inquiry extends BaseCreateTimeEntity {
     @OneToMany(mappedBy = "inquiry", fetch = FetchType.LAZY)
     private List<File> inquiryImages = new ArrayList<>();
 
+    /**
+     * 상품문의 생성을 위한 빌더
+     *
+     * @param parentInquiry    부모 문의(문의 질문)
+     * @param member           회원
+     * @param product          상품
+     * @param inquiryStateCode 상품문의상태코드
+     * @param inquiryTitle     상품문의 제목
+     * @param inquiryContent   상품문의 내용
+     * @param inquiryDisplayed 상품문의 공개 여부
+     */
     @Builder
     public Inquiry(Inquiry parentInquiry, Member member, Product product,
                    InquiryStateCode inquiryStateCode, String inquiryTitle,
@@ -90,6 +101,9 @@ public class Inquiry extends BaseCreateTimeEntity {
         this.inquiryDisplayed = inquiryDisplayed;
     }
 
+    /**
+     * 상품문의의 답변 완료 여부를 수정하기 위한 메서드입니다.
+     */
     public void modifyAnswered() {
         this.inquiryAnswered = !this.isInquiryAnswered();
     }

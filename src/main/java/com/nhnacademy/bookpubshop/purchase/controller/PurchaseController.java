@@ -35,7 +35,6 @@ public class PurchaseController {
      * 최신순으로 매입 이력을 반환합니다.
      * 페이징.
      *
-     *
      * @return 200, 최신순으로 매입 이력을 반환합니다.
      */
     @GetMapping("/token/purchases")
@@ -43,7 +42,6 @@ public class PurchaseController {
     public ResponseEntity<PageResponse<GetPurchaseListResponseDto>> getPurchaseListDesc(
             Pageable pageable) {
         Page<GetPurchaseListResponseDto> content = purchaseService.getPurchaseListDesc(pageable);
-
 
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
