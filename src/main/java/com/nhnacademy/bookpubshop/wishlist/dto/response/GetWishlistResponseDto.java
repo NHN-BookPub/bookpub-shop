@@ -16,5 +16,6 @@ public class GetWishlistResponseDto {
     private String title;
     private String productPublisher;
     private String thumbnail;
+    private String codeCategory;
     private boolean wishlistApplied;
 }
