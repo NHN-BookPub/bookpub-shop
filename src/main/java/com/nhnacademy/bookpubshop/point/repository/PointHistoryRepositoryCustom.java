@@ -13,6 +13,14 @@ import org.springframework.data.repository.NoRepositoryBean;
  **/
 @NoRepositoryBean
 public interface PointHistoryRepositoryCustom {
+    /**
+     * 페이지 내역 조회하는 메소드.
+     *
+     * @param pageable 페이저블.
+     * @param type     타입.
+     * @param memberNo 회원번호.
+     * @return 포인트내역 페이지.
+     */
     Page<GetPointResponseDto> getPointHistory(
             Pageable pageable, String type, Long memberNo);
 }

@@ -40,12 +40,13 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
     QAuthority authority = QAuthority.authority;
 
 
-
     public MemberRepositoryImpl() {
         super(Member.class);
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<MemberDetailResponseDto> findByMemberDetails(Long memberNo) {
         Optional<Member> content = Optional.ofNullable(from(member)
@@ -60,6 +61,9 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
         return content.map(MemberDetailResponseDto::new);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MemberStatisticsResponseDto memberStatistics() {
         return from(member)
@@ -171,6 +175,9 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                 memberAuthorities);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MemberAuthResponseDto findByAuthMemberInfo(Long memberNo) {
         Optional<IdPwdMemberDto> findMember = Optional.ofNullable(from(member)
