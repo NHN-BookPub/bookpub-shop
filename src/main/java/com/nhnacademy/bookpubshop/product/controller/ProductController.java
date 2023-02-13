@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -193,7 +194,8 @@ public class ProductController {
      */
     @GetMapping("/api/products/type/{typeNo}")
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-    getProductsByType(@PathVariable Integer typeNo, Pageable pageable) {
+    getProductsByType(@PathVariable Integer typeNo,
+                      @PageableDefault Pageable pageable) {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -223,7 +225,8 @@ public class ProductController {
      */
     @GetMapping("/api/products/product/categories/{categoryNo}")
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-    getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo, Pageable pageable) {
+    getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo,
+                          @PageableDefault Pageable pageable) {
         Page<GetProductByCategoryResponseDto> content =
                 productService.getProductsByCategory(categoryNo, pageable);
 
@@ -240,7 +243,7 @@ public class ProductController {
      */
     @GetMapping("/api/products/ebooks")
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-    getEbooks(Pageable pageable) {
+    getEbooks(@PageableDefault Pageable pageable) {
         Page<GetProductByCategoryResponseDto> content =
                 productService.getEbooks(pageable);
 
@@ -259,7 +262,7 @@ public class ProductController {
     @GetMapping("/token/product/{memberNo}/ebooks/")
     @MemberAndAuth
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-    getEbooks(Pageable pageable, @PathVariable Long memberNo) {
+    getEbooks(@PageableDefault Pageable pageable, @PathVariable Long memberNo) {
         Page<GetProductByCategoryResponseDto> content =
                 productService.getEbooksByMember(pageable, memberNo);
 
