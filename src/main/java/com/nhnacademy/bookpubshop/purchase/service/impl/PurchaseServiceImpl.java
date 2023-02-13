@@ -1,9 +1,15 @@
 package com.nhnacademy.bookpubshop.purchase.service.impl;
 
+import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
+import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
+import com.nhnacademy.bookpubshop.product.relationship.exception.NotFoundProductTypeException;
 import com.nhnacademy.bookpubshop.product.relationship.repository.ProductSaleStateCodeRepository;
+import com.nhnacademy.bookpubshop.product.relationship.repository.ProductTypeStateCodeRepository;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.purchase.dto.CreatePurchaseRequestDto;
 import com.nhnacademy.bookpubshop.purchase.dto.GetPurchaseListResponseDto;
@@ -13,6 +19,12 @@ import com.nhnacademy.bookpubshop.purchase.repository.PurchaseRepository;
 import com.nhnacademy.bookpubshop.purchase.service.PurchaseService;
 import com.nhnacademy.bookpubshop.state.ProductSaleState;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import com.nhnacademy.bookpubshop.wishlist.dto.response.GetAppliedMemberResponseDto;
+import com.nhnacademy.bookpubshop.wishlist.entity.Wishlist;
+import com.nhnacademy.bookpubshop.wishlist.exception.WishlistNotFoundException;
+import com.nhnacademy.bookpubshop.wishlist.repository.WishlistRepository;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +43,9 @@ public class PurchaseServiceImpl implements PurchaseService {
     private final PurchaseRepository purchaseRepository;
     private final ProductRepository productRepository;
     private final ProductSaleStateCodeRepository productSaleStateCodeRepository;
+    private final ProductTypeStateCodeRepository productTypeStateCodeRepository;
+    private final WishlistRepository wishlistRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * {@inheritDoc}
@@ -84,28 +99,45 @@ public class PurchaseServiceImpl implements PurchaseService {
      */
     @Override
     @Transactional(readOnly = true)
-    public PageResponse<GetPurchaseListResponseDto> getPurchaseListDesc(Pageable pageable) {
-        return new PageResponse<>(purchaseRepository.getPurchaseListDesc(pageable));
+    public Page<GetPurchaseListResponseDto> getPurchaseListDesc(Pageable pageable) {
+        return purchaseRepository.getPurchaseListDesc(pageable);
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @return
      */
     @Override
     @Transactional
-    public void createPurchaseMerged(CreatePurchaseRequestDto request) {
+    public List<GetAppliedMemberResponseDto> createPurchaseMerged(CreatePurchaseRequestDto request) {
         Product product = productRepository.findById(request.getProductNo())
                 .orElseThrow(ProductNotFoundException::new);
+        ProductTypeStateCode productTypeStateCode = productTypeStateCodeRepository.findById(request.getProductType())
+                .orElseThrow(NotFoundProductTypeException::new);
 
         purchaseRepository.save(request.toEntity(product));
-
         product.plusStock(request.getPurchaseAmount());
+        product.modifyProductType(productTypeStateCode);
+
+        List<GetAppliedMemberResponseDto> wishlistAppliedMembers = new ArrayList<>();
 
         if (isSoldOutState(product)) {
+            wishlistAppliedMembers = wishlistRepository.findWishlistAppliedMembers(product.getProductNo());
+            for (GetAppliedMemberResponseDto wishlistAppliedMember : wishlistAppliedMembers) {
+                Member wishMember = memberRepository.findById(wishlistAppliedMember.getMemberNo())
+                        .orElseThrow(MemberNotFoundException::new);
+                Product wishProduct = productRepository.findById(wishlistAppliedMember.getProductNo())
+                        .orElseThrow(ProductNotFoundException::new);
+
+                Wishlist wishlist = wishlistRepository.findById(new Wishlist.Pk(wishMember.getMemberNo(), wishProduct.getProductNo()))
+                        .orElseThrow(WishlistNotFoundException::new);
+                wishlist.modifyWishlistAlarm();
+            }
             updateProductStateToSale(product);
         }
 
-        productRepository.save(product);
+        return wishlistAppliedMembers;
     }
 
     /**
@@ -126,7 +158,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     private void updateProductStateToSale(Product product) {
         product.modifySaleStateCode(
                 productSaleStateCodeRepository
-                        .findByCodeCategory(ProductSaleState.SALE.name())
+                        .findByCodeCategory(ProductSaleState.SALE.getName())
                         .orElseThrow(NotFoundStateCodeException::new));
     }
 }

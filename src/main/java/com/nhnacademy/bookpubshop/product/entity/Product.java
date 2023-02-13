@@ -215,6 +215,15 @@ public class Product extends BaseCreateTimeEntity {
         this.productStock -= amount;
     }
 
+    /**
+     * 상품의 판매 유형을 변경하는 메서드. <br/>
+     * ex)  <br/>
+     * 새로운 매입 관리 : 품절 -> 판매중. <br/>
+     * 주문 : 판매중 -> 품절   <br/>
+     * 상태코드를 변경하는 메서드.
+     *
+     * @param saleStateCode 변경할 판매 유형 코드
+     */
     public void modifySaleStateCode(ProductSaleStateCode saleStateCode) {
         this.productSaleStateCode = saleStateCode;
     }
@@ -350,4 +359,14 @@ public class Product extends BaseCreateTimeEntity {
     public void deleteParentProduct() {
         this.parentProduct = null;
     }
+
+    /**
+     * 상품 타입 유형을 변경하는 메서드.
+     *
+     * @param productTypeStateCode 변경할 상품 타입
+     */
+    public void modifyProductType(ProductTypeStateCode productTypeStateCode) {
+        this.productTypeStateCode = productTypeStateCode;
+    }
+
 }

@@ -35,7 +35,7 @@ import com.nhnacademy.bookpubshop.subscribe.exception.SubscribeNotFoundException
 import com.nhnacademy.bookpubshop.tag.exception.TagNameDuplicatedException;
 import com.nhnacademy.bookpubshop.tag.exception.TagNotFoundException;
 import com.nhnacademy.bookpubshop.tier.exception.TierAlreadyExists;
-import com.nhnacademy.bookpubshop.wishlist.exception.WishlistNorFoundException;
+import com.nhnacademy.bookpubshop.wishlist.exception.WishlistNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
@@ -79,14 +79,14 @@ public class ShopAdviceController {
 
     @ExceptionHandler(value =
             {
-                AddressNotFoundException.class, NotFoundAuthorException.class,
-                NotSupportedCompanyException.class, CategoryNotFoundException.class,
-                CouponNotFoundException.class, NotFoundCouponException.class,
-                CouponMonthNotFoundException.class, CouponTemplateNotFoundException.class,
-                MemberNotFoundException.class, NicknameAlreadyExistsException.class,
-                PersonalInquiryNotFoundException.class, ProductNotFoundException.class,
-                ReviewNotFoundException.class, SubscribeNotFoundException.class,
-                TagNotFoundException.class, OrderNotFoundException.class,
+                    AddressNotFoundException.class, NotFoundAuthorException.class,
+                    NotSupportedCompanyException.class, CategoryNotFoundException.class,
+                    CouponNotFoundException.class, NotFoundCouponException.class,
+                    CouponMonthNotFoundException.class, CouponTemplateNotFoundException.class,
+                    MemberNotFoundException.class, NicknameAlreadyExistsException.class,
+                    PersonalInquiryNotFoundException.class, ProductNotFoundException.class,
+                    ReviewNotFoundException.class, SubscribeNotFoundException.class,
+                    TagNotFoundException.class, OrderNotFoundException.class,
 
             })
     public ResponseEntity<ErrorResponse> errorhandler() {
@@ -96,14 +96,14 @@ public class ShopAdviceController {
 
     @ExceptionHandler(value =
             {
-                IdAlreadyExistsException.class,
-                NotFoundOrderStateException.class, NotFoundPaymentStateException.class,
-                NotFoundPaymentTypeException.class, NotFoundProductPolicyException.class,
-                NotFoundPricePolicyException.class, NotFoundStateCodeException.class,
-                NotFoundStateCodesException.class, CouponTypeNotFoundException.class,
-                CouponStateCodeNotFoundException.class, CouponPolicyNotFoundException.class,
-                ReviewPolicyNotFoundException.class, ReviewPolicyUsedNotFoundException.class,
-                WishlistNorFoundException.class
+                    IdAlreadyExistsException.class,
+                    NotFoundOrderStateException.class, NotFoundPaymentStateException.class,
+                    NotFoundPaymentTypeException.class, NotFoundProductPolicyException.class,
+                    NotFoundPricePolicyException.class, NotFoundStateCodeException.class,
+                    NotFoundStateCodesException.class, CouponTypeNotFoundException.class,
+                    CouponStateCodeNotFoundException.class, CouponPolicyNotFoundException.class,
+                    ReviewPolicyNotFoundException.class, ReviewPolicyUsedNotFoundException.class,
+                    WishlistNotFoundException.class
             })
     public ResponseEntity<Void> badRequest() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
