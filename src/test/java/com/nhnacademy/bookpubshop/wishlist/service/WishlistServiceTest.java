@@ -25,7 +25,7 @@ import com.nhnacademy.bookpubshop.wishlist.dto.request.DeleteWishlistRequestDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.request.ModifyWishlistAlarmRequestDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistResponseDto;
 import com.nhnacademy.bookpubshop.wishlist.entity.Wishlist;
-import com.nhnacademy.bookpubshop.wishlist.exception.WishlistNorFoundException;
+import com.nhnacademy.bookpubshop.wishlist.exception.WishlistNotFoundException;
 import com.nhnacademy.bookpubshop.wishlist.repository.WishlistRepository;
 import com.nhnacademy.bookpubshop.wishlist.service.impl.WishlistServiceImpl;
 import java.util.List;
@@ -213,8 +213,8 @@ class WishlistServiceTest {
 
         // then
         assertThatThrownBy(() -> wishlistService.modifyWishlistAlarm(1L, dto))
-                .isInstanceOf(WishlistNorFoundException.class)
-                .hasMessageContaining(WishlistNorFoundException.MESSAGE);
+                .isInstanceOf(WishlistNotFoundException.class)
+                .hasMessageContaining(WishlistNotFoundException.MESSAGE);
     }
 
 }
