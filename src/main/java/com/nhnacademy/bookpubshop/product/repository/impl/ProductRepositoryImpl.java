@@ -18,6 +18,7 @@ import com.nhnacademy.bookpubshop.product.entity.QProduct;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductAuthor;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductSaleStateCode;
+import com.nhnacademy.bookpubshop.product.relationship.entity.QProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepositoryCustom;
 import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.ProductSaleState;
@@ -54,6 +55,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
     QProductAuthor productAuthor = QProductAuthor.productAuthor;
     QProductSaleStateCode productSaleStateCode = QProductSaleStateCode.productSaleStateCode;
     QFile file = QFile.file;
+    QProductTypeStateCode productTypeStateCode = QProductTypeStateCode.productTypeStateCode;
 
 
     public ProductRepositoryImpl(EntityManager entityManager) {
@@ -438,5 +440,49 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         .and(file.fileCategory.eq(FileCategory.PRODUCT_EBOOK.getCategory())))
                 .select(file.filePath)
                 .fetchOne();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetProductByCategoryResponseDto> getProductsByTypes(Integer typeNo, Pageable pageable) {
+        List<GetProductByCategoryResponseDto> content =
+                from(product)
+                        .select(Projections.fields(GetProductByCategoryResponseDto.class,
+                                product.productNo,
+                                product.title,
+                                file.filePath.as(FileCategory.PRODUCT_THUMBNAIL.getCategory()),
+                                product.salesPrice,
+                                product.salesRate))
+                        .innerJoin(product.productSaleStateCode, productSaleStateCode)
+                        .on(productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
+                        .innerJoin(productTypeStateCode).on(productTypeStateCode.codeNo.eq(product.productTypeStateCode.codeNo))
+                        .leftJoin(file).on(product.productNo.eq(file.product.productNo)
+                                .and(file.fileCategory
+                                        .eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
+                        .orderBy(product.productPriority.asc())
+                        .where(productTypeStateCode.codeNo.eq(typeNo))
+                        .where(product.productSaleStateCode.codeCategory
+                                .eq(ProductSaleState.SALE.getName()))
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .fetch();
+
+        setCategoryAndAuthors(content);
+
+        JPQLQuery<Long> count = from(product)
+                .leftJoin(product.productCategories)
+                .leftJoin(product.productAuthors)
+                .leftJoin(product.productTags)
+                .leftJoin(product.productSaleStateCode)
+                .innerJoin(productTypeStateCode).on(product.productTypeStateCode.codeNo
+                        .eq(productTypeStateCode.codeNo))
+                .select(product.count())
+                .where(productTypeStateCode.codeNo.eq(typeNo))
+                .where(product.productSaleStateCode.codeCategory
+                        .eq(ProductSaleState.SALE.getName()));
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 }

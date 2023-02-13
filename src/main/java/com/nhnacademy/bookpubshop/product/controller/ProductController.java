@@ -168,7 +168,7 @@ public class ProductController {
     }
 
     /**
-     * 상품 유형 번호를 가지고 상품 리스트 조회.
+     * 상품 유형 번호를 가지고 상품 리스트 조회.(개수)
      *
      * @param typeNo 유형 번호
      * @param limit  제한 갯수
@@ -182,6 +182,22 @@ public class ProductController {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productService.getProductsByType(typeNo, limit));
+    }
+
+    /**
+     * 상품 유형 번호를 가지고 상품 리스트 조회. (전체)
+     *
+     * @param typeNo 유형 번호
+     * @param pageable 페이징
+     * @return 상품 유형별 리스트
+     */
+    @GetMapping("/api/products/type/{typeNo}")
+    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
+    getProductsByType(@PathVariable Integer typeNo, Pageable pageable) {
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PageResponse<>(productService.getProductsByTypes(typeNo, pageable)));
     }
 
     /**

@@ -95,4 +95,6 @@ public interface ProductRepositoryCustom {
      * @return E-Book 파일 경로
      */
     String getFilePath(Long productNo);
+
+    Page<GetProductByCategoryResponseDto> getProductsByTypes(Integer typeNo, Pageable pageable);
 }
