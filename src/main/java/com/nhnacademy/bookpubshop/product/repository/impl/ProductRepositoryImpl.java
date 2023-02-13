@@ -114,7 +114,8 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         product.productDeleted))
                 .leftJoin(product.files, file)
                 .on(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
-                .where(product.title.like(title))
+                .where(product.title.like(title)
+                        .and(product.productDeleted.isFalse()))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -179,6 +180,8 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .on(productCategory.product.productNo.eq(product.productNo))
                 .leftJoin(category)
                 .on(category.categoryNo.eq(productCategory.category.categoryNo))
+                .leftJoin(productSaleStateCode)
+                .on(product.productSaleStateCode.codeNo.eq(productSaleStateCode.codeNo))
                 .leftJoin(file).on(product.productNo.eq(file.product.productNo)
                         .and(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
                 .select(Projections.fields(GetProductByTypeResponseDto.class,
@@ -188,14 +191,14 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         product.salesPrice,
                         product.productPrice,
                         product.salesRate))
-                .where(product.productTypeStateCode.codeNo.eq(typeNo))
-                .where(product.productSaleStateCode.codeCategory.eq("판매중"))
+                .where(product.productTypeStateCode.codeNo.eq(typeNo)
+                        .and(product.productDeleted.isFalse())
+                        .and(productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName())))
                 .distinct()
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(limit)
                 .fetch();
 
-        // TODO: 쿼리 수정 (Check)
         result.stream()
                 .map(m -> m.getProductCategories().add(
                         String.valueOf(
@@ -261,7 +264,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo, Pageable pageable) {
-
         List<GetProductByCategoryResponseDto> content =
                 from(product)
                         .select(Projections.fields(GetProductByCategoryResponseDto.class,
@@ -271,16 +273,15 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                                 product.salesPrice,
                                 product.salesRate))
                         .innerJoin(product.productSaleStateCode, productSaleStateCode)
-                        .on(productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
-
+                        .on(productSaleStateCode.codeCategory.notIn(ProductSaleState.STOP.getName()))
                         .innerJoin(product.productCategories, productCategory)
-                        .on(productCategory.product.productNo.eq(product.productNo))
-
+                        .on(productCategory.product.productNo.eq(product.productNo)
+                                .and(productCategory.category.categoryNo.eq(categoryNo)))
                         .leftJoin(file).on(product.productNo.eq(file.product.productNo)
-                                .and(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
-
+                                .and((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                                        .or(file.fileCategory.isNull())))
                         .orderBy(product.productPriority.asc())
-                        .where(productCategory.category.categoryNo.eq(categoryNo))
+                        .where(product.productDeleted.isFalse())
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
@@ -288,13 +289,17 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
         setCategoryAndAuthors(content);
 
         JPQLQuery<Long> count = from(product)
-                .leftJoin(product.productCategories)
-                .leftJoin(product.productAuthors)
-                .leftJoin(product.productTags)
-                .leftJoin(product.productSaleStateCode)
-                .select(product.count())
-                .where(category.categoryNo.eq(categoryNo))
-                .where(product.productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()));
+                .innerJoin(product.productSaleStateCode, productSaleStateCode)
+                .on(productSaleStateCode.codeCategory.notIn(ProductSaleState.STOP.getName()))
+                .innerJoin(product.productCategories, productCategory)
+                .on(productCategory.product.productNo.eq(product.productNo)
+                        .and(productCategory.category.categoryNo.eq(categoryNo)))
+                .leftJoin(file).on(product.productNo.eq(file.product.productNo)
+                        .and((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                                .or(file.fileCategory.isNull())))
+                .orderBy(product.productPriority.asc())
+                .where(product.productDeleted.isFalse())
+                .select(product.count());
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
