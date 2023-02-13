@@ -22,7 +22,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import java.util.List;
 import java.util.Optional;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -131,19 +130,19 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
 
         JPQLQuery<GetOrderListForAdminResponseDto> query = from(order)
                 .select(Projections.constructor(GetOrderListForAdminResponseDto.class,
-                        order.orderNo,
-                        member.memberId,
+                        order.orderNo.as("orderNo"),
+                        member.memberId.as("memberId"),
                         order.createdAt,
-                        order.invoiceNumber,
-                        orderStateCode.codeName,
-                        order.orderPrice,
+                        order.invoiceNumber.as("invoiceNo"),
+                        orderStateCode.codeName.as("orderState"),
+                        order.orderPrice.as("totalAmount"),
                         order.receivedAt))
                 .join(order.orderStateCode, orderStateCode)
                 .leftJoin(order.member, member)
                 .on(order.member.memberNo.eq(member.memberNo))
+                .orderBy(order.createdAt.desc())
                 .limit(pageable.getPageSize())
-                .offset(pageable.getOffset())
-                .fetchAll();
+                .offset(pageable.getOffset());
 
         JPQLQuery<Long> count = from(order)
                 .select(order.orderNo.count());

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -26,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
  * @author : 여운석, 박경서
  * @since : 1.0
  */
-@Service
 public interface ProductService {
     /**
      * 상품의 번호로 상품을 조회하는 메서드입니다.
@@ -246,4 +244,13 @@ public interface ProductService {
      * @param childNo 자식 상품 번호
      */
     void deleteRelationProduct(Long childNo);
+
+    /**
+     * 상품 유형 번호를 가지고 상품 리스트 조회. (전체)
+     *
+     * @param typeNo 유형 번호
+     * @param pageable 페이징
+     * @return 상품 유형별 리스트
+     */
+    Page<GetProductByCategoryResponseDto> getProductsByTypes(Integer typeNo, Pageable pageable);
 }

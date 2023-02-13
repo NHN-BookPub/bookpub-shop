@@ -585,4 +585,12 @@ public class ProductServiceImpl implements ProductService {
 
         childProduct.deleteParentProduct();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetProductByCategoryResponseDto> getProductsByTypes(Integer typeNo, Pageable pageable) {
+        return productRepository.getProductsByTypes(typeNo, pageable);
+    }
 }

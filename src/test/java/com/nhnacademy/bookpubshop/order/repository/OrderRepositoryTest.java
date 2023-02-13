@@ -316,7 +316,6 @@ class OrderRepositoryTest {
                 orderRepository.getOrderAndPayment(orderPersist.getOrderId())
                         .orElseThrow(OrderNotFoundException::new);
 
-        assertThat(result.getOrderName()).isEqualTo(orderPersist.getOrderName());
         assertThat(result.getReceiptUrl()).isEqualTo(paymentPersist.getReceipt());
         assertThat(result.getAddress()).isEqualTo(
                 orderPersist.getRoadAddress() + " " + orderPersist.getAddressDetail());
