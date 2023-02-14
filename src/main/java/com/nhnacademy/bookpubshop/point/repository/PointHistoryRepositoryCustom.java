@@ -1,6 +1,8 @@
 package com.nhnacademy.bookpubshop.point.repository;
 
+import com.nhnacademy.bookpubshop.point.dto.response.GetPointAdminResponseDto;
 import com.nhnacademy.bookpubshop.point.dto.response.GetPointResponseDto;
+import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -10,7 +12,7 @@ import org.springframework.data.repository.NoRepositoryBean;
  *
  * @author : 임태원
  * @since : 1.0
- **/
+ */
 @NoRepositoryBean
 public interface PointHistoryRepositoryCustom {
     /**
@@ -23,4 +25,14 @@ public interface PointHistoryRepositoryCustom {
      */
     Page<GetPointResponseDto> getPointHistory(
             Pageable pageable, String type, Long memberNo);
+
+    /**
+     * 관리자가 포인트 내역을 조회하는 메서드입니다.
+     *
+     * @param pageable 페이징
+     * @return 포인트내역 반환.
+     */
+    Page<GetPointAdminResponseDto> getPoints(Pageable pageable,
+                                             LocalDateTime start,
+                                             LocalDateTime end);
 }

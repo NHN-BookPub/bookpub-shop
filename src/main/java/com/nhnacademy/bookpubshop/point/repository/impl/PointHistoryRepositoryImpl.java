@@ -1,12 +1,16 @@
 package com.nhnacademy.bookpubshop.point.repository.impl;
 
 import com.nhnacademy.bookpubshop.member.entity.QMember;
+import com.nhnacademy.bookpubshop.point.dto.response.GetPointAdminResponseDto;
 import com.nhnacademy.bookpubshop.point.dto.response.GetPointResponseDto;
 import com.nhnacademy.bookpubshop.point.entity.PointHistory;
 import com.nhnacademy.bookpubshop.point.entity.QPointHistory;
 import com.nhnacademy.bookpubshop.point.repository.PointHistoryRepositoryCustom;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
+import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -107,5 +111,48 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport
                 .where(pointHistory.member.memberNo.eq(memberNo));
 
         return PageableExecutionUtils.getPage(query.fetch(), pageable, count::fetchOne);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetPointAdminResponseDto> getPoints(Pageable pageable,
+                                                    LocalDateTime start,
+                                                    LocalDateTime end) {
+        JPQLQuery<GetPointAdminResponseDto> content = from(pointHistory)
+                .select(Projections.constructor(
+                        GetPointAdminResponseDto.class,
+                        member.memberId,
+                        pointHistory.pointHistoryAmount,
+                        pointHistory.pointHistoryReason,
+                        pointHistory.createdAt,
+                        pointHistory.pointHistoryIncreased)).distinct()
+                .innerJoin(pointHistory.member, member)
+                .where(checkDate(start, end))
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset());
+
+        JPQLQuery<Long> count = from(pointHistory)
+                .innerJoin(pointHistory.member, member)
+                .where(checkDate(start, end))
+                .select(pointHistory.count()).distinct();
+
+        return PageableExecutionUtils.getPage(content.fetch(), pageable, count::fetchOne);
+    }
+
+    /**
+     * 시작일자와 종료일자를 기준으로 where 조건이 걸립니다.
+     *
+     * @param start 시작일자
+     * @param end   종료일자
+     * @return true, false 를 반환합니다.
+     */
+    private BooleanExpression checkDate(LocalDateTime start, LocalDateTime end) {
+        if (Objects.isNull(start) || Objects.isNull(end)) {
+            return pointHistory.createdAt
+                    .between(LocalDateTime.now().minusMonths(1L), LocalDateTime.now());
+        }
+        return pointHistory.createdAt.between(start, end);
     }
 }
