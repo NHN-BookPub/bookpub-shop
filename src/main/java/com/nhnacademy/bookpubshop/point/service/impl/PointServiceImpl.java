@@ -4,11 +4,13 @@ import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.point.dto.request.PointGiftRequestDto;
+import com.nhnacademy.bookpubshop.point.dto.response.GetPointAdminResponseDto;
 import com.nhnacademy.bookpubshop.point.dto.response.GetPointResponseDto;
 import com.nhnacademy.bookpubshop.point.entity.PointHistory;
 import com.nhnacademy.bookpubshop.point.repository.PointHistoryRepository;
 import com.nhnacademy.bookpubshop.point.service.PointService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -46,22 +48,30 @@ public class PointServiceImpl implements PointService {
     public void giftPoint(Long memberNo, PointGiftRequestDto giftRequestDto) {
         Member giveMember =
                 memberRepository.findById(memberNo)
-                .orElseThrow(MemberNotFoundException::new);
+                        .orElseThrow(MemberNotFoundException::new);
         Member receiveMember =
                 memberRepository.findMemberByMemberNickname(giftRequestDto.getNickname())
-                .orElseThrow(MemberNotFoundException::new);
+                        .orElseThrow(MemberNotFoundException::new);
 
         giveMember.decreaseMemberPoint(giftRequestDto.getPointAmount());
         receiveMember.increaseMemberPoint(giftRequestDto.getPointAmount());
         updatePointHistory(giftRequestDto, giveMember, receiveMember);
     }
 
+    @Override
+    public PageResponse<GetPointAdminResponseDto> getPoints(Pageable pageable,
+                                                            LocalDateTime start,
+                                                            LocalDateTime end) {
+        return new PageResponse<>(pointHistoryRepository.getPoints(pageable, start, end));
+    }
+
+
     /**
      * 선물 주고 받은 내역 기록 메소드.
      *
      * @param giftRequestDto 선물 요청 dto.
-     * @param giveMember 주는 사람.
-     * @param receiveMember 받는사람.
+     * @param giveMember     주는 사람.
+     * @param receiveMember  받는사람.
      */
     private void updatePointHistory(PointGiftRequestDto giftRequestDto,
                                     Member giveMember, Member receiveMember) {

@@ -1,10 +1,13 @@
 package com.nhnacademy.bookpubshop.point.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.annotation.MemberAndAuth;
 import com.nhnacademy.bookpubshop.point.dto.request.PointGiftRequestDto;
+import com.nhnacademy.bookpubshop.point.dto.response.GetPointAdminResponseDto;
 import com.nhnacademy.bookpubshop.point.dto.response.GetPointResponseDto;
 import com.nhnacademy.bookpubshop.point.service.PointService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -59,5 +62,24 @@ public class PointController {
         pointService.giftPoint(memberNo, giftRequestDto);
         return ResponseEntity.status(HttpStatus.OK)
                 .build();
+    }
+
+    /**
+     * 관리자가 포인트내역을 조회하기위한 메서드입니다.
+     * 성공시 200이 반환됩니다.
+     *
+     * @param pageable 페이징
+     * @param start    시작일자
+     * @param end      종료일자
+     * @return 포인트내역 반환.
+     */
+    @AdminAuth
+    @GetMapping("/token/points")
+    public ResponseEntity<PageResponse<GetPointAdminResponseDto>> getPoints(
+            Pageable pageable,
+            @RequestParam(value = "start", required = false) LocalDateTime start,
+            @RequestParam(value = "end", required = false) LocalDateTime end) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(pointService.getPoints(pageable, start, end));
     }
 }
