@@ -1937,7 +1937,7 @@ class ProductControllerTest {
     void modifyEBook_success_test() throws Exception {
         // given
         String imageContent = "234kh2kl4h2l34k2j34hlk23h4";
-        MockMultipartFile eBook = new MockMultipartFile("eBook", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
+        MockMultipartFile eBook = new MockMultipartFile("ebook", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
 
         // when
         doNothing().when(productService).modifyProductEBook(1L, eBook);
@@ -1954,7 +1954,7 @@ class ProductControllerTest {
                 .andDo(document("product-modify-eBook-success",
                         preprocessRequest(prettyPrint()),
                         requestParts(
-                                partWithName("eBook").description("E-Book 파일")
+                                partWithName("ebook").description("E-Book 파일")
                         )
                 ));
     }
