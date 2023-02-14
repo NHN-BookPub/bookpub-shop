@@ -24,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * CouponService 구현체.
@@ -192,8 +191,7 @@ public class CouponServiceImpl implements CouponService {
      */
     @Override
     @Transactional
-    public void issueMonthCouponByMemberNo(@RequestParam("memberNo") Long memberNo,
-            @RequestParam("templateNo") Long templateNo) {
+    public void issueMonthCouponByMemberNo(Long memberNo, Long templateNo) {
 
         CouponTemplate couponTemplate = couponTemplateRepository.findById(templateNo)
                 .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
