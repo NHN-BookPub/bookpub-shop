@@ -176,9 +176,9 @@ public class ProductController {
      * @return 상품 유형별 리스트
      */
     @GetMapping("/api/products/types/{typeNo}")
-    public ResponseEntity<List<GetProductByTypeResponseDto>>
-    getProductsByType(@PathVariable Integer typeNo,
-                      @RequestParam(name = "limit") Integer limit) {
+    public ResponseEntity<List<GetProductByTypeResponseDto>> getProductsByType(
+            @PathVariable Integer typeNo,
+            @RequestParam(name = "limit") Integer limit) {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -188,14 +188,13 @@ public class ProductController {
     /**
      * 상품 유형 번호를 가지고 상품 리스트 조회. (전체)
      *
-     * @param typeNo 유형 번호
+     * @param typeNo   유형 번호
      * @param pageable 페이징
      * @return 상품 유형별 리스트
      */
     @GetMapping("/api/products/type/{typeNo}")
-    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-    getProductsByType(@PathVariable Integer typeNo,
-                      @PageableDefault Pageable pageable) {
+    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>> getProductsByType(
+            @PathVariable Integer typeNo, @PageableDefault Pageable pageable) {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -224,9 +223,8 @@ public class ProductController {
      * @return 페이징 정보를 담은 상품들
      */
     @GetMapping("/api/products/product/categories/{categoryNo}")
-    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-    getProductsByCategory(@PathVariable("categoryNo") Integer categoryNo,
-                          @PageableDefault Pageable pageable) {
+    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>> getProductsByCategory(
+            @PathVariable("categoryNo") Integer categoryNo, @PageableDefault Pageable pageable) {
         Page<GetProductByCategoryResponseDto> content =
                 productService.getProductsByCategory(categoryNo, pageable);
 
@@ -242,10 +240,9 @@ public class ProductController {
      * @return 성공시 200, 페이징된 상품들 반환.
      */
     @GetMapping("/api/products/ebooks")
-    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-    getEbooks(@PageableDefault Pageable pageable) {
-        Page<GetProductByCategoryResponseDto> content =
-                productService.getEbooks(pageable);
+    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>> getEbooks(
+            @PageableDefault Pageable pageable) {
+        Page<GetProductByCategoryResponseDto> content = productService.getEbooks(pageable);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -261,8 +258,8 @@ public class ProductController {
      */
     @GetMapping("/token/product/{memberNo}/ebooks/")
     @MemberAndAuth
-    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>>
-    getEbooks(@PageableDefault Pageable pageable, @PathVariable Long memberNo) {
+    public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>> getEbooks(
+            @PageableDefault Pageable pageable, @PathVariable Long memberNo) {
         Page<GetProductByCategoryResponseDto> content =
                 productService.getEbooksByMember(pageable, memberNo);
 
@@ -282,7 +279,8 @@ public class ProductController {
     @AdminAuth
     @PutMapping("/token/products/{productNo}/info")
     public ResponseEntity<Void> modifyProductInfo(@PathVariable("productNo") Long productNo,
-                                                  @Valid @RequestBody ModifyProductInfoRequestDto request) {
+                                                  @Valid @RequestBody
+                                                  ModifyProductInfoRequestDto request) {
         productService.modifyProductInfo(productNo, request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -299,7 +297,8 @@ public class ProductController {
     @AdminAuth
     @PutMapping("/token/products/{productNo}/category")
     public ResponseEntity<Void> modifyProductCategory(@PathVariable("productNo") Long productNo,
-                                                      @Valid @RequestBody ModifyProductCategoryRequestDto request) {
+                                                      @Valid @RequestBody
+                                                      ModifyProductCategoryRequestDto request) {
         productService.modifyProductCategory(productNo, request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -316,7 +315,8 @@ public class ProductController {
     @AdminAuth
     @PutMapping("/token/products/{productNo}/author")
     public ResponseEntity<Void> modifyProductAuthor(@PathVariable("productNo") Long productNo,
-                                                    @Valid @RequestBody ModifyProductAuthorRequestDto request) {
+                                                    @Valid @RequestBody
+                                                    ModifyProductAuthorRequestDto request) {
         productService.modifyProductAuthor(productNo, request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -333,7 +333,8 @@ public class ProductController {
     @AdminAuth
     @PutMapping("/token/products/{productNo}/tag")
     public ResponseEntity<Void> modifyProductTag(@PathVariable("productNo") Long productNo,
-                                                 @Valid @RequestBody ModifyProductTagRequestDto request) {
+                                                 @Valid @RequestBody
+                                                 ModifyProductTagRequestDto request) {
         productService.modifyProductTag(productNo, request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -397,14 +398,15 @@ public class ProductController {
      * @param productNo 상품 번호
      * @return 200 코드
      */
-    @AdminAuth
+    @MemberAndAuth
     @GetMapping("/token/downloads/e-book/{productNo}")
-    public ResponseEntity<GetDownloadInfo> eBookDownload(@PathVariable("productNo") Long productNo) {
-        GetDownloadInfo eBookInfo = productService.getEBookInfo(productNo);
+    public ResponseEntity<GetDownloadInfo> ebookDownload(
+            @PathVariable("productNo") Long productNo) {
+        GetDownloadInfo ebookInfo = productService.getEBookInfo(productNo);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(eBookInfo);
+                .body(ebookInfo);
     }
 
     /**
@@ -416,8 +418,9 @@ public class ProductController {
      */
     @AdminAuth
     @PutMapping("/token/products/{productNo}/description")
-    public ResponseEntity<Void> modifyProductDescription(@PathVariable("productNo") Long productNo,
-                                                         @Valid @RequestBody ModifyProductDescriptionRequestDto request) {
+    public ResponseEntity<Void> modifyProductDescription(
+            @PathVariable("productNo") Long productNo,
+            @Valid @RequestBody ModifyProductDescriptionRequestDto request) {
         productService.modifyProductDescription(productNo, request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -428,14 +431,14 @@ public class ProductController {
      * E-Book File 변경 API.
      *
      * @param productNo 상품 번호
-     * @param eBook     E-Book
+     * @param ebook     E-Book
      * @return 201 코드
      */
     @AdminAuth
     @PutMapping("/token/products/{productNo}/e-book")
-    public ResponseEntity<Void> modifyProductEBook(@PathVariable("productNo") Long productNo,
-                                                   @RequestPart MultipartFile eBook) {
-        productService.modifyProductEBook(productNo, eBook);
+    public ResponseEntity<Void> modifyProductEbook(@PathVariable("productNo") Long productNo,
+                                                   @RequestPart MultipartFile ebook) {
+        productService.modifyProductEBook(productNo, ebook);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
@@ -518,8 +521,9 @@ public class ProductController {
      */
     @AdminAuth
     @PutMapping("/token/products/{productNo}/relation")
-    public ResponseEntity<Void> addRelationProduct(@PathVariable("productNo") Long productNo,
-                                                   @Valid @RequestBody CreateRelationProductRequestDto request) {
+    public ResponseEntity<Void> addRelationProduct(
+            @PathVariable("productNo") Long productNo,
+            @Valid @RequestBody CreateRelationProductRequestDto request) {
         productService.addRelationProduct(productNo, request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
