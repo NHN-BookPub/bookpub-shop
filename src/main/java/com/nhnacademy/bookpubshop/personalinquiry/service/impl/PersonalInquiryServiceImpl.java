@@ -11,19 +11,17 @@ import com.nhnacademy.bookpubshop.personalinquiry.exception.PersonalInquiryNotFo
 import com.nhnacademy.bookpubshop.personalinquiry.repository.PersonalInquiryRepository;
 import com.nhnacademy.bookpubshop.personalinquiry.service.PersonalInquiryService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Some description here.
+ * 1대1문의를 다루기 위한 서비스 구현체입니다.
  *
  * @author : 정유진
  * @since : 1.0
  **/
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -31,6 +29,11 @@ public class PersonalInquiryServiceImpl implements PersonalInquiryService {
     private final PersonalInquiryRepository personalInquiryRepository;
     private final MemberRepository memberRepository;
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws MemberNotFoundException 멤버를 찾을 수 없을 때 나는 에러
+     */
     @Transactional
     @Override
     public void createPersonalInquiry(CreatePersonalInquiryRequestDto createDto) {
@@ -44,6 +47,11 @@ public class PersonalInquiryServiceImpl implements PersonalInquiryService {
                 .build());
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws PersonalInquiryNotFoundException 1대1문의를 찾을 수 없을 때 나는 에러
+     */
     @Transactional
     @Override
     public void deletePersonalInquiry(Long personalInquiryNo) {
@@ -53,16 +61,28 @@ public class PersonalInquiryServiceImpl implements PersonalInquiryService {
         personalInquiry.changeInquiryDeleted();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Page<GetSimplePersonalInquiryResponseDto> getMemberPersonalInquiries(Pageable pageable, Long memberNo) {
+    public Page<GetSimplePersonalInquiryResponseDto> getMemberPersonalInquiries(
+            Pageable pageable, Long memberNo) {
         return personalInquiryRepository.findMemberPersonalInquiries(pageable, memberNo);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Page<GetSimplePersonalInquiryResponseDto> getPersonalInquiries(Pageable pageable) {
         return personalInquiryRepository.findPersonalInquiries(pageable);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws PersonalInquiryNotFoundException 1대1문의를 찾을 수 없을 때 나는 에러
+     */
     @Override
     public GetPersonalInquiryResponseDto getPersonalInquiry(Long inquiryNo) {
         return personalInquiryRepository.findPersonalInquiry(inquiryNo)

@@ -9,5 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author : 유호철
  * @since : 1.0
  **/
-public interface PersonalInquiryRepository extends JpaRepository<PersonalInquiry, Long> {
+public interface PersonalInquiryRepository extends JpaRepository<PersonalInquiry, Long>,
+        PersonalInquiryRepositoryCustom {
 }

@@ -35,14 +35,29 @@ import org.springframework.web.bind.annotation.RestController;
 public class PersonalInquiryController {
     private final PersonalInquiryService personalInquiryService;
 
+    /**
+     * 1대1문의를 생성하기 위한 메서드입니다.
+     * 성공 시 201 반환.
+     *
+     * @param createDto 1대1문의 생성 시 필요한 정보를 담은 Dto
+     * @return the response entity
+     */
     @MemberAuth
     @PostMapping("/token/personal-inquiries/members/{memberNo}")
-    public ResponseEntity<Void> personalInquiryAdd(@Valid @RequestBody CreatePersonalInquiryRequestDto createDto) {
+    public ResponseEntity<Void> personalInquiryAdd(
+            @Valid @RequestBody CreatePersonalInquiryRequestDto createDto) {
         personalInquiryService.createPersonalInquiry(createDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /**
+     * 1대1문의를 삭제하기 위한 메서드입니다.
+     * 성공 시 200 반환.
+     *
+     * @param personalInquiryNo 삭제할 1대1문의 번호
+     * @return the response entity
+     */
     @MemberAuth
     @PutMapping("/token/personal-inquiries/{personalInquiryNo}/members/{memberNo}/cancel")
     public ResponseEntity<Void> personalInquiryDelete(
@@ -52,6 +67,13 @@ public class PersonalInquiryController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 1대1문의 전체 리스트를 조회하기 위한 메서드입니다.
+     * 성공 시 200 반환.
+     *
+     * @param pageable 페이징 정보
+     * @return the response entity
+     */
     @AdminAuth
     @GetMapping("/token/personal-inquiries")
     public ResponseEntity<PageResponse<GetSimplePersonalInquiryResponseDto>> personalInquiryList(
@@ -63,11 +85,19 @@ public class PersonalInquiryController {
                 .body(new PageResponse<>(personalInquiries));
     }
 
+    /**
+     * 해당 회원의 1대1문의 리스트를 조회하기 위한 메서드입니다.
+     * 성공 시 200 반환.
+     *
+     * @param pageable 페이징 정보
+     * @param memberNo 회원 번호
+     * @return the response entity
+     */
     @MemberAuth
     @GetMapping("/token/personal-inquiries/members/{memberNo}")
-    public ResponseEntity<PageResponse<GetSimplePersonalInquiryResponseDto>> memberPersonalInquiryList(
-            @PageableDefault Pageable pageable,
-            @PathVariable("memberNo") Long memberNo) {
+    public ResponseEntity<PageResponse<GetSimplePersonalInquiryResponseDto>>
+        memberPersonalInquiryList(@PageableDefault Pageable pageable,
+                              @PathVariable("memberNo") Long memberNo) {
         Page<GetSimplePersonalInquiryResponseDto> personalInquiries =
                 personalInquiryService.getMemberPersonalInquiries(pageable, memberNo);
 
@@ -75,6 +105,13 @@ public class PersonalInquiryController {
                 .body(new PageResponse<>(personalInquiries));
     }
 
+    /**
+     * 1대1문의 단건 상세 조회를 위한 메서드입니다.
+     * 성공 시 200 반환.
+     *
+     * @param inquiryNo 조회할 1대1문의 번호
+     * @return the response entity
+     */
     @MemberAndAuth
     @GetMapping("/token/personal-inquiries/{inquiryNo}/members/{memberNo}")
     public ResponseEntity<GetPersonalInquiryResponseDto> personalInquiryDetail(

@@ -53,6 +53,13 @@ public class PersonalInquiry extends BaseCreateTimeEntity {
     @Column(name = "personal_inquiry_deleted")
     private boolean inquiryDeleted;
 
+    /**
+     * 1대1문의 생성을 위한 빌더입니다.
+     *
+     * @param member         회원
+     * @param inquiryTitle   1대1문의 제목
+     * @param inquiryContent 1대1문의 내용
+     */
     @Builder
     public PersonalInquiry(Member member, String inquiryTitle, String inquiryContent) {
         this.member = member;
@@ -60,10 +67,16 @@ public class PersonalInquiry extends BaseCreateTimeEntity {
         this.inquiryContent = inquiryContent;
     }
 
+    /**
+     * 1대1문의 삭제 상태 변경 메서드.
+     */
     public void changeInquiryDeleted() {
         this.inquiryDeleted = !this.inquiryDeleted;
     }
 
+    /**
+     * 1대1문의 답변여부 상태 변경 메서드.
+     */
     public void changeInquiryAnswered() {
         this.inquiryAnswered = !this.inquiryAnswered;
     }
