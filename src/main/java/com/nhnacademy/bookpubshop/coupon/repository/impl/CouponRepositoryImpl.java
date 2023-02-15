@@ -70,11 +70,15 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                 .on(coupon.couponTemplate.couponPolicy.policyNo
                         .eq(couponTemplate.couponPolicy.policyNo))
                 .innerJoin(coupon.member, member)
+                .innerJoin(couponType)
+                .on(coupon.couponTemplate.couponType.typeNo.eq(
+                        couponType.typeNo))
                 .select(Projections.constructor(GetCouponResponseDto.class,
                         coupon.couponNo,
                         member.memberId,
                         couponTemplate.templateName,
                         file.filePath.as(TEMPLATE_IMAGE),
+                        couponType.typeName,
                         couponPolicy.policyFixed,
                         couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
@@ -100,11 +104,15 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                 .join(couponPolicy)
                 .on(coupon.couponTemplate.couponPolicy.eq(couponPolicy))
                 .join(coupon.member, member)
+                .innerJoin(couponType)
+                .on(coupon.couponTemplate.couponType.typeNo.eq(
+                        couponType.typeNo))
                 .select(Projections.constructor(GetCouponResponseDto.class,
                         coupon.couponNo,
                         member.memberId,
                         couponTemplate.templateName,
                         file.filePath.as(TEMPLATE_IMAGE),
+                        couponType.typeName,
                         couponPolicy.policyFixed,
                         couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
@@ -216,7 +224,16 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                 .where(coupon.member.memberNo.eq(memberNo)
                         .and(coupon.couponUsed.isFalse())
                         .and((coupon.couponTemplate.finishedAt.after(LocalDateTime.now()))
-                                .or(coupon.couponTemplate.finishedAt.isNull())));
+                                .or(coupon.couponTemplate.finishedAt.isNull())))
+                .leftJoin(file).on(coupon.couponTemplate.eq(file.couponTemplate))
+                .innerJoin(coupon.couponTemplate, couponTemplate)
+                .innerJoin(coupon.couponTemplate.couponPolicy, couponPolicy)
+                .on(coupon.couponTemplate.couponPolicy.policyNo
+                        .eq(couponTemplate.couponPolicy.policyNo))
+                .innerJoin(coupon.member, member)
+                .innerJoin(couponType)
+                .on(coupon.couponTemplate.couponType.typeNo.eq(
+                        couponType.typeNo));
 
         List<GetCouponResponseDto> positiveCouponList = from(coupon)
                 .where(coupon.member.memberNo.eq(memberNo)
@@ -229,11 +246,15 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                 .on(coupon.couponTemplate.couponPolicy.policyNo
                         .eq(couponTemplate.couponPolicy.policyNo))
                 .innerJoin(coupon.member, member)
+                .innerJoin(couponType)
+                .on(coupon.couponTemplate.couponType.typeNo.eq(
+                        couponType.typeNo))
                 .select(Projections.constructor(GetCouponResponseDto.class,
                         coupon.couponNo,
                         member.memberId,
                         couponTemplate.templateName,
                         file.filePath.as(TEMPLATE_IMAGE),
+                        couponType.typeName,
                         couponPolicy.policyFixed,
                         couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
@@ -257,7 +278,15 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
         JPQLQuery<Long> count = from(coupon).select(coupon.count())
                 .where(coupon.member.memberNo.eq(memberNo)
                         .and(coupon.couponUsed.isTrue()
-                                .or(coupon.couponTemplate.finishedAt.before(LocalDateTime.now()))));
+                                .or(coupon.couponTemplate.finishedAt.before(LocalDateTime.now()))))
+                .leftJoin(file).on(coupon.couponTemplate.eq(file.couponTemplate))
+                .innerJoin(coupon.couponTemplate, couponTemplate)
+                .innerJoin(coupon.couponTemplate.couponPolicy, couponPolicy)
+                .on(coupon.couponTemplate.couponPolicy.policyNo
+                        .eq(couponTemplate.couponPolicy.policyNo))
+                .innerJoin(coupon.member, member)
+                .innerJoin(couponType)
+                .on(coupon.couponTemplate.couponType.typeNo.eq(couponType.typeNo));
 
         List<GetCouponResponseDto> negativeCoupon = from(coupon)
                 .where(coupon.member.memberNo.eq(memberNo)
@@ -269,11 +298,14 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
                 .on(coupon.couponTemplate.couponPolicy.policyNo
                         .eq(couponTemplate.couponPolicy.policyNo))
                 .innerJoin(coupon.member, member)
+                .innerJoin(couponType)
+                .on(coupon.couponTemplate.couponType.typeNo.eq(couponType.typeNo))
                 .select(Projections.constructor(GetCouponResponseDto.class,
                         coupon.couponNo,
                         member.memberId,
                         couponTemplate.templateName,
                         file.filePath.as(TEMPLATE_IMAGE),
+                        couponType.typeName,
                         couponPolicy.policyFixed,
                         couponPolicy.policyPrice,
                         couponPolicy.policyMinimum,
