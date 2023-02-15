@@ -6,21 +6,14 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
@@ -76,7 +69,7 @@ class CouponControllerTest {
     @DisplayName("쿠폰 전체 리스트 조회 api 테스트")
     void couponList() throws Exception {
         // given
-        GetCouponResponseDto response = new GetCouponResponseDto(1L, "member", "template", "image", true,
+        GetCouponResponseDto response = new GetCouponResponseDto(1L, "member", "template", "image", "일반", true,
                 10L, 1000L, 1000L, LocalDateTime.now(), true);
         PageRequest pageable = PageRequest.of(0, 10);
         PageImpl<GetCouponResponseDto> page = new PageImpl<>(List.of(response), pageable, 1);
@@ -109,6 +102,7 @@ class CouponControllerTest {
                                 fieldWithPath("content[].memberId").description("발급받은 유저의 아이디가 반환됩니다."),
                                 fieldWithPath("content[].templateName").description("쿠폰을 만든 템플릿의 번호가 반환됩니다."),
                                 fieldWithPath("content[].templateImage").description("발급받은 쿠폰의 이미지가 경로가 반환됩니다."),
+                                fieldWithPath("content[].typeName").description("발급받은 쿠폰의 타입이 반환됩니다."),
                                 fieldWithPath("content[].policyFixed").description("정율 여부가 반환됩니다."),
                                 fieldWithPath("content[].policyPrice").description("할인 퍼센트가 반환됩니다."),
                                 fieldWithPath("content[].policyMinimum").description("최소 주문금액이 반환됩니다."),
@@ -129,7 +123,7 @@ class CouponControllerTest {
     @DisplayName("단건 쿠폰을 조회 api 테스트")
     void couponDetail_Test() throws Exception {
         // given
-        GetCouponResponseDto response = new GetCouponResponseDto(1L, "member", "template", "image", true,
+        GetCouponResponseDto response = new GetCouponResponseDto(1L, "member", "template", "image", "일반", true,
                 10L, 1000L, 1000L, LocalDateTime.now(), true);
 
         // when
@@ -149,6 +143,7 @@ class CouponControllerTest {
                                 fieldWithPath("memberId").description("발급받은 유저의 아이디가 반환됩니다."),
                                 fieldWithPath("templateName").description("쿠폰을 만든 템플릿의 번호가 반환됩니다."),
                                 fieldWithPath("templateImage").description("발급받은 쿠폰의 이미지가 경로가 반환됩니다."),
+                                fieldWithPath("typeName").description("발급받은 쿠폰의 타입이 반환됩니다."),
                                 fieldWithPath("policyFixed").description("정율 여부가 반환됩니다."),
                                 fieldWithPath("policyPrice").description("할인 퍼센트가 반환됩니다."),
                                 fieldWithPath("policyMinimum").description("최소 주문금액이 반환됩니다."),

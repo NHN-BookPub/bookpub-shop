@@ -38,6 +38,7 @@ import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import com.nhnacademy.bookpubshop.orderstatecode.dummy.OrderStateCodeDummy;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
+import com.nhnacademy.bookpubshop.point.repository.PointHistoryRepository;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
@@ -90,6 +91,8 @@ class CouponServiceTest {
 
     @MockBean
     CouponMonthRepository couponMonthRepository;
+    @MockBean
+    PointHistoryRepository pointHistoryRepository;
     ArgumentCaptor<Coupon> captor;
 
     CouponPolicy couponPolicy;
@@ -117,7 +120,7 @@ class CouponServiceTest {
     @BeforeEach
     void setUp() {
         couponService = new CouponServiceImpl(couponRepository, memberRepository,
-                couponTemplateRepository, productRepository, couponMonthRepository);
+                couponTemplateRepository, productRepository, couponMonthRepository, pointHistoryRepository);
         couponPolicy = CouponPolicyDummy.dummy();
         couponType = CouponTypeDummy.dummy();
         couponStateCode = CouponStateCodeDummy.dummy();
@@ -257,7 +260,7 @@ class CouponServiceTest {
     void getCoupon_Success_Test() {
         // given
         GetCouponResponseDto response =
-                new GetCouponResponseDto(1L, "member", "template", "image", true, 1L, 10L, 100L, LocalDateTime.now(), true);
+                new GetCouponResponseDto(1L, "member", "template", "image", "일반", true, 1L, 10L, 100L, LocalDateTime.now(), true);
 
         // when
         when(couponRepository.findByCouponNo(anyLong()))
@@ -288,7 +291,7 @@ class CouponServiceTest {
     void getCoupons_Success_Test() throws IOException {
         // given
         GetCouponResponseDto response =
-                new GetCouponResponseDto(1L, "member", "template", "image", true, 1L, 10L, 100L, LocalDateTime.now(), true);
+                new GetCouponResponseDto(1L, "member", "template", "image", "일반", true, 1L, 10L, 100L, LocalDateTime.now(), true);
         Pageable pageable = Pageable.ofSize(10);
         PageImpl<GetCouponResponseDto> page = new PageImpl<>(List.of(response), pageable, 1);
 
