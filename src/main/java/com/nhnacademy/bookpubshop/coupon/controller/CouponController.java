@@ -152,6 +152,22 @@ public class CouponController {
     }
 
     /**
+     * 회원이 포인트 쿠폰 사용 시 상태변경 및 포인트 적립을 위한 메서드입니다.
+     *
+     * @param couponNo 쿠폰 번호
+     * @param memberNo 회원 번호
+     * @return the response entity
+     */
+    @MemberAuth
+    @PutMapping("/token/coupons/{couponNo}/point/members/{memberNo}")
+    public ResponseEntity<Void> pointCouponModifyUsed(@PathVariable("couponNo") Long couponNo,
+                                                      @PathVariable("memberNo") Long memberNo) {
+        couponService.modifyPointCouponUsed(couponNo, memberNo);
+
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * 멤버의 등급쿠폰 발급 유무를 확인하는 메서드입니다.
      *
      * @param memberNo    멤버 번호
