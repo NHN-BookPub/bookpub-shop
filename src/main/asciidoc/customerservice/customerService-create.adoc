@@ -1,0 +1,66 @@
+:toc:
+
+
+
+====고객서비스 등록
+
+고객서비스(CustomerService) 등록에 관한 API 명세
+
+===== 요청구조
+
+include::../../../../target/snippets/customerService-create/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::../../../../target/snippets/customerService-create/request-fields.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/customerService-create/http-response.adoc[]
+
+===== 응답 파라미터
+
+include::../../../../target/snippets/customerService-create/response-fields.adoc[]
+
+===== 예외사항
+
+====== 1. 상태 검증 실패
+
+Request
+
+include::../../../../target/snippets/customerService-create-fail-state/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/customerService-create-fail-state/http-response.adoc[]
+
+====== 2. 카테고리 검증 실패
+
+Request
+
+include::../../../../target/snippets/customerService-create-fail-category/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/customerService-create-fail-category/http-response.adoc[]
+
+====== 3. 내용 검증 실패
+
+Request
+
+include::../../../../target/snippets/customerService-create-fail-contents/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/customerService-create-fail-contents/http-response.adoc[]
+
+====== 4. 제목 검증 실패
+
+Request
+
+include::../../../../target/snippets/customerService-create-fail-title/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/customerService-create-fail-title/http-response.adoc[]
+

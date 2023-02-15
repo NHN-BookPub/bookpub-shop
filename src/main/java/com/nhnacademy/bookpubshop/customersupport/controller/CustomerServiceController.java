@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,7 @@ public class CustomerServiceController {
         customerServiceService.createCustomerService(requestDto, image);
 
         return ResponseEntity.status(HttpStatus.CREATED)
+                .contentType(MediaType.APPLICATION_JSON)
                 .build();
     }
 
@@ -54,7 +56,7 @@ public class CustomerServiceController {
     @GetMapping("/token/services")
     @AdminAuth
     public ResponseEntity<PageResponse<GetCustomerServiceListResponseDto>>
-    getCustomerServices(Pageable pageable) {
+    getCustomerServices(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(customerServiceService.getCustomerServices(pageable));
@@ -69,7 +71,8 @@ public class CustomerServiceController {
      */
     @GetMapping("/api/services/{codeName}")
     public ResponseEntity<PageResponse<GetCustomerServiceListResponseDto>>
-    getCustomerServicesByCodeName(@PathVariable String codeName, Pageable pageable) {
+    getCustomerServicesByCodeName(@PathVariable String codeName,
+                                  @PageableDefault Pageable pageable) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(customerServiceService.getCustomerServicesByCodeName(codeName, pageable));
@@ -84,9 +87,38 @@ public class CustomerServiceController {
      */
     @GetMapping("/api/services/category/{category}")
     public ResponseEntity<PageResponse<GetCustomerServiceListResponseDto>>
-    getCustomerServicesByCategory(@PathVariable String category, Pageable pageable) {
+    getCustomerServicesByCategory(@PathVariable String category,
+                                  @PageableDefault Pageable pageable) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(customerServiceService.getCustomerServicesByCategory(category, pageable));
+    }
+
+    /**
+     * 서비스 단건 조회.
+     *
+     * @param serviceNo 서비스번호
+     * @return 서비스 단건
+     */
+    @GetMapping("/api/service/{serviceNo}")
+    public ResponseEntity<GetCustomerServiceListResponseDto> getCustomerService(@PathVariable Integer serviceNo) {
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(customerServiceService.findCustomerServiceByNo(serviceNo));
+    }
+
+    /**
+     * 고객서비스 삭제
+     *
+     * @param serviceNo 서비스 번호
+     * @return 성공시 201
+     */
+    @DeleteMapping("/token/services/{serviceNo}")
+    @AdminAuth
+    public ResponseEntity<Void> deleteCustomerService(@PathVariable Integer serviceNo) {
+        customerServiceService.deleteCustomerServiceByNo(serviceNo);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
     }
 }

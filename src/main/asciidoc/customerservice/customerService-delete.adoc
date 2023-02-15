@@ -1,0 +1,13 @@
+:toc:
+
+==== 고객서비스 삭제
+
+고객서비스(CustomerService) 삭제에 관한 API 명세
+
+===== 요청구조
+
+include::../../../../target/snippets/customerService-delete/http-request.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/customerService-delete/http-response.adoc[]

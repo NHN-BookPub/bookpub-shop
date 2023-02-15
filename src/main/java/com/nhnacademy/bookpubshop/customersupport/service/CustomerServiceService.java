@@ -46,4 +46,19 @@ public interface CustomerServiceService {
      * @return 고객서비스 리스트
      */
     PageResponse<GetCustomerServiceListResponseDto> getCustomerServicesByCategory(String category, Pageable pageable);
+
+    /**
+     * 서비스 단건 조회.
+     *
+     * @param serviceNo 서비스번호
+     * @return 서비스 단건
+     */
+    GetCustomerServiceListResponseDto findCustomerServiceByNo(Integer serviceNo);
+
+    /**
+     * 서비스 삭제
+     *
+     * @param serviceNo 회원번호
+     */
+    void deleteCustomerServiceByNo(Integer serviceNo);
 }

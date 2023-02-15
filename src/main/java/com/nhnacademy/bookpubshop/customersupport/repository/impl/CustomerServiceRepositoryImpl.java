@@ -10,6 +10,7 @@ import com.nhnacademy.bookpubshop.servicecode.entity.QCustomerServiceStateCode;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -54,6 +55,7 @@ public class CustomerServiceRepositoryImpl extends QuerydslRepositorySupport imp
                         .on(customerServiceStateCode.serviceCodeNo
                                 .eq(customerService.customerServiceStateCode.serviceCodeNo))
                         .leftJoin(file).on(file.customerService.serviceNo.eq(customerService.serviceNo))
+                        .orderBy(customerService.serviceNo.desc())
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
@@ -76,7 +78,7 @@ public class CustomerServiceRepositoryImpl extends QuerydslRepositorySupport imp
                                 GetCustomerServiceListResponseDto.class,
                                 customerService.serviceNo,
                                 customerServiceStateCode.serviceCodeInfo,
-                                customerService.member.memberId,
+                                member.memberId,
                                 file.filePath.as(IMAGE),
                                 customerService.serviceCategory,
                                 customerService.serviceTitle,
@@ -136,5 +138,31 @@ public class CustomerServiceRepositoryImpl extends QuerydslRepositorySupport imp
                 .select(customerService.serviceNo.count());
 
         return PageableExecutionUtils.getPage(contents, pageable, count::fetchOne);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<GetCustomerServiceListResponseDto> findCustomerServiceByNo(Integer serviceNo) {
+        return Optional.of(
+                from(customerService)
+                .select(Projections.constructor(
+                        GetCustomerServiceListResponseDto.class,
+                        customerService.serviceNo,
+                        customerServiceStateCode.serviceCodeInfo,
+                        customerService.member.memberId,
+                        file.filePath.as(IMAGE),
+                        customerService.serviceCategory,
+                        customerService.serviceTitle,
+                        customerService.serviceContent,
+                        customerService.createdAt))
+                .innerJoin(member).on(member.memberNo.eq(customerService.member.memberNo))
+                .innerJoin(customerServiceStateCode)
+                .on(customerServiceStateCode.serviceCodeNo
+                        .eq(customerService.customerServiceStateCode.serviceCodeNo))
+                .leftJoin(file).on(file.customerService.serviceNo.eq(customerService.serviceNo))
+                .where(customerService.serviceNo.eq(serviceNo))
+                .fetchOne());
     }
 }

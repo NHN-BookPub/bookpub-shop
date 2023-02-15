@@ -23,4 +23,16 @@ public class CustomerServiceDummy {
                 .member(member)
                 .build();
     }
+
+    public static CustomerService dummy(CustomerServiceStateCode customerServiceStateCode,
+                                        Member member,
+                                        String category) {
+        return CustomerService.builder()
+                .customerServiceStateCode(customerServiceStateCode)
+                .serviceCategory(category)
+                .serviceContent("content")
+                .serviceTitle("title")
+                .member(member)
+                .build();
+    }
 }

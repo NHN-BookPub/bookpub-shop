@@ -1,0 +1,45 @@
+:toc:
+
+
+
+==== 고객서비스 단건 조회
+
+고객서비스(CustomerService) 조회에 관한 API 명세
+
+===== 요청구조
+
+include::../../../../target/snippets/customerService-get-one/http-request.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/customerService-get-one/http-response.adoc[]
+
+==== 고객서비스 전체 조회
+
+===== 요청구조
+
+include::../../../../target/snippets/customerService-get-total/http-request.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/customerService-get-total/http-response.adoc[]
+
+==== 고객서비스 코드명으로 조회
+
+===== 요청구조
+
+include::../../../../target/snippets/customerService-get-codeName/http-request.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/customerService-get-codeName/http-response.adoc[]
+
+==== 고객서비스 카테고리로 조회
+
+===== 요청구조
+
+include::../../../../target/snippets/customerService-get-category/http-request.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/customerService-get-category/http-response.adoc[]

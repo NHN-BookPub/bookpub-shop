@@ -15,7 +15,7 @@ public class CustomerServiceStateCodeDummy {
         return CustomerServiceStateCode
                 .builder()
                 .serviceCodeName(FAQ.getName())
-                .serviceCodeInfo(null)
+                .serviceCodeInfo("FAQ")
                 .serviceCodeUsed(FAQ.isUsed())
                 .build();
     }

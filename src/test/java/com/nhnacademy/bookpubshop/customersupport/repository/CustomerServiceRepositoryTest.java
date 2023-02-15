@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.customersupport.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.customersupport.dto.GetCustomerServiceListResponseDto;
 import com.nhnacademy.bookpubshop.customersupport.dummy.CustomerServiceDummy;
 import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
@@ -17,12 +18,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 /**
  * 고객서비스 repo 테스트를 위한 클래스.
  *
- * @author : 유호철
+ * @author : 유호철, 여운석
  * @since : 1.0
  **/
 @DataJpaTest
@@ -38,17 +41,21 @@ class CustomerServiceRepositoryTest {
     BookPubTier bookPubTier;
     CustomerServiceStateCode customerServiceStateCode;
     Member member;
+    Pageable pageable;
 
     @BeforeEach
     void setUp() {
         bookPubTier = TierDummy.dummy();
         member = MemberDummy.dummy(bookPubTier);
         customerServiceStateCode = CustomerServiceStateCodeDummy.dummy();
-        customerService = CustomerServiceDummy.dummy(customerServiceStateCode, member);
 
-        entityManager.persist(bookPubTier);
-        entityManager.persist(member);
-        entityManager.persist(customerServiceStateCode);
+        bookPubTier = entityManager.persist(bookPubTier);
+        member = entityManager.persist(member);
+        customerServiceStateCode = entityManager.persist(customerServiceStateCode);
+
+        customerService = CustomerServiceDummy.dummy(customerServiceStateCode, member, "faqUsing");
+
+        pageable = Pageable.ofSize(10);
     }
 
     @DisplayName("고객서비스 save 테스트")
@@ -72,4 +79,83 @@ class CustomerServiceRepositoryTest {
         assertThat(result.get().getCreatedAt()).isAfter(now);
     }
 
+    @Test
+    @DisplayName("고객서비스 전체 조회 성공")
+    void getCustomerServices() {
+        CustomerService persist = customerServiceRepository.save(customerService);
+
+        //when
+        Page<GetCustomerServiceListResponseDto> responses
+                = customerServiceRepository.getCustomerServices(pageable);
+
+        assertThat(responses.getContent().get(0).getCustomerServiceNo())
+                .isEqualTo(persist.getServiceNo());
+        assertThat(responses.getContent().get(0).getServiceContent())
+                .isEqualTo(persist.getServiceContent());
+        assertThat(responses.getContent().get(0).getServiceCategory())
+                .isEqualTo(persist.getServiceCategory());
+        assertThat(responses.getContent().get(0).getCreatedAt())
+                .isBeforeOrEqualTo(persist.getCreatedAt());
+        assertThat(responses.getContent().get(0).getMemberId())
+                .isEqualTo(persist.getMember().getMemberId());
+    }
+
+    @Test
+    void getCustomerServicesByCodeName() {
+        CustomerService persist = customerServiceRepository.save(customerService);
+
+        //when
+        Page<GetCustomerServiceListResponseDto> responses
+                = customerServiceRepository
+                .getCustomerServicesByCodeName(customerServiceStateCode
+                        .getServiceCodeName(), pageable);
+
+        assertThat(responses.getContent().get(0).getCustomerServiceNo())
+                .isEqualTo(persist.getServiceNo());
+        assertThat(responses.getContent().get(0).getServiceContent())
+                .isEqualTo(persist.getServiceContent());
+        assertThat(responses.getContent().get(0).getServiceCategory())
+                .isEqualTo(persist.getServiceCategory());
+        assertThat(responses.getContent().get(0).getCreatedAt())
+                .isBeforeOrEqualTo(persist.getCreatedAt());
+        assertThat(responses.getContent().get(0).getMemberId())
+                .isEqualTo(persist.getMember().getMemberId());
+    }
+
+    @Test
+    void getCustomerServicesByCategory() {
+        CustomerService persist = customerServiceRepository.save(customerService);
+
+        //when
+        Page<GetCustomerServiceListResponseDto> responses
+                = customerServiceRepository
+                .getCustomerServicesByCategory("faqUsing", pageable);
+
+        assertThat(responses.getContent().get(0).getCustomerServiceNo())
+                .isEqualTo(persist.getServiceNo());
+        assertThat(responses.getContent().get(0).getServiceContent())
+                .isEqualTo(persist.getServiceContent());
+        assertThat(responses.getContent().get(0).getServiceCategory())
+                .isEqualTo(persist.getServiceCategory());
+        assertThat(responses.getContent().get(0).getCreatedAt())
+                .isBeforeOrEqualTo(persist.getCreatedAt());
+        assertThat(responses.getContent().get(0).getMemberId())
+                .isEqualTo(persist.getMember().getMemberId());
+    }
+
+    @Test
+    void findCustomerServiceByNo() {
+        CustomerService persist = customerServiceRepository.save(customerService);
+
+        //when
+        Optional<GetCustomerServiceListResponseDto> responseDto =
+                customerServiceRepository.findCustomerServiceByNo(persist.getServiceNo());
+
+        assertThat(responseDto.get().getCustomerServiceNo()).isEqualTo(persist.getServiceNo());
+        assertThat(responseDto.get().getServiceTitle()).isEqualTo(persist.getServiceTitle());
+        assertThat(responseDto.get().getServiceCategory()).isEqualTo(persist.getServiceCategory());
+        assertThat(responseDto.get().getMemberId()).isEqualTo(persist.getMember().getMemberId());
+        assertThat(responseDto.get().getCreatedAt()).isAfterOrEqualTo(persist.getCreatedAt());
+
+    }
 }
