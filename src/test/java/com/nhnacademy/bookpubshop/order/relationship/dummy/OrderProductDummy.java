@@ -23,7 +23,8 @@ public class OrderProductDummy {
                 5,
                 100L,
                 10000L,
-                "reason"
+                "reason",
+                100L
         );
     }
 }

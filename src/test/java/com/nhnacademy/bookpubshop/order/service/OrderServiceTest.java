@@ -125,6 +125,7 @@ class OrderServiceTest {
     Map<Long, Long> couponAmount;
     Map<Long, Integer> productCount;
     Map<Long, Long> productSaleAmount;
+    Map<Long, Long> productPointSave;
     GetOrderAndPaymentResponseDto dto;
 
 
@@ -211,7 +212,7 @@ class OrderServiceTest {
                         FileCategory.PRODUCT_EBOOK, null)));
 
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
-                3, 1000L, 30000L, "reason");
+                3, 1000L, 30000L, "reason",100L);
 
         detailDto = new GetOrderDetailResponseDto(
                 1L,
@@ -261,15 +262,18 @@ class OrderServiceTest {
         couponAmount = new HashMap<>();
         productCount = new HashMap<>();
         productSaleAmount = new HashMap<>();
+        productPointSave = new HashMap<>();
 
         amounts.put(1L, 3L);
         couponAmount.put(1L, 2000L);
         productCount.put(1L, 1);
         productSaleAmount.put(1L, 2000L);
+        productPointSave.put(1L, 200L);
 
         ReflectionTestUtils.setField(requestDto, "productNos", List.of(1L));
         ReflectionTestUtils.setField(requestDto, "productAmount", amounts);
         ReflectionTestUtils.setField(requestDto, "productCoupon", couponAmount);
+        ReflectionTestUtils.setField(requestDto, "productPointSave", productPointSave);
         ReflectionTestUtils.setField(requestDto, "buyerName", order.getOrderBuyer());
         ReflectionTestUtils.setField(requestDto, "buyerNumber", order.getBuyerPhone());
         ReflectionTestUtils.setField(requestDto, "recipientName", order.getOrderRecipient());
@@ -584,6 +588,7 @@ class OrderServiceTest {
         ReflectionTestUtils.setField(requestDto, "productNos", List.of(1L));
         ReflectionTestUtils.setField(requestDto, "productAmount", amounts);
         ReflectionTestUtils.setField(requestDto, "productCoupon", couponAmount);
+        ReflectionTestUtils.setField(requestDto, "productPointSave",productPointSave);
         ReflectionTestUtils.setField(requestDto, "buyerName", order.getOrderBuyer());
         ReflectionTestUtils.setField(requestDto, "buyerNumber", order.getBuyerPhone());
         ReflectionTestUtils.setField(requestDto, "recipientName", order.getOrderRecipient());
@@ -601,6 +606,8 @@ class OrderServiceTest {
         ReflectionTestUtils.setField(requestDto, "deliveryFeePolicyNo", 1);
         ReflectionTestUtils.setField(requestDto, "packingFeePolicyNo", 1);
         ReflectionTestUtils.setField(requestDto, "savePoint", 100L);
+        ReflectionTestUtils.setField(requestDto, "orderName", order.getOrderName());
+
 
         assertThatThrownBy(() -> orderService.createOrder(requestDto))
                 .isInstanceOf(NotFoundCouponException.class)

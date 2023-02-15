@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.order.relationship.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
@@ -80,7 +81,9 @@ class OrderSubscribeRepositoryTest {
         order = OrderDummy.dummy(member, pricePolicy, deliveryPricePolicy, orderStateCode);
         subscribe = SubscribeDummy.dummy();
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
-        orderProduct = new OrderProduct(null, product, order, orderProductStateCode, 1, 100L, 5000L, "테스트");
+        orderProduct = new OrderProduct(
+                null, product, order, orderProductStateCode, 1,
+                100L, 5000L, "테스트", 100L);
         orderSubscribe = OrderSubscribeDummy.dummy(subscribe, order, orderSubscribeStateCode);
 
         entityManager.persist(productPolicy);

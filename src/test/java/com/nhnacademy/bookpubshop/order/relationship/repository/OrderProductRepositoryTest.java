@@ -102,7 +102,9 @@ class OrderProductRepositoryTest {
         entityManager.persist(order);
 
 
-        orderProduct = new OrderProduct(null, product, order, orderProductStateCode, 1, 1000L, product.getSalesPrice(), null);
+        orderProduct = new OrderProduct(null, product, order,
+                orderProductStateCode, 1, 1000L,
+                product.getSalesPrice(), null,100L);
     }
 
     @Test

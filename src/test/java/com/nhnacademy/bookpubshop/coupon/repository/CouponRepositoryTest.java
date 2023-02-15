@@ -199,7 +199,8 @@ class CouponRepositoryTest {
                 10,
                 1000L,
                 100000L,
-                "reason"
+                "reason",
+                100L
         );
 
         coupon = CouponDummy.dummy(

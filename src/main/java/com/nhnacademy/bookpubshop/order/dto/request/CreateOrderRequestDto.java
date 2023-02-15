@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.Length;
 /**
  * 주문등록을 위한 Dto.
  *
- * @author : 여운석
+ * @author : 여운석, 임태원
  * @since : 1.0
  **/
 @Getter
@@ -26,9 +26,10 @@ public class CreateOrderRequestDto {
     private Map<Long, Long> productAmount;
     @NotNull(message = "상품 별 구매정보는 필수입니다")
     private Map<Long, Long> productCoupon;
-
     @NotNull(message = "상품 별 구매정보는 필수입니다")
     private Map<Long, Long> productSaleAmount;
+    @NotNull(message = "상품 별 포인트적립금 정보는 필수입니다")
+    private Map<Long, Long> productPointSave;
     private Long memberNo;
     @NotNull(message = "배송정책 정보는 필수입니다")
     private Integer deliveryFeePolicyNo;

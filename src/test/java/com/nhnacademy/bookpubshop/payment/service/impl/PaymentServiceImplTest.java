@@ -439,8 +439,22 @@ class PaymentServiceImplTest {
     @Test
     @DisplayName("주문상품 결제취소 주문상품을 찾지못할경우")
     void refundOrderProductNotOrderProductException() {
-        when(orderProductRepository.getOrderProductList(anyLong()))
-                .thenReturn(List.of(orderProduct));
+        when(paymentRepository.getRefundInfo(any()))
+                .thenReturn(Optional.of(refundResponseDto));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+        when(paymentStateCodeRepository.getPaymentStateCode(anyString()))
+                .thenReturn(Optional.of(paymentStateCode));
+        when(paymentTypeRepository.getPaymentType(anyString()))
+                .thenReturn(Optional.of(paymentTypeState));
+        when(paymentRepository.getPayment(anyString()))
+                .thenReturn(Optional.of(payment));
+        when(paymentRepository.getOrderByPaymentKey(anyString()))
+                .thenReturn(Optional.of(order));
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderStateCode));
+        when(tossAdaptor.requestRefund(anyString(),anyString()))
+                .thenReturn(tossResponseDto);
         when(orderProductRepository.getOrderProduct(anyLong()))
                 .thenReturn(Optional.empty());
 
@@ -457,14 +471,24 @@ class PaymentServiceImplTest {
     @Test
     @DisplayName("주문상품 상품을 찾지못할경우")
     void refundOrderProductNotStatetException() {
-        when(orderProductRepository.getOrderProductList(anyLong()))
-                .thenReturn(List.of(orderProduct));
+        when(paymentRepository.getRefundInfo(any()))
+                .thenReturn(Optional.of(refundResponseDto));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+        when(paymentStateCodeRepository.getPaymentStateCode(anyString()))
+                .thenReturn(Optional.of(paymentStateCode));
+        when(paymentTypeRepository.getPaymentType(anyString()))
+                .thenReturn(Optional.of(paymentTypeState));
+        when(paymentRepository.getPayment(anyString()))
+                .thenReturn(Optional.of(payment));
+        when(paymentRepository.getOrderByPaymentKey(anyString()))
+                .thenReturn(Optional.of(order));
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderStateCode));
+        when(tossAdaptor.requestRefund(anyString(),anyString()))
+                .thenReturn(tossResponseDto);
         when(orderProductRepository.getOrderProduct(anyLong()))
                 .thenReturn(Optional.of(orderProduct));
-        when(couponRepository.findByCouponByOrderProductNo(anyLong()))
-                .thenReturn(List.of(coupon));
-        when(productRepository.findById(any()))
-                .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> paymentService.refundOrderProduct(orderProductRefundRequestDto))
                 .isInstanceOf(ProductNotFoundException.class)
@@ -493,17 +517,12 @@ class PaymentServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> paymentService.refundOrderProduct(orderProductRefundRequestDto))
-                .isInstanceOf(NotFoundOrderProductStateException.class)
-                .hasMessageContaining(NotFoundOrderProductStateException.MESSAGE);
+                .isInstanceOf(NotFoundPaymentException.class)
+                .hasMessageContaining(NotFoundPaymentException.MESSAGE);
 
         verify(orderProductRepository, times(1))
                 .getOrderProductList(anyLong());
-        verify(orderProductRepository, times(1))
-                .getOrderProduct(anyLong());
-        verify(productRepository, times(1))
-                .findById(any());
-        verify(orderProductStateCodeRepository, times(1))
-                .findByCodeName(anyString());
+
     }
 
     @Test
@@ -519,16 +538,28 @@ class PaymentServiceImplTest {
                 .thenReturn(Optional.of(product));
         when(orderProductStateCodeRepository.findByCodeName(anyString()))
                 .thenReturn(Optional.of(orderProductStateCode));
+        when(paymentStateCodeRepository.getPaymentStateCode(anyString()))
+                .thenReturn(Optional.of(paymentStateCode));
+        when(paymentTypeRepository.getPaymentType(anyString()))
+                .thenReturn(Optional.of(paymentTypeState));
+        when(paymentRepository.getRefundInfo(any()))
+                .thenReturn(Optional.of(refundResponseDto));
+        when(paymentRepository.getPayment(anyString()))
+                .thenReturn(Optional.of(payment));
+        when(paymentRepository.getOrderByPaymentKey(anyString()))
+                .thenReturn(Optional.of(order));
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderStateCode));
+        when(tossAdaptor.requestRefund(anyString(),anyString()))
+                .thenReturn(tossResponseDto);
 
         paymentService.refundOrderProduct(orderProductRefundRequestDto);
 
         verify(orderProductRepository, times(1))
                 .getOrderProductList(anyLong());
-        verify(orderProductRepository, times(1))
-                .getOrderProduct(anyLong());
-        verify(productRepository, times(1))
-                .findById(any());
         verify(orderProductStateCodeRepository, times(1))
                 .findByCodeName(anyString());
+        verify(orderProductRepository, times(0))
+                .getOrderProduct(anyLong());
     }
 }
