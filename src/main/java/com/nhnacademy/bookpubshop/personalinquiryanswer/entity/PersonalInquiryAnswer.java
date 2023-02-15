@@ -30,7 +30,7 @@ public class PersonalInquiryAnswer extends BaseCreateTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "personal_inquiry_answer_number")
-    private Long answerNumber;
+    private Long answerNo;
 
     @NotNull
     @OneToOne

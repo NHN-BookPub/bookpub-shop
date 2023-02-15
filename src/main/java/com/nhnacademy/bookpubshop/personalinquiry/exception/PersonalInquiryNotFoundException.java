@@ -8,9 +8,9 @@ package com.nhnacademy.bookpubshop.personalinquiry.exception;
  **/
 public class PersonalInquiryNotFoundException extends RuntimeException {
 
-    public static final String MESSAGE = "은 없는 1대1문의 번호입니다.";
+    public static final String MESSAGE = "1대1문의를 찾을 수 없습니다.";
 
-    public PersonalInquiryNotFoundException(Long personalInquiryNo) {
-        super(personalInquiryNo + MESSAGE);
+    public PersonalInquiryNotFoundException() {
+        super(MESSAGE);
     }
 }

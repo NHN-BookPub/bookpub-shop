@@ -55,11 +55,11 @@ class PersonalPersonalInquiryAnswerRepositoryTest {
         LocalDateTime now = LocalDateTime.now();
 
         PersonalInquiryAnswer persist = entityManager.persist(personalInquiryAnswer);
-        Optional<PersonalInquiryAnswer> result = personalInquiryAnswerRepository.findById(persist.getAnswerNumber());
+        Optional<PersonalInquiryAnswer> result = personalInquiryAnswerRepository.findById(persist.getAnswerNo());
 
         assertThat(result).isPresent();
         assertThat(result.get().getAnswerContent()).isEqualTo(persist.getAnswerContent());
-        assertThat(result.get().getAnswerNumber()).isEqualTo(persist.getAnswerNumber());
+        assertThat(result.get().getAnswerNo()).isEqualTo(persist.getAnswerNo());
         assertThat(result.get().getPersonalInquiry().getPersonalInquiryNo()).
                 isEqualTo(persist.getPersonalInquiry().getPersonalInquiryNo());
         assertThat(result.get().getCreatedAt()).isAfter(now);
