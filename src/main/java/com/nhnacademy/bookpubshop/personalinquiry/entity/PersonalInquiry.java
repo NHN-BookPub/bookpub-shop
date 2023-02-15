@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -46,12 +47,24 @@ public class PersonalInquiry extends BaseCreateTimeEntity {
     @Column(name = "personal_inquiry_content")
     private String inquiryContent;
 
-    @Column(name = "personal_inquiry_image_path")
-    private String imagePath;
-
     @Column(name = "personal_inquiry_answered")
     private boolean inquiryAnswered;
 
     @Column(name = "personal_inquiry_deleted")
     private boolean inquiryDeleted;
+
+    @Builder
+    public PersonalInquiry(Member member, String inquiryTitle, String inquiryContent) {
+        this.member = member;
+        this.inquiryTitle = inquiryTitle;
+        this.inquiryContent = inquiryContent;
+    }
+
+    public void changeInquiryDeleted() {
+        this.inquiryDeleted = !this.inquiryDeleted;
+    }
+
+    public void changeInquiryAnswered() {
+        this.inquiryAnswered = !this.inquiryAnswered;
+    }
 }
