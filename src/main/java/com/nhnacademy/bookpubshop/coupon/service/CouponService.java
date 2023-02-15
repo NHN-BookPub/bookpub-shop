@@ -75,6 +75,14 @@ public interface CouponService {
     Page<GetCouponResponseDto> getNegativeCouponList(Pageable pageable, Long memberNo);
 
     /**
+     * 포인트쿠폰 사용 및 사용여부 수정을 위한 메서드.
+     *
+     * @param couponNo 쿠폰 번호
+     * @param memberNo 회원 번호
+     */
+    void modifyPointCouponUsed(Long couponNo, Long memberNo);
+
+    /**
      * 멤버의 등급쿠폰 발급 유무를 확인하는 메서드입니다.
      *
      * @param memberNo    멤버 번호

@@ -16,6 +16,8 @@ import com.nhnacademy.bookpubshop.coupontemplate.repository.CouponTemplateReposi
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
+import com.nhnacademy.bookpubshop.point.entity.PointHistory;
+import com.nhnacademy.bookpubshop.point.repository.PointHistoryRepository;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import java.util.List;
@@ -42,6 +44,7 @@ public class CouponServiceImpl implements CouponService {
     private final CouponTemplateRepository couponTemplateRepository;
     private final ProductRepository productRepository;
     private final CouponMonthRepository couponMonthRepository;
+    private final PointHistoryRepository pointHistoryRepository;
 
     /**
      * {@inheritDoc}
@@ -146,6 +149,33 @@ public class CouponServiceImpl implements CouponService {
         }
 
         return couponRepository.findNegativeCouponByMemberNo(pageable, memberNo);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws CouponNotFoundException 쿠폰이 존재하지 않을 경우 나오는 에러
+     * @throws MemberNotFoundException 회원이 존재하지 않을 경우 나오는 에러
+     */
+    @Transactional
+    @Override
+    public void modifyPointCouponUsed(Long couponNo, Long memberNo) {
+        Coupon coupon = couponRepository.findById(couponNo)
+                .orElseThrow(() -> new CouponNotFoundException(couponNo));
+        coupon.modifyCouponUsed();
+
+        Long pointAmount = coupon.getCouponTemplate().getCouponPolicy().getPolicyPrice();
+
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
+        member.increaseMemberPoint(pointAmount);
+
+        pointHistoryRepository.save(PointHistory.builder()
+                .member(member)
+                .pointHistoryIncreased(true)
+                .pointHistoryAmount(pointAmount)
+                .pointHistoryReason("포인트 쿠폰 사용")
+                .build());
     }
 
     /**
