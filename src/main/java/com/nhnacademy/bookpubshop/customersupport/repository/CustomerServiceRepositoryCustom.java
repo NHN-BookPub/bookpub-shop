@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.customersupport.repository;
 
 import com.nhnacademy.bookpubshop.customersupport.dto.GetCustomerServiceListResponseDto;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -37,4 +38,12 @@ public interface CustomerServiceRepositoryCustom {
      * @return 고객서비스 리스트
      */
     Page<GetCustomerServiceListResponseDto> getCustomerServicesByCategory(String category, Pageable pageable);
+
+    /**
+     * 서비스 단건 조회.
+     *
+     * @param serviceNo 서비스번호
+     * @return 서비스 단건
+     */
+    Optional<GetCustomerServiceListResponseDto> findCustomerServiceByNo(Integer serviceNo);
 }

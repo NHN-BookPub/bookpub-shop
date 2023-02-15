@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.customersupport.service.impl;
 import com.nhnacademy.bookpubshop.customersupport.dto.CreateCustomerServiceRequestDto;
 import com.nhnacademy.bookpubshop.customersupport.dto.GetCustomerServiceListResponseDto;
 import com.nhnacademy.bookpubshop.customersupport.entity.CustomerService;
+import com.nhnacademy.bookpubshop.customersupport.exception.CustomerServiceNotFoundException;
 import com.nhnacademy.bookpubshop.customersupport.repository.CustomerServiceRepository;
 import com.nhnacademy.bookpubshop.customersupport.service.CustomerServiceService;
 import com.nhnacademy.bookpubshop.filemanager.FileManagement;
@@ -92,5 +93,25 @@ public class CustomerServiceServiceImpl implements CustomerServiceService {
     @Override
     public PageResponse<GetCustomerServiceListResponseDto> getCustomerServicesByCategory(String category, Pageable pageable) {
         return new PageResponse<>(customerServiceRepository.getCustomerServicesByCategory(category, pageable));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public GetCustomerServiceListResponseDto findCustomerServiceByNo(Integer serviceNo) {
+        return customerServiceRepository.findCustomerServiceByNo(serviceNo)
+                .orElse(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteCustomerServiceByNo(Integer serviceNo) {
+        CustomerService customerService = customerServiceRepository.findById(serviceNo)
+                .orElseThrow(() -> new CustomerServiceNotFoundException(serviceNo));
+
+        customerServiceRepository.delete(customerService);
     }
 }
