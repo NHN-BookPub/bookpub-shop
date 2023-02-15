@@ -9,17 +9,15 @@ import com.nhnacademy.bookpubshop.personalinquiryanswer.exception.PersonalInquir
 import com.nhnacademy.bookpubshop.personalinquiryanswer.repsitory.PersonalInquiryAnswerRepository;
 import com.nhnacademy.bookpubshop.personalinquiryanswer.service.PersonalInquiryAnswerService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Some description here.
+ * 1대1문의답변 서비스 구현체입니다.
  *
  * @author : 정유진
  * @since : 1.0
  **/
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -27,6 +25,11 @@ public class PersonalInquiryAnswerServiceImpl implements PersonalInquiryAnswerSe
     private final PersonalInquiryAnswerRepository personalInquiryAnswerRepository;
     private final PersonalInquiryRepository personalInquiryRepository;
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws PersonalInquiryNotFoundException 1대1문의를 찾을 수 없을때 발생하는 에러
+     */
     @Transactional
     @Override
     public void createPersonalInquiryAnswer(CreatePersonalInquiryAnswerRequestDto createDto) {
@@ -41,6 +44,12 @@ public class PersonalInquiryAnswerServiceImpl implements PersonalInquiryAnswerSe
                 .build());
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws PersonalInquiryAnswerNotFoundException 1대1문의답변을 찾을 수 없을때 발생하는 에러
+     * @throws PersonalInquiryNotFoundException       1대1문의를 찾을 수 없을때 발생하는 에러
+     */
     @Transactional
     @Override
     public void deletePersonalInquiryAnswer(Long answerNo) {
