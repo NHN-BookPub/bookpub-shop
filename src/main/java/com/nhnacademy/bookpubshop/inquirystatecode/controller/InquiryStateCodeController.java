@@ -6,8 +6,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 상품문의상태코드를 다루기 위한 컨트롤러입니다.
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @author : 정유진
  * @since : 1.0
  **/
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class InquiryStateCodeController {
     private final InquiryStateCodeService inquiryStateCodeService;
