@@ -13,13 +13,10 @@ public class PersonalInquiryDummy {
 
     public static PersonalInquiry dummy(Member member) {
 
-        return new PersonalInquiry(
-                null,
-                member,
-                "test_title",
-                "test_content",
-                "test_image",
-                false,
-                false);
+        return PersonalInquiry.builder()
+                .member(member)
+                .inquiryTitle("testTitle")
+                .inquiryContent("testContent")
+                .build();
     }
 }
