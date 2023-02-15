@@ -145,7 +145,7 @@ public class CustomerServiceRepositoryImpl extends QuerydslRepositorySupport imp
      */
     @Override
     public Optional<GetCustomerServiceListResponseDto> findCustomerServiceByNo(Integer serviceNo) {
-        return Optional.ofNullable(
+        return Optional.of(
                 from(customerService)
                 .select(Projections.constructor(
                         GetCustomerServiceListResponseDto.class,
