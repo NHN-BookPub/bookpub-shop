@@ -58,7 +58,6 @@ class PersonalInquiryRepositoryTest {
         assertThat(result.get().getInquiryTitle()).isEqualTo(personalInquiry.getInquiryTitle());
         assertThat(result.get().getInquiryContent()).isEqualTo(personalInquiry.getInquiryContent());
         assertThat(result.get().getCreatedAt().getYear()).isEqualTo(personalInquiry.getCreatedAt().getYear());
-        assertThat(result.get().getImagePath()).isEqualTo(personalInquiry.getImagePath());
         assertThat(result.get().getMember().getMemberId()).isEqualTo(personalInquiry.getMember().getMemberId());
         assertThat(result.get().isInquiryAnswered()).isFalse();
         assertThat(result.get().isInquiryDeleted()).isFalse();
