@@ -148,7 +148,7 @@ class OrderRepositoryTest {
         product = entityManager.persist(product);
 
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
-                3, 1000L, 30000L, "reason");
+                3, 1000L, 30000L, "reason", 100L);
         orderProduct = entityManager.persist(orderProduct);
 
 

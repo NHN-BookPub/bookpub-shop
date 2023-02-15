@@ -16,11 +16,14 @@ import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.exception.OrderNotFoundException;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProductStateCode;
+import com.nhnacademy.bookpubshop.order.relationship.exception.NotFoundOrderProductException;
+import com.nhnacademy.bookpubshop.order.relationship.exception.NotFoundOrderProductStateException;
 import com.nhnacademy.bookpubshop.order.relationship.repository.OrderProductRepository;
 import com.nhnacademy.bookpubshop.order.relationship.repository.OrderProductStateCodeRepository;
 import com.nhnacademy.bookpubshop.order.repository.OrderRepository;
 import com.nhnacademy.bookpubshop.order.service.OrderService;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
+import com.nhnacademy.bookpubshop.orderstatecode.exception.NotFoundOrderStateException;
 import com.nhnacademy.bookpubshop.orderstatecode.repository.OrderStateCodeRepository;
 import com.nhnacademy.bookpubshop.point.entity.PointHistory;
 import com.nhnacademy.bookpubshop.point.repository.PointHistoryRepository;
@@ -57,9 +60,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class OrderServiceImpl implements OrderService {
-    private static final String BUY_BOOK = "책 구매";
-
+    private static final String BUY_BOOK = "상품 구매";
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
     private final PricePolicyRepository pricePolicyRepository;
@@ -75,7 +78,6 @@ public class OrderServiceImpl implements OrderService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(readOnly = true)
     public GetOrderDetailResponseDto getOrderDetailById(Long orderNo) {
         GetOrderDetailResponseDto response = orderRepository.getOrderDetailById(orderNo)
                 .orElseThrow(OrderNotFoundException::new);
@@ -85,7 +87,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public GetOrderDetailResponseDto getOrderDetailByOrderId(String orderId) {
         GetOrderDetailResponseDto response = orderRepository.getOrderDetailByOrderId(orderId)
                 .orElseThrow(OrderNotFoundException::new);
@@ -115,7 +116,6 @@ public class OrderServiceImpl implements OrderService {
                 pricePolicyRepository.getPricePolicyById(request.getPackingFeePolicyNo())
                         .orElseThrow(NotFoundPricePolicyException::new);
 
-
         OrderStateCode orderStateCode =
                 orderStateCodeRepository.findByCodeName(OrderState.WAITING_PAYMENT.getName())
                         .orElseThrow(NotFoundStateCodeException::new);
@@ -144,7 +144,8 @@ public class OrderServiceImpl implements OrderService {
                 .orderName(request.getOrderName())
                 .build());
 
-        createOrderProduct(request, order, request.getProductCoupon());
+        createOrderProduct(request, order, request.getProductCoupon(),
+                request.getProductPointSave());
 
         if (Objects.nonNull(member)) {
             updateMemberPoint(member.getMemberNo(), request.getPointAmount());
@@ -159,7 +160,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void createOrderProduct(CreateOrderRequestDto request,
                                    BookpubOrder order,
-                                   Map<Long, Long> productCoupon) {
+                                   Map<Long, Long> productCoupon,
+                                   Map<Long, Long> productPointSave) {
         OrderProductStateCode orderProductStateCode =
                 orderProductStateCodeRepository
                         .findByCodeName(OrderProductState.WAITING_PAYMENT.getName())
@@ -180,6 +182,7 @@ public class OrderServiceImpl implements OrderService {
                             .couponAmount(request.getProductSaleAmount().get(productNo))
                             .productPrice(request.getProductAmount().get(productNo))
                             .reasonName(OrderState.WAITING_PAYMENT.getReason())
+                            .pointSave(productPointSave.get(productNo))
                             .build());
 
             updateCoupon(order, orderProduct, productCoupon.get(productNo));
@@ -210,6 +213,10 @@ public class OrderServiceImpl implements OrderService {
      * @param usePoint 사용한 포인트.
      */
     public void updateMemberPoint(Long memberNo, Long usePoint) {
+        if (usePoint == 0) {
+            return;
+        }
+
         Member member = memberRepository.findById(memberNo)
                 .orElseThrow(MemberNotFoundException::new);
         member.decreaseMemberPoint(usePoint);
@@ -228,6 +235,7 @@ public class OrderServiceImpl implements OrderService {
      *
      * @param productNo 상품번호.
      */
+    @Transactional
     public void updateProductInventory(Long productNo, Integer productAmount) {
         Product product = productRepository.findById(productNo)
                 .orElseThrow(ProductNotFoundException::new);
@@ -244,7 +252,7 @@ public class OrderServiceImpl implements OrderService {
      * 재고가 부족할 시 품절 예외가 발생합니다.
      *
      * @param productAmount 주문 할 상품의 양
-     * @param product 주문 할 상품
+     * @param product       주문 할 상품
      */
     private void isSoldOut(Integer productAmount, Product product) {
         if (product.getProductSaleStateCode()
@@ -258,7 +266,7 @@ public class OrderServiceImpl implements OrderService {
      * 상품의 재고가 주문한 양과 동일하면 상품을 품절상태로 변경합니다.
      *
      * @param productAmount 주문 할 상품의 양
-     * @param product 주문 할 상품
+     * @param product       주문 할 상품
      */
     private void makeSoldOut(Integer productAmount, Product product) {
         if (product.getProductStock() - productAmount == 0) {
@@ -303,7 +311,6 @@ public class OrderServiceImpl implements OrderService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(readOnly = true)
     public PageResponse<GetOrderListForAdminResponseDto> getOrderList(Pageable pageable) {
         Page<GetOrderListForAdminResponseDto> returns =
                 orderRepository.getOrderList(pageable);
@@ -315,7 +322,6 @@ public class OrderServiceImpl implements OrderService {
      * {@inheritDoc}
      */
     @Override
-    @Transactional(readOnly = true)
     public PageResponse<GetOrderListResponseDto> getOrderListByUsers(
             Pageable pageable, Long memberNo) {
         Page<GetOrderListResponseDto> returns =
@@ -336,7 +342,6 @@ public class OrderServiceImpl implements OrderService {
      * @throws OrderNotFoundException 주문정보가 없습니다.
      */
     @Override
-    @Transactional(readOnly = true)
     public GetOrderAndPaymentResponseDto getOrderAndPaymentInfo(String orderId) {
         return orderRepository.getOrderAndPayment(orderId)
                 .orElseThrow(OrderNotFoundException::new);
@@ -345,7 +350,7 @@ public class OrderServiceImpl implements OrderService {
     /**
      * {@inheritDoc}
      *
-     * @throws  OrderNotFoundException 주문정보가 없습니다.
+     * @throws OrderNotFoundException 주문정보가 없습니다.
      */
     @Override
     public GetOrderConfirmResponseDto getOrderConfirmInfo(Long orderNo) {
@@ -353,5 +358,71 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(OrderNotFoundException::new);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void confirmOrderProduct(String orderProductNo, String memberNo) {
+        OrderProduct orderProduct = modifyOrderProductState(orderProductNo);
+        modifyOrderState(orderProduct);
+        increaseMemberPoint(memberNo, orderProduct);
+    }
 
+    /**
+     * 주문 상품의 상태를 구매확정으로 바꿔주는 메소드.
+     *
+     * @param orderProductNo 주문상품 번호.
+     * @return 주문상품.
+     */
+    private OrderProduct modifyOrderProductState(String orderProductNo) {
+        OrderProduct orderProduct =
+                orderProductRepository.getOrderProduct(Long.parseLong(orderProductNo))
+                        .orElseThrow(NotFoundOrderProductException::new);
+
+        OrderProductStateCode orderProductStateCode =
+                orderProductStateCodeRepository
+                        .findByCodeName(OrderProductState.CONFIRMED.getName())
+                        .orElseThrow(NotFoundOrderProductStateException::new);
+        orderProduct.modifyOrderProductState(orderProductStateCode);
+        return orderProduct;
+    }
+
+    /**
+     * 회원 포인트를 주문상품에 기재된 포인트만큼 증가시켜주는 메소드.
+     *
+     * @param memberNo     회원번호.
+     * @param orderProduct 주문상품.
+     */
+    private void increaseMemberPoint(String memberNo, OrderProduct orderProduct) {
+        Member member = memberRepository.findById(Long.parseLong(memberNo))
+                .orElseThrow(MemberNotFoundException::new);
+        member.increaseMemberPoint(orderProduct.getPointSave());
+        pointHistoryRepository.save(PointHistory.builder()
+                .pointHistoryReason(BUY_BOOK)
+                .member(member)
+                .pointHistoryIncreased(true)
+                .pointHistoryAmount(orderProduct.getPointSave())
+                .build()
+        );
+    }
+
+    /**
+     * 주문상태를 구매확정으로 변경시켜주는 메소드.
+     *
+     * @param orderProduct 주문상품.
+     */
+    private void modifyOrderState(OrderProduct orderProduct) {
+        BookpubOrder bookpubOrder = orderRepository.findById(orderProduct.getOrder().getOrderNo())
+                .orElseThrow(OrderNotFoundException::new);
+
+        if (bookpubOrder.getOrderStateCode().getCodeName().equals(OrderState.CONFIRMED.getName())) {
+            return;
+        }
+
+        OrderStateCode orderStateCode =
+                orderStateCodeRepository.findByCodeName(OrderState.CONFIRMED.getName())
+                        .orElseThrow(NotFoundOrderStateException::new);
+        bookpubOrder.modifyState(orderStateCode);
+    }
 }

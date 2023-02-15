@@ -172,7 +172,7 @@ class OrderControllerTest {
                 "info");
 
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
-                3, 1000L, 30000L, "reason");
+                3, 1000L, 30000L, "reason", 100L);
 
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
@@ -200,7 +200,7 @@ class OrderControllerTest {
                         FileCategory.PRODUCT_EBOOK, null)));
 
         new OrderProduct(null, product, order, orderProductStateCode,
-                3, 1000L, 30000L, "reason");
+                3, 1000L, 30000L, "reason", 100L);
 
         productDto = new GetProductListForOrderResponseDto(1L,
                 orderProduct.getOrderProductNo(),
@@ -221,11 +221,14 @@ class OrderControllerTest {
         productCount.put(1L, 1);
         Map<Long, Long> productSaleAmount = new HashMap<>();
         productSaleAmount.put(1L, 2000L);
+        Map<Long, Long> productPointSave = new HashMap<>();
+        productSaleAmount.put(1L, 2000L);
 
 
         ReflectionTestUtils.setField(requestDto, "productNos", List.of(1L));
         ReflectionTestUtils.setField(requestDto, "productAmount", amounts);
         ReflectionTestUtils.setField(requestDto, "productCoupon", couponAmount);
+        ReflectionTestUtils.setField(requestDto, "productPointSave", productPointSave);
         ReflectionTestUtils.setField(requestDto, "buyerName", order.getOrderBuyer());
         ReflectionTestUtils.setField(requestDto, "buyerNumber", order.getBuyerPhone());
         ReflectionTestUtils.setField(requestDto, "recipientName", order.getOrderRecipient());
@@ -357,6 +360,8 @@ class OrderControllerTest {
                                                 .description("상품별 구입 갯수"),
                                         PayloadDocumentation.subsectionWithPath("productSaleAmount")
                                                 .description("상품에 대한 할인 금액"),
+                                        PayloadDocumentation.subsectionWithPath("productPointSave")
+                                                .description("구입 후 적용되는 포인트"),
                                         fieldWithPath("productNos").description("상품번호"),
                                         fieldWithPath("productAmount").description("상품수량"),
                                         fieldWithPath("buyerName").description("주문인"),
@@ -486,13 +491,12 @@ class OrderControllerTest {
     }
 
     @Test
-    @Disabled
     @DisplayName("주문 상세 조회 성공")
     void getOrderDetailByOrderNo() throws Exception {
         when(orderService.getOrderDetailById(anyLong()))
                 .thenReturn(detailDto);
 
-        mockMvc.perform(RestDocumentationRequestBuilders.get(tokenUrl + "/{orderNo}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.get(tokenUrl + "/{orderNo}/members/{memberNo}", 1L, 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderState").value(order.getOrderStateCode().getCodeName()))
@@ -505,11 +509,16 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.createdAt").value(order.getCreatedAt()))
                 .andExpect(jsonPath("$.invoiceNo").value(order.getInvoiceNumber()))
                 .andExpect(jsonPath("$.packaged").value(order.isOrderPackaged()))
+                .andExpect(jsonPath("$.couponAmount").value(order.getCouponDiscount()))
+                .andExpect(jsonPath("$.totalAmount").value(order.getOrderPrice()))
+                .andExpect(jsonPath("$.orderName").value(order.getOrderName()))
+                .andExpect(jsonPath("$.orderId").value(order.getOrderId()))
                 .andDo(print())
                 .andDo(document("order-detail",
                         preprocessResponse(prettyPrint()),
                         pathParameters(
-                                parameterWithName("orderNo").description("주문번호")
+                                parameterWithName("orderNo").description("주문번호"),
+                                parameterWithName("memberNo").description("회원번호")
                         ),
                         responseFields(
                                 fieldWithPath("orderNo").description("주문번호"),
@@ -544,7 +553,7 @@ class OrderControllerTest {
                 .thenReturn(dto);
 
         mockMvc.perform(RestDocumentationRequestBuilders.get(
-                url + "/payment/{orderId}", "1")
+                                url + "/payment/{orderId}", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderName").value(dto.getOrderName()))

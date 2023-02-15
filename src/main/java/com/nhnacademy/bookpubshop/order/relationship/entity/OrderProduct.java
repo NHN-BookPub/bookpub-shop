@@ -64,6 +64,9 @@ public class OrderProduct {
     @Column(name = "order_product_reason_name")
     private String reasonName;
 
+    @Column(name = "order_product_point_save")
+    private Long pointSave;
+
     /**
      * 주문상품의 상태를 변경하는 메소드 입니다.
      *

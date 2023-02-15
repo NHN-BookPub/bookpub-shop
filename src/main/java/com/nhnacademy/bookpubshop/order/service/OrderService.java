@@ -46,13 +46,15 @@ public interface OrderService {
     /**
      * 주문 상품을 등록합니다.
      *
-     * @param request       dto객체.
-     * @param order         주문
-     * @param productCoupon 상품에 쓰인 쿠폰.
+     * @param request          dto객체.
+     * @param order            주문
+     * @param productCoupon    상품에 쓰인 쿠폰.
+     * @param productPointSave 상품에 적립될 포인트.
      */
     void createOrderProduct(CreateOrderRequestDto request,
                             BookpubOrder order,
-                            Map<Long, Long> productCoupon);
+                            Map<Long, Long> productCoupon,
+                            Map<Long, Long> productPointSave);
 
     /**
      * 송장번호를 수정합니다.
@@ -94,7 +96,7 @@ public interface OrderService {
      * 주문, 결제 최종정보를 반환하는 메소드.
      *
      * @param orderId 주문아이디.
-     * @return 주문,결제 정보.
+     * @return 주문, 결제 정보.
      */
     GetOrderAndPaymentResponseDto getOrderAndPaymentInfo(String orderId);
 
@@ -105,4 +107,12 @@ public interface OrderService {
      * @return 주문정보.
      */
     GetOrderConfirmResponseDto getOrderConfirmInfo(Long orderNo);
+
+    /**
+     * 주문상품의 상태를 구매확정으로 변경시켜주는 메소드.
+     *
+     * @param orderProductNo 주문상품번호.
+     * @param memberNo       회원번호.
+     */
+    void confirmOrderProduct(String orderProductNo, String memberNo);
 }

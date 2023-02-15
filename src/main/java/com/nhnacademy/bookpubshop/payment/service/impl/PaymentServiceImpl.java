@@ -205,7 +205,7 @@ public class PaymentServiceImpl implements PaymentService {
         int refundCnt = 0;
 
         for (OrderProduct op : orderProductList) {
-            if (!op.getOrderProductStateCode().getCodeName()
+            if (op.getOrderProductStateCode().getCodeName()
                     .equals(OrderProductState.REFUND.getName())) {
                 refundCnt++;
             }

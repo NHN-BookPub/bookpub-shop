@@ -382,7 +382,8 @@ class ProductRepositoryTest {
         BookpubOrder order = OrderDummy.dummy(member, pricePolicy, pricePolicy2, orderStateCode);
         OrderProductStateCode orderProductStateCode = new OrderProductStateCode(
                 null, "name", true, "info");
-        OrderProduct orderProduct = new OrderProduct(null, product, order, orderProductStateCode, 10, 10L, 10L, "A");
+        OrderProduct orderProduct = new OrderProduct(null, product, order, orderProductStateCode, 10,
+                10L, 10L, "A", 100L);
         File fileDummy = entityManager.persist(file);
         entityManager.persist(tier);
         entityManager.persist(member);
