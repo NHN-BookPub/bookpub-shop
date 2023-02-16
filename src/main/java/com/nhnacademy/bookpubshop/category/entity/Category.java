@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.category.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,7 +34,7 @@ public class Category {
     @Column(name = "category_number")
     private Integer categoryNo;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_parent_number")
     private Category parentCategory;
 
