@@ -377,18 +377,18 @@ public class OrderServiceImpl implements OrderService {
     public void confirmExchange(String orderProductNo) {
         OrderProduct orderProduct =
                 orderProductRepository.getOrderProduct(Long.valueOf(orderProductNo))
-                .orElseThrow(NotFoundOrderProductException::new);
+                        .orElseThrow(NotFoundOrderProductException::new);
 
         OrderProductStateCode orderProductStateCode =
                 orderProductStateCodeRepository
                         .findByCodeName(OrderProductState.COMPLETE_EXCHANGE.getName())
-                .orElseThrow(NotFoundOrderProductStateException::new);
+                        .orElseThrow(NotFoundOrderProductStateException::new);
 
         orderProduct.modifyOrderProductState(orderProductStateCode);
 
         Product product =
                 productRepository.findById(orderProduct.getProduct().getProductNo())
-                .orElseThrow(ProductNotFoundException::new);
+                        .orElseThrow(ProductNotFoundException::new);
 
         product.minusStock(orderProduct.getProductAmount());
     }

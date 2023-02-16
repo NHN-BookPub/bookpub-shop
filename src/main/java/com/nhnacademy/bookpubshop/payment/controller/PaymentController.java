@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.payment.controller;
 
 import com.nhnacademy.bookpubshop.annotation.MemberAndAuth;
+import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.payment.dto.request.OrderProductRefundRequestDto;
 import com.nhnacademy.bookpubshop.payment.dto.request.RefundRequestDto;
 import com.nhnacademy.bookpubshop.payment.service.PaymentService;
@@ -63,8 +64,8 @@ public class PaymentController {
      *
      * @return void
      */
-    @PostMapping("/token/payment/order")
-    @MemberAndAuth
+    @PostMapping("/token/payment/order/{memberNo}")
+    @MemberAuth
     public ResponseEntity<Void> refundOrder(@Valid @RequestBody RefundRequestDto refundRequestDto) {
         paymentService.refundOrder(refundRequestDto);
         return ResponseEntity.status(HttpStatus.OK)
