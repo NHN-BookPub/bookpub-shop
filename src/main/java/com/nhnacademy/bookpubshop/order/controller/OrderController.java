@@ -183,7 +183,7 @@ public class OrderController {
      * @param orderProductNo 주문상품번호.
      * @return 성공상태.
      */
-    @MemberAndAuth
+    @MemberAuth
     @PutMapping("/token/orders/order-product/{orderProductNo}/member/{memberNo}")
     public ResponseEntity<Void> confirmOrderProduct(
             @PathVariable String memberNo, @PathVariable String orderProductNo) {
