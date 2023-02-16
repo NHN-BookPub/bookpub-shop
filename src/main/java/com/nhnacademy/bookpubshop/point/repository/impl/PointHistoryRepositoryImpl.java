@@ -71,6 +71,7 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport
                         pointHistory.pointHistoryIncreased
                 )).where(pointHistory.member.memberNo.eq(memberNo))
                 .where(pointHistory.pointHistoryIncreased.eq(isIncreased))
+                .orderBy(pointHistory.createdAt.desc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset());
 
@@ -101,6 +102,7 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport
                         pointHistory.createdAt,
                         pointHistory.pointHistoryIncreased
                 )).where(pointHistory.member.memberNo.eq(memberNo))
+                .orderBy(pointHistory.createdAt.desc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .fetchAll();

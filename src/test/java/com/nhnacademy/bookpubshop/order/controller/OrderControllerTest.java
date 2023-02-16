@@ -63,7 +63,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,7 +171,7 @@ class OrderControllerTest {
                 "info");
 
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
-                3, 1000L, 30000L, "reason", 100L);
+                3, 1000L, 30000L, "reason", 100L,"");
 
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
@@ -200,7 +199,7 @@ class OrderControllerTest {
                         FileCategory.PRODUCT_EBOOK, null)));
 
         new OrderProduct(null, product, order, orderProductStateCode,
-                3, 1000L, 30000L, "reason", 100L);
+                3, 1000L, 30000L, "reason", 100L,"");
 
         productDto = new GetProductListForOrderResponseDto(1L,
                 orderProduct.getOrderProductNo(),
