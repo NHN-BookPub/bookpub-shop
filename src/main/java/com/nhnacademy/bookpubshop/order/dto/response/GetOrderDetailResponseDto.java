@@ -4,7 +4,6 @@ import com.nhnacademy.bookpubshop.product.dto.response.GetProductListForOrderRes
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Builder;
 import lombok.Getter;
 
 /**
@@ -16,6 +15,7 @@ import lombok.Getter;
 @Getter
 public class GetOrderDetailResponseDto {
     private Long orderNo;
+    private Long memberNo;
     private List<GetProductListForOrderResponseDto> orderProducts = new ArrayList<>();
     private String orderState;
     private String buyerName;
@@ -38,6 +38,7 @@ public class GetOrderDetailResponseDto {
     private String orderId;
 
     public GetOrderDetailResponseDto(Long orderNo,
+                                     Long memberNo,
                                      String orderState,
                                      String buyerName,
                                      String buyerNumber,
@@ -58,6 +59,7 @@ public class GetOrderDetailResponseDto {
                                      String orderName,
                                      String orderId) {
         this.orderNo = orderNo;
+        this.memberNo = memberNo;
         this.orderState = orderState;
         this.buyerName = buyerName;
         this.buyerNumber = buyerNumber;
