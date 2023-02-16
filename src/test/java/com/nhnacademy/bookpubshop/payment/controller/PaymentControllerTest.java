@@ -124,7 +124,7 @@ class PaymentControllerTest {
     void refundOrderFailTest() throws Exception {
         doNothing().when(paymentService).refundOrder(any());
         RefundRequestDto dto = new RefundRequestDto(null, "resson");
-        mockMvc.perform(post("/token/payment/order")
+        mockMvc.perform(post("/token/payment/order/{memberNo}}",1L)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -141,7 +141,7 @@ class PaymentControllerTest {
     void refundOrderFailTest2() throws Exception {
         doNothing().when(paymentService).refundOrder(any());
         RefundRequestDto dto = new RefundRequestDto(1L, null);
-        mockMvc.perform(post("/token/payment/order")
+        mockMvc.perform(post("/token/payment/order/{memberNo}",1L)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -158,7 +158,7 @@ class PaymentControllerTest {
     void refundOrderFailTest3() throws Exception {
         doNothing().when(paymentService).refundOrder(any());
         RefundRequestDto dto = new RefundRequestDto(1L, "");
-        mockMvc.perform(post("/token/payment/order")
+        mockMvc.perform(post("/token/payment/order/{memberNo}",1L)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -175,7 +175,7 @@ class PaymentControllerTest {
     void refundOrderSuccess() throws Exception {
         doNothing().when(paymentService).refundOrder(any());
         RefundRequestDto dto = new RefundRequestDto(1L, "sadfsafdf");
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/token/payment/order")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/token/payment/order/{memberNo}",1L)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
