@@ -8,6 +8,10 @@ import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderVerifyResponseDto;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
+import com.nhnacademy.bookpubshop.sales.dto.response.OrderCntResponseDto;
+import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleDto;
+import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleYearDto;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -94,4 +98,29 @@ public interface OrderRepositoryCustom {
      * @return 주문상품들.
      */
     List<OrderProduct> getOrderProductList(Long orderNo);
+
+    /**
+     * 매출값을 얻기위한 메서드입니다.
+     *
+     * @param start 시작일자
+     * @param end   종료일자
+     * @return 매출정보
+     */
+    List<TotalSaleDto> getTotalSale(LocalDateTime start, LocalDateTime end);
+
+    /**
+     * 월별 매출통계를 얻기위한 메서드입니다.
+     *
+     * @param start 시작일자
+     * @param end   종료일자
+     * @return 매출정보
+     */
+    List<TotalSaleYearDto> getTotalSaleMonth(LocalDateTime start, LocalDateTime end);
+
+    /**
+     * 시간대별 주문 현황을 보기위한 메서드입니다.
+     *
+     * @return 시간대별 주문현황반환
+     */
+    List<OrderCntResponseDto> getOrderTime();
 }
