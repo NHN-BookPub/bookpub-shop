@@ -179,7 +179,7 @@ public class OrderController {
     /**
      * 주문상품 상태를 구매확정으로 만드는 메소드.
      *
-     * @param memberNo 회원번호.
+     * @param memberNo       회원번호.
      * @param orderProductNo 주문상품번호.
      * @return 성공상태.
      */
@@ -189,6 +189,20 @@ public class OrderController {
             @PathVariable String memberNo, @PathVariable String orderProductNo) {
         orderService.confirmOrderProduct(orderProductNo, memberNo);
         return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 교환 수락 메소드.
+     *
+     * @param orderProductNo 주문상품번호.
+     * @return 성공상태번호.
+     */
+    @AdminAuth
+    @PostMapping("/token/orders/order-product/{orderProductNo}")
+    public ResponseEntity<Void> confirmExchange(@PathVariable String orderProductNo) {
+        orderService.confirmExchange(orderProductNo);
+        return ResponseEntity.status(HttpStatus.OK)
                 .build();
     }
 }

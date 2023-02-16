@@ -383,7 +383,7 @@ class ProductRepositoryTest {
         OrderProductStateCode orderProductStateCode = new OrderProductStateCode(
                 null, "name", true, "info");
         OrderProduct orderProduct = new OrderProduct(null, product, order, orderProductStateCode, 10,
-                10L, 10L, "A", 100L);
+                10L, 10L, "A", 100L,"");
         File fileDummy = entityManager.persist(file);
         entityManager.persist(tier);
         entityManager.persist(member);

@@ -1,8 +1,11 @@
 package com.nhnacademy.bookpubshop.order.relationship.repository;
 
+import com.nhnacademy.bookpubshop.order.relationship.dto.GetExchangeResponseDto;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
 
 /**
@@ -28,4 +31,12 @@ public interface OrderProductRepositoryCustom {
      * @return 주문상품.
      */
     Optional<OrderProduct> getOrderProduct(Long orderProductNo);
+
+    /**
+     * 교환대기 주문상품 목록 불러오는 메소드.
+     *
+     * @param pageable 페이지.
+     * @return 목록반환
+     */
+    Page<GetExchangeResponseDto> getExchangeOrderProductList(Pageable pageable);
 }

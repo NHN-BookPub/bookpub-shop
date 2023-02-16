@@ -104,7 +104,7 @@ class OrderProductRepositoryTest {
 
         orderProduct = new OrderProduct(null, product, order,
                 orderProductStateCode, 1, 1000L,
-                product.getSalesPrice(), null,100L);
+                product.getSalesPrice(), null,100L,"");
     }
 
     @Test

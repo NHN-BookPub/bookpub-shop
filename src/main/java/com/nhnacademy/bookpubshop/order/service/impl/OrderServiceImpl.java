@@ -370,6 +370,31 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void confirmExchange(String orderProductNo) {
+        OrderProduct orderProduct =
+                orderProductRepository.getOrderProduct(Long.valueOf(orderProductNo))
+                .orElseThrow(NotFoundOrderProductException::new);
+
+        OrderProductStateCode orderProductStateCode =
+                orderProductStateCodeRepository
+                        .findByCodeName(OrderProductState.COMPLETE_EXCHANGE.getName())
+                .orElseThrow(NotFoundOrderProductStateException::new);
+
+        orderProduct.modifyOrderProductState(orderProductStateCode);
+
+        Product product =
+                productRepository.findById(orderProduct.getProduct().getProductNo())
+                .orElseThrow(ProductNotFoundException::new);
+
+        product.minusStock(orderProduct.getProductAmount());
+    }
+
+
+    /**
      * 주문 상품의 상태를 구매확정으로 바꿔주는 메소드.
      *
      * @param orderProductNo 주문상품 번호.

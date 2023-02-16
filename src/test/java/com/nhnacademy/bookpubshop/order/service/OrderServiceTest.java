@@ -212,7 +212,7 @@ class OrderServiceTest {
                         FileCategory.PRODUCT_EBOOK, null)));
 
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
-                3, 1000L, 30000L, "reason",100L);
+                3, 1000L, 30000L, "reason",100L,"");
 
         detailDto = new GetOrderDetailResponseDto(
                 1L,
