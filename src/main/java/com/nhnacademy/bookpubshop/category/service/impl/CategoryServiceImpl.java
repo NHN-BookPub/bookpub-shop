@@ -91,8 +91,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional(readOnly = true)
     public GetCategoryResponseDto getCategory(Integer categoryNo) {
-        return categoryRepository.findCategory(categoryNo)
+        Category category = categoryRepository.findById(categoryNo)
                 .orElseThrow(CategoryNotFoundException::new);
+
+        return new GetCategoryResponseDto(category.getCategoryNo(), category.getCategoryName(),
+                null, category.getCategoryPriority(), category.isCategoryDisplayed());
     }
 
 

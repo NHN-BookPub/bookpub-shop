@@ -172,7 +172,7 @@ class OrderControllerTest {
                 "info");
 
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
-                3, 1000L, 30000L, "reason", 100L);
+                3, 1000L, 30000L, "reason", 100L,"");
 
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
@@ -200,7 +200,7 @@ class OrderControllerTest {
                         FileCategory.PRODUCT_EBOOK, null)));
 
         new OrderProduct(null, product, order, orderProductStateCode,
-                3, 1000L, 30000L, "reason", 100L);
+                3, 1000L, 30000L, "reason", 100L,"");
 
         productDto = new GetProductListForOrderResponseDto(1L,
                 orderProduct.getOrderProductNo(),

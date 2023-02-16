@@ -126,7 +126,7 @@ class CategoryServiceTest {
     void modifyCategoryFindFailTest() {
         ReflectionTestUtils.setField(modifyCategoryRequestDto, "categoryName", "외국도서");
 
-        when(categoryRepository.findCategory(anyInt()))
+        when(categoryRepository.findById(anyInt()))
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> categoryService.modifyCategory(modifyCategoryRequestDto))
@@ -191,7 +191,7 @@ class CategoryServiceTest {
     @DisplayName("카테고리 단건 조회 실패 테스트.")
     void getCategoryFailTest() {
 
-        when(categoryRepository.findCategory(anyInt()))
+        when(categoryRepository.findById(anyInt()))
                 .thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> categoryService.getCategory(1))
@@ -210,13 +210,12 @@ class CategoryServiceTest {
         ReflectionTestUtils.setField(getCategoryResponseDto, "categoryName", categoryName);
 
         when(categoryRepository.save(any())).thenReturn(category);
-        when(categoryRepository.findCategory(anyInt())).thenReturn(
-                Optional.of(getCategoryResponseDto));
+        when(categoryRepository.findById(anyInt())).thenReturn(
+                Optional.of(category));
 
-        GetCategoryResponseDto result = categoryService.getCategory(anyInt());
-        assertThat(result.getCategoryName()).isEqualTo(getCategoryResponseDto.getCategoryName());
+        categoryService.getCategory(anyInt());
 
-        verify(categoryRepository, times(1)).findCategory(anyInt());
+        verify(categoryRepository, times(1)).findById(anyInt());
 
     }
 

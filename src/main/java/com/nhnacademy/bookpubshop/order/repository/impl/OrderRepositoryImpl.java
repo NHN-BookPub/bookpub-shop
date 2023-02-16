@@ -1,5 +1,8 @@
 package com.nhnacademy.bookpubshop.order.repository.impl;
 
+import static com.nhnacademy.bookpubshop.state.OrderState.CANCEL;
+import static com.nhnacademy.bookpubshop.state.OrderState.CANCEL_PAYMENT;
+import static com.nhnacademy.bookpubshop.state.OrderState.CONFIRMED;
 import static com.querydsl.jpa.JPAExpressions.select;
 
 import com.nhnacademy.bookpubshop.card.entity.QCard;
@@ -18,8 +21,13 @@ import com.nhnacademy.bookpubshop.order.repository.OrderRepositoryCustom;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.QOrderStateCode;
 import com.nhnacademy.bookpubshop.payment.entity.QPayment;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.QPricePolicy;
+import com.nhnacademy.bookpubshop.sales.dto.response.OrderCntResponseDto;
+import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleDto;
+import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleYearDto;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.JPQLQuery;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -58,7 +66,6 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                         .select(Projections.constructor(
                                 GetOrderDetailResponseDto.class,
                                 order.orderNo,
-                                member.memberNo,
                                 orderStateCode.codeName,
                                 order.orderBuyer,
                                 order.buyerPhone,
@@ -79,7 +86,6 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                                 order.orderName,
                                 order.orderId
                         ))
-                        .leftJoin(member).on(member.memberNo.eq(order.member.memberNo))
                         .innerJoin(order.orderStateCode, orderStateCode)
                         .innerJoin(order.deliveryPricePolicy, packagingPricePolicy)
                         .innerJoin(order.packagingPricePolicy, deliveryPricePolicy)
@@ -97,7 +103,6 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                         .select(Projections.constructor(
                                 GetOrderDetailResponseDto.class,
                                 order.orderNo,
-                                member.memberNo,
                                 orderStateCode.codeName,
                                 order.orderBuyer,
                                 order.buyerPhone,
@@ -118,7 +123,6 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                                 order.orderName,
                                 order.orderId
                         ))
-                        .leftJoin(order.member, member)
                         .innerJoin(order.orderStateCode, orderStateCode)
                         .innerJoin(order.deliveryPricePolicy, packagingPricePolicy)
                         .innerJoin(order.packagingPricePolicy, deliveryPricePolicy)
@@ -266,4 +270,143 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                 .select(orderProduct)
                 .where(order.orderNo.eq(orderNo)).fetch();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<TotalSaleDto> getTotalSale(LocalDateTime start, LocalDateTime end) {
+
+        return from(order)
+                .select(Projections.constructor(
+                        TotalSaleDto.class,
+                        new CaseBuilder()
+                                .when(orderStateCode.codeName
+                                        .eq(CANCEL_PAYMENT.getName()))
+                                .then(1)
+                                .otherwise((Integer) null)
+                                .count()
+                                .as("cancelPaymentCnt"),
+                        new CaseBuilder()
+                                .when(orderStateCode.codeName
+                                        .eq(CANCEL_PAYMENT.getName()))
+                                .then(order.orderPrice)
+                                .otherwise(0L)
+                                .sum()
+                                .as("cancelPaymentAmount"),
+                        new CaseBuilder()
+                                .when(orderStateCode.codeName
+                                        .eq(CANCEL.getName()))
+                                .then(1)
+                                .otherwise((Integer) null)
+                                .count()
+                                .as("cancelOrderCnt"),
+                        new CaseBuilder()
+                                .when(orderStateCode.codeName
+                                        .eq(CONFIRMED.getName()))
+                                .then(1)
+                                .otherwise((Integer) null)
+                                .count()
+                                .as("saleCnt"),
+                        new CaseBuilder()
+                                .when(orderStateCode.codeName
+                                        .eq(CONFIRMED.getName()))
+                                .then(order.orderPrice)
+                                .otherwise(0L)
+                                .sum()
+                                .as("saleAmount"),
+                        new CaseBuilder()
+                                .when(orderStateCode.codeName.eq(CONFIRMED.getName()))
+                                .then(order.orderPrice)
+                                .when(orderStateCode.codeName.eq(CANCEL_PAYMENT.getName()))
+                                .then((order.orderPrice.multiply(-1)))
+                                .otherwise(0L)
+                                .sum()
+                                .as("total")
+                ))
+                .innerJoin(order.orderStateCode, orderStateCode)
+                .where(order.createdAt.between(start, end))
+                .fetch();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<TotalSaleYearDto> getTotalSaleMonth(LocalDateTime start, LocalDateTime end) {
+
+        return from(order)
+                .select(Projections.constructor(
+                        TotalSaleYearDto.class,
+                        new CaseBuilder()
+                                .when(orderStateCode.codeName
+                                        .eq(CANCEL_PAYMENT.getName()))
+                                .then(1)
+                                .otherwise((Integer) null)
+                                .count()
+                                .as("cancelPaymentCnt"),
+                        new CaseBuilder()
+                                .when(orderStateCode.codeName
+                                        .eq(CANCEL_PAYMENT.getName()))
+                                .then(order.orderPrice)
+                                .otherwise(0L)
+                                .sum()
+                                .as("cancelPaymentAmount"),
+                        new CaseBuilder()
+                                .when(orderStateCode.codeName
+                                        .eq(CANCEL.getName()))
+                                .then(1)
+                                .otherwise((Integer) null)
+                                .count()
+                                .as("cancelOrderCnt"),
+                        new CaseBuilder()
+                                .when(orderStateCode.codeName
+                                        .eq(CONFIRMED.getName()))
+                                .then(1)
+                                .otherwise((Integer) null)
+                                .count()
+                                .as("saleCnt"),
+                        new CaseBuilder()
+                                .when(orderStateCode.codeName
+                                        .eq(CONFIRMED.getName()))
+                                .then(order.orderPrice)
+                                .otherwise(0L)
+                                .sum()
+                                .as("saleAmount"),
+                        new CaseBuilder()
+                                .when(orderStateCode.codeName.eq(CONFIRMED.getName()))
+                                .then(order.orderPrice)
+                                .when(orderStateCode.codeName.eq(CANCEL_PAYMENT.getName()))
+                                .then((order.orderPrice.multiply(-1)))
+                                .otherwise(0L)
+                                .sum()
+                                .as("total"),
+                        order.createdAt.month()
+                                .as("month")
+                ))
+                .innerJoin(order.orderStateCode, orderStateCode)
+                .groupBy(order.createdAt.month())
+                .orderBy(order.createdAt.month().asc())
+                .where(order.createdAt.between(start, end))
+                .fetch();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<OrderCntResponseDto> getOrderTime() {
+        return from(order)
+                .select(Projections.constructor(
+                        OrderCntResponseDto.class,
+                        order.createdAt.hour(),
+                        order.orderNo.count())
+                )
+                .from(order)
+                .groupBy(order.createdAt.hour())
+                .orderBy(order.createdAt.hour().asc())
+                .fetch();
+    }
+
+
 }

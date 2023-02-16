@@ -67,6 +67,9 @@ public class OrderProduct {
     @Column(name = "order_product_point_save")
     private Long pointSave;
 
+    @Column(name = "order_product_exchange_reason")
+    private String exchangeReason;
+
     /**
      * 주문상품의 상태를 변경하는 메소드 입니다.
      *
@@ -75,5 +78,9 @@ public class OrderProduct {
     public void modifyOrderProductState(
             OrderProductStateCode orderProductStateCode) {
         this.orderProductStateCode = orderProductStateCode;
+    }
+
+    public void updateExchangeReason(String exchangeReason) {
+        this.exchangeReason = exchangeReason;
     }
 }

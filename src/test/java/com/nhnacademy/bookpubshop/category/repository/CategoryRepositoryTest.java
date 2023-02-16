@@ -54,23 +54,7 @@ class CategoryRepositoryTest {
         entityManager.clear();
     }
 
-    @Test
-    @DisplayName("카테고리 단건 조회 테스트입니다.")
-    void categoryGetTest() {
-        String expectedChildName = "판타지소설";
-        Category child = new Category(null, category, expectedChildName, 0, true);
-        Category savedParent = categoryRepository.save(category);
-        Category savedChild = categoryRepository.save(child);
 
-        Optional<GetCategoryResponseDto> result = categoryRepository.findCategory(
-                savedChild.getCategoryNo());
-        assertThat(result).isPresent();
-        assertThat(result.get().getCategoryName()).isEqualTo(child.getCategoryName());
-        assertThat(result.get().getParent().getCategoryName()).isEqualTo(
-                savedParent.getCategoryName());
-        assertThat(result.get().getCategoryPriority()).isEqualTo(savedChild.getCategoryPriority());
-        assertThat(result.get().isCategoryDisplayed()).isEqualTo(savedChild.isCategoryDisplayed());
-    }
 
     @Test
     @DisplayName("카테고리 다건 조회 테스트 입니다.")

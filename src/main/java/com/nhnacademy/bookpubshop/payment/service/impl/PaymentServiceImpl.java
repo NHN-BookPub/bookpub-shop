@@ -41,6 +41,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @EnableAsync
+@Slf4j
 @Transactional(readOnly = true)
 public class PaymentServiceImpl implements PaymentService {
     private final OrderProductRepository orderProductRepository;
@@ -175,6 +177,25 @@ public class PaymentServiceImpl implements PaymentService {
 
             orderProduct.modifyOrderProductState(orderProductStateCode);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void exchangeOrderProduct(OrderProductRefundRequestDto exchangeRequestDto) {
+        OrderProduct orderProduct =
+                orderProductRepository.getOrderProduct(exchangeRequestDto.getOrderProductNo())
+                .orElseThrow(NotFoundOrderProductException::new);
+
+        OrderProductStateCode orderProductStateCode =
+                orderProductStateRepository
+                        .findByCodeName(OrderProductState.WAITING_EXCHANGE.getName())
+                .orElseThrow(NotFoundOrderProductStateException::new);
+
+        orderProduct.updateExchangeReason(exchangeRequestDto.getCancelReason());
+        orderProduct.modifyOrderProductState(orderProductStateCode);
     }
 
     /**

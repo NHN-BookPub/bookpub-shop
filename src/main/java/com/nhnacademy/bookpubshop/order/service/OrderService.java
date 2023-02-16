@@ -115,4 +115,11 @@ public interface OrderService {
      * @param memberNo       회원번호.
      */
     void confirmOrderProduct(String orderProductNo, String memberNo);
+
+    /**
+     * 주문상품의 상태를 교환완료로 변경시켜주는 메소드.
+     * '
+     * @param orderProductNo 주문상품번호.
+     */
+    void confirmExchange(String orderProductNo);
 }

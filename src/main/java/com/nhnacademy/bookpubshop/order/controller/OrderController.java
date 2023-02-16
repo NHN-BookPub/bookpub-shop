@@ -13,6 +13,7 @@ import com.nhnacademy.bookpubshop.order.service.OrderService;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
  **/
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class OrderController {
     private final OrderService orderService;
 
@@ -59,6 +61,8 @@ public class OrderController {
      */
     @PostMapping("/api/orders")
     public ResponseEntity<Long> createOrder(@Valid @RequestBody CreateOrderRequestDto request) {
+        log.warn("파싱 : {}", request.getCouponAmount().toString());
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(orderService.createOrder(request));
@@ -179,16 +183,30 @@ public class OrderController {
     /**
      * 주문상품 상태를 구매확정으로 만드는 메소드.
      *
-     * @param memberNo 회원번호.
+     * @param memberNo       회원번호.
      * @param orderProductNo 주문상품번호.
      * @return 성공상태.
      */
-    @MemberAndAuth
+    @MemberAuth
     @PutMapping("/token/orders/order-product/{orderProductNo}/member/{memberNo}")
     public ResponseEntity<Void> confirmOrderProduct(
             @PathVariable String memberNo, @PathVariable String orderProductNo) {
         orderService.confirmOrderProduct(orderProductNo, memberNo);
         return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
+    }
+
+    /**
+     * 교환 수락 메소드.
+     *
+     * @param orderProductNo 주문상품번호.
+     * @return 성공상태번호.
+     */
+    @AdminAuth
+    @PostMapping("/token/orders/order-product/{orderProductNo}")
+    public ResponseEntity<Void> confirmExchange(@PathVariable String orderProductNo) {
+        orderService.confirmExchange(orderProductNo);
+        return ResponseEntity.status(HttpStatus.OK)
                 .build();
     }
 }

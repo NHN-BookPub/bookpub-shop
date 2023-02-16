@@ -8,6 +8,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -123,7 +124,7 @@ class PaymentControllerTest {
     void refundOrderFailTest() throws Exception {
         doNothing().when(paymentService).refundOrder(any());
         RefundRequestDto dto = new RefundRequestDto(null, "resson");
-        mockMvc.perform(post("/token/payment/order")
+        mockMvc.perform(post("/token/payment/order/{memberNo}}",1L)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -140,7 +141,7 @@ class PaymentControllerTest {
     void refundOrderFailTest2() throws Exception {
         doNothing().when(paymentService).refundOrder(any());
         RefundRequestDto dto = new RefundRequestDto(1L, null);
-        mockMvc.perform(post("/token/payment/order")
+        mockMvc.perform(post("/token/payment/order/{memberNo}",1L)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -157,7 +158,7 @@ class PaymentControllerTest {
     void refundOrderFailTest3() throws Exception {
         doNothing().when(paymentService).refundOrder(any());
         RefundRequestDto dto = new RefundRequestDto(1L, "");
-        mockMvc.perform(post("/token/payment/order")
+        mockMvc.perform(post("/token/payment/order/{memberNo}",1L)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -171,10 +172,10 @@ class PaymentControllerTest {
 
     @Test
     @DisplayName("주문환불 validation cancelReason 없음")
-      void refundOrderSuccess() throws Exception {
+    void refundOrderSuccess() throws Exception {
         doNothing().when(paymentService).refundOrder(any());
         RefundRequestDto dto = new RefundRequestDto(1L, "sadfsafdf");
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/token/payment/order")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/token/payment/order/{memberNo}",1L)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -197,7 +198,7 @@ class PaymentControllerTest {
         ReflectionTestUtils.setField(dto, "orderProductNo", 1L);
         ReflectionTestUtils.setField(dto, "cancelReason", "cancelReason");
 
-        mockMvc.perform(post("/token/payment/order-product")
+        mockMvc.perform(post("/token/payment/order-product/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -217,7 +218,7 @@ class PaymentControllerTest {
         ReflectionTestUtils.setField(dto, "orderProductNo", null);
         ReflectionTestUtils.setField(dto, "cancelReason", "cancelReason");
 
-        mockMvc.perform(post("/token/payment/order-product")
+        mockMvc.perform(post("/token/payment/order-product/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -237,7 +238,7 @@ class PaymentControllerTest {
         ReflectionTestUtils.setField(dto, "orderProductNo", 1L);
         ReflectionTestUtils.setField(dto, "cancelReason", null);
 
-        mockMvc.perform(post("/token/payment/order-product")
+        mockMvc.perform(post("/token/payment/order-product/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -257,7 +258,7 @@ class PaymentControllerTest {
         ReflectionTestUtils.setField(dto, "orderProductNo", 1L);
         ReflectionTestUtils.setField(dto, "cancelReason", "");
 
-        mockMvc.perform(post("/token/payment/order-product")
+        mockMvc.perform(post("/token/payment/order-product/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is4xxClientError())
@@ -277,7 +278,7 @@ class PaymentControllerTest {
         ReflectionTestUtils.setField(dto, "orderProductNo", 1L);
         ReflectionTestUtils.setField(dto, "cancelReason", "취소사유");
 
-        mockMvc.perform(post("/token/payment/order-product")
+        mockMvc.perform(post("/token/payment/order-product/members/{memberNo}", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().is2xxSuccessful())

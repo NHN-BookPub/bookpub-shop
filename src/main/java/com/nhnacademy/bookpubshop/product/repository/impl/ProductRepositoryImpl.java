@@ -460,8 +460,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                                         .eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
                         .orderBy(product.productPriority.asc())
                         .where(productTypeStateCode.codeNo.eq(typeNo))
-                        .where(product.productSaleStateCode.codeCategory
-                                .eq(ProductSaleState.SALE.getName()))
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
                         .fetch();
@@ -469,16 +467,15 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
         setCategoryAndAuthors(content);
 
         JPQLQuery<Long> count = from(product)
-                .leftJoin(product.productCategories)
-                .leftJoin(product.productAuthors)
-                .leftJoin(product.productTags)
-                .leftJoin(product.productSaleStateCode)
-                .innerJoin(productTypeStateCode).on(product.productTypeStateCode.codeNo
-                        .eq(productTypeStateCode.codeNo))
-                .select(product.count())
+                .innerJoin(product.productSaleStateCode, productSaleStateCode)
+                .on(productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
+                .innerJoin(productTypeStateCode).on(productTypeStateCode.codeNo.eq(product.productTypeStateCode.codeNo))
+                .leftJoin(file).on(product.productNo.eq(file.product.productNo)
+                        .and(file.fileCategory
+                                .eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
+                .orderBy(product.productPriority.asc())
                 .where(productTypeStateCode.codeNo.eq(typeNo))
-                .where(product.productSaleStateCode.codeCategory
-                        .eq(ProductSaleState.SALE.getName()));
+                .select(product.count());
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }

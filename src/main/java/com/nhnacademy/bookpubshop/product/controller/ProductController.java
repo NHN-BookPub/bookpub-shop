@@ -256,7 +256,7 @@ public class ProductController {
      * @param memberNo 멤버번호
      * @return 200 코드
      */
-    @GetMapping("/token/product/{memberNo}/ebooks/")
+    @GetMapping("/token/product/{memberNo}/ebooks")
     @MemberAndAuth
     public ResponseEntity<PageResponse<GetProductByCategoryResponseDto>> getEbooks(
             @PageableDefault Pageable pageable, @PathVariable Long memberNo) {
@@ -399,9 +399,10 @@ public class ProductController {
      * @return 200 코드
      */
     @MemberAndAuth
-    @GetMapping("/token/downloads/e-book/{productNo}")
+    @GetMapping("/token/downloads/e-book/{productNo}/{memberNo}")
     public ResponseEntity<GetDownloadInfo> ebookDownload(
-            @PathVariable("productNo") Long productNo) {
+            @PathVariable("productNo") Long productNo,
+            @PathVariable("memberNo") Long memberNo) {
         GetDownloadInfo ebookInfo = productService.getEBookInfo(productNo);
 
         return ResponseEntity.ok()

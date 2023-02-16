@@ -83,7 +83,7 @@ class OrderSubscribeRepositoryTest {
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
         orderProduct = new OrderProduct(
                 null, product, order, orderProductStateCode, 1,
-                100L, 5000L, "테스트", 100L);
+                100L, 5000L, "테스트", 100L,"");
         orderSubscribe = OrderSubscribeDummy.dummy(subscribe, order, orderSubscribeStateCode);
 
         entityManager.persist(productPolicy);
