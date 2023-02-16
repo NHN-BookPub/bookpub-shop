@@ -1808,7 +1808,7 @@ class ProductControllerTest {
                 .thenReturn(info);
 
         // then
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/token/downloads/e-book/{productNo}", 1)
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/token/downloads/e-book/{productNo}/{memberNo}", 1, 1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("path").value(info.getPath()))
@@ -1820,7 +1820,8 @@ class ProductControllerTest {
                 .andDo(document("product-get-EBook-success",
                         preprocessResponse(prettyPrint()),
                         pathParameters(
-                                parameterWithName("productNo").description("상품 번호")
+                                parameterWithName("productNo").description("상품 번호"),
+                                parameterWithName("memberNo").description("멤버 번호")
                         ),
                         responseFields(
                                 fieldWithPath("path").description("오브젝트 스토리지 경로"),
