@@ -176,16 +176,15 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                         order.orderPrice
                 ))
                 .innerJoin(order.orderStateCode, orderStateCode)
-                .where(order.member.memberNo.eq(memberNo))
-                .orderBy(order.createdAt.desc())
-                .limit(pageable.getPageSize())
-                .offset(pageable.getOffset());
+                .innerJoin(order.member, member)
+                .where(member.memberNo.eq(memberNo))
+                .orderBy(order.createdAt.desc());
 
-        JPQLQuery<Long> count =
-                select(order.orderNo.count())
-                        .from(order)
-                        .innerJoin(order.member, member)
-                        .where(member.memberNo.eq(memberNo));
+        JPQLQuery<Long> count = from(order)
+                .innerJoin(order.orderStateCode, orderStateCode)
+                .innerJoin(order.member, member)
+                .where(member.memberNo.eq(memberNo))
+                .select(order.count());
 
         return PageableExecutionUtils.getPage(query.fetch(), pageable, count::fetchOne);
     }
