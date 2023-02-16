@@ -126,9 +126,11 @@ public class OrderController {
     @GetMapping("/token/orders/{orderNo}/members/{memberNo}")
     public ResponseEntity<GetOrderDetailResponseDto> getOrderDetailByOrderNo(
             @PathVariable Long orderNo) {
+        GetOrderDetailResponseDto response = orderService.getOrderDetailById(orderNo);
+
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(orderService.getOrderDetailById(orderNo));
+                .body(response);
     }
 
     /**
@@ -157,7 +159,7 @@ public class OrderController {
             @RequestParam String phoneNo) {
         GetOrderDetailResponseDto response = orderService.getOrderDetailByOrderId(orderId);
 
-        if (!response.getBuyerNumber().equals(phoneNo)) {
+        if (!response.getBuyerNumber().equals(phoneNo) || response.getMemberNo() != null) {
             response = null;
         }
 
