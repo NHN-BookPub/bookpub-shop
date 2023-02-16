@@ -8,7 +8,9 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,7 +48,7 @@ public class PaymentController {
      * 유효한 주문인지 검증하는 메소드.
      *
      * @param orderId 주문 id.
-     * @param amount 주문금액.
+     * @param amount  주문금액.
      * @return 유효한 주문인지 아닌지.
      */
     @PostMapping("/api/payment/verify")
@@ -74,11 +76,28 @@ public class PaymentController {
      *
      * @return void
      */
-    @PostMapping("/token/payment/order-product")
+    @PostMapping("/token/payment/order-product/members/{memberNo}")
     @MemberAndAuth
     public ResponseEntity<Void> refundOrderProduct(
-            @Valid @RequestBody OrderProductRefundRequestDto refundRequestDto) {
+            @Valid @RequestBody OrderProductRefundRequestDto refundRequestDto,
+            @PathVariable String memberNo) {
         paymentService.refundOrderProduct(refundRequestDto);
+        return ResponseEntity.status(HttpStatus.OK)
+                .build();
+    }
+
+
+    /**
+     * 주문 상품 환불 신청하는 api.
+     *
+     * @return void
+     */
+    @PutMapping("/token/payment/order-product/members/{memberNo}")
+    @MemberAndAuth
+    public ResponseEntity<Void> exchangeOrderProduct(
+            @Valid @RequestBody OrderProductRefundRequestDto refundRequestDto,
+            @PathVariable String memberNo) {
+        paymentService.exchangeOrderProduct(refundRequestDto);
         return ResponseEntity.status(HttpStatus.OK)
                 .build();
     }

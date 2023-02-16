@@ -178,6 +178,25 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional
+    public void exchangeOrderProduct(OrderProductRefundRequestDto exchangeRequestDto) {
+        OrderProduct orderProduct =
+                orderProductRepository.getOrderProduct(exchangeRequestDto.getOrderProductNo())
+                .orElseThrow(NotFoundOrderProductException::new);
+
+        OrderProductStateCode orderProductStateCode =
+                orderProductStateRepository
+                        .findByCodeName(OrderProductState.WAITING_EXCHANGE.getName())
+                .orElseThrow(NotFoundOrderProductStateException::new);
+
+        orderProduct.updateExchangeReason(exchangeRequestDto.getCancelReason());
+        orderProduct.modifyOrderProductState(orderProductStateCode);
+    }
+
+    /**
      * 주문 상품이 전부 환불되었는지에 따라 결제, 주문의 상태도 변경하기 위한 로직이 담겨있는 메소드 입니다.
      *
      * @param requestDto 환불dto.
