@@ -63,7 +63,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,6 +143,7 @@ class OrderControllerTest {
         order = OrderDummy.dummy(member, pricePolicy, packPricePolicy, orderStateCode);
         detailDto = new GetOrderDetailResponseDto(
                 1L,
+                order.getMember().getMemberNo(),
                 order.getOrderStateCode().getCodeName(),
                 order.getOrderBuyer(),
                 order.getBuyerPhone(),
@@ -522,6 +522,7 @@ class OrderControllerTest {
                         ),
                         responseFields(
                                 fieldWithPath("orderNo").description("주문번호"),
+                                fieldWithPath("memberNo").description("회원번호"),
                                 fieldWithPath("orderProducts").description("주문상품"),
                                 fieldWithPath("orderState").description("결제완료"),
                                 fieldWithPath("buyerName").description("구매자"),

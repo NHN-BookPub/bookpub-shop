@@ -58,6 +58,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                         .select(Projections.constructor(
                                 GetOrderDetailResponseDto.class,
                                 order.orderNo,
+                                member.memberNo,
                                 orderStateCode.codeName,
                                 order.orderBuyer,
                                 order.buyerPhone,
@@ -78,6 +79,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                                 order.orderName,
                                 order.orderId
                         ))
+                        .leftJoin(member).on(member.memberNo.eq(order.member.memberNo))
                         .innerJoin(order.orderStateCode, orderStateCode)
                         .innerJoin(order.deliveryPricePolicy, packagingPricePolicy)
                         .innerJoin(order.packagingPricePolicy, deliveryPricePolicy)
@@ -95,6 +97,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                         .select(Projections.constructor(
                                 GetOrderDetailResponseDto.class,
                                 order.orderNo,
+                                member.memberNo,
                                 orderStateCode.codeName,
                                 order.orderBuyer,
                                 order.buyerPhone,
@@ -115,6 +118,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                                 order.orderName,
                                 order.orderId
                         ))
+                        .leftJoin(order.member, member)
                         .innerJoin(order.orderStateCode, orderStateCode)
                         .innerJoin(order.deliveryPricePolicy, packagingPricePolicy)
                         .innerJoin(order.packagingPricePolicy, deliveryPricePolicy)
@@ -262,6 +266,4 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                 .select(orderProduct)
                 .where(order.orderNo.eq(orderNo)).fetch();
     }
-
-
 }

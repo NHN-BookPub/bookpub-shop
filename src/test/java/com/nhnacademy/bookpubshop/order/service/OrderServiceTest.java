@@ -216,6 +216,7 @@ class OrderServiceTest {
 
         detailDto = new GetOrderDetailResponseDto(
                 1L,
+                order.getMember().getMemberNo(),
                 order.getOrderStateCode().getCodeName(),
                 order.getOrderBuyer(),
                 order.getBuyerPhone(),

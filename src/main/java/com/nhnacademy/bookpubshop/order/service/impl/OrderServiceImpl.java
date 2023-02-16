@@ -81,6 +81,7 @@ public class OrderServiceImpl implements OrderService {
     public GetOrderDetailResponseDto getOrderDetailById(Long orderNo) {
         GetOrderDetailResponseDto response = orderRepository.getOrderDetailById(orderNo)
                 .orElseThrow(OrderNotFoundException::new);
+
         response.addProducts(productRepository.getProductListByOrderNo(orderNo));
 
         return response;
