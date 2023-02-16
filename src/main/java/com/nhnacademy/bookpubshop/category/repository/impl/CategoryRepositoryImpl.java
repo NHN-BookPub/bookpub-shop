@@ -9,7 +9,6 @@ import com.nhnacademy.bookpubshop.category.repository.CategoryRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -30,23 +29,6 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
 
     QCategory parent = new QCategory("parent");
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Optional<GetCategoryResponseDto> findCategory(Integer categoryNo) {
-        QCategory category = QCategory.category;
-
-        return Optional.ofNullable(from(category, parent)
-                .where(category.categoryNo.eq(categoryNo))
-                .select(Projections.constructor(GetCategoryResponseDto.class, category.categoryNo,
-                        category.categoryName,
-                        Projections.constructor(GetCategoryResponseDto.class, parent.categoryNo,
-                                parent.categoryName), category.categoryPriority,
-                        category.categoryDisplayed))
-                .leftJoin(category.parentCategory, parent).on(parent.eq(category.parentCategory))
-                .fetchFirst());
-    }
 
     /**
      * {@inheritDoc}
