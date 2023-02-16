@@ -19,7 +19,8 @@ public enum OrderState implements States {
     COMPLETE_DELIVERY("배송완료", true, "상품 배송 완료"),
     CANCEL_DELIVERY("배송취소", true, "상품 배송 취소"),
     CANCEL_PAYMENT("결제취소", true, "결제 취소"),
-    CONFIRMED("구매확정", true, "구매 확정 상태");
+    CONFIRMED("구매확정", true, "구매 확정 상태"),
+    CANCEL("주문취소", true, "주문 취소 상태");
 
     private final String name;
     private final boolean isUsed;
