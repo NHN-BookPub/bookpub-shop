@@ -157,15 +157,9 @@ public class OrderController {
     public ResponseEntity<GetOrderDetailResponseDto> getOrderDetailByOrderId(
             @PathVariable String orderId,
             @RequestParam String phoneNo) {
-        GetOrderDetailResponseDto response = orderService.getOrderDetailByOrderId(orderId);
-
-        if (!response.getBuyerNumber().equals(phoneNo) || response.getMemberNo() != null) {
-            response = null;
-        }
-
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(response);
+                .body(orderService.getOrderDetailByOrderId(orderId));
     }
 
     /**

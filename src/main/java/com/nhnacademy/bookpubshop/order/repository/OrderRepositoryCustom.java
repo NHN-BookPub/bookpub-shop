@@ -87,7 +87,7 @@ public interface OrderRepositoryCustom {
      * 최종 결제 성공 후 메인화면에서 띄워줄 정보.
      *
      * @param orderId 주문아이디.
-     * @return 주문,결제 정보.
+     * @return 주문, 결제 정보.
      */
     Optional<GetOrderAndPaymentResponseDto> getOrderAndPayment(String orderId);
 
