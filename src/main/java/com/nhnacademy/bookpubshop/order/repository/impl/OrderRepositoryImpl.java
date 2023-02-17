@@ -3,7 +3,6 @@ package com.nhnacademy.bookpubshop.order.repository.impl;
 import static com.nhnacademy.bookpubshop.state.OrderState.CANCEL;
 import static com.nhnacademy.bookpubshop.state.OrderState.CANCEL_PAYMENT;
 import static com.nhnacademy.bookpubshop.state.OrderState.CONFIRMED;
-import static com.querydsl.jpa.JPAExpressions.select;
 
 import com.nhnacademy.bookpubshop.card.entity.QCard;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
@@ -177,16 +176,12 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                 ))
                 .innerJoin(order.orderStateCode, orderStateCode)
                 .innerJoin(order.member, member)
-                .where(member.memberNo.eq(memberNo))
-                .orderBy(order.createdAt.desc());
+                .where(order.member.memberNo.eq(memberNo))
+                .orderBy(order.createdAt.desc())
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset());
 
-        JPQLQuery<Long> count = from(order)
-                .innerJoin(order.orderStateCode, orderStateCode)
-                .innerJoin(order.member, member)
-                .where(member.memberNo.eq(memberNo))
-                .select(order.count());
-
-        return PageableExecutionUtils.getPage(query.fetch(), pageable, count::fetchOne);
+        return PageableExecutionUtils.getPage(query.fetch(), pageable, query::fetchCount);
     }
 
     /**
