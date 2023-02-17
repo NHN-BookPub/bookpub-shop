@@ -1804,7 +1804,7 @@ class ProductControllerTest {
         GetDownloadInfo info = new GetDownloadInfo("object storage path", "token", "파일 본명", "파일 저장명", "파일 확장자");
 
         // when
-        when(productService.getEBookInfo(anyLong()))
+        when(productService.getEbookInfo(anyLong()))
                 .thenReturn(info);
 
         // then
@@ -1833,7 +1833,7 @@ class ProductControllerTest {
                 ));
 
         verify(productService, times(1))
-                .getEBookInfo(anyLong());
+                .getEbookInfo(anyLong());
     }
 
     @Test
@@ -1941,7 +1941,7 @@ class ProductControllerTest {
         MockMultipartFile eBook = new MockMultipartFile("ebook", "imageName.jpeg", "image/jpeg", imageContent.getBytes());
 
         // when
-        doNothing().when(productService).modifyProductEBook(1L, eBook);
+        doNothing().when(productService).modifyProductEbook(1L, eBook);
 
         // then
         mockMvc.perform(multipart("/token/products/{productNo}/e-book", 1)

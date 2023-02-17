@@ -55,7 +55,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * 상품 서비스 구현체.
  *
- * @author : 여운석, 박경서, 정유진
+ * @author : 여운석, 박경서, 정유진, 임태원
  * @since : 1.0
  **/
 @Service
@@ -406,7 +406,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional(readOnly = true)
-    public GetDownloadInfo getEBookInfo(Long productNo) {
+    public GetDownloadInfo getEbookInfo(Long productNo) {
         String filePath = productRepository.getFilePath(productNo);
 
         return fileManagement.downloadFileInfo(filePath);
@@ -429,7 +429,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional
-    public void modifyProductEBook(Long productNo, MultipartFile eBook) {
+    public void modifyProductEbook(Long productNo, MultipartFile eBook) {
         Product product = productRepository.findById(productNo)
                 .orElseThrow(ProductNotFoundException::new);
 
@@ -592,5 +592,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<GetProductByCategoryResponseDto> getProductsByTypes(Integer typeNo, Pageable pageable) {
         return productRepository.getProductsByTypes(typeNo, pageable);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isPurchaseUser(String memberNo, String productNo) {
+        return productRepository.isPurchaseUser(memberNo, productNo);
     }
 }

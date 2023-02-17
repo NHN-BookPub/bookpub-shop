@@ -403,7 +403,7 @@ public class ProductController {
     public ResponseEntity<GetDownloadInfo> ebookDownload(
             @PathVariable("productNo") Long productNo,
             @PathVariable("memberNo") Long memberNo) {
-        GetDownloadInfo ebookInfo = productService.getEBookInfo(productNo);
+        GetDownloadInfo ebookInfo = productService.getEbookInfo(productNo);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
@@ -439,7 +439,7 @@ public class ProductController {
     @PutMapping("/token/products/{productNo}/e-book")
     public ResponseEntity<Void> modifyProductEbook(@PathVariable("productNo") Long productNo,
                                                    @RequestPart MultipartFile ebook) {
-        productService.modifyProductEBook(productNo, ebook);
+        productService.modifyProductEbook(productNo, ebook);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .build();
@@ -544,5 +544,20 @@ public class ProductController {
 
         return ResponseEntity.ok()
                 .build();
+    }
+
+    /**
+     * ebook 구매 이력이 있는 사용자인지 확인하는 컨트롤러.
+     *
+     * @param memberNo 회원번호.
+     * @param productNo 상품번호.
+     * @return boolean.
+     */
+    @GetMapping("/api/products/{productNo}/{memberNo}")
+    public ResponseEntity<Boolean> isPurchaseUser(@PathVariable String memberNo,
+                                                  @PathVariable String productNo) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(productService.isPurchaseUser(memberNo, productNo));
     }
 }
