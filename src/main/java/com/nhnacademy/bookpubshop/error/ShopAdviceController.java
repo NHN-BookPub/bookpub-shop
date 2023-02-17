@@ -92,6 +92,7 @@ public class ShopAdviceController {
     public ResponseEntity<ErrorResponse> errorhandler() {
         log.warn("MAIN Bad Request");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse("MAIN", "MAIN"));
     }
 
@@ -116,6 +117,7 @@ public class ShopAdviceController {
     public ResponseEntity<ErrorResponse> categoryError() {
         log.warn("category page badRequest");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(CategoryAlreadyExistsException.MESSAGE, "CATEGORY"));
     }
 
@@ -123,6 +125,7 @@ public class ShopAdviceController {
     public ResponseEntity<ErrorResponse> authority() {
         log.warn("authority badrequest");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(AddressNotFoundException.MESSAGE, "AUTHORITY"));
     }
 
@@ -130,6 +133,7 @@ public class ShopAdviceController {
     public ResponseEntity<ErrorResponse> adminException() {
         log.warn("Admin Page bad request");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(NotFoundPurchasesException.MESSAGE, "ADMIN"));
     }
 
@@ -137,6 +141,7 @@ public class ShopAdviceController {
     public ResponseEntity<ErrorResponse> tagError() {
         log.warn("Tag bad Request");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(TagNameDuplicatedException.ERROR_MESSAGE, "TAG"));
     }
 
@@ -144,6 +149,7 @@ public class ShopAdviceController {
     public ResponseEntity<ErrorResponse> tierError() {
         log.warn("tier bad request");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(TierAlreadyExists.MESSAGE, "TIER"));
     }
 
