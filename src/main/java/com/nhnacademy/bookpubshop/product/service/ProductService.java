@@ -112,6 +112,7 @@ public interface ProductService {
 
     /**
      * 멤버가 구매한 모든 이북이 반환됩니다.
+     *
      * @param pageable 페이징
      * @param memberNo 멤버번호
      * @return 이북리스트
@@ -180,7 +181,7 @@ public interface ProductService {
      * @param productNo 상품 번호
      * @return E-Book 정보
      */
-    GetDownloadInfo getEBookInfo(Long productNo);
+    GetDownloadInfo getEbookInfo(Long productNo);
 
     /**
      * 상품 설명 수정.
@@ -194,9 +195,9 @@ public interface ProductService {
      * E-Book 파일 수정.
      *
      * @param productNo 상품 번호
-     * @param eBook     변경할 E-Book
+     * @param ebook     변경할 E-Book
      */
-    void modifyProductEBook(Long productNo, MultipartFile eBook);
+    void modifyProductEbook(Long productNo, MultipartFile ebook);
 
     /**
      * Image 파일 수정.
@@ -253,4 +254,13 @@ public interface ProductService {
      * @return 상품 유형별 리스트
      */
     Page<GetProductByCategoryResponseDto> getProductsByTypes(Integer typeNo, Pageable pageable);
+
+    /**
+     * ebook 구매 이력이 있는지 없는지 확인.
+     *
+     * @param memberNo 회원번호.
+     * @param productNo 상품번호.
+     * @return boolean.
+     */
+    boolean isPurchaseUser(String memberNo, String productNo);
 }
