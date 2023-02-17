@@ -38,6 +38,48 @@ public class GetOrderDetailResponseDto {
     private String orderId;
 
     public GetOrderDetailResponseDto(Long orderNo,
+                                     String orderState,
+                                     String buyerName,
+                                     String buyerNumber,
+                                     String recipientName,
+                                     String recipientNumber,
+                                     String addressBase,
+                                     String addressDetail,
+                                     LocalDateTime createdAt,
+                                     LocalDateTime receivedAt,
+                                     String invoiceNo,
+                                     boolean packaged,
+                                     Long packageAmount,
+                                     Long deliveryAmount,
+                                     String orderRequest,
+                                     Long pointAmount,
+                                     Long couponAmount,
+                                     Long totalAmount,
+                                     String orderName,
+                                     String orderId) {
+        this.orderNo = orderNo;
+        this.orderState = orderState;
+        this.buyerName = buyerName;
+        this.buyerNumber = buyerNumber;
+        this.recipientName = recipientName;
+        this.recipientNumber = recipientNumber;
+        this.addressBase = addressBase;
+        this.addressDetail = addressDetail;
+        this.createdAt = createdAt;
+        this.receivedAt = receivedAt;
+        this.invoiceNo = invoiceNo;
+        this.packaged = packaged;
+        this.packageAmount = packageAmount;
+        this.deliveryAmount = deliveryAmount;
+        this.orderRequest = orderRequest;
+        this.pointAmount = pointAmount;
+        this.couponAmount = couponAmount;
+        this.totalAmount = totalAmount;
+        this.orderName = orderName;
+        this.orderId = orderId;
+    }
+
+    public GetOrderDetailResponseDto(Long orderNo,
                                      Long memberNo,
                                      String orderState,
                                      String buyerName,

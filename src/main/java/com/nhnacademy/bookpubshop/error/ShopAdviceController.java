@@ -53,7 +53,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * @since : 1.0
  */
 @Log4j2
-@RestControllerAdvice(basePackages = "com.nhnacademy.bookpubshop")
+@RestControllerAdvice
 public class ShopAdviceController {
 
     /**
@@ -79,17 +79,18 @@ public class ShopAdviceController {
 
     @ExceptionHandler(value =
             {
-                    AddressNotFoundException.class, NotFoundAuthorException.class,
-                    NotSupportedCompanyException.class, CategoryNotFoundException.class,
-                    CouponNotFoundException.class, NotFoundCouponException.class,
-                    CouponMonthNotFoundException.class, CouponTemplateNotFoundException.class,
-                    MemberNotFoundException.class, NicknameAlreadyExistsException.class,
-                    PersonalInquiryNotFoundException.class, ProductNotFoundException.class,
-                    ReviewNotFoundException.class, SubscribeNotFoundException.class,
-                    TagNotFoundException.class, OrderNotFoundException.class,
+                AddressNotFoundException.class, NotFoundAuthorException.class,
+                NotSupportedCompanyException.class, CategoryNotFoundException.class,
+                CouponNotFoundException.class, NotFoundCouponException.class,
+                CouponMonthNotFoundException.class, CouponTemplateNotFoundException.class,
+                MemberNotFoundException.class, NicknameAlreadyExistsException.class,
+                PersonalInquiryNotFoundException.class, ProductNotFoundException.class,
+                ReviewNotFoundException.class, SubscribeNotFoundException.class,
+                TagNotFoundException.class, OrderNotFoundException.class,
 
             })
     public ResponseEntity<ErrorResponse> errorhandler() {
+        log.warn("MAIN Bad Request");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse("MAIN", "MAIN"));
@@ -97,22 +98,24 @@ public class ShopAdviceController {
 
     @ExceptionHandler(value =
             {
-                    IdAlreadyExistsException.class,
-                    NotFoundOrderStateException.class, NotFoundPaymentStateException.class,
-                    NotFoundPaymentTypeException.class, NotFoundProductPolicyException.class,
-                    NotFoundPricePolicyException.class, NotFoundStateCodeException.class,
-                    NotFoundStateCodesException.class, CouponTypeNotFoundException.class,
-                    CouponStateCodeNotFoundException.class, CouponPolicyNotFoundException.class,
-                    ReviewPolicyNotFoundException.class, ReviewPolicyUsedNotFoundException.class,
-                    WishlistNotFoundException.class
+                IdAlreadyExistsException.class,
+                NotFoundOrderStateException.class, NotFoundPaymentStateException.class,
+                NotFoundPaymentTypeException.class, NotFoundProductPolicyException.class,
+                NotFoundPricePolicyException.class, NotFoundStateCodeException.class,
+                NotFoundStateCodesException.class, CouponTypeNotFoundException.class,
+                CouponStateCodeNotFoundException.class, CouponPolicyNotFoundException.class,
+                ReviewPolicyNotFoundException.class, ReviewPolicyUsedNotFoundException.class,
+                WishlistNotFoundException.class
             })
     public ResponseEntity<Void> badRequest() {
+        log.warn("only BadRequest");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .build();
     }
 
     @ExceptionHandler(value = CategoryAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> categoryError() {
+        log.warn("category page badRequest");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(CategoryAlreadyExistsException.MESSAGE, "CATEGORY"));
@@ -120,6 +123,7 @@ public class ShopAdviceController {
 
     @ExceptionHandler(value = AuthorityNotFoundException.class)
     public ResponseEntity<ErrorResponse> authority() {
+        log.warn("authority badrequest");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(AddressNotFoundException.MESSAGE, "AUTHORITY"));
@@ -127,6 +131,7 @@ public class ShopAdviceController {
 
     @ExceptionHandler(value = NotFoundPurchasesException.class)
     public ResponseEntity<ErrorResponse> adminException() {
+        log.warn("Admin Page bad request");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(NotFoundPurchasesException.MESSAGE, "ADMIN"));
@@ -134,6 +139,7 @@ public class ShopAdviceController {
 
     @ExceptionHandler(value = TagNameDuplicatedException.class)
     public ResponseEntity<ErrorResponse> tagError() {
+        log.warn("Tag bad Request");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(TagNameDuplicatedException.ERROR_MESSAGE, "TAG"));
@@ -141,6 +147,7 @@ public class ShopAdviceController {
 
     @ExceptionHandler(value = TierAlreadyExists.class)
     public ResponseEntity<ErrorResponse> tierError() {
+        log.warn("tier bad request");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(TierAlreadyExists.MESSAGE, "TIER"));
@@ -148,6 +155,7 @@ public class ShopAdviceController {
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<Void> error() {
+        log.error("알수없는 에러");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .build();
     }

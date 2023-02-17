@@ -76,7 +76,8 @@ public interface ProductRepositoryCustom {
      * @param pageable   페이징 정보
      * @return 페이징을 담은 상품들
      */
-    Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo, Pageable pageable);
+    Page<GetProductByCategoryResponseDto> getProductsByCategory(
+            Integer categoryNo, Pageable pageable);
 
     /**
      * 모든 Ebook 상품들을 반환합니다.
@@ -111,4 +112,14 @@ public interface ProductRepositoryCustom {
      * @return 상품
      */
     Page<GetProductByCategoryResponseDto> getProductsByTypes(Integer typeNo, Pageable pageable);
+
+    /**
+     * 상품을 구매한 적 있는 유저인지 확인 메소드.
+     *
+     * @param memberNo 회원번호.
+     * @param productNo 상품번호.
+     * @return 구매했나 안했나.
+     */
+    boolean isPurchaseUser(String memberNo, String productNo);
+
 }

@@ -56,6 +56,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
     QProductSaleStateCode productSaleStateCode = QProductSaleStateCode.productSaleStateCode;
     QFile file = QFile.file;
     QProductTypeStateCode productTypeStateCode = QProductTypeStateCode.productTypeStateCode;
+    QMember member = QMember.member;
 
 
     public ProductRepositoryImpl(EntityManager entityManager) {
@@ -478,5 +479,20 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .select(product.count());
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    @Override
+    public boolean isPurchaseUser(String memberNo, String productNo) {
+        return from(orderProduct)
+                .innerJoin(orderProduct.order, order)
+                .innerJoin(order.member, member)
+                .innerJoin(orderProduct.product, product)
+                .innerJoin(product.productCategories, productCategory)
+                .innerJoin(productCategory.category, category)
+                .where(member.memberNo.eq(Long.parseLong(memberNo))
+                        .and(productCategory.product.productNo.eq(Long.parseLong(productNo))
+                                .and(productCategory.category.categoryName.eq("eBook"))))
+                .select(orderProduct.orderProductNo)
+                .fetchOne() != null;
     }
 }

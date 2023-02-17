@@ -977,7 +977,7 @@ class ProductServiceTest {
     void getBookInfo() {
 
         // then
-        productService.getEBookInfo(anyLong());
+        productService.getEbookInfo(anyLong());
 
         verify(productRepository, times(1))
                 .getFilePath(anyLong());
@@ -1028,7 +1028,7 @@ class ProductServiceTest {
                 .thenReturn(Optional.of(product));
 
         // then
-        productService.modifyProductEBook(1L, multipartFile);
+        productService.modifyProductEbook(1L, multipartFile);
 
         verify(productRepository, times(1))
                 .findById(anyLong());
@@ -1189,7 +1189,7 @@ class ProductServiceTest {
         doThrow(new IOException()).when(fileManagement).deleteFile(anyString());
 
         // then
-        assertThatThrownBy(() -> productService.modifyProductEBook(1L, multipartFile))
+        assertThatThrownBy(() -> productService.modifyProductEbook(1L, multipartFile))
                 .isInstanceOf(FileNotFoundException.class)
                 .hasMessageContaining(FileNotFoundException.MESSAGE);
     }
@@ -1209,7 +1209,7 @@ class ProductServiceTest {
                 .thenThrow(IOException.class);
 
         // then
-        assertThatThrownBy(() -> productService.modifyProductEBook(1L, multipartFile))
+        assertThatThrownBy(() -> productService.modifyProductEbook(1L, multipartFile))
                 .isInstanceOf(FileNotFoundException.class)
                 .hasMessageContaining(FileNotFoundException.MESSAGE);
     }
