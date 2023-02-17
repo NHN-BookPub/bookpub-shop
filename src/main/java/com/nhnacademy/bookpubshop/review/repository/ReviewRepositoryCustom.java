@@ -59,4 +59,13 @@ public interface ReviewRepositoryCustom {
      * @return 해당 상품의 간단한 상품평 정보가 담긴 Dto
      */
     Optional<GetProductReviewInfoResponseDto> findReviewInfoByProductNo(Long productNo);
+
+    /**
+     * 리뷰가 삭제된 상품인지 확인하는 메서드입니다.
+     *
+     * @param memberNo  회원번호
+     * @param productNo 상품번호
+     * @return the boolean
+     */
+    boolean checkDeletedReview(Long memberNo, Long productNo);
 }

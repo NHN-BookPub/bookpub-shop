@@ -97,7 +97,8 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                 .innerJoin(review.product, product)
                 .where(review.member.memberNo.eq(memberNo)
                         .and(review.reviewDeleted.isFalse())
-                        .and((productFile.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                        .and((productFile.fileCategory
+                                .eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                                 .or(productFile.fileCategory.isNull())));
 
         List<GetMemberReviewResponseDto> content = from(review)
@@ -108,7 +109,8 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                 .innerJoin(review.product, product)
                 .where(review.member.memberNo.eq(memberNo)
                         .and(review.reviewDeleted.isFalse())
-                        .and((productFile.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                        .and((productFile.fileCategory
+                                .eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                                 .or(productFile.fileCategory.isNull())))
                 .select(Projections.fields(GetMemberReviewResponseDto.class,
                         review.reviewNo,
@@ -168,7 +170,8 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                                         .where(member.memberNo.eq(memberNo)
                                                 .and(review.reviewDeleted.isFalse()))
                         )))
-                        .and((productFile.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                        .and((productFile.fileCategory.eq(FileCategory
+                                .PRODUCT_THUMBNAIL.getCategory()))
                                 .or(productFile.fileCategory.isNull())))
                 .distinct()
                 .select(orderProduct.count());
@@ -193,7 +196,8 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                                         .where(member.memberNo.eq(memberNo)
                                                 .and(review.reviewDeleted.isFalse()))
                         )))
-                        .and((productFile.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                        .and((productFile.fileCategory
+                                .eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                                 .or(productFile.fileCategory.isNull())))
                 .select(Projections.fields(GetProductSimpleResponseDto.class,
                         product.productNo,
@@ -230,7 +234,9 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                 .leftJoin(productFile)
                 .on(review.product.productNo.eq(productFile.product.productNo))
                 .innerJoin(review.product, product)
-                .where(review.reviewNo.eq(reviewNo).and((productFile.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                .where(review.reviewNo.eq(reviewNo)
+                        .and((productFile.fileCategory
+                                .eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                         .or(productFile.fileCategory.isNull())))
                 .select(Projections.fields(GetMemberReviewResponseDto.class,
                         review.reviewNo,
@@ -269,5 +275,16 @@ public class ReviewRepositoryImpl extends QuerydslRepositorySupport
                 .where(review.product.productNo.eq(productNo)
                         .and(review.reviewDeleted.isFalse()))
                 .fetchOne());
+    }
+
+    @Override
+    public boolean checkDeletedReview(Long memberNo, Long productNo) {
+        return from(review)
+                .innerJoin(review.member, member)
+                .innerJoin(review.product, product)
+                .where(member.memberNo.eq(memberNo)
+                        .and(product.productNo.eq(productNo))
+                        .and(review.reviewDeleted.isTrue()))
+                .fetchOne() == null;
     }
 }

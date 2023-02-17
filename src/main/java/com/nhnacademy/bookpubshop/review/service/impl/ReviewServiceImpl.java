@@ -38,7 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author : 정유진
  * @since : 1.0
- **/
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -127,12 +127,8 @@ public class ReviewServiceImpl implements ReviewService {
                 .reviewContent(createRequestDto.getReviewContent())
                 .build());
 
-        pointHistoryRepository.save(PointHistory.builder()
-                .member(member)
-                .pointHistoryIncreased(true)
-                .pointHistoryReason(REVIEW)
-                .pointHistoryAmount(reviewPolicy.getSendPoint())
-                .build());
+        checkIsDeletedReview(product, member, reviewPolicy);
+
 
         try {
             review.setFile(fileManagement.saveFile(null, null, null,
@@ -140,6 +136,25 @@ public class ReviewServiceImpl implements ReviewService {
                     FileCategory.REVIEW.getCategory(), FileCategory.REVIEW.getPath()));
         } catch (IOException e) {
             throw new FileNotFoundException();
+        }
+    }
+
+    /**
+     * 이전에 이미 삭제된 리뷰가있는지 확인하는 메서드 입니다.
+     *
+     * @param product 상품정보
+     * @param member 회원정보
+     * @param reviewPolicy 리뷰 정책
+     */
+    private void checkIsDeletedReview(Product product, Member member, ReviewPolicy reviewPolicy) {
+        if (reviewRepository.checkDeletedReview(member.getMemberNo(), product.getProductNo())) {
+            pointHistoryRepository.save(PointHistory.builder()
+                    .member(member)
+                    .pointHistoryIncreased(true)
+                    .pointHistoryReason(REVIEW)
+                    .pointHistoryAmount(reviewPolicy.getSendPoint())
+                    .build());
+            member.increaseMemberPoint(reviewPolicy.getSendPoint());
         }
     }
 
