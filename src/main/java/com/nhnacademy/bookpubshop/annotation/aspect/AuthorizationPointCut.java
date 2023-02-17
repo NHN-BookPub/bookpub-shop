@@ -38,7 +38,7 @@ public class AuthorizationPointCut {
      * @return the object
      */
     @Around(value = "@annotation(com.nhnacademy.bookpubshop.annotation.MemberAuth)")
-    public Object checkMemberAuthorization(ProceedingJoinPoint pjp) {
+    public Object checkMemberAuthorization(ProceedingJoinPoint pjp) throws Throwable {
         HttpServletRequest request = getRequest();
         if (getHeader(request, AUTH_MEMBER_INFO, null)) {
             log.error("헤더가 없음");
@@ -50,13 +50,9 @@ public class AuthorizationPointCut {
             return httpResponse(HttpStatus.UNAUTHORIZED);
         }
 
-        try {
-            if (getHeader(request, AUTH_HEADER, ROLE_MEMBER)) {
-                return pjp.proceed(pjp.getArgs());
+        if (getHeader(request, AUTH_HEADER, ROLE_MEMBER)) {
+            return pjp.proceed(pjp.getArgs());
 
-            }
-        } catch (Throwable e) {
-            return httpResponse(HttpStatus.NOT_IMPLEMENTED);
         }
         return httpResponse(HttpStatus.UNAUTHORIZED);
     }
@@ -68,16 +64,13 @@ public class AuthorizationPointCut {
      * @return the object
      */
     @Around(value = "@annotation(com.nhnacademy.bookpubshop.annotation.AdminAuth)")
-    public Object checkAdminAuthorization(ProceedingJoinPoint pjp) {
+    public Object checkAdminAuthorization(ProceedingJoinPoint pjp) throws Throwable {
         HttpServletRequest request = getRequest();
 
-        try {
-            if (getHeader(request, AUTH_HEADER, ROLE_ADMIN)) {
-                return pjp.proceed(pjp.getArgs());
-            }
-        } catch (Throwable e) {
-            httpResponse(HttpStatus.NOT_IMPLEMENTED);
+        if (getHeader(request, AUTH_HEADER, ROLE_ADMIN)) {
+            return pjp.proceed(pjp.getArgs());
         }
+
         return httpResponse(HttpStatus.UNAUTHORIZED);
     }
 
@@ -99,28 +92,24 @@ public class AuthorizationPointCut {
      * @return the object
      */
     @Around(value = "@annotation(com.nhnacademy.bookpubshop.annotation.MemberAndAuth)")
-    public Object checkAdminAndMemberAuthorization(ProceedingJoinPoint pjp) {
+    public Object checkAdminAndMemberAuthorization(ProceedingJoinPoint pjp) throws Throwable {
         HttpServletRequest request = getRequest();
-        try {
-            if (getHeader(request, AUTH_HEADER, ROLE_ADMIN)) {
-                return pjp.proceed(pjp.getArgs());
-            }
+        if (getHeader(request, AUTH_HEADER, ROLE_ADMIN)) {
+            return pjp.proceed(pjp.getArgs());
+        }
 
-            if (getHeader(request, AUTH_MEMBER_INFO, null)) {
-                log.error("헤더가 없음");
-                return httpResponse(HttpStatus.UNAUTHORIZED);
-            }
+        if (getHeader(request, AUTH_MEMBER_INFO, null)) {
+            log.error("헤더가 없음");
+            return httpResponse(HttpStatus.UNAUTHORIZED);
+        }
 
-            if (!request.getRequestURI().contains(request.getHeader(AUTH_MEMBER_INFO))) {
-                log.error("Url path 에 멤버 no 가 없음");
-                return httpResponse(HttpStatus.UNAUTHORIZED);
-            }
-            if (getHeader(request, AUTH_HEADER, ROLE_MEMBER)) {
-                return pjp.proceed(pjp.getArgs());
+        if (!request.getRequestURI().contains(request.getHeader(AUTH_MEMBER_INFO))) {
+            log.error("Url path 에 멤버 no 가 없음");
+            return httpResponse(HttpStatus.UNAUTHORIZED);
+        }
+        if (getHeader(request, AUTH_HEADER, ROLE_MEMBER)) {
+            return pjp.proceed(pjp.getArgs());
 
-            }
-        } catch (Throwable e) {
-            httpResponse(HttpStatus.NOT_IMPLEMENTED);
         }
         return httpResponse(HttpStatus.UNAUTHORIZED);
     }

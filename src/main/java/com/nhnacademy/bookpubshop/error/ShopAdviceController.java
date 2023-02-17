@@ -53,7 +53,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * @since : 1.0
  */
 @Log4j2
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.nhnacademy.bookpubshop")
 public class ShopAdviceController {
 
     /**
@@ -91,6 +91,7 @@ public class ShopAdviceController {
             })
     public ResponseEntity<ErrorResponse> errorhandler() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse("MAIN", "MAIN"));
     }
 
@@ -113,36 +114,41 @@ public class ShopAdviceController {
     @ExceptionHandler(value = CategoryAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> categoryError() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(CategoryAlreadyExistsException.MESSAGE, "CATEGORY"));
     }
 
     @ExceptionHandler(value = AuthorityNotFoundException.class)
     public ResponseEntity<ErrorResponse> authority() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(AddressNotFoundException.MESSAGE, "AUTHORITY"));
     }
 
     @ExceptionHandler(value = NotFoundPurchasesException.class)
     public ResponseEntity<ErrorResponse> adminException() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(NotFoundPurchasesException.MESSAGE, "ADMIN"));
-    }
-
-    @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<Void> error() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .build();
     }
 
     @ExceptionHandler(value = TagNameDuplicatedException.class)
     public ResponseEntity<ErrorResponse> tagError() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(TagNameDuplicatedException.ERROR_MESSAGE, "TAG"));
     }
 
     @ExceptionHandler(value = TierAlreadyExists.class)
     public ResponseEntity<ErrorResponse> tierError() {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorResponse(TierAlreadyExists.MESSAGE, "TIER"));
+    }
+
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<Void> error() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .build();
     }
 }

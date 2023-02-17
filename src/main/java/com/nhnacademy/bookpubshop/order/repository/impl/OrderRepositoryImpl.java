@@ -89,8 +89,8 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                         ))
                         .leftJoin(order.member, member)
                         .innerJoin(order.orderStateCode, orderStateCode)
-                        .innerJoin(order.deliveryPricePolicy, packagingPricePolicy)
-                        .innerJoin(order.packagingPricePolicy, deliveryPricePolicy)
+                        .innerJoin(order.deliveryPricePolicy, deliveryPricePolicy)
+                        .innerJoin(order.packagingPricePolicy, packagingPricePolicy)
                         .where(order.orderNo.eq(orderNo))
                         .fetchOne());
     }
