@@ -131,6 +131,8 @@ include::tier/tier.adoc[]
 //등급 쿠폰
 include::tiercoupon/tiercoupon.adoc[]
 
+//매출
+include::sales/sales.adoc[]
 
 
 
