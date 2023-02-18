@@ -1,0 +1,61 @@
+:toc:
+==== 매출 && 통계 조회
+
+매출(Sales) 통계 조회에대한 API 명세입니다.
+
+
+===== 요청구조
+
+include::../../../../target/snippets/sales-month/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/sales-month/request-body.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/sales-month/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/sales-month/response-fields.adoc[]
+
+==== 년별 매출 통계
+
+년도에 대한 매출을 조회할때 쓰입니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/sales-year/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/sales-year/request-body.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/sales-year/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/sales-year/response-fields.adoc[]
+
+==== 시간별 주문
+
+시간별 주문횟수를 조회할때 사용됩니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/sales-order-cnt/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/sales-order-cnt/request-body.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/sales-order-cnt/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/sales-order-cnt/response-fields.adoc[]
