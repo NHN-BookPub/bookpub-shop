@@ -28,7 +28,6 @@ import org.springframework.data.support.PageableExecutionUtils;
  **/
 public class OrderProductRepositoryImpl extends QuerydslRepositorySupport
         implements OrderProductRepositoryCustom {
-
     QOrderProduct orderProduct = QOrderProduct.orderProduct;
     QBookpubOrder order = QBookpubOrder.bookpubOrder;
     QProduct product = QProduct.product;

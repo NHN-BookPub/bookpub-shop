@@ -1,12 +1,18 @@
 package com.nhnacademy.bookpubshop.order.relationship.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.order.dummy.OrderDummy;
 import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
+import com.nhnacademy.bookpubshop.order.relationship.dto.GetExchangeResponseDto;
+import com.nhnacademy.bookpubshop.order.relationship.dummy.OrderProductDummy;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProductStateCode;
+import com.nhnacademy.bookpubshop.orderstatecode.dummy.OrderStateCodeDummy;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
+import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
@@ -21,6 +27,7 @@ import com.nhnacademy.bookpubshop.state.OrderState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,21 +35,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 주문상품 레포지토리 테스트
  *
- * @author : 여운석
+ * @author : 여운석, 임태원
  * @since : 1.0
  **/
 @DataJpaTest
 class OrderProductRepositoryTest {
     @Autowired
     TestEntityManager entityManager;
-
     @Autowired
     OrderProductRepository orderProductRepository;
-
     Product product;
     ProductPolicy productPolicy;
     ProductTypeStateCode productTypeStateCode;
@@ -52,6 +59,9 @@ class OrderProductRepositoryTest {
     OrderProduct orderProduct;
     Member member;
     BookPubTier bookPubTier;
+    PricePolicy shipPricePolicy;
+    PricePolicy packPricePolicy;
+    OrderStateCode orderStateCode;
 
     @BeforeEach
     void setUp() {
@@ -59,36 +69,16 @@ class OrderProductRepositoryTest {
         productTypeStateCode = ProductTypeStateCodeDummy.dummy();
         productSaleStateCode = ProductSaleStateCodeDummy.dummy();
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
-
-        orderProductStateCode = new OrderProductStateCode(null, OrderProductState.CONFIRMED.getName(), OrderProductState.CONFIRMED.isUsed(), "주문완료되었습니다.");
-
+        orderProductStateCode = new OrderProductStateCode(null, OrderProductState.WAITING_EXCHANGE.getName(), OrderProductState.WAITING_EXCHANGE.isUsed(), "주문완료되었습니다.");
         bookPubTier = TierDummy.dummy();
-
         member = MemberDummy.dummy(bookPubTier);
+        shipPricePolicy = PricePolicyDummy.dummy();
+        packPricePolicy = PricePolicyDummy.dummy();
+        orderStateCode = OrderStateCodeDummy.dummy();
 
-        order = new BookpubOrder(
-                null,
-                member,
-                new PricePolicy(null, "배송비", 3000L),
-                new PricePolicy(null, "포장비", 1500L),
-                new OrderStateCode(null, OrderState.COMPLETE_DELIVERY.getName(), OrderState.COMPLETE_DELIVERY.isUsed(), "배송완료"),
-                "test_recipient",
-                "test_recipient_phone",
-                "test_buyer",
-                "test_buyer_phone",
-                LocalDateTime.now(),
-                null,
-                10000L,
-                100L,
-                1500L,
-                true,
-                null,
-                1000L,
-                "IT관",
-                "광주 동구 조선대길",
-                "dsafijvxzkjs",
-                "orderName"
-        );
+        order = OrderDummy.dummy3(member,packPricePolicy,shipPricePolicy,orderStateCode);
+        orderProduct = OrderProductDummy.dummy(product,order,orderProductStateCode);
+
         entityManager.persist(bookPubTier);
         entityManager.persist(member);
         entityManager.persist(productPolicy);
@@ -100,17 +90,13 @@ class OrderProductRepositoryTest {
         entityManager.persist(orderProductStateCode);
         entityManager.persist(product);
         entityManager.persist(order);
-
-
-        orderProduct = new OrderProduct(null, product, order,
-                orderProductStateCode, 1, 1000L,
-                product.getSalesPrice(), null,100L,"");
+        orderProduct = entityManager.persist(orderProduct);
     }
 
     @Test
     @DisplayName("주문상품 save 테스트")
     void memberSaveTest() {
-        OrderProduct persist = entityManager.persist(orderProduct);
+        OrderProduct persist = orderProduct;
         Optional<OrderProduct> result = orderProductRepository.findById(persist.getOrderProductNo());
 
         assertThat(result).isPresent();
@@ -122,5 +108,43 @@ class OrderProductRepositoryTest {
         assertThat(result.get().getCouponAmount()).isEqualTo(persist.getCouponAmount());
         assertThat(result.get().getProductPrice()).isEqualTo(persist.getProductPrice());
         assertThat(result.get().getReasonName()).isEqualTo(persist.getReasonName());
+    }
+
+    @Test
+    @DisplayName("주문상품 리스트를 불러오는 테스트")
+    void getOrderProductList() {
+        List<OrderProduct> orderProductList
+                = orderProductRepository.getOrderProductList(order.getOrderNo());
+
+        assertThat(orderProductList).hasSize(1);
+        assertThat(orderProductList.get(0).getExchangeReason()).isEqualTo("변심");
+    }
+
+    @Test
+    @DisplayName("주문상품 단건 조회 메소드")
+    void getOrderProduct() {
+        Optional<OrderProduct> orderProduct1
+                = orderProductRepository.getOrderProduct(orderProduct.getOrderProductNo());
+
+        assertThat(orderProduct1).isPresent();
+    }
+
+    @Test
+    @DisplayName("교환상품 리스트를 불러오는 메소드")
+    void getExchangeOrderProductList() {
+        Pageable pageable = Pageable.ofSize(10);
+        Page<GetExchangeResponseDto> exchangeOrderProductList
+                = orderProductRepository.getExchangeOrderProductList(pageable);
+
+        assertThat(exchangeOrderProductList.getTotalPages()).isEqualTo(1);
+        assertThat(exchangeOrderProductList.getContent()).hasSize(1);
+        assertThat(exchangeOrderProductList.getContent().get(0).getOrderProductNo()).isEqualTo(orderProduct.getOrderProductNo());
+        assertThat(exchangeOrderProductList.getContent().get(0).getMemberId()).isEqualTo("test_id");
+        assertThat(exchangeOrderProductList.getContent().get(0).getProductNo()).isEqualTo(product.getProductNo());
+        assertThat(exchangeOrderProductList.getContent().get(0).getThumbnail()).isNull();
+        assertThat(exchangeOrderProductList.getContent().get(0).getProductAmount()).isEqualTo(orderProduct.getProductAmount());
+        assertThat(exchangeOrderProductList.getContent().get(0).getStateCode()).isEqualTo("교환대기");
+        assertThat(exchangeOrderProductList.getContent().get(0).getTitle()).isEqualTo("title");
+        assertThat(exchangeOrderProductList.getContent().get(0).getExchangeReason()).isEqualTo("변심");
     }
 }

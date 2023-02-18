@@ -1,0 +1,6 @@
+=== 포인트
+
+포인트 사용에 따른 api를 조회할 수 있습니다.
+
+include::point-get.adoc[]
+include::point-post.adoc[]

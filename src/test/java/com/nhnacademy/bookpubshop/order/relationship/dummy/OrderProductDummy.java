@@ -25,7 +25,7 @@ public class OrderProductDummy {
                 10000L,
                 "reason",
                 100L,
-                ""
+                "변심"
         );
     }
 }

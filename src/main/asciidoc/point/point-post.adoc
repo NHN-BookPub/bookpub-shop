@@ -1,0 +1,15 @@
+==== 회원의 포인트 선물
+
+===== 요청구조
+
+include::../../../../target/snippets/point-gift/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/point-gift/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/point-gift/http-response.adoc[]
+
+===== 응답 파라미터들

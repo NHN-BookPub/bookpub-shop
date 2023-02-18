@@ -9,6 +9,7 @@ import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderConfirmResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
@@ -38,14 +39,19 @@ import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
+import com.nhnacademy.bookpubshop.sales.dto.response.OrderCntResponseDto;
+import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleDto;
+import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleYearDto;
 import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -60,7 +66,7 @@ import org.springframework.data.domain.Pageable;
 /**
  * 주문 Repo Test 입니다.
  *
- * @author : 김서현, 여운석
+ * @author : 김서현, 여운석, 임태원
  * @since : 1.0
  **/
 @DataJpaTest
@@ -91,6 +97,7 @@ class OrderRepositoryTest {
     Card card;
 
 
+
     @BeforeEach
     void setUp() {
 
@@ -118,7 +125,7 @@ class OrderRepositoryTest {
         productSaleStateCode = ProductSaleStateCodeDummy.dummy();
         productSaleStateCode = entityManager.persist(productSaleStateCode);
 
-        order = OrderDummy.dummy(member, pricePolicy, packagePricePolicy, orderStateCode);
+        order = OrderDummy.dummy3(member, pricePolicy, packagePricePolicy, orderStateCode);
         order = entityManager.persist(order);
 
         paymentStateCode = PaymentStateCodeDummy.dummy();
@@ -148,10 +155,8 @@ class OrderRepositoryTest {
         product = entityManager.persist(product);
 
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
-                3, 1000L, 30000L, "reason", 100L,"");
+                3, 1000L, 30000L, "reason", 100L, "");
         orderProduct = entityManager.persist(orderProduct);
-
-
     }
 
     @Test
@@ -185,7 +190,6 @@ class OrderRepositoryTest {
         entityManager.clear();
     }
 
-    @Disabled
     @Test
     @DisplayName("주문 상세 단건 조회 성공")
     void getOrderDetailById() {
@@ -193,6 +197,45 @@ class OrderRepositoryTest {
 
         GetOrderDetailResponseDto result =
                 orderRepository.getOrderDetailById(persist.getOrderNo())
+                        .orElseThrow(OrderNotFoundException::new);
+
+        file = entityManager.persist(
+                FileDummy.dummy(null, null,
+                        null, product, null, FileCategory.PRODUCT_THUMBNAIL, null));
+
+        assertThat(result.getOrderNo()).isEqualTo(persist.getOrderNo());
+        assertThat(result.getOrderState()).isEqualTo(persist.getOrderStateCode().getCodeName());
+        assertThat(result.getAddressDetail()).isEqualTo(persist.getAddressDetail());
+        assertThat(result.getAddressBase()).isEqualTo(persist.getRoadAddress());
+        assertThat(result.getOrderRequest()).isEqualTo(persist.getOrderRequest());
+        assertThat(result.getBuyerName()).isEqualTo(persist.getOrderBuyer());
+        assertThat(result.getBuyerNumber()).isEqualTo(persist.getBuyerPhone());
+        assertThat(result.getRecipientName()).isEqualTo(persist.getOrderRecipient());
+        assertThat(result.getRecipientNumber()).isEqualTo(persist.getRecipientPhone());
+        assertThat(result.getInvoiceNo()).isEqualTo(persist.getInvoiceNumber());
+        assertThat(result.getDeliveryAmount()).isEqualTo(persist.getDeliveryPricePolicy().getPolicyFee());
+        assertThat(result.getPackageAmount()).isEqualTo(persist.getPackagingPricePolicy().getPolicyFee());
+        assertThat(result.getCouponAmount()).isEqualTo(persist.getCouponDiscount());
+        assertThat(result.getTotalAmount()).isEqualTo(persist.getOrderPrice());
+        assertThat(result.getReceivedAt()).isEqualTo(persist.getReceivedAt());
+        assertThat(result.isPackaged()).isEqualTo(persist.isOrderPackaged());
+
+        List<GetProductListForOrderResponseDto> productsResult =
+                productRepository.getProductListByOrderNo(persist.getOrderNo());
+
+        assertThat(productsResult.get(0).getProductNo()).isEqualTo(product.getProductNo());
+        assertThat(productsResult.get(0).getTitle()).isEqualTo(product.getTitle());
+        assertThat(productsResult.get(0).getSalesPrice()).isEqualTo(product.getSalesPrice());
+        assertThat(productsResult.get(0).getProductAmount()).isEqualTo(orderProduct.getProductAmount());
+    }
+
+    @Test
+    @DisplayName("주문 상세 단건 조회 성공_주문아이디를 통해")
+    void getOrderDetailByOrderId() {
+        BookpubOrder persist = order;
+
+        GetOrderDetailResponseDto result =
+                orderRepository.getOrderDetailByOrderId(persist.getOrderId())
                         .orElseThrow(OrderNotFoundException::new);
 
         file = entityManager.persist(
@@ -248,7 +291,6 @@ class OrderRepositoryTest {
                 .isEqualTo(persist.getReceivedAt());
     }
 
-    @Disabled
     @Test
     @DisplayName("유저 번호로 주문 리스트 조회 성공")
     void getOrdersListByUser() {
@@ -322,5 +364,68 @@ class OrderRepositoryTest {
         assertThat(result.getReceiveDate()).isEqualTo(orderPersist.getReceivedAt());
         assertThat(result.getRecipient()).isEqualTo(orderPersist.getOrderRecipient());
         assertThat(result.getSavePoint()).isEqualTo(orderPersist.getPointSave());
+    }
+
+    @Test
+    @DisplayName("결제 전 주문확인정보 불러오기")
+    void getOrderConfirmInfo() {
+        GetOrderConfirmResponseDto dto = new GetOrderConfirmResponseDto();
+
+        orderRepository.getOrderConfirmInfo(order.getOrderNo())
+                .orElseThrow(OrderNotFoundException::new);
+    }
+
+    @Test
+    @DisplayName("주문상품 리스트 불러오기")
+    void getOrderProductList() {
+        List<OrderProduct> orderProductList =
+                orderRepository.getOrderProductList(order.getOrderNo());
+
+        assertThat(orderProductList).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("매출 통계 불러오기")
+    void getTotalSale() {
+        List<TotalSaleDto> totalSale = orderRepository.getTotalSale(LocalDateTime.of(2023, 1, 1, 0, 0),
+                LocalDateTime.of(2022, 3, 1, 0, 0));
+
+        assertThat(totalSale).hasSize(1);
+        assertThat(totalSale.get(0).getCancelOrderCnt()).isZero();
+        assertThat(totalSale.get(0).getCancelPaymentAmount()).isNull();
+        assertThat(totalSale.get(0).getCancelPaymentCnt()).isZero();
+        assertThat(totalSale.get(0).getSaleCnt()).isZero();
+        assertThat(totalSale.get(0).getSaleAmount()).isNull();
+        assertThat(totalSale.get(0).getTotal()).isNull();
+
+    }
+
+    @Test
+    @DisplayName("월별 매출 통계")
+    void getTotalSaleMonth() {
+        List<TotalSaleYearDto> totalSale =
+                orderRepository.getTotalSaleMonth(LocalDateTime.of(2023, 2, 1, 0, 0),
+                        LocalDateTime.of(2023, 3, 1, 0, 0));
+
+        assertThat(totalSale).hasSize(1);
+        assertThat(totalSale.get(0).getCancelOrderCnt()).isZero();
+        assertThat(totalSale.get(0).getCancelPaymentAmount()).isZero();
+        assertThat(totalSale.get(0).getCancelPaymentCnt()).isZero();
+        assertThat(totalSale.get(0).getSaleCnt()).isZero();
+        assertThat(totalSale.get(0).getSaleAmount()).isZero();
+        assertThat(totalSale.get(0).getTotal()).isZero();
+        assertThat(totalSale.get(0).getMonth()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("주문시간 통계")
+    void getOrderTime() {
+        List<OrderCntResponseDto> orderTime
+                = orderRepository.getOrderTime();
+
+        assertThat(orderTime).hasSize(1);
+        assertThat(orderTime.get(0).getOrderCnt()).isEqualTo(1L);
+        assertThat(orderTime.get(0).getDate()).isEqualTo(LocalDateTime.now().getHour());
+
     }
 }
