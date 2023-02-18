@@ -35,3 +35,31 @@ include::../../../../target/snippets/invoiceNo-modify/path-parameters.adoc[]
 
 include::../../../../target/snippets/invoiceNo-modify/http-response.adoc[]
 
+
+==== 주문 상태 구매확정으로 수정
+
+===== 요청구조
+
+include::../../../../target/snippets/order-state-change-confirm/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/order-state-change-confirm/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/order-state-change-confirm/http-response.adoc[]
+
+==== 주문 상태 교환수락으로 수정
+
+===== 요청구조
+
+include::../../../../target/snippets/order-state-change-exchange/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/order-state-change-exchange/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/order-state-change-exchange/http-response.adoc[]

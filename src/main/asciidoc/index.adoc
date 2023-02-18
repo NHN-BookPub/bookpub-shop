@@ -81,6 +81,9 @@ include::coupontype/coupontype.adoc[]
 //주문
 include::order/order.adoc[]
 
+//주문상품
+include::orderProduct/orderProduct.adoc[]
+
 //주문상품상태코드
 include::orderProductStateCode/order-product-state-code.adoc[]
 
@@ -111,6 +114,8 @@ include::productsalestatecode/productsalestatecode.adoc[]
 //매입
 include::purchase/purchase.adoc[]
 
+//포인트
+include::point/point.adoc[]
 
 //리뷰
 include::review/review.adoc[]
@@ -120,7 +125,6 @@ include::reviewpolicy/reviewpolicy.adoc[]
 
 //구독
 include::subscribe/subscribe-main.adoc[]
-
 
 //태그
 include::tag/tag.adoc[]

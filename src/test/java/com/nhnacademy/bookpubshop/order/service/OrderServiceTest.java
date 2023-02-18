@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -27,9 +28,11 @@ import com.nhnacademy.bookpubshop.coupontype.entity.CouponType;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
+import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.repository.MemberRepository;
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderConfirmResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
@@ -38,12 +41,15 @@ import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.exception.OrderNotFoundException;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProductStateCode;
+import com.nhnacademy.bookpubshop.order.relationship.exception.NotFoundOrderProductException;
+import com.nhnacademy.bookpubshop.order.relationship.exception.NotFoundOrderProductStateException;
 import com.nhnacademy.bookpubshop.order.relationship.repository.OrderProductRepository;
 import com.nhnacademy.bookpubshop.order.relationship.repository.OrderProductStateCodeRepository;
 import com.nhnacademy.bookpubshop.order.repository.OrderRepository;
 import com.nhnacademy.bookpubshop.order.service.impl.OrderServiceImpl;
 import com.nhnacademy.bookpubshop.orderstatecode.dummy.OrderStateCodeDummy;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
+import com.nhnacademy.bookpubshop.orderstatecode.exception.NotFoundOrderStateException;
 import com.nhnacademy.bookpubshop.orderstatecode.repository.OrderStateCodeRepository;
 import com.nhnacademy.bookpubshop.point.repository.PointHistoryRepository;
 import com.nhnacademy.bookpubshop.pricepolicy.dummy.PricePolicyDummy;
@@ -55,6 +61,7 @@ import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.exception.NotFoundStateCodeException;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
+import com.nhnacademy.bookpubshop.product.exception.SoldOutException;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
@@ -86,7 +93,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 /**
  * 주문 서비스 테스트.
  *
- * @author : 여운석
+ * @author : 여운석, 임태원
  * @since : 1.0
  **/
 class OrderServiceTest {
@@ -144,7 +151,6 @@ class OrderServiceTest {
         pointHistoryRepository = Mockito.mock(PointHistoryRepository.class);
 
 
-
         orderService = new OrderServiceImpl(
                 orderRepository,
                 memberRepository,
@@ -185,7 +191,7 @@ class OrderServiceTest {
         product = ProductDummy.dummy(productPolicy,
                 productTypeStateCode,
                 productSaleStateCode,
-                null,
+                1L,
                 Collections.EMPTY_LIST);
 
         product.setProductFiles(List.of(
@@ -212,7 +218,7 @@ class OrderServiceTest {
                         FileCategory.PRODUCT_EBOOK, null)));
 
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
-                3, 1000L, 30000L, "reason",100L,"");
+                3, 1000L, 30000L, "reason", 100L, "");
 
         detailDto = new GetOrderDetailResponseDto(
                 1L,
@@ -589,7 +595,7 @@ class OrderServiceTest {
         ReflectionTestUtils.setField(requestDto, "productNos", List.of(1L));
         ReflectionTestUtils.setField(requestDto, "productAmount", amounts);
         ReflectionTestUtils.setField(requestDto, "productCoupon", couponAmount);
-        ReflectionTestUtils.setField(requestDto, "productPointSave",productPointSave);
+        ReflectionTestUtils.setField(requestDto, "productPointSave", productPointSave);
         ReflectionTestUtils.setField(requestDto, "buyerName", order.getOrderBuyer());
         ReflectionTestUtils.setField(requestDto, "buyerNumber", order.getBuyerPhone());
         ReflectionTestUtils.setField(requestDto, "recipientName", order.getOrderRecipient());
@@ -613,6 +619,61 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.createOrder(requestDto))
                 .isInstanceOf(NotFoundCouponException.class)
                 .hasMessageContaining(NotFoundCouponException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("주문 등록 실패(상품 재고가 부족)")
+    void createOrderFailed_soldOut() {
+        product = ProductDummy.dummy(
+                productPolicy,
+                productTypeStateCode,
+                productSaleStateCode,
+                0
+        );
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+        when(pricePolicyRepository.getPricePolicyById(anyInt()))
+                .thenReturn(Optional.of(packagePricePolicy));
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderStateCode));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+        when(productSaleStateCodeRepository.findByCodeCategory(anyString()))
+                .thenReturn(Optional.of(productSaleStateCode));
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+        when(couponRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+        when(orderRepository.save(any()))
+                .thenReturn(order);
+
+        ReflectionTestUtils.setField(requestDto, "productNos", List.of(1L));
+        ReflectionTestUtils.setField(requestDto, "productAmount", amounts);
+        ReflectionTestUtils.setField(requestDto, "productCoupon", couponAmount);
+        ReflectionTestUtils.setField(requestDto, "productPointSave", productPointSave);
+        ReflectionTestUtils.setField(requestDto, "buyerName", order.getOrderBuyer());
+        ReflectionTestUtils.setField(requestDto, "buyerNumber", order.getBuyerPhone());
+        ReflectionTestUtils.setField(requestDto, "recipientName", order.getOrderRecipient());
+        ReflectionTestUtils.setField(requestDto, "recipientNumber", order.getRecipientPhone());
+        ReflectionTestUtils.setField(requestDto, "addressDetail", order.getAddressDetail());
+        ReflectionTestUtils.setField(requestDto, "roadAddress", order.getRoadAddress());
+        ReflectionTestUtils.setField(requestDto, "receivedAt", LocalDateTime.now());
+        ReflectionTestUtils.setField(requestDto, "packaged", order.isOrderPackaged());
+        ReflectionTestUtils.setField(requestDto, "orderRequest", order.getOrderRequest());
+        ReflectionTestUtils.setField(requestDto, "pointAmount", order.getPointAmount());
+        ReflectionTestUtils.setField(requestDto, "couponAmount", order.getCouponDiscount());
+        ReflectionTestUtils.setField(requestDto, "productCount", productCount);
+        ReflectionTestUtils.setField(requestDto, "productSaleAmount", productSaleAmount);
+        ReflectionTestUtils.setField(requestDto, "memberNo", 1L);
+        ReflectionTestUtils.setField(requestDto, "deliveryFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "packingFeePolicyNo", 1);
+        ReflectionTestUtils.setField(requestDto, "savePoint", 100L);
+        ReflectionTestUtils.setField(requestDto, "orderName", order.getOrderName());
+
+
+        assertThatThrownBy(() -> orderService.createOrder(requestDto))
+                .isInstanceOf(SoldOutException.class)
+                .hasMessageContaining(SoldOutException.MESSAGE);
     }
 
     @Test
@@ -770,5 +831,244 @@ class OrderServiceTest {
         assertThat(orderId.getCardCompany()).isEqualTo(dto.getCardCompany());
         assertThat(orderId.getReceiptUrl()).isEqualTo(dto.getReceiptUrl());
         assertThat(orderId.getTotalAmount()).isEqualTo(dto.getTotalAmount());
+    }
+
+    @Test
+    @DisplayName("결제 전 주문확인용 정보 호출")
+    void getOrderConfirmInfo() {
+        GetOrderConfirmResponseDto dto = new GetOrderConfirmResponseDto(
+                "orderName",
+                "buyerName",
+                "recipientName",
+                "roadAddress",
+                "detailAddress",
+                LocalDateTime.of(1998, 10, 8, 0, 0),
+                "orderRequest",
+                10000L,
+                "orderId",
+                "orderState"
+        );
+
+        when(orderRepository.getOrderConfirmInfo(anyLong()))
+                .thenReturn(Optional.of(dto));
+
+        GetOrderConfirmResponseDto orderConfirmInfo
+                = orderService.getOrderConfirmInfo(1L);
+
+
+        assertThat(orderConfirmInfo.getOrderId()).isEqualTo("orderId");
+        assertThat(orderConfirmInfo.getOrderName()).isEqualTo("orderName");
+        assertThat(orderConfirmInfo.getAddressBase()).isEqualTo("roadAddress");
+        assertThat(orderConfirmInfo.getOrderState()).isEqualTo("orderState");
+        assertThat(orderConfirmInfo.getOrderRequest()).isEqualTo("orderRequest");
+        assertThat(orderConfirmInfo.getBuyerName()).isEqualTo("buyerName");
+        assertThat(orderConfirmInfo.getReceivedAt()).isEqualTo("1998-10-08T00:00:00");
+        assertThat(orderConfirmInfo.getAddressDetail()).isEqualTo("detailAddress");
+        assertThat(orderConfirmInfo.getTotalAmount()).isEqualTo(10000L);
+        assertThat(orderConfirmInfo.getRecipientName()).isEqualTo("recipientName");
+    }
+
+    @Test
+    @DisplayName("결제 전 주문확인용 정보 호출 실패")
+    void getOrderConfirmInfo_fail() {
+        when(orderRepository.getOrderConfirmInfo(anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> orderService.getOrderConfirmInfo(anyLong()))
+                .isInstanceOf(OrderNotFoundException.class)
+                .hasMessageContaining(OrderNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("주문상품의 상태를 구매확정으로 만들어주는 메소드")
+    void orderState_confirm() {
+        when(orderProductRepository.getOrderProduct(anyLong()))
+                .thenReturn(Optional.of(orderProduct));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+
+        when(orderRepository.findById(anyLong()))
+                .thenReturn(Optional.of(order));
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderStateCode));
+
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+
+        orderService.confirmOrderProduct("1", "1");
+
+        verify(orderRepository, times(1)).findById(anyLong());
+        verify(orderProductRepository, times(1)).getOrderProduct(anyLong());
+        verify(orderProductStateCodeRepository, times(1)).findByCodeName(anyString());
+        verify(orderStateCodeRepository, times(1)).findByCodeName(anyString());
+        verify(memberRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("구매확정 메소드 실패_주문상품 존재 x")
+    void orderState_confirm_fail_notExist_orderProduct() {
+        when(orderProductRepository.getOrderProduct(anyLong()))
+                .thenReturn(Optional.empty());
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+        when(orderRepository.findById(anyLong()))
+                .thenReturn(Optional.of(order));
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderStateCode));
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+
+        assertThatThrownBy(() -> orderService.confirmOrderProduct("1", "1"))
+                .isInstanceOf(NotFoundOrderProductException.class)
+                .hasMessageContaining(NotFoundOrderProductException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("구매확정 메소드 실패_주문상품상태 존재 x")
+    void orderState_confirm_fail_notExist_orderProductState() {
+        when(orderProductRepository.getOrderProduct(anyLong()))
+                .thenReturn(Optional.of(orderProduct));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.empty());
+        when(orderRepository.findById(anyLong()))
+                .thenReturn(Optional.of(order));
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderStateCode));
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+
+        assertThatThrownBy(() -> orderService.confirmOrderProduct("1", "1"))
+                .isInstanceOf(NotFoundOrderProductStateException.class)
+                .hasMessageContaining(NotFoundOrderProductStateException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("구매확정 메소드 실패_주문 존재 x")
+    void orderState_confirm_fail_notExist_order() {
+        when(orderProductRepository.getOrderProduct(anyLong()))
+                .thenReturn(Optional.of(orderProduct));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+        when(orderRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderStateCode));
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+
+        assertThatThrownBy(() -> orderService.confirmOrderProduct("1", "1"))
+                .isInstanceOf(OrderNotFoundException.class)
+                .hasMessageContaining(OrderNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("구매확정 메소드 실패_주문상태 존재 x")
+    void orderState_confirm_fail_notExist_member() {
+        when(orderProductRepository.getOrderProduct(anyLong()))
+                .thenReturn(Optional.of(orderProduct));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+        when(orderRepository.findById(anyLong()))
+                .thenReturn(Optional.of(order));
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.empty());
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+
+        assertThatThrownBy(() -> orderService.confirmOrderProduct("1", "1"))
+                .isInstanceOf(NotFoundOrderStateException.class)
+                .hasMessageContaining(NotFoundOrderStateException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("구매확정 메소드 실패_회원정보 존재 x")
+    void orderState_confirm_fail_notExist_orderState() {
+        when(orderProductRepository.getOrderProduct(anyLong()))
+                .thenReturn(Optional.of(orderProduct));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+        when(orderRepository.findById(anyLong()))
+                .thenReturn(Optional.of(order));
+        when(orderStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderStateCode));
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> orderService.confirmOrderProduct("1", "1"))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("교환수락 메소드")
+    void orderState_exchange() {
+        when(orderProductRepository.getOrderProduct(anyLong()))
+                .thenReturn(Optional.of(orderProduct));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        orderService.confirmExchange("1");
+    }
+
+    @Test
+    @DisplayName("교환수락 메소드 실패_주문상품 정보 x")
+    void orderState_exchange_fail_orderProduct() {
+        when(orderProductRepository.getOrderProduct(anyLong()))
+                .thenReturn(Optional.empty());
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        assertThatThrownBy(() -> orderService.confirmExchange("1"))
+                .isInstanceOf(NotFoundOrderProductException.class)
+                .hasMessageContaining(NotFoundOrderProductException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("교환수락 메소드 실패_주문상품상태 정보 x")
+    void orderState_exchange_fail_orderProductState() {
+        when(orderProductRepository.getOrderProduct(anyLong()))
+                .thenReturn(Optional.of(orderProduct));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.empty());
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.of(product));
+
+        assertThatThrownBy(() -> orderService.confirmExchange("1"))
+                .isInstanceOf(NotFoundOrderProductStateException.class)
+                .hasMessageContaining(NotFoundOrderProductStateException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("교환수락 메소드 실패_상품 정보 x")
+    void orderState_exchange_fail_product() {
+        when(orderProductRepository.getOrderProduct(anyLong()))
+                .thenReturn(Optional.of(orderProduct));
+        when(orderProductStateCodeRepository.findByCodeName(anyString()))
+                .thenReturn(Optional.of(orderProductStateCode));
+        when(productRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> orderService.confirmExchange("1"))
+                .isInstanceOf(ProductNotFoundException.class)
+                .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("비회원 주문 단건 조회")
+    void getOrderDetailByOrderId_noAuth_member() {
+        when(orderRepository.getOrderDetailByOrderId(anyString()))
+                .thenReturn(Optional.of(detailDto));
+        when(productRepository.getProductListByOrderNo(anyLong()))
+                .thenReturn(List.of(productListDto));
+
+        orderService.getOrderDetailByOrderId("orderId");
+
+        verify(orderRepository,times(1)).getOrderDetailByOrderId(anyString());
+        verify(productRepository, times(1)).getProductListByOrderNo(anyLong());
+
     }
 }
