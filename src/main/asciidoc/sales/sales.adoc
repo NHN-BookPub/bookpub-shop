@@ -2,5 +2,5 @@
 
 매출및 통계를 볼수있습니다.
 
-
+include::slae-get.adoc[]
 
