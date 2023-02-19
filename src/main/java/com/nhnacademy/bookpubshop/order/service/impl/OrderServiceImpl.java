@@ -87,6 +87,9 @@ public class OrderServiceImpl implements OrderService {
         return response;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public GetOrderDetailResponseDto getOrderDetailByOrderId(String orderId) {
         GetOrderDetailResponseDto response = orderRepository.getOrderDetailByOrderId(orderId)

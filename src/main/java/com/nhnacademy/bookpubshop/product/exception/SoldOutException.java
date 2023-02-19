@@ -7,7 +7,7 @@ package com.nhnacademy.bookpubshop.product.exception;
  * @since : 1.0
  **/
 public class SoldOutException extends RuntimeException {
-    private static final String MESSAGE = "All Sold out, Have no more stock;";
+    public static final String MESSAGE = "All Sold out, Have no more stock;";
 
     public SoldOutException() {
         super(MESSAGE);

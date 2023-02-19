@@ -148,15 +148,14 @@ public class OrderController {
     }
 
     /**
-     * 주문 상세 정보를 반환합니다. (주문 Id 조회)
+     * 비회원 주문 상세 정보를 반환합니다. (주문 Id 조회)
      *
      * @param orderId 주문 Id 입니다.
      * @return 200, 주문상세정보 Dto 를 반환합니다.
      */
     @GetMapping("/api/orders/non/{orderId}")
     public ResponseEntity<GetOrderDetailResponseDto> getOrderDetailByOrderId(
-            @PathVariable String orderId,
-            @RequestParam String phoneNo) {
+            @PathVariable String orderId) {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(orderService.getOrderDetailByOrderId(orderId));

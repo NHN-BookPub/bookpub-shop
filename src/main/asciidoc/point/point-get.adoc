@@ -1,0 +1,37 @@
+:toc:
+==== 회원의 포인트 사용내역 전부 조회
+
+===== 요청구조
+
+include::../../../../target/snippets/point-history-list/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/point-history-list/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/point-history-list/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/point-history-list/response-fields.adoc[]
+
+
+==== 관리자의 포인트 사용내역 전부 조회
+
+===== 요청구조
+
+include::../../../../target/snippets/admin-point-list/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/admin-point-list/request-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/admin-point-list/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/admin-point-list/response-fields.adoc[]

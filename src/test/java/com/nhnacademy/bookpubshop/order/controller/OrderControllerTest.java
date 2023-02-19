@@ -20,6 +20,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.requestP
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -31,6 +32,7 @@ import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.order.dto.request.CreateOrderRequestDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;
+import com.nhnacademy.bookpubshop.order.dto.response.GetOrderConfirmResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderDetailResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListForAdminResponseDto;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderListResponseDto;
@@ -84,7 +86,7 @@ import org.springframework.test.web.servlet.MockMvc;
 /**
  * 주문 컨트롤러 테스트.
  *
- * @author : 여운석
+ * @author : 여운석, 임태원
  * @since : 1.0
  **/
 @WebMvcTest(OrderController.class)
@@ -172,7 +174,7 @@ class OrderControllerTest {
                 "info");
 
         orderProduct = new OrderProduct(null, product, order, orderProductStateCode,
-                3, 1000L, 30000L, "reason", 100L,"");
+                3, 1000L, 30000L, "reason", 100L, "");
 
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
@@ -200,7 +202,7 @@ class OrderControllerTest {
                         FileCategory.PRODUCT_EBOOK, null)));
 
         new OrderProduct(null, product, order, orderProductStateCode,
-                3, 1000L, 30000L, "reason", 100L,"");
+                3, 1000L, 30000L, "reason", 100L, "");
 
         productDto = new GetProductListForOrderResponseDto(1L,
                 orderProduct.getOrderProductNo(),
@@ -580,6 +582,153 @@ class OrderControllerTest {
                                 fieldWithPath("savePoint").description("적립 포인트"),
                                 fieldWithPath("cardCompany").description("카드 회사"),
                                 fieldWithPath("receiptUrl").description("영수증 링크")
+                        )));
+    }
+
+
+    @Test
+    @DisplayName("결제 전 마지막 주문 정보를 반환하는 메소드 테스트")
+    void getOrderConfirmInfo() throws Exception {
+        GetOrderConfirmResponseDto dto = new GetOrderConfirmResponseDto(
+                "orderName",
+                "buyerName",
+                "recipientName",
+                "roadAddress",
+                "detailAddress",
+                LocalDateTime.of(1998, 10, 8, 0, 0),
+                "orderRequest",
+                10000L,
+                "orderId",
+                "orderState"
+        );
+
+        when(orderService.getOrderConfirmInfo(anyLong()))
+                .thenReturn(dto);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/orders/{orderNo}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.orderName").value("orderName"))
+                .andExpect(jsonPath("$.buyerName").value("buyerName"))
+                .andExpect(jsonPath("$.recipientName").value("recipientName"))
+                .andExpect(jsonPath("$.addressBase").value("roadAddress"))
+                .andExpect(jsonPath("$.addressDetail").value("detailAddress"))
+                .andExpect(jsonPath("$.receivedAt").value("1998-10-08T00:00:00"))
+                .andExpect(jsonPath("$.orderRequest").value("orderRequest"))
+                .andExpect(jsonPath("$.totalAmount").value(10000L))
+                .andExpect(jsonPath("$.orderId").value("orderId"))
+                .andExpect(jsonPath("$.orderState").value("orderState"))
+                .andDo(document("order-confirm",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("orderNo").description("주문번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("orderName").description("주문명"),
+                                fieldWithPath("buyerName").description("구매인 이름"),
+                                fieldWithPath("recipientName").description("수령인 이름"),
+                                fieldWithPath("addressBase").description("도로명주소"),
+                                fieldWithPath("addressDetail").description("상세주소"),
+                                fieldWithPath("receivedAt").description("도착예정일"),
+                                fieldWithPath("orderRequest").description("배송 시 요청사항"),
+                                fieldWithPath("totalAmount").description("주문 총액"),
+                                fieldWithPath("orderId").description("주문 아이디"),
+                                fieldWithPath("orderState").description("주문 상태")
+                        )));
+    }
+
+    @Test
+    @DisplayName("비회원 주문 상세 정보를 반환합니다.")
+    void getOrderDetail_unAuth_user() throws Exception {
+        when(orderService.getOrderDetailByOrderId(anyString()))
+                .thenReturn(detailDto);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get(
+                "/api/orders/non/{orderId}", 1L)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orderState").value(order.getOrderStateCode().getCodeName()))
+                .andExpect(jsonPath("$.buyerName").value(order.getOrderBuyer()))
+                .andExpect(jsonPath("$.buyerNumber").value(order.getBuyerPhone()))
+                .andExpect(jsonPath("$.recipientName").value(order.getOrderRecipient()))
+                .andExpect(jsonPath("$.recipientNumber").value(order.getRecipientPhone()))
+                .andExpect(jsonPath("$.addressBase").value(order.getRoadAddress()))
+                .andExpect(jsonPath("$.addressDetail").value(order.getAddressDetail()))
+                .andExpect(jsonPath("$.createdAt").value(order.getCreatedAt()))
+                .andExpect(jsonPath("$.invoiceNo").value(order.getInvoiceNumber()))
+                .andExpect(jsonPath("$.packaged").value(order.isOrderPackaged()))
+                .andExpect(jsonPath("$.couponAmount").value(order.getCouponDiscount()))
+                .andExpect(jsonPath("$.totalAmount").value(order.getOrderPrice()))
+                .andExpect(jsonPath("$.orderName").value(order.getOrderName()))
+                .andExpect(jsonPath("$.orderId").value(order.getOrderId()))
+                .andDo(print())
+                .andDo(document("non-order-detail",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("orderId").description("주문 아이디")
+                        ),
+                        responseFields(
+                                fieldWithPath("orderNo").description("주문번호"),
+                                fieldWithPath("memberNo").description("회원번호"),
+                                fieldWithPath("orderProducts").description("주문상품"),
+                                fieldWithPath("orderState").description("결제완료"),
+                                fieldWithPath("buyerName").description("구매자"),
+                                fieldWithPath("buyerNumber").description("구매자 번호"),
+                                fieldWithPath("recipientName").description("수령인"),
+                                fieldWithPath("recipientNumber").description("수령인 번호"),
+                                fieldWithPath("addressBase").description("기본 주소"),
+                                fieldWithPath("addressDetail").description("상세 주소"),
+                                fieldWithPath("createdAt").description("주문일"),
+                                fieldWithPath("receivedAt").description("수령일"),
+                                fieldWithPath("invoiceNo").description("송장 번호"),
+                                fieldWithPath("packaged").description("포장여부"),
+                                fieldWithPath("packageAmount").description("포장비"),
+                                fieldWithPath("deliveryAmount").description("배송비"),
+                                fieldWithPath("orderRequest").description("요구사항"),
+                                fieldWithPath("pointAmount").description("포인트 사용량"),
+                                fieldWithPath("couponAmount").description("쿠폰 할인 금액"),
+                                fieldWithPath("totalAmount").description("총 금액"),
+                                fieldWithPath("orderName").description("주문 명"),
+                                fieldWithPath("orderId").description("주문 아이디")
+
+                        )));
+
+    }
+
+
+    @Test
+    @DisplayName("주문상품 상태를 구매확정으로 만드는 메소드.")
+    void change_confirm_state_orderProduct() throws Exception {
+        doNothing().when(orderService).confirmOrderProduct(anyString(), anyString());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/orders/order-product/{orderProductNo}/member/{memberNo}", 1L, 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andDo(document("order-state-change-confirm",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("orderProductNo").description("주문상품번호"),
+                                parameterWithName("memberNo").description("회원번호")
+                        )));
+    }
+
+    @Test
+    @DisplayName("교환신청 주문상품에 대해 관리자가 수락해주는 메소드")
+    void change_exchange_state_orderProduct() throws Exception {
+        doNothing().when(orderService).confirmExchange(anyString());
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.post("/token/orders/order-product/{orderProductNo}", 1L)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(document("order-state-change-exchange",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("orderProductNo").description("주문상품번호")
                         )));
     }
 }

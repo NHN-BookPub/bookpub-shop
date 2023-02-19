@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
  * @since : 1.0
  **/
 public interface PointService {
+
     /**
      * 포인트 내역 불러오는 메소드.
      *

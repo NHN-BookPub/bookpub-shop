@@ -69,6 +69,57 @@ public class ProductDummy {
             ProductPolicy productPolicy,
             ProductTypeStateCode productTypeStateCode,
             ProductSaleStateCode productSaleStateCode,
+            int productStock) {
+
+        List<Product> relation = new ArrayList<>();
+        relation.add(new Product(
+                null,
+                productPolicy,
+                productTypeStateCode,
+                productSaleStateCode,
+                null,
+                "1111111111",
+                "title",
+                "publisher",
+                100,
+                "description",
+                8000L,
+                10000L,
+                20,
+                0L,
+                3,
+                false,
+                productStock,
+                LocalDateTime.now(),
+                true));
+
+
+        return new Product(
+                null,
+                productPolicy,
+                productTypeStateCode,
+                productSaleStateCode,
+                null,
+                "1111111111",
+                "title",
+                "publisher",
+                100,
+                "description",
+                9000L,
+                10000L,
+                10,
+                0L,
+                5,
+                false,
+                productStock,
+                LocalDateTime.now(),
+                true);
+    }
+
+    public static Product dummy(
+            ProductPolicy productPolicy,
+            ProductTypeStateCode productTypeStateCode,
+            ProductSaleStateCode productSaleStateCode,
             Long id) {
 
         List<Product> relation = new ArrayList<>();

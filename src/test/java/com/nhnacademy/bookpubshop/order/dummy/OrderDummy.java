@@ -64,6 +64,32 @@ public class OrderDummy {
                 "dalskdjzx",
                 "orderName"
         );
+    }
+
+    public static BookpubOrder dummy3(Member member, PricePolicy pricePolicy, PricePolicy packagePricePolicy, OrderStateCode orderStateCode) {
+        return new BookpubOrder(
+                null,
+                member,
+                pricePolicy,
+                packagePricePolicy,
+                orderStateCode,
+                "test_recipient",
+                "test_recipient_phone",
+                "test_buyer",
+                "test_buyer_phone",
+                LocalDateTime.of(2023,2,18,4,0),
+                null,
+                10000L,
+                100L,
+                1500L,
+                true,
+                null,
+                1000L,
+                "IT",
+                "광주 동구 조선대길",
+                "dasdljzxlkj",
+                "asdasdasd"
+        );
 
     }
 
