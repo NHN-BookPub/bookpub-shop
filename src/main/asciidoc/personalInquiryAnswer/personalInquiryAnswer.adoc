@@ -1,0 +1,5 @@
+==== 1:1문의 답변
+
+include::personalInquiryAnswer-create.adoc[]
+include::personalInquiryAnswer-delete.adoc[]
+

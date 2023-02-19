@@ -19,4 +19,16 @@ public class PersonalInquiryDummy {
                 .inquiryContent("testContent")
                 .build();
     }
+
+    public static PersonalInquiry dummy2(Member member) {
+
+        return new PersonalInquiry(
+                1L,
+                member,
+                "title",
+                "content",
+                true,
+                false
+        );
+    }
 }

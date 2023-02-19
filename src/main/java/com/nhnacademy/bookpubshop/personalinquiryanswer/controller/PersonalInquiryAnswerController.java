@@ -5,6 +5,8 @@ import com.nhnacademy.bookpubshop.personalinquiryanswer.dto.request.CreatePerson
 import com.nhnacademy.bookpubshop.personalinquiryanswer.service.PersonalInquiryAnswerService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,9 +31,12 @@ public class PersonalInquiryAnswerController {
      */
     @AdminAuth
     @PostMapping("/token/personal-inquiry-answers")
-    public void personalInquiryAnswerAdd(
+    public ResponseEntity<Void> personalInquiryAnswerAdd(
             @Valid @RequestBody CreatePersonalInquiryAnswerRequestDto createDto) {
         personalInquiryAnswerService.createPersonalInquiryAnswer(createDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .build();
     }
 
     /**
@@ -41,8 +46,11 @@ public class PersonalInquiryAnswerController {
      */
     @AdminAuth
     @DeleteMapping("/token/personal-inquiry-answers/{answerNo}")
-    public void personalInquiryAnswerDelete(
+    public ResponseEntity<Void> personalInquiryAnswerDelete(
             @PathVariable("answerNo") Long answerNo) {
         personalInquiryAnswerService.deletePersonalInquiryAnswer(answerNo);
+
+        return ResponseEntity.ok()
+                .build();
     }
 }

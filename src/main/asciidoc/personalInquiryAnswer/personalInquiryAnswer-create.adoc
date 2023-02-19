@@ -1,0 +1,39 @@
+:toc:
+
+==== 1:1 문의 답변 등록
+
+문의 답변 등록에 관한 API 명세
+
+===== 요청구조
+
+include::../../../../target/snippets/personal-inquiry-answer-create/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::../../../../target/snippets/personal-inquiry-answer-create/request-fields.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/personal-inquiry-answer-create/http-response.adoc[]
+
+===== 예외사항
+
+====== 1. 문의 답변 문의번호가 null
+
+Request
+
+include::../../../../target/snippets/personal-inquiry-answer-create-fail-valid-inquiryNo/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/personal-inquiry-answer-create-fail-valid-inquiryNo/http-response.adoc[]
+
+====== 2. 문의 답변 내용이 null
+
+Request
+
+include::../../../../target/snippets/personal-inquiry-answer-create-fail-valid-content/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/personal-inquiry-answer-create-fail-valid-content/http-response.adoc[]

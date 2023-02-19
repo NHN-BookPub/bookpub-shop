@@ -1,0 +1,5 @@
+==== 1:1문의
+
+include::personalInquiry-create.adoc[]
+include::personalInquirty-delete.adoc[]
+include::personalInquiry-get.adoc[]
