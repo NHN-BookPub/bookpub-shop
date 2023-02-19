@@ -108,7 +108,7 @@ class PersonalInquiryRepositoryTest {
     @DisplayName("1:1 문의 상세내용")
     void findPersonalInquiry() {
         Optional<GetPersonalInquiryResponseDto> response
-                = personalInquiryRepository.findPersonalInquiry(1L);
+                = personalInquiryRepository.findPersonalInquiry(personalInquiry.getPersonalInquiryNo());
 
         assertThat(response).isPresent();
         assertThat(response.get().getInquiryNo()).isEqualTo(personalInquiry.getPersonalInquiryNo());
