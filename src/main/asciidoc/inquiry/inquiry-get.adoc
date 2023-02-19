@@ -1,0 +1,140 @@
+:toc:
+==== 문의  단건 조회
+
+문의(Inquiry) 조회 ApI 명세
+
+===== 요청구조
+
+include::../../../../target/snippets/inquiry-get-productNo/http-request.adoc[]
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/inquiry-get-productNo/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-get-productNo/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/inquiry-get-productNo/response-fields.adoc[]
+
+==== 문의 요약정보 조회
+
+===== 요청구조
+
+include::../../../../target/snippets/inquiry-get-admin/http-request.adoc[]
+
+RequestParam
+
+include::../../../../target/snippets/inquiry-get-admin/request-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-get-admin/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/inquiry-get-admin/response-fields.adoc[]
+
+==== 문의 불량상품 조회
+
+===== 요청구조
+
+RequestBody
+
+include::../../../../target/snippets/inquiry-get-error/http-request.adoc[]
+
+RequestParam
+
+include::../../../../target/snippets/inquiry-get-error/request-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-get-error/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/inquiry-get-error/response-fields.adoc[]
+
+==== 멤버관련 문의 조회
+
+===== 요청구조
+
+RequestBody
+
+include::../../../../target/snippets/inquiry-get-member/http-request.adoc[]
+
+RequestParam
+
+include::../../../../target/snippets/inquiry-get-member/request-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-get-member/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/inquiry-get-member/response-fields.adoc[]
+
+==== 상품문의 단건 조회(공개중)
+
+===== 요청구조
+
+RequestBody
+
+include::../../../../target/snippets/inquiry-get-view-details/http-request.adoc[]
+
+PathVariable
+
+include::../../../../target/snippets/inquiry-get-view-details/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-get-view-details/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/inquiry-get-view-details/response-fields.adoc[]
+
+==== 상품문의 단건 조회(비공개)
+
+===== 요청구조
+
+RequestBody
+
+include::../../../../target/snippets/inquiry-get-view-details/http-request.adoc[]
+
+PathVariable
+
+include::../../../../target/snippets/inquiry-get-view-details/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-get-view-details/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/inquiry-get-view-details/response-fields.adoc[]
+
+==== 상품문의 회원번호를 통해조회(비공개)
+
+===== 요청구조
+
+RequestBody
+
+include::../../../../target/snippets/inquiry-get-details/http-request.adoc[]
+
+PathVariable
+
+include::../../../../target/snippets/inquiry-get-details/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-get-details/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/inquiry-get-details/response-fields.adoc[]
+
+
