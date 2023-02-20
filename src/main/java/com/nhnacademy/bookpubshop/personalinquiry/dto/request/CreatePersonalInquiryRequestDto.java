@@ -19,10 +19,11 @@ public class CreatePersonalInquiryRequestDto {
     private Long memberNo;
 
     @NotBlank(message = "문의 제목를 입력해주세요.")
-    @Size(max = 100)
+    @Size(max = 100, message = "문의제목은 100자를 넘길 수 없습니다")
     private String inquiryTitle;
 
-    @NotBlank(message = "문의 내용를 입력해주세요.")
-    @Size(max = 2000)
+    @NotBlank(message = "문의 내용을 입력해주세요.")
+    @Size(max = 2000, message = "문의 내용은 2000자를 넘길 수 없습니다")
     private String inquiryContent;
 }
+

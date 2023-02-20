@@ -18,4 +18,12 @@ public class PersonalInquiryAnswerDummy {
                 .personalInquiry(personalInquiry)
                 .build();
     }
+
+    public static PersonalInquiryAnswer dummy2(PersonalInquiry personalInquiry) {
+        return new PersonalInquiryAnswer(
+                1L,
+                personalInquiry,
+                "content"
+        );
+    }
 }

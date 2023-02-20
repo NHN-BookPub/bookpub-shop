@@ -1,0 +1,63 @@
+:toc:
+
+==== 1:1 문의 전체조회
+
+어드민이 모든 문의를 조회하는데 사용하는 api 명세
+
+===== 요청구조
+
+include::../../../../target/snippets/personal-inquiries-list/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::../../../../target/snippets/personal-inquiries-list/httpie-request.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/personal-inquiries-list/http-response.adoc[]
+
+====== 응답 파라미터들
+
+include::../../../../target/snippets/personal-inquiries-list/response-fields.adoc[]
+
+
+==== 특정 회원의 1:1 문의 전체조회
+
+마이페이지에서 회원이 자신의 전체 1:1 문의 리스트를 요청하는 api명세
+
+===== 요청구조
+
+include::../../../../target/snippets/personal-inquiries-list-member/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::../../../../target/snippets/personal-inquiries-list-member/httpie-request.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/personal-inquiries-list-member/http-response.adoc[]
+
+====== 응답 파라미터들
+
+include::../../../../target/snippets/personal-inquiries-list-member/response-fields.adoc[]
+
+==== 1:1문의 상세내용
+
+1:1문의의 상세 내용을 요청하는 api 명세
+
+===== 요청구조
+
+include::../../../../target/snippets/personal-inquiry-delete/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::../../../../target/snippets/personal-inquiry-detail/httpie-request.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/personal-inquiry-detail/http-response.adoc[]
+
+====== 응답 파라미터들
+
+include::../../../../target/snippets/personal-inquiry-detail/response-fields.adoc[]
+

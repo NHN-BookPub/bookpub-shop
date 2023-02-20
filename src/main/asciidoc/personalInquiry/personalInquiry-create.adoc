@@ -1,0 +1,69 @@
+:toc:
+
+==== 1:1 문의 등록
+
+문의 등록에 관한 API 명세
+
+===== 요청구조
+
+include::../../../../target/snippets/personal-inquiry-create/http-request.adoc[]
+
+===== 요청 파라미터
+
+include::../../../../target/snippets/personal-inquiry-create/request-fields.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/personal-inquiry-create/http-response.adoc[]
+
+===== 예외사항
+
+====== 1. 문의 회원 번호가 null
+
+Request
+
+include::../../../../target/snippets/personal-inquiry-create-fail-valid-member/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/personal-inquiry-create-fail-valid-member/http-response.adoc[]
+
+====== 2. 문의 제목이 null
+
+Request
+
+include::../../../../target/snippets/personal-inquiry-create-fail-valid-title_null/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/personal-inquiry-create-fail-valid-title_null/http-response.adoc[]
+
+====== 3. 문의 제목 size
+
+Request
+
+include::../../../../target/snippets/personal-inquiry-create-fail-valid-title_size/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/personal-inquiry-create-fail-valid-title_size/http-response.adoc[]
+
+====== 4. 문의 내용 null
+
+Request
+
+include::../../../../target/snippets/personal-inquiry-create-fail-valid-content_null/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/personal-inquiry-create-fail-valid-content_null/http-response.adoc[]
+
+====== 5. 문의 내용 size
+
+Request
+
+include::../../../../target/snippets/personal-inquiry-create-fail-valid-content_size/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/personal-inquiry-create-fail-valid-content_size/http-response.adoc[]

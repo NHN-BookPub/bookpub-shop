@@ -1,0 +1,13 @@
+:toc:
+
+==== 1:1문의 답변 삭제
+
+1:1 문의 답변 삭제에 대한 명세
+
+===== 요청구조
+
+include::../../../../target/snippets/inquiry-answer-delete/http-request.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-answer-delete/http-response.adoc[]
