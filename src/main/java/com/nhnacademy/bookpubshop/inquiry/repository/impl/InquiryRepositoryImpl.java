@@ -135,7 +135,8 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                 .where(((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                         .or(file.fileCategory.isNull()))
                         .and(inquiry.parentInquiry.isNull())
-                        .and(inquiry.inquiryStateCode.inquiryCodeName.eq(InquiryState.ERROR.getName())))
+                        .and(inquiry.inquiryStateCode.inquiryCodeName
+                                .eq(InquiryState.ERROR.getName())))
                 .select(inquiry.count());
 
         List<GetInquirySummaryResponseDto> inquiries =
@@ -155,7 +156,8 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                                 inquiry.inquiryNo,
                                 inquiry.product.productNo,
                                 member.memberNo,
-                                inquiry.inquiryStateCode.inquiryCodeName.as(INQUIRY_STATE_CODE_NAME),
+                                inquiry.inquiryStateCode.inquiryCodeName
+                                        .as(INQUIRY_STATE_CODE_NAME),
                                 member.memberNickname,
                                 product.title.as(PRODUCT_TITLE),
                                 product.productIsbn,
@@ -177,18 +179,15 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public Page<GetInquirySummaryResponseDto> findSummaryInquiries(Pageable pageable,
-                                                                   String searchKeyFir, String searchValueFir,
-                                                                   String searchKeySec, String searchValueSec) {
+    public Page<GetInquirySummaryResponseDto> findSummaryInquiries(
+            Pageable pageable,
+            String searchKeyFir, String searchValueFir,
+            String searchKeySec, String searchValueSec) {
         JPQLQuery<Long> count = from(inquiry)
                 .innerJoin(inquiry.product, product)
                 .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
                 .innerJoin(inquiry.member, member)
                 .on(inquiry.member.memberNo.eq(member.memberNo))
-//                        .leftJoin(productCategory)
-//                        .on(inquiry.product.productNo.eq(productCategory.product.productNo))
-//                        .leftJoin(category)
-//                        .on(productCategory.category.categoryNo.eq(category.categoryNo))
                 .leftJoin(file)
                 .on(inquiry.product.productNo.eq(file.product.productNo))
                 .where(((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
@@ -206,10 +205,6 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                         .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
                         .innerJoin(inquiry.member, member)
                         .on(inquiry.member.memberNo.eq(member.memberNo))
-//                        .leftJoin(productCategory)
-//                        .on(inquiry.product.productNo.eq(productCategory.product.productNo))
-//                        .leftJoin(category)
-//                        .on(productCategory.category.categoryNo.eq(category.categoryNo))
                         .leftJoin(file)
                         .on(inquiry.product.productNo.eq(file.product.productNo))
                         .where(((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
@@ -382,18 +377,19 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
      * @return querydsl 조건절
      */
     private BooleanExpression searchSecEq(String searchKeySec, String searchValueSec) {
-        if (Objects.isNull(searchKeySec) || Objects.isNull(searchValueSec) ||
-                (searchKeySec.isBlank()) || (searchValueSec.isBlank())) {
+        if (Objects.isNull(searchKeySec) || Objects.isNull(searchValueSec)
+                || (searchKeySec.isBlank()) || (searchValueSec.isBlank())) {
             return null;
         }
-        if (searchKeySec.equals(PRODUCT_TITLE)) {
-            return inquiry.product.title.contains(searchValueSec);
-        } else if (searchKeySec.equals("productIsbn")) {
-            return inquiry.product.productIsbn.eq(searchValueSec);
-        } else if (searchKeySec.equals("inquiryTitle")) {
-            return inquiry.inquiryTitle.contains(searchValueSec);
-        } else {
-            return null;
+        switch (searchKeySec) {
+            case PRODUCT_TITLE:
+                return inquiry.product.title.contains(searchValueSec);
+            case "productIsbn":
+                return inquiry.product.productIsbn.eq(searchValueSec);
+            case "inquiryTitle":
+                return inquiry.inquiryTitle.contains(searchValueSec);
+            default:
+                return null;
         }
     }
 }

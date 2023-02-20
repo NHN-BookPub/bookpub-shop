@@ -1,0 +1,183 @@
+:toc:
+
+==== 문의 등록
+
+문의 (Inquiry) 등록에 관한 Api 명세입니다.
+
+===== 요청구조
+
+include::../../../../target/snippets/inquiry-add/http-request.adoc[]
+
+===== 요청 파라미터들
+
+RequestBody
+
+include::../../../../target/snippets/inquiry-add/request-fields.adoc[]
+
+PathVariable
+
+include::../../../../target/snippets/inquiry-add/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-add/http-response.adoc[]
+
+===== 예외 상황
+
+====== 1. 문의 내용이 비어있을경우
+
+Request
+
+include::../../../../target/snippets/inquiry-add-fail-content-null/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/inquiry-add-fail-content-null/http-response.adoc[]
+
+====== 2. 문의 내용이 너무길경우
+
+Request
+
+include::../../../../target/snippets/inquiry-add-fail-content-long/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/inquiry-add-fail-content-long/http-response.adoc[]
+
+====== 3. 상품번호를 기입하지않았을경우
+
+Request
+
+include::../../../../target/snippets/inquiry-add-fail-productNo-null/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/inquiry-add-fail-productNo-null/http-response.adoc[]
+
+====== 4. 문의 제목이 길었을 경우
+
+Request
+
+include::../../../../target/snippets/inquiry-add-fail-inquiry-title-long/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/inquiry-add-fail-inquiry-title-long/http-response.adoc[]
+
+====== 5. 문의 제목이 null 일 경우
+
+Request
+
+include::../../../../target/snippets/inquiry-add-fail-inquiry-title-null/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/inquiry-add-fail-inquiry-title-null/http-response.adoc[]
+
+====== 6. 문의 상태코드가 null 일 경우
+
+Request
+
+include::../../../../target/snippets/inquiry-add-fail-inquiryStateCodeNo-null/http-request.adoc[]
+
+Response
+
+include::../../../../target/snippets/inquiry-add-fail-inquiryStateCodeNo-null/http-response.adoc[]
+
+==== 문의 이력확인
+
+문의 (Inquiry) 이미지 추가
+
+===== 요청구조
+
+include::../../../../target/snippets/inquiry-add-image/http-request.adoc[]
+
+===== 요청 파라미터들
+
+RequestParam
+
+include::../../../../target/snippets/inquiry-add-image/request-parts.adoc[]
+
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-add-image/http-response.adoc[]
+
+
+==== 문의 이력확인
+
+문의 (Inquiry) 구매이력 확인
+
+===== 요청구조
+
+include::../../../../target/snippets/inquiry-verify/http-request.adoc[]
+
+===== 요청 파라미터들
+
+RequestParam
+
+include::../../../../target/snippets/inquiry-verify/request-parameters.adoc[]
+
+PathVariable
+
+include::../../../../target/snippets/inquiry-verify/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-verify/http-response.adoc[]
+
+
+==== 문의 답변 삭제
+
+문의 (Inquiry) 답변 삭제
+
+===== 요청구조
+
+include::../../../../target/snippets/inquiry-delete-answer/http-request.adoc[]
+
+===== 요청 파라미터들
+
+PathVariable
+
+include::../../../../target/snippets/inquiry-delete-answer/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-delete-answer/http-response.adoc[]
+
+==== 문의 삭제
+
+문의 (Inquiry) 삭제
+
+===== 요청구조
+
+include::../../../../target/snippets/inquiry-delete/http-request.adoc[]
+
+===== 요청 파라미터들
+
+PathVariable
+
+include::../../../../target/snippets/inquiry-delete/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-delete/http-response.adoc[]
+
+==== 문의 수정
+
+문의 (Inquiry) 답변여부 수정
+
+===== 요청구조
+
+include::../../../../target/snippets/inquiry-modify/http-request.adoc[]
+
+===== 요청 파라미터들
+
+PathVariable
+
+include::../../../../target/snippets/inquiry-modify/path-parameters.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-modify/http-response.adoc[]
+

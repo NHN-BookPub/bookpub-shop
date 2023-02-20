@@ -138,6 +138,8 @@ include::tiercoupon/tiercoupon.adoc[]
 //매출
 include::sales/sales.adoc[]
 
+//상품문의
+include::inquiry/inquiry.adoc[]
 
 
 
