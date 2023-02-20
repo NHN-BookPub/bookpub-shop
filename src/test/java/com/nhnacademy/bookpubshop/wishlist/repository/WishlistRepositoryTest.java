@@ -19,10 +19,8 @@ import com.nhnacademy.bookpubshop.member.dummy.MemberDummy;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.personalinquiry.dummy.PersonalInquiryDummy;
 import com.nhnacademy.bookpubshop.personalinquiry.entity.PersonalInquiry;
-import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
-import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
@@ -33,10 +31,13 @@ import com.nhnacademy.bookpubshop.reviewpolicy.dummy.ReviewPolicyDummy;
 import com.nhnacademy.bookpubshop.reviewpolicy.entity.ReviewPolicy;
 import com.nhnacademy.bookpubshop.servicecode.dummy.CustomerServiceStateCodeDummy;
 import com.nhnacademy.bookpubshop.servicecode.entity.CustomerServiceStateCode;
+import com.nhnacademy.bookpubshop.state.ProductSaleState;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
+import com.nhnacademy.bookpubshop.wishlist.dto.response.GetAppliedMemberResponseDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistResponseDto;
 import com.nhnacademy.bookpubshop.wishlist.entity.Wishlist;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,8 +90,13 @@ class WishlistRepositoryTest {
 
         productPolicy = ProductPolicyDummy.dummy();
         productTypeStateCode = ProductTypeStateCodeDummy.dummy();
-        productSaleStateCode = ProductSaleStateCodeDummy.dummy();
-        product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
+        productSaleStateCode = new ProductSaleStateCode(
+                null, ProductSaleState.SOLD_OUT.getName(), true, "품절");
+        product = new Product(
+                null, productPolicy, productTypeStateCode, productSaleStateCode, null,
+                "isbn", "title", "출판사", 100, "설명",
+                100L, 100L, 0, 100L, 10, false,
+                100, LocalDateTime.now(), false);
         personalInquiry = PersonalInquiryDummy.dummy(member);
         reviewPolicy = ReviewPolicyDummy.dummy();
         review = ReviewDummy.dummy(member, product, reviewPolicy);
@@ -101,14 +107,6 @@ class WishlistRepositoryTest {
         couponTemplate = CouponTemplateDummy.dummy(couponPolicy, couponType, product, category, couponStateCode);
         customerServiceStateCode = CustomerServiceStateCodeDummy.dummy();
         customerService = CustomerServiceDummy.dummy(customerServiceStateCode, member);
-//        file = new File(null, review,
-//                personalInquiry, couponTemplate,
-//                product, customerService,
-//                FileCategory.PRODUCT_THUMBNAIL.getCategory(),
-//                "path", ".png",
-//                "origin", "a");
-
-
     }
 
     @Test
@@ -166,13 +164,6 @@ class WishlistRepositoryTest {
         entityManager.persist(customerServiceStateCode);
         entityManager.persist(customerService);
 
-//        File fileDummy = entityManager.persist(
-//                new File(null, null, null, null, product,
-//                        null, "thumbnail", "path", ".exe", "origin", "name"));
-
-//        product.setProductFiles(List.of(file));
-
-
         Wishlist wishlist = new Wishlist(new Wishlist.Pk(member.getMemberNo(), product.getProductNo()),
                 member, product, true);
         Wishlist persist = entityManager.persist(wishlist);
@@ -186,7 +177,34 @@ class WishlistRepositoryTest {
         assertThat(list.get(0).getProductNo()).isEqualTo(persist.getProduct().getProductNo());
         assertThat(list.get(0).getTitle()).isEqualTo(persist.getProduct().getTitle());
         assertThat(list.get(0).getProductPublisher()).isEqualTo(persist.getProduct().getProductPublisher());
-//        assertThat(list.get(0).getThumbnail()).isEqualTo(fileDummy.getFilePath());
         assertThat(list.get(0).isWishlistApplied()).isEqualTo(persist.isWishlistApplied());
+    }
+
+    @Test
+    @DisplayName("위시리스트 알람 등록한 멤버 조회 테스트")
+    void findWishlistAppliedMembers() {
+        // given
+        entityManager.persist(bookPubTier);
+        Member memberDummy = entityManager.persist(member);
+        entityManager.persist(productPolicy);
+        entityManager.persist(productTypeStateCode);
+        entityManager.persist(productSaleStateCode);
+        Product productDummy = entityManager.persist(product);
+        entityManager.persist(personalInquiry);
+
+        Wishlist wishlist = new Wishlist(new Wishlist.Pk(memberDummy.getMemberNo(), productDummy.getProductNo()),
+                memberDummy, product, true);
+        Wishlist persist = entityManager.persist(wishlist);
+
+        // when
+        List<GetAppliedMemberResponseDto> list = wishlistRepository.findWishlistAppliedMembers(persist.getProduct().getProductNo());
+
+        // then
+        assertThat(list).isNotEmpty();
+        assertThat(list.get(0).getMemberNo()).isEqualTo(persist.getMember().getMemberNo());
+        assertThat(list.get(0).getMemberNickname()).isEqualTo(persist.getMember().getMemberNickname());
+        assertThat(list.get(0).getMemberPhone()).isEqualTo(persist.getMember().getMemberPhone());
+        assertThat(list.get(0).getProductNo()).isEqualTo(persist.getProduct().getProductNo());
+        assertThat(list.get(0).getTitle()).isEqualTo(persist.getProduct().getTitle());
     }
 }
