@@ -30,11 +30,9 @@
 - 두레이에서 제공하는 칸반보드사용.
   <img width="1314" alt="image" src="https://user-images.githubusercontent.com/88470887/220016688-0d7c198a-ac63-43eb-bc15-2010fcdb79cf.png">
 
----
-
 ### 테스트 커버리지
 
-목표 : 라인 커버리지 80% 이상
+- 목표 : 라인 커버리지 80% 이상
 
 **2023년 2월 20일 (월) 기준 81.5%**
 <img width="949" alt="스크린샷 2023-02-20 오후 2 25 42" src="https://user-images.githubusercontent.com/65845022/220016397-ba222183-d23a-4556-bcc9-adda2862801e.png">
