@@ -179,7 +179,7 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public boolean existsMonthCouponsByMemberNo(Long memberNo, Long templateNo) {
+    public boolean existsMonthCoupon(Long memberNo, Long templateNo) {
         Long monthCoupon = from(coupon)
                 .select(coupon.couponNo)
                 .where(coupon.member.memberNo.eq(memberNo)

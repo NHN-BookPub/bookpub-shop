@@ -75,7 +75,7 @@ public interface CouponRepositoryCustom {
      * @param templateNo 쿠폰 템플릿 번호
      * @return 발급 유무
      */
-    boolean existsMonthCouponsByMemberNo(Long memberNo, Long templateNo);
+    boolean existsMonthCoupon(Long memberNo, Long templateNo);
 
     /**
      * 주문번호로 해당 주문에 사용 된 쿠폰을 가져오는 메소드.
