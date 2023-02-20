@@ -12,7 +12,7 @@
 
 ## 아키텍처 구조
 
-- 이미지 첨부 예정
+![Book_Pub_ Architecture](https://user-images.githubusercontent.com/87689191/220088802-720d31f9-71b9-494a-b413-132cd931335c.png)
 
 ## CD/CD
 
