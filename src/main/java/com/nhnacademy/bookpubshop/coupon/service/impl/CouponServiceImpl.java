@@ -22,6 +22,8 @@ import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,10 +35,14 @@ import org.springframework.transaction.annotation.Transactional;
  * @author : 정유진
  * @since : 1.0
  **/
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CouponServiceImpl implements CouponService {
+
+
+    private final RabbitTemplate rabbitTemplate;
 
     private final CouponRepository couponRepository;
     private final MemberRepository memberRepository;
@@ -208,20 +214,14 @@ public class CouponServiceImpl implements CouponService {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean checkedMonthCouponByMemberNo(Long memberNo, Long templateNo) {
-        return couponRepository.existsMonthCouponsByMemberNo(memberNo, templateNo);
-    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional
-    public void issueMonthCouponByMemberNo(Long memberNo, Long templateNo) {
+//    @RabbitListener(queues = "coupon.month.queue")
+    public Integer issueMonthCouponByMemberNo(Long memberNo, Long templateNo) {
 
         CouponTemplate couponTemplate = couponTemplateRepository.findById(templateNo)
                 .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
@@ -229,16 +229,28 @@ public class CouponServiceImpl implements CouponService {
         CouponMonth couponMonth = couponMonthRepository.findByCouponTemplate(couponTemplate)
                 .orElseThrow(() -> new CouponMonthNotFoundException(templateNo));
 
-        couponMonth.minusCouponMonthQuantity();
+        boolean result = couponRepository.existsMonthCoupon(memberNo, templateNo);
 
-        Member member = memberRepository.findById(memberNo)
-                .orElseThrow(MemberNotFoundException::new);
+        if (result) {
+            // 쿠폰이 발급되었으면
+            return 1;
+        } else {
+            // 쿠폰이 발급되지 않았으면
+            couponMonth.minusCouponMonthQuantity();
 
-        Coupon coupon = Coupon.builder()
-                .couponTemplate(couponTemplate)
-                .member(member)
-                .build();
+            Member member = memberRepository.findById(memberNo)
+                    .orElseThrow(MemberNotFoundException::new);
 
-        couponRepository.save(coupon);
+            Coupon coupon = Coupon.builder()
+                    .couponTemplate(couponTemplate)
+                    .member(member)
+                    .build();
+
+            couponRepository.save(coupon);
+
+            return 3;
+
+        }
+
     }
 }
