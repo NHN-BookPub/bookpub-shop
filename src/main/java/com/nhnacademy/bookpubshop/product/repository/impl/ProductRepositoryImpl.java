@@ -28,7 +28,6 @@ import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -89,9 +88,10 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        Long count = queryFactory.select(product.count()).from(product).fetchOne();
+        JPQLQuery<Long> count = from(product)
+                .select(product.count());
 
-        return new PageImpl<>(query, pageable, count);
+        return new PageImpl<>(query, pageable, count.fetchOne());
     }
 
     /**
@@ -202,15 +202,16 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .limit(limit)
                 .fetch();
 
-        result.stream()
-                .map(m -> m.getProductCategories().add(
+        result.forEach(m -> m.getProductCategories().add(
                         String.valueOf(
                                 from(category)
                                         .leftJoin(productCategory)
-                                        .on(productCategory.category.categoryNo.eq(category.categoryNo))
+                                        .on(productCategory.category.categoryNo
+                                                .eq(category.categoryNo))
                                         .select(category.categoryName)
-                                        .where(productCategory.product.productNo.eq(m.getProductNo())).fetch())
-                )).collect(Collectors.toList());
+                                        .where(productCategory.product.productNo
+                                                .eq(m.getProductNo())).fetch())
+                ));
 
         return result;
     }
@@ -245,7 +246,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public List<GetProductDetailResponseDto> getProductsInCart(List<Long> productsNo) {
-        return from(product)
+        List<GetProductDetailResponseDto> policySaveRate = from(product)
                 .select(Projections.fields(GetProductDetailResponseDto.class,
                         product.productNo,
                         product.title,
@@ -253,21 +254,38 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         product.productPublisher,
                         product.productPrice,
                         product.salesPrice,
+                        product.productStock,
                         product.productPolicy.policyMethod,
                         product.productPolicy.policySaved,
                         product.productPolicy.saveRate.as("policySaveRate")
-                ))
+                        ))
                 .leftJoin(file).on(product.productNo.eq(file.product.productNo)
                         .and(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
                 .where(product.productNo.in(productsNo))
                 .fetch();
+
+        policySaveRate.forEach(p -> p.addEbookPath(getEbookPath(p.getProductNo())));
+
+        return policySaveRate;
+    }
+
+    private String getEbookPath(Long productNo) {
+        return from(product)
+                .select(Projections.fields(GetProductDetailResponseDto.class,
+                        file.filePath.as(FileCategory.PRODUCT_EBOOK.getCategory())
+                ))
+                .leftJoin(file).on(product.productNo.eq(file.product.productNo)
+                        .and(file.fileCategory.eq(FileCategory.PRODUCT_EBOOK.getCategory())))
+                .where(product.productNo.eq(productNo))
+                .fetchOne().getEbook();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Page<GetProductByCategoryResponseDto> getProductsByCategory(Integer categoryNo, Pageable pageable) {
+    public Page<GetProductByCategoryResponseDto> getProductsByCategory(
+            Integer categoryNo, Pageable pageable) {
         List<GetProductByCategoryResponseDto> content =
                 from(product)
                         .select(Projections.fields(GetProductByCategoryResponseDto.class,
@@ -277,12 +295,14 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                                 product.salesPrice,
                                 product.salesRate))
                         .innerJoin(product.productSaleStateCode, productSaleStateCode)
-                        .on(productSaleStateCode.codeCategory.notIn(ProductSaleState.STOP.getName()))
+                        .on(productSaleStateCode.codeCategory
+                                .notIn(ProductSaleState.STOP.getName()))
                         .innerJoin(product.productCategories, productCategory)
                         .on(productCategory.product.productNo.eq(product.productNo)
                                 .and(productCategory.category.categoryNo.eq(categoryNo)))
                         .leftJoin(file).on(product.productNo.eq(file.product.productNo)
-                                .and((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                                .and((file.fileCategory
+                                        .eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                                         .or(file.fileCategory.isNull())))
                         .orderBy(product.productPriority.asc())
                         .where(product.productDeleted.isFalse())
@@ -323,7 +343,8 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                         .innerJoin(product.productSaleStateCode, productSaleStateCode)
                         .on(productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
                         .innerJoin(file).on(product.productNo.eq(file.product.productNo)
-                                .and(file.fileCategory.eq(FileCategory.PRODUCT_EBOOK.getCategory())))
+                                .and(file.fileCategory
+                                        .eq(FileCategory.PRODUCT_EBOOK.getCategory())))
                         .orderBy(product.productPriority.asc())
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
@@ -338,7 +359,8 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                 .innerJoin(file).on(product.productNo.eq(file.product.productNo)
                         .and(file.fileCategory.eq(FileCategory.PRODUCT_EBOOK.getCategory())))
                 .select(product.count())
-                .where(product.productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()));
+                .where(product.productSaleStateCode.codeCategory
+                        .eq(ProductSaleState.SALE.getName()));
 
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
@@ -347,9 +369,8 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public Page<GetProductByCategoryResponseDto> getEbooksByMember(Pageable pageable, Long memberNo) {
-        QMember member = QMember.member;
-
+    public Page<GetProductByCategoryResponseDto> getEbooksByMember(
+            Pageable pageable, Long memberNo) {
         List<GetProductByCategoryResponseDto> content =
                 from(orderProduct)
                         .select(Projections.fields(GetProductByCategoryResponseDto.class,
@@ -397,8 +418,10 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                             .innerJoin(product)
                             .on(file.product.productNo.eq(product.productNo))
                             .select(file.filePath)
-                            .where(file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())
-                                    .and(file.product.productNo.eq(getProductByCategoryResponseDto.getProductNo())))
+                            .where(file.fileCategory
+                                    .eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())
+                                    .and(file.product.productNo
+                                            .eq(getProductByCategoryResponseDto.getProductNo())))
                             .fetchOne());
         }
     }
@@ -415,14 +438,16 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                             .leftJoin(productCategory)
                             .on(productCategory.category.categoryNo.eq(category.categoryNo))
                             .select(category.categoryName)
-                            .where(productCategory.product.productNo.eq(getProductByCategoryResponseDto.getProductNo())).fetch());
+                            .where(productCategory.product.productNo
+                                    .eq(getProductByCategoryResponseDto.getProductNo())).fetch());
 
             getProductByCategoryResponseDto.setAuthors(
                     from(author)
                             .innerJoin(productAuthor)
                             .on(productAuthor.author.authorNo.eq(author.authorNo))
                             .select(author.authorName)
-                            .where(productAuthor.product.productNo.eq(getProductByCategoryResponseDto.getProductNo())).fetch());
+                            .where(productAuthor.product.productNo
+                                    .eq(getProductByCategoryResponseDto.getProductNo())).fetch());
         }
     }
 
@@ -444,7 +469,8 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public Page<GetProductByCategoryResponseDto> getProductsByTypes(Integer typeNo, Pageable pageable) {
+    public Page<GetProductByCategoryResponseDto> getProductsByTypes(
+            Integer typeNo, Pageable pageable) {
         List<GetProductByCategoryResponseDto> content =
                 from(product)
                         .select(Projections.fields(GetProductByCategoryResponseDto.class,
@@ -455,7 +481,8 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
                                 product.salesRate))
                         .innerJoin(product.productSaleStateCode, productSaleStateCode)
                         .on(productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
-                        .innerJoin(productTypeStateCode).on(productTypeStateCode.codeNo.eq(product.productTypeStateCode.codeNo))
+                        .innerJoin(productTypeStateCode).on(productTypeStateCode.codeNo
+                                .eq(product.productTypeStateCode.codeNo))
                         .leftJoin(file).on(product.productNo.eq(file.product.productNo)
                                 .and(file.fileCategory
                                         .eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))
@@ -470,7 +497,8 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport
         JPQLQuery<Long> count = from(product)
                 .innerJoin(product.productSaleStateCode, productSaleStateCode)
                 .on(productSaleStateCode.codeCategory.eq(ProductSaleState.SALE.getName()))
-                .innerJoin(productTypeStateCode).on(productTypeStateCode.codeNo.eq(product.productTypeStateCode.codeNo))
+                .innerJoin(productTypeStateCode).on(productTypeStateCode.codeNo
+                        .eq(product.productTypeStateCode.codeNo))
                 .leftJoin(file).on(product.productNo.eq(file.product.productNo)
                         .and(file.fileCategory
                                 .eq(FileCategory.PRODUCT_THUMBNAIL.getCategory())))

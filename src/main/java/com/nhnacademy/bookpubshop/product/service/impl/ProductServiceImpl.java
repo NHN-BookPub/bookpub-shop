@@ -128,7 +128,11 @@ public class ProductServiceImpl implements ProductService {
                     .orElseThrow(NotFoundAuthorException::new);
 
             product.getProductAuthors().add(new ProductAuthor(
-                    new ProductAuthor.Pk(author.getAuthorNo(), product.getProductNo()), author, product));
+                    new ProductAuthor.Pk(
+                            author.getAuthorNo(),
+                            product.getProductNo()),
+                    author,
+                    product));
         }
 
         List<Integer> categoriesNo = request.getCategoriesNo();
@@ -137,7 +141,9 @@ public class ProductServiceImpl implements ProductService {
                     .orElseThrow(CategoryNotFoundException::new);
 
             product.getProductCategories().add(new ProductCategory(
-                    new ProductCategory.Pk(category.getCategoryNo(), product.getProductNo()), category, product));
+                    new ProductCategory.Pk(category.getCategoryNo(),
+                            product.getProductNo()),
+                    category, product));
         }
 
         if (Objects.nonNull(request.getTagsNo())) {
@@ -208,7 +214,7 @@ public class ProductServiceImpl implements ProductService {
         ProductTypeStateCode typeStateCode = typeStateCodeRepository
                 .findById(request.getTypeCodeNo())
                 .orElseThrow(NotFoundStateCodeException::new);
-        
+
         productRepository.save(new Product(
                 product.getProductNo(),
                 productPolicy,
@@ -313,7 +319,9 @@ public class ProductServiceImpl implements ProductService {
             Category category = categoryRepository.findById(categoryNo)
                     .orElseThrow(CategoryNotFoundException::new);
             product.getProductCategories()
-                    .add(new ProductCategory(new ProductCategory.Pk(categoryNo, productNo), category, product));
+                    .add(new ProductCategory(
+                            new ProductCategory.Pk(categoryNo, productNo),
+                            category, product));
         }
     }
 
@@ -333,7 +341,9 @@ public class ProductServiceImpl implements ProductService {
                     .orElseThrow(NotFoundAuthorException::new);
 
             product.getProductAuthors()
-                    .add(new ProductAuthor(new ProductAuthor.Pk(authorNo, productNo), author, product));
+                    .add(new ProductAuthor(
+                            new ProductAuthor.Pk(authorNo, productNo),
+                            author, product));
         }
     }
 
@@ -417,7 +427,8 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional
-    public void modifyProductDescription(Long productNo, ModifyProductDescriptionRequestDto request) {
+    public void modifyProductDescription(Long productNo,
+                                         ModifyProductDescriptionRequestDto request) {
         Product product = productRepository.findById(productNo)
                 .orElseThrow(ProductNotFoundException::new);
 
@@ -429,19 +440,19 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     @Transactional
-    public void modifyProductEbook(Long productNo, MultipartFile eBook) {
+    public void modifyProductEbook(Long productNo, MultipartFile ebook) {
         Product product = productRepository.findById(productNo)
                 .orElseThrow(ProductNotFoundException::new);
 
         try {
-            Optional<File> eBookFile = product.getFiles().stream()
+            Optional<File> ebookFile = product.getFiles().stream()
                     .filter(x -> x.getFileCategory()
                             .equals(FileCategory.PRODUCT_EBOOK.getCategory()))
                     .findFirst();
-            if (eBookFile.isEmpty()) {
+            if (ebookFile.isEmpty()) {
                 return;
             }
-            fileManagement.deleteFile(eBookFile.get().getFilePath());
+            fileManagement.deleteFile(ebookFile.get().getFilePath());
         } catch (IOException e) {
             throw new FileNotFoundException();
         }
@@ -449,7 +460,8 @@ public class ProductServiceImpl implements ProductService {
         try {
             File file = fileManagement.saveFile(null, null, product,
                     null, null, null,
-                    eBook, FileCategory.PRODUCT_EBOOK.getCategory(), FileCategory.PRODUCT_EBOOK.getPath());
+                    ebook, FileCategory.PRODUCT_EBOOK.getCategory(),
+                    FileCategory.PRODUCT_EBOOK.getPath());
 
             product.modifyEbook(file);
         } catch (IOException e) {
@@ -481,7 +493,8 @@ public class ProductServiceImpl implements ProductService {
 
         try {
             File file = fileManagement.saveFile(null, null, product, null, null, null,
-                    image, FileCategory.PRODUCT_THUMBNAIL.getCategory(), FileCategory.PRODUCT_THUMBNAIL.getPath());
+                    image, FileCategory.PRODUCT_THUMBNAIL.getCategory(),
+                    FileCategory.PRODUCT_THUMBNAIL.getPath());
             product.modifyThumbnail(file);
         } catch (IOException e) {
             throw new FileNotFoundException();
@@ -511,7 +524,8 @@ public class ProductServiceImpl implements ProductService {
         }
         try {
             File file = fileManagement.saveFile(null, null, product, null, null, null,
-                    detail, FileCategory.PRODUCT_DETAIL.getCategory(), FileCategory.PRODUCT_DETAIL.getPath());
+                    detail, FileCategory.PRODUCT_DETAIL.getCategory(),
+                    FileCategory.PRODUCT_DETAIL.getPath());
 
             product.modifyDetailImage(file);
         } catch (IOException e) {
@@ -530,7 +544,8 @@ public class ProductServiceImpl implements ProductService {
 
         try {
             File file = fileManagement.saveFile(null, null, product, null, null, null,
-                    image, FileCategory.PRODUCT_THUMBNAIL.getCategory(), FileCategory.PRODUCT_THUMBNAIL.getPath());
+                    image, FileCategory.PRODUCT_THUMBNAIL.getCategory(),
+                    FileCategory.PRODUCT_THUMBNAIL.getPath());
 
             product.addFile(file);
         } catch (IOException e) {
@@ -549,7 +564,8 @@ public class ProductServiceImpl implements ProductService {
 
         try {
             File file = fileManagement.saveFile(null, null, product, null, null, null,
-                    detailImage, FileCategory.PRODUCT_DETAIL.getCategory(), FileCategory.PRODUCT_DETAIL.getPath());
+                    detailImage, FileCategory.PRODUCT_DETAIL.getCategory(),
+                    FileCategory.PRODUCT_DETAIL.getPath());
 
             product.addFile(file);
         } catch (IOException e) {
@@ -590,7 +606,8 @@ public class ProductServiceImpl implements ProductService {
      * {@inheritDoc}
      */
     @Override
-    public Page<GetProductByCategoryResponseDto> getProductsByTypes(Integer typeNo, Pageable pageable) {
+    public Page<GetProductByCategoryResponseDto> getProductsByTypes(Integer typeNo,
+                                                                    Pageable pageable) {
         return productRepository.getProductsByTypes(typeNo, pageable);
     }
 
