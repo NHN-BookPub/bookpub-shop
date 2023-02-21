@@ -119,8 +119,10 @@ class CouponServiceTest {
 
     GetOrderCouponResponseDto orderCouponResponseDto;
 
+    @MockBean
     RabbitTemplate rabbitTemplate;
 
+    @MockBean
     ObjectMapper objectMapper;
 
     @BeforeEach
@@ -149,8 +151,6 @@ class CouponServiceTest {
         coupon = CouponDummy.dummy(couponTemplate, bookpubOrder, orderProduct, member);
 
         captor = ArgumentCaptor.forClass(Coupon.class);
-
-        objectMapper = new ObjectMapper();
 
         orderCouponResponseDto = new GetOrderCouponResponseDto(
                 1L, "testName", 1L, 1, true, 1000L, 1000L, 1000L, true
