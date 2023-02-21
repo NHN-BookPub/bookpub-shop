@@ -148,4 +148,8 @@ public class GetProductDetailResponseDto {
     public void addRelationInfo(List<GetRelationProductInfoResponseDto> info) {
         this.info = info;
     }
+
+    public void addEbookPath(String ebook) {
+        this.ebook = ebook;
+    }
 }
