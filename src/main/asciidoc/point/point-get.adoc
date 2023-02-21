@@ -26,7 +26,7 @@ include::../../../../target/snippets/admin-point-list/http-request.adoc[]
 
 ===== 요청 파라미터들
 
-include::../../../../target/snippets/admin-point-list/request-parameters.adoc[]
+include::../../../../target/snippets/admin-point-list/request-body.adoc[]
 
 ===== 응답구조
 

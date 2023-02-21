@@ -30,7 +30,6 @@ import com.nhnacademy.bookpubshop.wishlist.dto.response.GetAppliedMemberResponse
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +96,6 @@ class PurchaseControllerTest {
                 purchase.getCreatedAt());
     }
 
-    @Disabled
     @Test
     @DisplayName("최신순 전체 매입이력 조회 성공")
     void getPurchaseListDesc() throws Exception {
@@ -110,8 +108,8 @@ class PurchaseControllerTest {
         PageResponse<GetPurchaseListResponseDto> pageResult =
                 new PageResponse<>(page);
 
-//        when(purchaseService.getPurchaseListDesc(pageable))
-//                .thenReturn(pageResult);
+        when(purchaseService.getPurchaseListDesc(pageable))
+                .thenReturn(page);
 
         mockMvc.perform(get(tokenUrl + "?page=0&size=5")
                         .contentType(MediaType.APPLICATION_JSON)
