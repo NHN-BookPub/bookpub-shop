@@ -14,6 +14,7 @@ v2023.02.13
 
 이 API 문서는 Book-Pub 팀의 Api 문서를 유용하게 볼수있게 도와줍니다.
 
+
 [NOTE]
 ====
 해당 프로젝트는 API 문서는 개발환경까지 노출합니다.
@@ -25,31 +26,52 @@ v2023.02.13
     |  2. /api/ ** |
 
 총 2가지로 구성되어 있습니다.
+
+DNS :
+
+1. book-pub.shop
+2. www.book-pub.shop
 ====
 
 === API 서버 경로
 
 [col="2,5,3"]
 |====
-|환경         | DNS|비고
-|SHOP 개발(dev)    | |
-|SHOP 운영(prod)   | |
-|====
+|환경         |비고
 
+|SHOP 개발(dev) | local 에서 진행
+|SHOP 운영(prod)| 총 2개의 prod 서버 동작
+|====
 [WARNING]
 ====
 운영환경에서 노출의 경우 보안 관련 문제가 발생할수 있습니다.
 ====
 
 |====
-|응답데이터가 없는 경우|
-|응답데이터가 있는 경우|
+|응답데이터가 없는 경우| message 값이 첨가
+|응답데이터가 있는 경우| 응답데이터 200
 |====
 
-==== 상태코드
+==== 에러 처리
+|====
+| 에러 클래스 | 유형 | 비고
 
-아직 에러페이지가 나올시 처리
+| ErrorResponse | message , code  | 응답메시지와 code 값으로 구성
+|====
 
+        응답 메세지와 코드에따라서 각기다른 에러페이지로 Front 에서 응답.
+
+=== 참여인원
+|====
+|이름| GitHub 주소
+
+|유호철 | https://github.com/HoFe-U
+|임태원 | https://github.com/limtaewon
+|김서현 | https://github.com/seohyeon07
+|박경서 | https://github.com/unhas01
+|여운석 | https://github.com/uasaha
+|정유진 | https://github.com/hobby3530
+|====
 == API
 //회원
 include::member/member.adoc[]
