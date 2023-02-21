@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.coupon.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
@@ -100,11 +101,21 @@ public interface CouponService {
     void issueTierCouponsByMemberNo(Long memberNo, List<Long> tierCoupons);
 
     /**
-     * 이달의 쿠폰 발급을 위한 메서드입니다.
+     * 이달의 쿠폰을 발행하는 메서드입니다.
      *
      * @param memberNo   멤버 번호
      * @param templateNo 쿠폰 템플릿 번호
-     * @return 쿠폰 발급 상태값
+     * @throws JsonProcessingException json error
      */
-    Integer issueMonthCouponByMemberNo(Long memberNo, Long templateNo);
+    void issueCouponMonth(Long memberNo, Long templateNo)
+            throws JsonProcessingException;
+
+    /**
+     * 이달의 쿠폰 발행 여부를 확인하는 메서드입니다.
+     *
+     * @param memberNo   멤버 번호
+     * @param templateNo 쿠폰 템플릿 번호
+     * @return 쿠폰 발행 여부
+     */
+    boolean existsCouponMonthIssued(Long memberNo, Long templateNo);
 }
