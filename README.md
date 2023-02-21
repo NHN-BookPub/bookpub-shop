@@ -16,7 +16,7 @@
 
 ## CD/CD
 
-- 이미지 첨부 예정
+![CI:CD](https://user-images.githubusercontent.com/87689191/220225296-7e7afebf-42d7-45a9-a275-aa4c1f417057.png)
 
 ## 프로젝트 관리(공통)
 
