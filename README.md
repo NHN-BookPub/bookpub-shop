@@ -16,7 +16,7 @@
 
 ## CD/CD
 
-![CI:CD](https://user-images.githubusercontent.com/87689191/220225296-7e7afebf-42d7-45a9-a275-aa4c1f417057.png)
+![CI:CD](https://user-images.githubusercontent.com/87689191/220225863-130d435b-8dae-44fb-97e6-6cd3faa751f4.png)
 
 ## 프로젝트 관리(공통)
 
