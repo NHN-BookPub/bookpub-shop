@@ -7,7 +7,7 @@ include::../../../../target/snippets/order-product-exchange-list/http-request.ad
 
 ===== 요청 파라미터들
 
-include::../../../../target/snippets/order-product-exchange-list/request-parameters.adoc[]
+include::../../../../target/snippets/order-product-exchange-list/request-body.adoc[]
 
 ===== 응답구조
 
