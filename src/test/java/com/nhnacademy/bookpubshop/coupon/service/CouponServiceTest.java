@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.coupon.service;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
 import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
@@ -61,6 +62,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
@@ -117,10 +119,17 @@ class CouponServiceTest {
 
     GetOrderCouponResponseDto orderCouponResponseDto;
 
+    @MockBean
+    RabbitTemplate rabbitTemplate;
+
+    @MockBean
+    ObjectMapper objectMapper;
+
     @BeforeEach
     void setUp() {
         couponService = new CouponServiceImpl(couponRepository, memberRepository,
-                couponTemplateRepository, productRepository, couponMonthRepository, pointHistoryRepository);
+                couponTemplateRepository, productRepository, couponMonthRepository,
+                pointHistoryRepository, rabbitTemplate, objectMapper);
         couponPolicy = CouponPolicyDummy.dummy();
         couponType = CouponTypeDummy.dummy();
         couponStateCode = CouponStateCodeDummy.dummy();

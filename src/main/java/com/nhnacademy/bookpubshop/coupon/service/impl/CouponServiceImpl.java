@@ -1,6 +1,9 @@
 package com.nhnacademy.bookpubshop.coupon.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
+import com.nhnacademy.bookpubshop.coupon.dto.request.IssueCouponMonthDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
@@ -23,6 +26,8 @@ import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,9 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class CouponServiceImpl implements CouponService {
-
 
 
     private final CouponRepository couponRepository;
@@ -48,6 +51,10 @@ public class CouponServiceImpl implements CouponService {
     private final ProductRepository productRepository;
     private final CouponMonthRepository couponMonthRepository;
     private final PointHistoryRepository pointHistoryRepository;
+
+    private final RabbitTemplate rabbitTemplate;
+
+    private final ObjectMapper objectMapper;
 
     /**
      * {@inheritDoc}
@@ -96,6 +103,7 @@ public class CouponServiceImpl implements CouponService {
      * @throws CouponNotFoundException 쿠폰이 없을 때 나오는 에러
      */
     @Override
+    @Transactional(readOnly = true)
     public GetCouponResponseDto getCoupon(Long couponNo) {
         return couponRepository.findByCouponNo(couponNo)
                 .orElseThrow(() -> new CouponNotFoundException(couponNo));
@@ -105,6 +113,7 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<GetCouponResponseDto> getCoupons(Pageable pageable, String searchKey,
             String search) {
         return couponRepository.findAllBy(pageable, searchKey, search);
@@ -118,6 +127,7 @@ public class CouponServiceImpl implements CouponService {
      * @throws ProductNotFoundException 상품이 없을 때 나오는 에러
      */
     @Override
+    @Transactional(readOnly = true)
     public List<GetOrderCouponResponseDto> getOrderCoupons(Long memberNo, Long productNo) {
         if (!memberRepository.existsById(memberNo)) {
             throw new MemberNotFoundException();
@@ -134,6 +144,7 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<GetCouponResponseDto> getPositiveCouponList(Pageable pageable, Long memberNo) {
         if (!memberRepository.existsById(memberNo)) {
             throw new MemberNotFoundException();
@@ -146,6 +157,7 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<GetCouponResponseDto> getNegativeCouponList(Pageable pageable, Long memberNo) {
         if (!memberRepository.existsById(memberNo)) {
             throw new MemberNotFoundException();
@@ -185,8 +197,18 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public boolean existsCouponsByMemberNo(Long memberNo, List<Long> tierCoupons) {
         return couponRepository.existsTierCouponsByMemberNo(memberNo, tierCoupons);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsCouponMonthIssued(Long memberNo, Long templateNo) {
+        return couponRepository.existsMonthCoupon(memberNo, templateNo);
     }
 
     /**
@@ -212,14 +234,53 @@ public class CouponServiceImpl implements CouponService {
 
     }
 
-
     /**
      * {@inheritDoc}
      */
     @Override
     @Transactional
-//    @RabbitListener(queues = "coupon.month.queue")
-    public Integer issueMonthCouponByMemberNo(Long memberNo, Long templateNo) {
+    public void issueCouponMonth(Long memberNo, Long templateNo)
+            throws JsonProcessingException {
+        IssueCouponMonthDto issueCouponMonthDto = new IssueCouponMonthDto(memberNo, templateNo);
+        // 이달의 쿠폰 정보 메세지 큐에 발행
+        couponMonthQueueProducer(issueCouponMonthDto);
+    }
+
+
+    /**
+     * rabbitMQ Producer 로 메세지를 생성하는 메서드입니다.
+     *
+     * @param dto 이달의 쿠폰 발행 정보 dto
+     * @throws JsonProcessingException json error
+     */
+    private void couponMonthQueueProducer(IssueCouponMonthDto dto) throws JsonProcessingException {
+
+        String request = objectMapper.writeValueAsString(dto);
+
+        rabbitTemplate.convertAndSend("amq.direct", "coupon.month", request);
+    }
+
+    /**
+     * rabbitMQ Consumer 로 큐에 메시지를 소비합니다.
+     *
+     * @param message 소비하는 메시지
+     * @throws JsonProcessingException json error
+     */
+    @RabbitListener(queues = "coupon.month.queue")
+    public void issueMonthCouponConsumer(String message) throws JsonProcessingException {
+
+        // 실패 케이스 필요 - 메세지를 읽지 못한다면?
+
+        message = message.replace("\\", "");
+
+        String realMessage = message.substring(1, message.length() - 1);
+
+        IssueCouponMonthDto issueCouponMonthDto = objectMapper.readValue(realMessage,
+                IssueCouponMonthDto.class);
+
+        Long memberNo = issueCouponMonthDto.getMemberNo();
+
+        Long templateNo = issueCouponMonthDto.getTemplateNo();
 
         CouponTemplate couponTemplate = couponTemplateRepository.findById(templateNo)
                 .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
@@ -230,10 +291,10 @@ public class CouponServiceImpl implements CouponService {
         boolean result = couponRepository.existsMonthCoupon(memberNo, templateNo);
 
         if (result) {
-            // 쿠폰이 발급되었으면
-            return 1;
+            // 쿠폰이 발급되어있으면 ( 중복)
+
         } else {
-            // 쿠폰이 발급되지 않았으면
+            // 쿠폰이 발급되지 않았으면 발급.
             couponMonth.minusCouponMonthQuantity();
 
             Member member = memberRepository.findById(memberNo)
@@ -246,9 +307,8 @@ public class CouponServiceImpl implements CouponService {
 
             couponRepository.save(coupon);
 
-            return 3;
-
         }
 
     }
+
 }

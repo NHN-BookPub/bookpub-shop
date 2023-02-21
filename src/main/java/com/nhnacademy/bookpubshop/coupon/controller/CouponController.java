@@ -214,12 +214,33 @@ public class CouponController {
      */
     @MemberAuth
     @PostMapping("/token/coupons/{memberNo}/month-coupon")
-    public ResponseEntity<Integer> issueMonthCoupon(@PathVariable Long memberNo,
-            @RequestParam Long templateNo) {
+    public ResponseEntity<String> issueMonthCoupon(@PathVariable Long memberNo,
+            @RequestParam Long templateNo) throws IOException {
+
+        couponService.issueCouponMonth(memberNo, templateNo);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(couponService.issueMonthCouponByMemberNo(memberNo, templateNo));
+                .build();
 
+    }
+
+    /**
+     * 이달의 쿠폰 발행 여부 확인을 위한 메서드입니다.
+     *
+     * @param memberNo   멤버 번호
+     * @param templateNo 쿠폰 템플릿 번호
+     * @return 발행 여부
+     */
+    @MemberAuth
+    @GetMapping("/token/coupons/{memberNo}/month-coupon")
+    public ResponseEntity<Boolean> checkCouponMonthIssued(
+            @PathVariable Long memberNo,
+            @RequestParam Long templateNo) {
+
+        boolean check = couponService.existsCouponMonthIssued(memberNo, templateNo);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(check);
     }
 }

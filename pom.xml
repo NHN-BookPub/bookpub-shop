@@ -114,6 +114,12 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- rabbitmq -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
         <!--file upload-->
         <dependency>
             <groupId>org.apache.commons</groupId>
