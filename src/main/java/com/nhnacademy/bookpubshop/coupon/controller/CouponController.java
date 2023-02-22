@@ -243,4 +243,23 @@ public class CouponController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(check);
     }
+
+    /**
+     * 이달의 쿠폰 중복 발급을 확인하기 위한 메서드입니다.
+     *
+     * @param memberNo   멤버 번호
+     * @param couponList 이달의 쿠폰 리스트
+     * @return 발행 여부
+     */
+    @MemberAuth
+    @GetMapping("/token/coupons/{memberNo}/month-coupons/issue-check")
+    public ResponseEntity<List<Boolean>> checkCouponMonthListIssued(
+            @PathVariable Long memberNo,
+            @RequestParam List<Long> couponList
+    ) {
+        List<Boolean> result = couponService.existsCouponMonthListIssued(memberNo, couponList);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(result);
+    }
+
 }
