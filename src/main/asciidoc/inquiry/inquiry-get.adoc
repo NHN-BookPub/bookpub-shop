@@ -103,26 +103,6 @@ include::../../../../target/snippets/inquiry-get-view-details/response-fields.ad
 
 RequestBody
 
-include::../../../../target/snippets/inquiry-get-view-details/http-request.adoc[]
-
-PathVariable
-
-include::../../../../target/snippets/inquiry-get-view-details/path-parameters.adoc[]
-
-===== 응답구조
-
-include::../../../../target/snippets/inquiry-get-view-details/http-response.adoc[]
-
-===== 응답 파라미터들
-
-include::../../../../target/snippets/inquiry-get-view-details/response-fields.adoc[]
-
-==== 상품문의 회원번호를 통해조회(비공개)
-
-===== 요청구조
-
-RequestBody
-
 include::../../../../target/snippets/inquiry-get-details/http-request.adoc[]
 
 PathVariable
@@ -136,5 +116,3 @@ include::../../../../target/snippets/inquiry-get-details/http-response.adoc[]
 ===== 응답 파라미터들
 
 include::../../../../target/snippets/inquiry-get-details/response-fields.adoc[]
-
-
