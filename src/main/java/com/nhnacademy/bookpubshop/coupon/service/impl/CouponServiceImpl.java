@@ -23,6 +23,7 @@ import com.nhnacademy.bookpubshop.point.entity.PointHistory;
 import com.nhnacademy.bookpubshop.point.repository.PointHistoryRepository;
 import com.nhnacademy.bookpubshop.product.exception.ProductNotFoundException;
 import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -215,6 +216,24 @@ public class CouponServiceImpl implements CouponService {
      * {@inheritDoc}
      */
     @Override
+    public List<Boolean> existsCouponMonthListIssued(Long memberNo, List<Long> couponList) {
+        List<Long> couponMonthList = couponRepository.existsMonthCouponList(memberNo, couponList);
+        List<Boolean> checkCouponMonthIssued = new ArrayList<>();
+
+        for (Long coupon : couponList) {
+            if (couponMonthList.contains(coupon)) {
+                checkCouponMonthIssued.add(true);
+            } else {
+                checkCouponMonthIssued.add(false);
+            }
+        }
+        return checkCouponMonthIssued;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @Transactional
     public void issueTierCouponsByMemberNo(Long memberNo, List<Long> tierCoupons) {
 
@@ -269,8 +288,6 @@ public class CouponServiceImpl implements CouponService {
     @RabbitListener(queues = "coupon.month.queue")
     public void issueMonthCouponConsumer(String message) throws JsonProcessingException {
 
-        // 실패 케이스 필요 - 메세지를 읽지 못한다면?
-
         message = message.replace("\\", "");
 
         String realMessage = message.substring(1, message.length() - 1);
@@ -282,33 +299,29 @@ public class CouponServiceImpl implements CouponService {
 
         Long templateNo = issueCouponMonthDto.getTemplateNo();
 
+        //쿠폰 확인
         CouponTemplate couponTemplate = couponTemplateRepository.findById(templateNo)
                 .orElseThrow(() -> new CouponTemplateNotFoundException(templateNo));
 
+        // 이달의 쿠폰 확인
         CouponMonth couponMonth = couponMonthRepository.findByCouponTemplate(couponTemplate)
                 .orElseThrow(() -> new CouponMonthNotFoundException(templateNo));
 
-        boolean result = couponRepository.existsMonthCoupon(memberNo, templateNo);
+        // 멤버 확인
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(MemberNotFoundException::new);
 
-        if (result) {
-            // 쿠폰이 발급되어있으면 ( 중복)
+        //쿠폰 수량 감소
+        couponMonth.minusCouponMonthQuantity();
 
-        } else {
-            // 쿠폰이 발급되지 않았으면 발급.
-            couponMonth.minusCouponMonthQuantity();
+        //발급 쿠폰 생성
+        Coupon coupon = Coupon.builder()
+                .couponTemplate(couponTemplate)
+                .member(member)
+                .build();
 
-            Member member = memberRepository.findById(memberNo)
-                    .orElseThrow(MemberNotFoundException::new);
-
-            Coupon coupon = Coupon.builder()
-                    .couponTemplate(couponTemplate)
-                    .member(member)
-                    .build();
-
-            couponRepository.save(coupon);
-
-        }
-
+        //쿠폰 저장
+        couponRepository.save(coupon);
     }
 
 }

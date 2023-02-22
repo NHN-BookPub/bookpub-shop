@@ -33,7 +33,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 /**
  * CouponRepositoryCustom 구현체.
  *
- * @author : 정유진
+ * @author : 정유진, 김서현
  * @since : 1.0
  **/
 public class CouponRepositoryImpl extends QuerydslRepositorySupport
@@ -192,6 +192,19 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
+    public List<Long> existsMonthCouponList(Long memberNo, List<Long> couponList) {
+
+        return from(coupon)
+                .select(coupon.couponTemplate.templateNo)
+                .where(coupon.member.memberNo.eq(memberNo)
+                        .and(coupon.couponTemplate.templateNo.in(couponList)))
+                .fetch();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<Coupon> findByCouponByOrderNo(Long orderNo) {
         return from(coupon)
                 .innerJoin(coupon.order, order)
@@ -273,7 +286,7 @@ public class CouponRepositoryImpl extends QuerydslRepositorySupport
      */
     @Override
     public Page<GetCouponResponseDto> findNegativeCouponByMemberNo(Pageable pageable,
-                                                                   Long memberNo) {
+            Long memberNo) {
 
         JPQLQuery<Long> count = from(coupon).select(coupon.count())
                 .where(coupon.member.memberNo.eq(memberNo)

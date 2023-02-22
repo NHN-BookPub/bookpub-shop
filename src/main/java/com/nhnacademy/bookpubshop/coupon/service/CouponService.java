@@ -118,4 +118,13 @@ public interface CouponService {
      * @return 쿠폰 발행 여부
      */
     boolean existsCouponMonthIssued(Long memberNo, Long templateNo);
+
+    /**
+     * 멤버의 이달의 쿠폰 리스트  발행 여부를 확인하는 메서드입니다.
+     *
+     * @param memberNo   멤버 번호
+     * @param couponList 이달의 쿠폰 리스트
+     * @return 이달의 쿠폰 발행 여부 리스트
+     */
+    List<Boolean> existsCouponMonthListIssued(Long memberNo, List<Long> couponList);
 }

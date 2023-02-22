@@ -78,6 +78,15 @@ public interface CouponRepositoryCustom {
     boolean existsMonthCoupon(Long memberNo, Long templateNo);
 
     /**
+     * 멤버의 이달의 쿠폰 리스트 발행 여부를 확인하는 메서드입니다.
+     *
+     * @param memberNo   멤버 번호
+     * @param couponList 이달의 쿠폰 번호 리스트
+     * @return 발급된 쿠폰 템플릿 번호
+     */
+    List<Long> existsMonthCouponList(Long memberNo, List<Long> couponList);
+
+    /**
      * 주문번호로 해당 주문에 사용 된 쿠폰을 가져오는 메소드.
      *
      * @return 해당 주문에 사용 된 쿠폰.
