@@ -84,7 +84,7 @@ Response
 
 include::../../../../target/snippets/inquiry-add-fail-inquiryStateCodeNo-null/http-response.adoc[]
 
-==== 문의 이력확인
+==== 문의 이미지추가
 
 문의 (Inquiry) 이미지 추가
 
