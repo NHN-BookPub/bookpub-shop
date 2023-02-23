@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.sales.service;
 
 import com.nhnacademy.bookpubshop.sales.dto.response.OrderCntResponseDto;
+import com.nhnacademy.bookpubshop.sales.dto.response.SaleProductCntDto;
 import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleDto;
 import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleYearDto;
 import java.time.LocalDateTime;
@@ -38,4 +39,6 @@ public interface SalesService {
      * @return 매출정보 반환
      */
     List<TotalSaleYearDto> getTotalSaleCurrentYear(LocalDateTime start, LocalDateTime end);
+
+    List<SaleProductCntDto> getSaleProductCount(LocalDateTime start, LocalDateTime end);
 }

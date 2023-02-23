@@ -2,6 +2,8 @@ package com.nhnacademy.bookpubshop.order.relationship.repository;
 
 import com.nhnacademy.bookpubshop.order.relationship.dto.GetExchangeResponseDto;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
+import com.nhnacademy.bookpubshop.sales.dto.response.SaleProductCntDto;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -39,4 +41,6 @@ public interface OrderProductRepositoryCustom {
      * @return 목록반환
      */
     Page<GetExchangeResponseDto> getExchangeOrderProductList(Pageable pageable);
+
+    List<SaleProductCntDto> getSaleProductCount(LocalDateTime start, LocalDateTime end);
 }

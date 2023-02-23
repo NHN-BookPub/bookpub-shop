@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.sales.controllerr;
 
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.sales.dto.response.OrderCntResponseDto;
+import com.nhnacademy.bookpubshop.sales.dto.response.SaleProductCntDto;
 import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleDto;
 import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleYearDto;
 import com.nhnacademy.bookpubshop.sales.service.SalesService;
@@ -69,5 +70,19 @@ public class SalesController {
             LocalDateTime end) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(service.getTotalSaleCurrentYear(start, end));
+    }
+
+    @AdminAuth
+    @GetMapping("/token/sale-product-rank")
+    public ResponseEntity<List<SaleProductCntDto>> saleProductCount(
+            @RequestParam(value = "start", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime start,
+            @RequestParam(value = "end", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime end
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(service.getSaleProductCount(start, end));
     }
 }
