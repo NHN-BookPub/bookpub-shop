@@ -427,6 +427,9 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                 .offset(pageable.getOffset());
 
         JPQLQuery<Long> count = from(order)
+                .where(order.orderStateCode.codeName.eq(codeName))
+                .innerJoin(orderStateCode)
+                .on(orderStateCode.codeNo.eq(order.orderStateCode.codeNo))
                 .select(order.orderNo.count());
 
         return PageableExecutionUtils.getPage(query.fetch(), pageable, count::fetchOne);
