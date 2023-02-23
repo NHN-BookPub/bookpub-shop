@@ -13,6 +13,7 @@ import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.io.IOException;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
  **/
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class InquiryController {
     private final InquiryService inquiryService;
 
@@ -51,8 +53,8 @@ public class InquiryController {
      */
     @MemberAuth
     @GetMapping("/token/inquiries/members/{memberNo}/verify")
-    public ResponseEntity<Boolean> writableInquiryVerify(@PathVariable("memberNo") Long memberNo,
-                                                         @RequestParam("productNo") Long productNo) {
+    public ResponseEntity<Boolean> writableInquiryVerify(
+            @PathVariable("memberNo") Long memberNo, @RequestParam("productNo") Long productNo) {
         boolean result = inquiryService.verifyWritableInquiry(memberNo, productNo);
 
         return ResponseEntity.ok().body(result);
@@ -86,7 +88,8 @@ public class InquiryController {
      */
     @MemberAndAuth
     @PostMapping("/token/inquiries/members/{memberNo}/image")
-    public ResponseEntity<String> inquiryAddImage(@RequestPart("image") MultipartFile image) throws IOException {
+    public ResponseEntity<String> inquiryAddImage(
+            @RequestPart("image") MultipartFile image) throws IOException {
         String path = inquiryService.addInquiryImage(image);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(path);
@@ -152,7 +155,7 @@ public class InquiryController {
      */
     @GetMapping("/api/inquiries/products/{productNo}")
     public ResponseEntity<PageResponse<GetInquirySummaryProductResponseDto>>
-    productInquiryList(Pageable pageable,
+        productInquiryList(Pageable pageable,
                        @PathVariable("productNo") Long productNo) {
         Page<GetInquirySummaryProductResponseDto> inquiries =
                 inquiryService.getSummaryInquiriesByProduct(pageable, productNo);
@@ -176,11 +179,12 @@ public class InquiryController {
      */
     @AdminAuth
     @GetMapping("/token/inquiries")
-    public ResponseEntity<PageResponse<GetInquirySummaryResponseDto>> inquiryList(Pageable pageable,
-                                                                                  @RequestParam(value = "searchKeyFir", required = false) String searchKeyFir,
-                                                                                  @RequestParam(value = "searchValueFir", required = false) String searchValueFir,
-                                                                                  @RequestParam(value = "searchKeySec", required = false) String searchKeySec,
-                                                                                  @RequestParam(value = "searchValueSec", required = false) String searchValueSec) {
+    public ResponseEntity<PageResponse<GetInquirySummaryResponseDto>> inquiryList(
+            Pageable pageable,
+            @RequestParam(value = "searchKeyFir", required = false) String searchKeyFir,
+            @RequestParam(value = "searchValueFir", required = false) String searchValueFir,
+            @RequestParam(value = "searchKeySec", required = false) String searchKeySec,
+            @RequestParam(value = "searchValueSec", required = false) String searchValueSec) {
 
         Page<GetInquirySummaryResponseDto> inquiries = inquiryService.getSummaryInquiries(pageable,
                 searchKeyFir, searchValueFir, searchKeySec, searchValueSec);
@@ -199,9 +203,11 @@ public class InquiryController {
      */
     @AdminAuth
     @GetMapping("/token/inquiries/error")
-    public ResponseEntity<PageResponse<GetInquirySummaryResponseDto>> errorInquiryList(Pageable pageable) {
+    public ResponseEntity<PageResponse<GetInquirySummaryResponseDto>> errorInquiryList(
+            Pageable pageable) {
 
-        Page<GetInquirySummaryResponseDto> inquiries = inquiryService.getSummaryErrorInquiries(pageable);
+        Page<GetInquirySummaryResponseDto> inquiries =
+                inquiryService.getSummaryErrorInquiries(pageable);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

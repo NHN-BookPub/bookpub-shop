@@ -2,6 +2,8 @@ package com.nhnacademy.bookpubshop.inquiry.repository;
 
 import static com.nhnacademy.bookpubshop.state.InquiryState.EXCHANGE;
 import static org.assertj.core.api.Assertions.assertThat;
+import com.nhnacademy.bookpubshop.category.dummy.CategoryDummy;
+import com.nhnacademy.bookpubshop.category.entity.Category;
 import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.inquiry.dto.response.GetInquiryResponseDto;
 import com.nhnacademy.bookpubshop.inquiry.dto.response.GetInquirySummaryMemberResponseDto;
@@ -26,6 +28,7 @@ import com.nhnacademy.bookpubshop.product.entity.Product;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductPolicyDummy;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductSaleStateCodeDummy;
 import com.nhnacademy.bookpubshop.product.relationship.dummy.ProductTypeStateCodeDummy;
+import com.nhnacademy.bookpubshop.product.relationship.entity.ProductCategory;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductPolicy;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductSaleStateCode;
 import com.nhnacademy.bookpubshop.product.relationship.entity.ProductTypeStateCode;
@@ -94,6 +97,8 @@ class InquiryRepositoryTest {
     PricePolicy deliveryPolicy;
     OrderStateCode orderStateCode;
     OrderProductStateCode orderProductStateCode;
+    Category category;
+    ProductCategory productCategory;
     File file;
     PageRequest pageRequest;
 
@@ -121,18 +126,25 @@ class InquiryRepositoryTest {
         productSaleStateCode = ProductSaleStateCodeDummy.dummy();
         product = ProductDummy.dummy(productPolicy, productTypeStateCode, productSaleStateCode);
 
+        category = CategoryDummy.dummy();
+        productCategory = new ProductCategory(
+                new ProductCategory.Pk(category.getCategoryNo(), product.getProductNo()),
+                category, product);
+
         inquiryStateCode = new InquiryStateCode(null, EXCHANGE.getName(), EXCHANGE.isUsed(), "교환");
         errorStateCode = new InquiryStateCode(null, InquiryState.ERROR.getName(), true, "교환");
 
         entityManager.persist(errorStateCode);
         inquiryStateCodeRepository.save(inquiryStateCode);
 
+        entityManager.persist(category);
         entityManager.persist(productPolicy);
         entityManager.persist(productTypeStateCode);
         entityManager.persist(productSaleStateCode);
         entityManager.persist(product);
         order = OrderDummy.dummy(member, pricePolicy, deliveryPolicy, orderStateCode);
         entityManager.persist(order);
+        entityManager.persist(productCategory);
 
         inquiry = new Inquiry(null, null, member, product, inquiryStateCode, "title", "content", false, false, null);
         orderProduct = OrderProductDummy.dummy(product, order, orderProductStateCode);
@@ -212,8 +224,6 @@ class InquiryRepositoryTest {
         assertThat(result.get(0).getMemberNo()).isEqualTo(member.getMemberNo());
         assertThat(result.get(0).getInquiryStateCodeName()).isEqualTo(errorInquiry.getInquiryStateCode().getInquiryCodeName());
         assertThat(result.get(0).getProductTitle()).isEqualTo(product.getTitle());
-        assertThat(result.get(0).getProductIsbn()).isEqualTo(product.getProductIsbn());
-        assertThat(result.get(0).getProductImagePath()).isEqualTo(file.getFilePath());
         assertThat(result.get(0).getInquiryTitle()).isEqualTo(errorInquiry.getInquiryTitle());
         assertThat(result.get(0).isInquiryDisplayed()).isEqualTo(errorInquiry.isInquiryDisplayed());
         assertThat(result.get(0).isInquiryAnswered()).isEqualTo(errorInquiry.isInquiryAnswered());
@@ -228,15 +238,18 @@ class InquiryRepositoryTest {
         Page<GetInquirySummaryResponseDto> page = inquiryRepository.findSummaryInquiries(pageRequest, null, null, null, null);
         List<GetInquirySummaryResponseDto> result = page.getContent();
 
+        System.out.println(inquiry);
+        System.out.println(product);
+        System.out.println(member);
+
         assertThat(page).isNotEmpty();
         assertThat(result).isNotEmpty();
         assertThat(result.get(0).getInquiryNo()).isEqualTo(inquiry.getInquiryNo());
         assertThat(result.get(0).getProductNo()).isEqualTo(product.getProductNo());
         assertThat(result.get(0).getMemberNo()).isEqualTo(member.getMemberNo());
         assertThat(result.get(0).getInquiryStateCodeName()).isEqualTo(inquiry.getInquiryStateCode().getInquiryCodeName());
+        assertThat(result.get(0).getMemberNickname()).isEqualTo(member.getMemberNickname());
         assertThat(result.get(0).getProductTitle()).isEqualTo(product.getTitle());
-        assertThat(result.get(0).getProductIsbn()).isEqualTo(product.getProductIsbn());
-        assertThat(result.get(0).getProductImagePath()).isEqualTo(file.getFilePath());
         assertThat(result.get(0).getInquiryTitle()).isEqualTo(inquiry.getInquiryTitle());
         assertThat(result.get(0).isInquiryDisplayed()).isEqualTo(inquiry.isInquiryDisplayed());
         assertThat(result.get(0).isInquiryAnswered()).isEqualTo(inquiry.isInquiryAnswered());

@@ -9,7 +9,6 @@ import com.nhnacademy.bookpubshop.inquirystatecode.entity.InquiryStateCode;
 import com.nhnacademy.bookpubshop.member.entity.Member;
 import com.nhnacademy.bookpubshop.product.entity.Product;
 import java.time.LocalDateTime;
-import java.util.List;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -44,8 +43,7 @@ public class InquiryDummy {
     public static GetInquirySummaryResponseDto getErrorInquiryDummy() {
         return new GetInquirySummaryResponseDto(1L, 1L, 1L,
                 "name", "name",
-                "title", "isbn",
-                List.of("aa"), "path", "title", true,
+                "title", "title", true,
                 true, LocalDateTime.now());
     }
 
