@@ -54,6 +54,23 @@ public class OrderController {
     }
 
     /**
+     * 상태코드로 주문을 조회합니다.
+     *
+     * @param pageable 페이징
+     * @param codeName 상태코드명(영어)
+     * @return 주문목록
+     */
+    @AdminAuth
+    @GetMapping("/token/orders/{codeName}")
+    public ResponseEntity<PageResponse<GetOrderListForAdminResponseDto>> getOrdersByCodeName(
+            Pageable pageable,
+            @PathVariable String codeName) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(orderService.getOrderListByCodeName(pageable, codeName));
+    }
+
+    /**
      * 주문을 등록합니다.
      *
      * @param request 등록을 위한 Dto 객체를 받습니다.
@@ -115,6 +132,7 @@ public class OrderController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(orderService.getOrderListByUsers(pageable, memberNo));
     }
+
 
     /**
      * 주문 상세 정보를 반환합니다. (주문 번호로 조회)

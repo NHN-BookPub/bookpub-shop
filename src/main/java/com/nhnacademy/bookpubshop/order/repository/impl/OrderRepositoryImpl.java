@@ -401,4 +401,34 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
                 .fetch();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetOrderListForAdminResponseDto> getOrderListByCodeName(Pageable pageable, String codeName) {
+        JPQLQuery<GetOrderListForAdminResponseDto> query = from(order)
+                .select(Projections.constructor(GetOrderListForAdminResponseDto.class,
+                        order.orderNo.as("orderNo"),
+                        member.memberId.as("memberId"),
+                        order.createdAt,
+                        order.invoiceNumber.as("invoiceNo"),
+                        orderStateCode.codeName.as("orderState"),
+                        order.orderPrice.as("totalAmount"),
+                        order.receivedAt))
+                .join(order.orderStateCode, orderStateCode)
+                .leftJoin(order.member, member)
+                .on(order.member.memberNo.eq(member.memberNo))
+                .where(orderStateCode.codeName.eq(codeName))
+                .orderBy(order.createdAt.desc())
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset());
+
+        JPQLQuery<Long> count = from(order)
+                .where(order.orderStateCode.codeName.eq(codeName))
+                .innerJoin(orderStateCode)
+                .on(orderStateCode.codeNo.eq(order.orderStateCode.codeNo))
+                .select(order.orderNo.count());
+
+        return PageableExecutionUtils.getPage(query.fetch(), pageable, count::fetchOne);
+    }
 }
