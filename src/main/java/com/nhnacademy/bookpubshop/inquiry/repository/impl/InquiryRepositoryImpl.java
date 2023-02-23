@@ -23,8 +23,6 @@ import com.querydsl.jpa.JPQLQuery;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -36,7 +34,6 @@ import org.springframework.data.support.PageableExecutionUtils;
  * @author : 정유진
  * @since : 1.0
  **/
-@Slf4j
 public class InquiryRepositoryImpl extends QuerydslRepositorySupport
         implements InquiryRepositoryCustom {
 
@@ -78,7 +75,8 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public Page<GetInquirySummaryProductResponseDto> findSummaryInquiriesByProduct(Pageable pageable, Long productNo) {
+    public Page<GetInquirySummaryProductResponseDto> findSummaryInquiriesByProduct(
+            Pageable pageable, Long productNo) {
         JPQLQuery<Long> count = from(inquiry)
                 .innerJoin(inquiry.member, member)
                 .on(inquiry.member.memberNo.eq(member.memberNo))
@@ -130,11 +128,7 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                 .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
                 .innerJoin(inquiry.member, member)
                 .on(inquiry.member.memberNo.eq(member.memberNo))
-                .leftJoin(file)
-                .on(inquiry.product.productNo.eq(file.product.productNo))
-                .where(((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
-                        .or(file.fileCategory.isNull()))
-                        .and(inquiry.parentInquiry.isNull())
+                .where(inquiry.parentInquiry.isNull()
                         .and(inquiry.inquiryStateCode.inquiryCodeName
                                 .eq(InquiryState.ERROR.getName())))
                 .select(inquiry.count());
@@ -145,12 +139,9 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                         .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
                         .innerJoin(inquiry.member, member)
                         .on(inquiry.member.memberNo.eq(member.memberNo))
-                        .leftJoin(file)
-                        .on(inquiry.product.productNo.eq(file.product.productNo))
-                        .where(((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
-                                .or(file.fileCategory.isNull()))
-                                .and(inquiry.parentInquiry.isNull())
-                                .and(inquiry.inquiryStateCode.inquiryCodeName.eq(InquiryState.ERROR.getName())))
+                        .where(inquiry.parentInquiry.isNull()
+                                .and(inquiry.inquiryStateCode.inquiryCodeName
+                                        .eq(InquiryState.ERROR.getName())))
                         .select(Projections.fields(
                                 GetInquirySummaryResponseDto.class,
                                 inquiry.inquiryNo,
@@ -160,8 +151,6 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                                         .as(INQUIRY_STATE_CODE_NAME),
                                 member.memberNickname,
                                 product.title.as(PRODUCT_TITLE),
-                                product.productIsbn,
-                                file.filePath.as(PRODUCT_IMAGE_PATH),
                                 inquiry.inquiryTitle,
                                 inquiry.inquiryDisplayed,
                                 inquiry.inquiryAnswered,
@@ -188,11 +177,11 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                 .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
                 .innerJoin(inquiry.member, member)
                 .on(inquiry.member.memberNo.eq(member.memberNo))
-                .leftJoin(file)
-                .on(inquiry.product.productNo.eq(file.product.productNo))
-                .where(((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
-                        .or(file.fileCategory.isNull()))
-                        .and(inquiry.parentInquiry.isNull())
+                .leftJoin(productCategory)
+                .on(inquiry.product.productNo.eq(productCategory.product.productNo))
+                .innerJoin(category)
+                .on(productCategory.category.categoryNo.eq(category.categoryNo))
+                .where((inquiry.parentInquiry.isNull())
                         .and(inquiry.inquiryStateCode.inquiryCodeName.notIn(
                                 InquiryState.ANSWER.getName(), InquiryState.ERROR.getName()))
                         .and(searchFirEq(searchKeyFir, searchValueFir))
@@ -205,13 +194,14 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                         .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
                         .innerJoin(inquiry.member, member)
                         .on(inquiry.member.memberNo.eq(member.memberNo))
-                        .leftJoin(file)
-                        .on(inquiry.product.productNo.eq(file.product.productNo))
-                        .where(((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
-                                .or(file.fileCategory.isNull()))
-                                .and(inquiry.parentInquiry.isNull())
+                        .leftJoin(productCategory)
+                        .on(inquiry.product.productNo.eq(productCategory.product.productNo))
+                        .innerJoin(category)
+                        .on(productCategory.category.categoryNo.eq(category.categoryNo))
+                        .where((inquiry.parentInquiry.isNull())
                                 .and(inquiry.inquiryStateCode.inquiryCodeName.notIn(
-                                        InquiryState.ANSWER.getName(), InquiryState.ERROR.getName()))
+                                        InquiryState.ANSWER.getName(),
+                                        InquiryState.ERROR.getName()))
                                 .and(searchFirEq(searchKeyFir, searchValueFir))
                                 .and(searchSecEq(searchKeySec, searchValueSec)))
                         .select(Projections.fields(
@@ -219,11 +209,10 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                                 inquiry.inquiryNo,
                                 inquiry.product.productNo,
                                 inquiry.member.memberNo,
-                                inquiry.inquiryStateCode.inquiryCodeName.as(INQUIRY_STATE_CODE_NAME),
+                                inquiry.inquiryStateCode.inquiryCodeName
+                                        .as(INQUIRY_STATE_CODE_NAME),
                                 member.memberNickname,
                                 product.title.as(PRODUCT_TITLE),
-                                product.productIsbn,
-                                file.filePath.as(PRODUCT_IMAGE_PATH),
                                 inquiry.inquiryTitle,
                                 inquiry.inquiryDisplayed,
                                 inquiry.inquiryAnswered,
@@ -232,17 +221,8 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                         .orderBy(inquiry.createdAt.desc())
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
+                        .distinct()
                         .fetch();
-
-        inquiries.stream()
-                .map(m -> m.getProductCategories().add(
-                        String.valueOf(
-                                from(category)
-                                        .leftJoin(productCategory)
-                                        .on(productCategory.category.categoryNo.eq(category.categoryNo))
-                                        .select(category.categoryName)
-                                        .where(productCategory.product.productNo.eq(m.getProductNo())).fetch())
-                )).collect(Collectors.toList());
 
         return PageableExecutionUtils.getPage(inquiries, pageable, count::fetchOne);
     }
@@ -251,7 +231,8 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
      * {@inheritDoc}
      */
     @Override
-    public Page<GetInquirySummaryMemberResponseDto> findMemberInquiries(Pageable pageable, Long memberNo) {
+    public Page<GetInquirySummaryMemberResponseDto> findMemberInquiries(
+            Pageable pageable, Long memberNo) {
         JPQLQuery<Long> count = from(inquiry)
                 .innerJoin(inquiry.product, product)
                 .innerJoin(inquiry.inquiryStateCode, inquiryStateCode)
@@ -272,7 +253,8 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
                         .leftJoin(file)
                         .on(inquiry.product.productNo.eq(file.product.productNo))
                         .where(inquiry.member.memberNo.eq(memberNo)
-                                .and((file.fileCategory.eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
+                                .and((file.fileCategory
+                                        .eq(FileCategory.PRODUCT_THUMBNAIL.getCategory()))
                                         .or(file.fileCategory.isNull()))
                                 .and(inquiry.parentInquiry.isNull())
                                 .and(inquiry.inquiryStateCode.inquiryCodeName.notIn(
@@ -358,12 +340,12 @@ public class InquiryRepositoryImpl extends QuerydslRepositorySupport
      * @return querydsl 조건절
      */
     private BooleanExpression searchFirEq(String searchKeyFir, String searchValueFir) {
-        if (Objects.isNull(searchKeyFir) || Objects.isNull(searchValueFir) ||
-                (searchKeyFir.isBlank()) || (searchValueFir.isBlank())) {
+        if (Objects.isNull(searchKeyFir) || Objects.isNull(searchValueFir)
+                || (searchKeyFir.isBlank()) || (searchValueFir.isBlank())) {
             return null;
         }
         if (searchKeyFir.equals("category")) {
-            return productCategory.category.categoryName.eq(searchKeyFir);
+            return category.categoryName.contains(searchValueFir);
         } else {
             return null;
         }
