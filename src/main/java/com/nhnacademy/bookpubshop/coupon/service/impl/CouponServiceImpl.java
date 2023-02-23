@@ -307,21 +307,24 @@ public class CouponServiceImpl implements CouponService {
         CouponMonth couponMonth = couponMonthRepository.findByCouponTemplate(couponTemplate)
                 .orElseThrow(() -> new CouponMonthNotFoundException(templateNo));
 
-        // 멤버 확인
-        Member member = memberRepository.findById(memberNo)
-                .orElseThrow(MemberNotFoundException::new);
+        boolean result = couponRepository.existsMonthCoupon(memberNo, templateNo);
 
-        //쿠폰 수량 감소
-        couponMonth.minusCouponMonthQuantity();
+        if (!result) {
+            // 쿠폰이 발급되지 않았으면 발급.
 
-        //발급 쿠폰 생성
-        Coupon coupon = Coupon.builder()
-                .couponTemplate(couponTemplate)
-                .member(member)
-                .build();
+            Member member = memberRepository.findById(memberNo)
+                    .orElseThrow(MemberNotFoundException::new);
 
-        //쿠폰 저장
-        couponRepository.save(coupon);
+            couponMonth.minusCouponMonthQuantity();
+
+            Coupon coupon = Coupon.builder()
+                    .couponTemplate(couponTemplate)
+                    .member(member)
+                    .build();
+
+            couponRepository.save(coupon);
+
+        }
     }
 
 }
