@@ -1,25 +1,21 @@
 package com.nhnacademy.bookpubshop.sales.service;
 
-import static com.nhnacademy.bookpubshop.sales.dummy.TotalSaleDummy.orderCntDummy;
-import static com.nhnacademy.bookpubshop.sales.dummy.TotalSaleDummy.totalSaleDummy;
-import static com.nhnacademy.bookpubshop.sales.dummy.TotalSaleDummy.totalSaleYearDummy;
+import static com.nhnacademy.bookpubshop.sales.dummy.TotalSaleDummy.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import com.nhnacademy.bookpubshop.order.relationship.repository.OrderProductRepository;
 import com.nhnacademy.bookpubshop.order.repository.OrderRepository;
 import com.nhnacademy.bookpubshop.sales.dto.response.OrderCntResponseDto;
 import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleDto;
 import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleYearDto;
 import com.nhnacademy.bookpubshop.sales.service.impl.SalesServiceImpl;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -39,6 +35,8 @@ class SalesServiceTest {
 
     @MockBean
     OrderRepository repository;
+    @MockBean
+    OrderProductRepository orderProductRepository;
     TotalSaleDto totalSaleDto;
     OrderCntResponseDto orderCntResponseDto;
     TotalSaleYearDto totalSaleYearDto;

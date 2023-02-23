@@ -2,6 +2,8 @@ package com.nhnacademy.bookpubshop.order.relationship.repository;
 
 import com.nhnacademy.bookpubshop.order.relationship.dto.GetExchangeResponseDto;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
+import com.nhnacademy.bookpubshop.sales.dto.response.SaleProductCntDto;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -39,4 +41,13 @@ public interface OrderProductRepositoryCustom {
      * @return 목록반환
      */
     Page<GetExchangeResponseDto> getExchangeOrderProductList(Pageable pageable);
+
+    /**
+     * 기간에 따른 상품 판매 순위를 조회하기 위한 메소드입니다.
+     *
+     * @param start 시작 기간
+     * @param end   끝 기간
+     * @return 상품판매량 정보가 담긴 dto 리스트
+     */
+    List<SaleProductCntDto> getSaleProductCount(LocalDateTime start, LocalDateTime end);
 }

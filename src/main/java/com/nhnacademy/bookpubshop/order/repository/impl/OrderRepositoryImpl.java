@@ -1,9 +1,6 @@
 package com.nhnacademy.bookpubshop.order.repository.impl;
 
-import static com.nhnacademy.bookpubshop.state.OrderState.CANCEL;
-import static com.nhnacademy.bookpubshop.state.OrderState.CANCEL_PAYMENT;
-import static com.nhnacademy.bookpubshop.state.OrderState.CONFIRMED;
-
+import static com.nhnacademy.bookpubshop.state.OrderState.*;
 import com.nhnacademy.bookpubshop.card.entity.QCard;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
 import com.nhnacademy.bookpubshop.order.dto.response.GetOrderAndPaymentResponseDto;

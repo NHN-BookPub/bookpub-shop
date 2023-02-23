@@ -1,7 +1,9 @@
 package com.nhnacademy.bookpubshop.sales.service.impl;
 
+import com.nhnacademy.bookpubshop.order.relationship.repository.OrderProductRepository;
 import com.nhnacademy.bookpubshop.order.repository.OrderRepository;
 import com.nhnacademy.bookpubshop.sales.dto.response.OrderCntResponseDto;
+import com.nhnacademy.bookpubshop.sales.dto.response.SaleProductCntDto;
 import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleDto;
 import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleYearDto;
 import com.nhnacademy.bookpubshop.sales.service.SalesService;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class SalesServiceImpl implements SalesService {
     private final OrderRepository orderRepository;
+    private final OrderProductRepository orderProductRepository;
 
 
     /**
@@ -59,5 +62,19 @@ public class SalesServiceImpl implements SalesService {
             end = LocalDateTime.now();
         }
         return orderRepository.getTotalSaleMonth(start, end);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<SaleProductCntDto> getSaleProductCount(LocalDateTime start, LocalDateTime end) {
+        if (Objects.isNull(start) || Objects.isNull(end)) {
+            start = LocalDateTime.now()
+                    .withDayOfMonth(1)
+                    .withMonth(1);
+            end = LocalDateTime.now();
+        }
+        return orderProductRepository.getSaleProductCount(start, end);
     }
 }

@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.sales.controllerr;
 
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.sales.dto.response.OrderCntResponseDto;
+import com.nhnacademy.bookpubshop.sales.dto.response.SaleProductCntDto;
 import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleDto;
 import com.nhnacademy.bookpubshop.sales.dto.response.TotalSaleYearDto;
 import com.nhnacademy.bookpubshop.sales.service.SalesService;
@@ -69,5 +70,28 @@ public class SalesController {
             LocalDateTime end) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(service.getTotalSaleCurrentYear(start, end));
+    }
+
+    /**
+     * 특정 기간의 상품 판매량 랭킹을 조회하기 위한 메서드입니다.
+     * 조건이 없을 시, 올해의 상품 판매량 랭킹 정보가 반환됩니다.
+     * 성공 시 200이 반환.
+     *
+     * @param start 시작일자
+     * @param end   종료일자
+     * @return the response entity
+     */
+    @AdminAuth
+    @GetMapping("/token/sale-product-rank")
+    public ResponseEntity<List<SaleProductCntDto>> saleProductCount(
+            @RequestParam(value = "start", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime start,
+            @RequestParam(value = "end", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime end
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(service.getSaleProductCount(start, end));
     }
 }

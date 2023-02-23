@@ -9,10 +9,14 @@ import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProduct;
 import com.nhnacademy.bookpubshop.order.relationship.entity.QOrderProductStateCode;
 import com.nhnacademy.bookpubshop.order.relationship.repository.OrderProductRepositoryCustom;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
+import com.nhnacademy.bookpubshop.sales.dto.response.SaleProductCntDto;
 import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.OrderProductState;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPQLQuery;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -98,5 +102,30 @@ public class OrderProductRepositoryImpl extends QuerydslRepositorySupport
                 .select(orderProduct.count());
 
         return PageableExecutionUtils.getPage(query, pageable, count::fetchOne);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<SaleProductCntDto> getSaleProductCount(LocalDateTime start, LocalDateTime end) {
+
+        NumberPath<Long> aliasProductCount = Expressions.numberPath(Long.class, "productCount");
+
+        return from(orderProduct)
+                .innerJoin(orderProduct.orderProductStateCode, orderProductStateCode)
+                .innerJoin(orderProduct.order, order)
+                .innerJoin(orderProduct.product, product)
+                .select(Projections.fields(
+                        SaleProductCntDto.class,
+                        product.title.as("productTitle"),
+                        orderProduct.count().as(aliasProductCount)
+                ))
+                .groupBy(product.productNo)
+                .where(orderProduct.orderProductStateCode.codeName
+                        .eq(OrderProductState.CONFIRMED.getName()))
+                .orderBy(aliasProductCount.desc())
+                .limit(7)
+                .fetch();
     }
 }
