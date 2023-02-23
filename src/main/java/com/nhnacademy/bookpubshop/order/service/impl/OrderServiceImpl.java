@@ -397,6 +397,19 @@ public class OrderServiceImpl implements OrderService {
         product.minusStock(orderProduct.getProductAmount());
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PageResponse<GetOrderListForAdminResponseDto> getOrderListByCodeName(Pageable pageable, String codeName) {
+        String code = OrderState.CANCEL.getNameByEngName(codeName);
+
+        Page<GetOrderListForAdminResponseDto> responses =
+                orderRepository.getOrderListByCodeName(pageable, code);
+
+        return new PageResponse<>(responses);
+    }
+
 
     /**
      * 주문 상품의 상태를 구매확정으로 바꿔주는 메소드.

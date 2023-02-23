@@ -17,6 +17,7 @@ import com.nhnacademy.bookpubshop.member.exception.AuthorityNotFoundException;
 import com.nhnacademy.bookpubshop.member.exception.IdAlreadyExistsException;
 import com.nhnacademy.bookpubshop.member.exception.MemberNotFoundException;
 import com.nhnacademy.bookpubshop.member.exception.NicknameAlreadyExistsException;
+import com.nhnacademy.bookpubshop.order.exception.NotFoundOrderStateNameException;
 import com.nhnacademy.bookpubshop.order.exception.OrderNotFoundException;
 import com.nhnacademy.bookpubshop.orderstatecode.exception.NotFoundOrderStateException;
 import com.nhnacademy.bookpubshop.paymentstatecode.exception.NotFoundPaymentStateException;
@@ -111,6 +112,14 @@ public class ShopAdviceController {
         log.warn("only BadRequest");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .build();
+    }
+
+    @ExceptionHandler(value = NotFoundOrderStateNameException.class)
+    public ResponseEntity<ErrorResponse> orderStateNameError() {
+        log.warn("not defined order type");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorResponse(NotFoundOrderStateNameException.MESSAGE, "ORDER"));
     }
 
     @ExceptionHandler(value = CategoryAlreadyExistsException.class)
