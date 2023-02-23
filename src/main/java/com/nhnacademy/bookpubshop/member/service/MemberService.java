@@ -201,4 +201,21 @@ public interface MemberService {
      */
     Integer getTierByMemberNo(Long memberNo);
 
+    /**
+     * 닉네임으로 멤버를 검색합니다.
+     *
+     * @param pageable 페이징
+     * @param search 검색할 문자
+     * @return 멤버리스트
+     */
+    Page<MemberResponseDto> getMembersByNickName(Pageable pageable, String search);
+
+    /**
+     * 아이디로 멤버를 검색합니다.
+     *
+     * @param pageable 페이징
+     * @param search 검색할 문자
+     * @return 멤버리스트
+     */
+    Page<MemberResponseDto> getMembersById(Pageable pageable, String search);
 }

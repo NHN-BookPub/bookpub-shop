@@ -82,4 +82,22 @@ public interface MemberCustomRepository {
      * @return 멤버.
      */
     Optional<Member> findMemberByMemberNickname(String nickname);
+
+    /**
+     * 닉네임으로 멤버를 검색합니다.
+     *
+     * @param pageable 페이징
+     * @param search 검색할 문자
+     * @return 멤버리스트
+     */
+    Page<MemberResponseDto> findMembersListByNickName(Pageable pageable, String search);
+
+    /**
+     * 아이디로 멤버를 검색합니다.
+     *
+     * @param pageable 페이징
+     * @param search 검색할 문자
+     * @return 멤버리스트
+     */
+    Page<MemberResponseDto> findMembersListById(Pageable pageable, String search);
 }
