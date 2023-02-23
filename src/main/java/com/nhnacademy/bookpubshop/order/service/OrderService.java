@@ -122,4 +122,14 @@ public interface OrderService {
      * @param orderProductNo 주문상품번호.
      */
     void confirmExchange(String orderProductNo);
+
+    /**
+     * 주문 상태에 따라 주문목록을 반환합니다.
+     *
+     * @param pageable 페이징
+     * @param codeName 상태코드명
+     * @return 상태별 주문목록
+     */
+    PageResponse<GetOrderListForAdminResponseDto>
+    getOrderListByCodeName(Pageable pageable, String codeName);
 }

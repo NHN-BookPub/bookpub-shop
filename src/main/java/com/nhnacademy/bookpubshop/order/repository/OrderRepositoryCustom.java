@@ -123,4 +123,14 @@ public interface OrderRepositoryCustom {
      * @return 시간대별 주문현황반환
      */
     List<OrderCntResponseDto> getOrderTime();
+
+    /**
+     * 주문 상태에 따라 주문목록을 반환합니다.
+     *
+     * @param pageable 페이징
+     * @param codeName 상태코드명
+     * @return 상태별 주문목록
+     */
+    Page<GetOrderListForAdminResponseDto>
+    getOrderListByCodeName(Pageable pageable, String codeName);
 }

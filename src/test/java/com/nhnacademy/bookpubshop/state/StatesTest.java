@@ -54,6 +54,14 @@ class StatesTest {
         Set<ConstraintViolation<CreatePricePolicyRequestDto>> violations
                 = validator.validate(dto);
 
-        assertThat(violations).isNotNull();;
+        assertThat(violations).isNotNull();
+    }
+
+    @Test
+    @DisplayName("주문상태 engName To name 성공")
+    void engToNameTest() {
+        String name = OrderState.CANCEL.getNameByEngName("canceled");
+
+        assertThat(OrderState.CANCEL.getName()).isEqualTo(name);
     }
 }
