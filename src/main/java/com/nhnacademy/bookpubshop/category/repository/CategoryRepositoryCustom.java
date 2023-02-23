@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.category.repository;
 
+import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryInfoResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import java.util.List;
@@ -45,4 +46,13 @@ public interface CategoryRepositoryCustom {
      * @return 하위 카테고리 이름 리스트
      */
     List<String> findChildNameByParentNo(Integer parentCategoryNo);
+
+
+    /**
+     * 카테고리 기본 정보 조회.
+     *
+     * @return 카테고리 번호 이름 반환.
+     */
+    List<GetCategoryInfoResponseDto> findCategoriesInfo();
+
 }
