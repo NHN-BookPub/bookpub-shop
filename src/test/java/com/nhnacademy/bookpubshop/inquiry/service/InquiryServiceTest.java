@@ -2,14 +2,8 @@ package com.nhnacademy.bookpubshop.inquiry.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import com.nhnacademy.bookpubshop.file.dummy.FileDummy;
 import com.nhnacademy.bookpubshop.file.entity.File;
 import com.nhnacademy.bookpubshop.file.repository.FileRepository;
@@ -367,9 +361,6 @@ class InquiryServiceTest {
         assertThat(result.get(0).getInquiryStateCodeName()).isEqualTo(getInquirySummaryResponseDto.getInquiryStateCodeName());
         assertThat(result.get(0).getMemberNickname()).isEqualTo(getInquirySummaryResponseDto.getMemberNickname());
         assertThat(result.get(0).getProductTitle()).isEqualTo(getInquirySummaryResponseDto.getProductTitle());
-        assertThat(result.get(0).getProductIsbn()).isEqualTo(getInquirySummaryResponseDto.getProductIsbn());
-        assertThat(result.get(0).getProductCategories()).isEqualTo(getInquirySummaryResponseDto.getProductCategories());
-        assertThat(result.get(0).getProductImagePath()).isEqualTo(getInquirySummaryResponseDto.getProductImagePath());
         assertThat(result.get(0).getInquiryTitle()).isEqualTo(getInquirySummaryResponseDto.getInquiryTitle());
         assertThat(result.get(0).isInquiryDisplayed()).isEqualTo(getInquirySummaryResponseDto.isInquiryDisplayed());
         assertThat(result.get(0).isInquiryAnswered()).isEqualTo(getInquirySummaryResponseDto.isInquiryAnswered());
@@ -397,9 +388,6 @@ class InquiryServiceTest {
         assertThat(result.get(0).getInquiryStateCodeName()).isEqualTo(getInquirySummaryResponseDto.getInquiryStateCodeName());
         assertThat(result.get(0).getMemberNickname()).isEqualTo(getInquirySummaryResponseDto.getMemberNickname());
         assertThat(result.get(0).getProductTitle()).isEqualTo(getInquirySummaryResponseDto.getProductTitle());
-        assertThat(result.get(0).getProductIsbn()).isEqualTo(getInquirySummaryResponseDto.getProductIsbn());
-        assertThat(result.get(0).getProductCategories()).isEqualTo(getInquirySummaryResponseDto.getProductCategories());
-        assertThat(result.get(0).getProductImagePath()).isEqualTo(getInquirySummaryResponseDto.getProductImagePath());
         assertThat(result.get(0).getInquiryTitle()).isEqualTo(getInquirySummaryResponseDto.getInquiryTitle());
         assertThat(result.get(0).isInquiryDisplayed()).isEqualTo(getInquirySummaryResponseDto.isInquiryDisplayed());
         assertThat(result.get(0).isInquiryAnswered()).isEqualTo(getInquirySummaryResponseDto.isInquiryAnswered());

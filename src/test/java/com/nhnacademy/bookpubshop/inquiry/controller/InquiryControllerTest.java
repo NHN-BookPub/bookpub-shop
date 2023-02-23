@@ -2,23 +2,11 @@ package com.nhnacademy.bookpubshop.inquiry.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -558,8 +546,6 @@ class InquiryControllerTest {
                 .andExpect(jsonPath("$.content[0].inquiryStateCodeName").value((getInquirySummaryResponseDto.getInquiryStateCodeName())))
                 .andExpect(jsonPath("$.content[0].memberNickname").value((getInquirySummaryResponseDto.getMemberNickname())))
                 .andExpect(jsonPath("$.content[0].inquiryTitle").value(getInquirySummaryResponseDto.getInquiryTitle()))
-                .andExpect(jsonPath("$.content[0].productIsbn").value(getInquirySummaryResponseDto.getProductIsbn()))
-                .andExpect(jsonPath("$.content[0].productImagePath").value(getInquirySummaryResponseDto.getProductImagePath()))
                 .andExpect(jsonPath("$.content[0].inquiryDisplayed").value(getInquirySummaryResponseDto.isInquiryDisplayed()))
                 .andExpect(jsonPath("$.content[0].inquiryAnswered").value(getInquirySummaryResponseDto.isInquiryAnswered()))
                 .andDo(print())
@@ -585,9 +571,6 @@ class InquiryControllerTest {
                                         fieldWithPath("content[].inquiryAnswered").description("문의 답변여부 반환"),
                                         fieldWithPath("content[].createdAt").description("생성일시 반환"),
                                         fieldWithPath("content[].productTitle").description("상품명 반환"),
-                                        fieldWithPath("content[].productIsbn").description("isbn 반환"),
-                                        fieldWithPath("content[].productCategories.[]").description("상품 카테고리들 반환"),
-                                        fieldWithPath("content[].productImagePath").description("상품이미지 경로반환"),
                                         fieldWithPath("number").description("현재 페이지 반환"),
                                         fieldWithPath("previous").description("이전 페이지 여부"),
                                         fieldWithPath("next").description("다음 페이지 여부"),
@@ -615,8 +598,6 @@ class InquiryControllerTest {
                 .andExpect(jsonPath("$.content[0].inquiryStateCodeName").value((getInquirySummaryResponseDto.getInquiryStateCodeName())))
                 .andExpect(jsonPath("$.content[0].memberNickname").value((getInquirySummaryResponseDto.getMemberNickname())))
                 .andExpect(jsonPath("$.content[0].inquiryTitle").value(getInquirySummaryResponseDto.getInquiryTitle()))
-                .andExpect(jsonPath("$.content[0].productIsbn").value(getInquirySummaryResponseDto.getProductIsbn()))
-                .andExpect(jsonPath("$.content[0].productImagePath").value(getInquirySummaryResponseDto.getProductImagePath()))
                 .andExpect(jsonPath("$.content[0].inquiryDisplayed").value(getInquirySummaryResponseDto.isInquiryDisplayed()))
                 .andExpect(jsonPath("$.content[0].inquiryAnswered").value(getInquirySummaryResponseDto.isInquiryAnswered()))
                 .andDo(print())
@@ -638,9 +619,6 @@ class InquiryControllerTest {
                                         fieldWithPath("content[].inquiryAnswered").description("문의 답변여부 반환"),
                                         fieldWithPath("content[].createdAt").description("생성일시 반환"),
                                         fieldWithPath("content[].productTitle").description("상품명 반환"),
-                                        fieldWithPath("content[].productIsbn").description("isbn 반환"),
-                                        fieldWithPath("content[].productCategories.[]").description("상품 카테고리들 반환"),
-                                        fieldWithPath("content[].productImagePath").description("상품이미지 경로반환"),
                                         fieldWithPath("number").description("현재 페이지 반환"),
                                         fieldWithPath("previous").description("이전 페이지 여부"),
                                         fieldWithPath("next").description("다음 페이지 여부"),
