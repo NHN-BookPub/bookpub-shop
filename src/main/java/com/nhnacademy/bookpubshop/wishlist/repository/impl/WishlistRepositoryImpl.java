@@ -1,19 +1,26 @@
 package com.nhnacademy.bookpubshop.wishlist.repository.impl;
 
+import com.nhnacademy.bookpubshop.category.entity.QCategory;
 import com.nhnacademy.bookpubshop.file.entity.QFile;
 import com.nhnacademy.bookpubshop.member.entity.QMember;
 import com.nhnacademy.bookpubshop.product.entity.QProduct;
+import com.nhnacademy.bookpubshop.product.relationship.entity.QProductCategory;
 import com.nhnacademy.bookpubshop.product.relationship.entity.QProductSaleStateCode;
 import com.nhnacademy.bookpubshop.state.FileCategory;
 import com.nhnacademy.bookpubshop.state.ProductSaleState;
 import com.nhnacademy.bookpubshop.wishlist.dto.response.GetAppliedMemberResponseDto;
+import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistCountResponseDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistResponseDto;
 import com.nhnacademy.bookpubshop.wishlist.entity.QWishlist;
 import com.nhnacademy.bookpubshop.wishlist.entity.Wishlist;
 import com.nhnacademy.bookpubshop.wishlist.repository.WishlistRepositoryCustom;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.JPQLQuery;
 import java.util.List;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,11 +37,14 @@ import org.springframework.data.support.PageableExecutionUtils;
 public class WishlistRepositoryImpl extends QuerydslRepositorySupport
         implements WishlistRepositoryCustom {
 
+    QCategory category = QCategory.category;
     QWishlist wishlist = QWishlist.wishlist;
     QProduct product = QProduct.product;
     QFile file = QFile.file;
     QMember member = QMember.member;
     QProductSaleStateCode productSaleStateCode = QProductSaleStateCode.productSaleStateCode;
+
+    QProductCategory productCategory = QProductCategory.productCategory;
 
 
     public WishlistRepositoryImpl() {
@@ -95,9 +105,91 @@ public class WishlistRepositoryImpl extends QuerydslRepositorySupport
                         product.productNo,
                         product.title))
                 .where(wishlist.member.memberBlocked.isFalse()
-                        .and(wishlist.product.productSaleStateCode.codeCategory.eq(ProductSaleState.SOLD_OUT.getName()))
+                        .and(wishlist.product.productSaleStateCode.codeCategory.eq(
+                                ProductSaleState.SOLD_OUT.getName()))
                         .and(wishlist.wishlistApplied.isTrue())
                         .and(wishlist.product.productNo.eq(productNo)))
                 .fetch();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetWishlistCountResponseDto> getCountWishList(Integer categoryNo,
+            Pageable pageable) {
+
+        JPQLQuery<Long> count;
+        NumberPath<Long> aliasCount =
+                Expressions.numberPath(Long.class, "wishCount");
+        List<GetWishlistCountResponseDto> content;
+
+        if (Objects.isNull(categoryNo)) {
+            count = from(product)
+                    .select(product.count())
+                    .leftJoin(wishlist.product, product)
+                    .on(product.productNo.eq(wishlist.product.productNo))
+                    .where(categoryEq(categoryNo));
+
+            content = from(wishlist)
+                    .select(Projections.fields(
+                            GetWishlistCountResponseDto.class,
+                            wishlist.product.productNo,
+                            wishlist.product.title,
+                            wishlist.product.productNo.count().as(aliasCount)))
+                    .leftJoin(wishlist.product, product)
+                    .on(product.productNo.eq(wishlist.product.productNo))
+                    .where(categoryEq(categoryNo))
+                    .groupBy(wishlist.product.productNo)
+                    .orderBy(aliasCount.desc())
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .fetch();
+
+        } else {
+            count = from(wishlist)
+                    .select(wishlist.count())
+                    .leftJoin(wishlist.product, product)
+                    .on(product.productNo.eq(wishlist.product.productNo))
+                    .leftJoin(productCategory)
+                    .on(product.productNo.eq(productCategory.product.productNo))
+                    .leftJoin(category)
+                    .on(productCategory.category.categoryNo.eq(category.categoryNo))
+                    .where(categoryEq(categoryNo));
+
+            content = from(wishlist)
+                    .select(Projections.fields(
+                            GetWishlistCountResponseDto.class,
+                            wishlist.product.productNo,
+                            wishlist.product.title,
+                            wishlist.product.productNo.count().as(aliasCount)))
+                    .leftJoin(wishlist.product, product)
+                    .on(product.productNo.eq(wishlist.product.productNo))
+                    .leftJoin(productCategory)
+                    .on(product.productNo.eq(productCategory.product.productNo))
+                    .leftJoin(category)
+                    .on(productCategory.category.categoryNo.eq(category.categoryNo))
+                    .where(categoryEq(categoryNo))
+                    .groupBy(wishlist.product.productNo)
+                    .orderBy(aliasCount.desc())
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .fetch();
+
+        }
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    /**
+     * 카테고리 번호로 검색.
+     *
+     * @param categoryNo 카테고리 번호
+     * @return 카테고리 번호 쿼리
+     */
+    private BooleanExpression categoryEq(Integer categoryNo) {
+        if (Objects.isNull(categoryNo)) {
+            return null;
+        }
+        return productCategory.category.categoryNo.eq(categoryNo);
     }
 }

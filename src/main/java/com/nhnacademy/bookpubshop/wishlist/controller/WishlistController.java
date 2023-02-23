@@ -1,10 +1,12 @@
 package com.nhnacademy.bookpubshop.wishlist.controller;
 
+import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.annotation.MemberAuth;
 import com.nhnacademy.bookpubshop.utils.PageResponse;
 import com.nhnacademy.bookpubshop.wishlist.dto.request.CreateWishlistRequestDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.request.DeleteWishlistRequestDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.request.ModifyWishlistAlarmRequestDto;
+import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistCountResponseDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistResponseDto;
 import com.nhnacademy.bookpubshop.wishlist.service.WishlistService;
 import javax.validation.Valid;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -71,6 +74,28 @@ public class WishlistController {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new PageResponse<>(content));
+    }
+
+
+    /**
+     * 관리자 좋아요 카운트 조회 메서드.
+     *
+     * @param categoryNo 카테고리 번호
+     * @param pageable   페이징 정보
+     * @return 좋아요 카운트 반환.
+     */
+    @AdminAuth
+    @GetMapping("/token/wishlist")
+    public ResponseEntity<PageResponse<GetWishlistCountResponseDto>> getWishlistCount(
+            @RequestParam(required = false) Integer categoryNo, Pageable pageable) {
+
+        Page<GetWishlistCountResponseDto> content = wishlistService.getCountWishList(categoryNo,
+                pageable);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PageResponse<>(content));
+
     }
 
     /**
