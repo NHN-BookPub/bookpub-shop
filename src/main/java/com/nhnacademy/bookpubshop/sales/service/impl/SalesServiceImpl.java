@@ -64,6 +64,9 @@ public class SalesServiceImpl implements SalesService {
         return orderRepository.getTotalSaleMonth(start, end);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<SaleProductCntDto> getSaleProductCount(LocalDateTime start, LocalDateTime end) {
         if (Objects.isNull(start) || Objects.isNull(end)) {

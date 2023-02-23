@@ -42,5 +42,12 @@ public interface OrderProductRepositoryCustom {
      */
     Page<GetExchangeResponseDto> getExchangeOrderProductList(Pageable pageable);
 
+    /**
+     * 기간에 따른 상품 판매 순위를 조회하기 위한 메소드입니다.
+     *
+     * @param start 시작 기간
+     * @param end   끝 기간
+     * @return 상품판매량 정보가 담긴 dto 리스트
+     */
     List<SaleProductCntDto> getSaleProductCount(LocalDateTime start, LocalDateTime end);
 }

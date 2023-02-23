@@ -72,6 +72,15 @@ public class SalesController {
                 .body(service.getTotalSaleCurrentYear(start, end));
     }
 
+    /**
+     * 특정 기간의 상품 판매량 랭킹을 조회하기 위한 메서드입니다.
+     * 조건이 없을 시, 올해의 상품 판매량 랭킹 정보가 반환됩니다.
+     * 성공 시 200이 반환.
+     *
+     * @param start 시작일자
+     * @param end   종료일자
+     * @return the response entity
+     */
     @AdminAuth
     @GetMapping("/token/sale-product-rank")
     public ResponseEntity<List<SaleProductCntDto>> saleProductCount(

@@ -104,6 +104,9 @@ public class OrderProductRepositoryImpl extends QuerydslRepositorySupport
         return PageableExecutionUtils.getPage(query, pageable, count::fetchOne);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<SaleProductCntDto> getSaleProductCount(LocalDateTime start, LocalDateTime end) {
 
