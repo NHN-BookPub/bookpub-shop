@@ -35,4 +35,18 @@ public interface PointHistoryRepositoryCustom {
     Page<GetPointAdminResponseDto> getPoints(Pageable pageable,
                                              LocalDateTime start,
                                              LocalDateTime end);
+
+    /**
+     * 관리자가 포인트내역을 회원 아이디를 검색하여 조회하기위한 메서드입니다.
+     *
+     * @param pageable 페이징
+     * @param start 시작일
+     * @param end 종료일
+     * @param search 아이디 검색어
+     * @return 포인트 내역
+     */
+    Page<GetPointAdminResponseDto> getPointsBySearch(Pageable pageable,
+                                                     LocalDateTime start,
+                                                     LocalDateTime end,
+                                                     String search);
 }

@@ -144,6 +144,34 @@ public class PointHistoryRepositoryImpl extends QuerydslRepositorySupport
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<GetPointAdminResponseDto> getPointsBySearch(Pageable pageable, LocalDateTime start, LocalDateTime end, String search) {
+        JPQLQuery<GetPointAdminResponseDto> content = from(pointHistory)
+                .select(Projections.constructor(
+                        GetPointAdminResponseDto.class,
+                        member.memberId,
+                        pointHistory.pointHistoryAmount,
+                        pointHistory.pointHistoryReason,
+                        pointHistory.createdAt,
+                        pointHistory.pointHistoryIncreased)).distinct()
+                .innerJoin(pointHistory.member, member)
+                .where(checkDate(start, end)
+                        .and(member.memberId.contains(search)))
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset());
+
+        JPQLQuery<Long> count = from(pointHistory)
+                .innerJoin(pointHistory.member, member)
+                .where(checkDate(start, end)
+                        .and(member.memberId.contains(search)))
+                .select(pointHistory.count()).distinct();
+
+        return PageableExecutionUtils.getPage(content.fetch(), pageable, count::fetchOne);
+    }
+
+    /**
      * 시작일자와 종료일자를 기준으로 where 조건이 걸립니다.
      *
      * @param start 시작일자
