@@ -248,6 +248,45 @@ public class MemberController {
     }
 
     /**
+     * 닉네임으로 멤버를 검색합니다.
+     *
+     * @param pageable 페이징
+     * @param search 검색할 문자
+     * @return 성공시 200, 멤버리스트
+     */
+    @GetMapping("/token/admin/members/{search}/nick")
+    @AdminAuth
+    public ResponseEntity<PageResponse<MemberResponseDto>> memberListByNick(
+            Pageable pageable, @PathVariable String search) {
+        Page<MemberResponseDto> members =
+                memberService.getMembersByNickName(pageable, search);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PageResponse<>(members));
+    }
+
+    /**
+     * 아이디로 멤버를 검색합니다.
+     *
+     * @param pageable 페이징
+     * @param search 검색할 문자
+     * @return 성공시 200, 멤버리스트
+     */
+    @GetMapping("/token/admin/members/{search}/id")
+    @AdminAuth
+    public ResponseEntity<PageResponse<MemberResponseDto>> memberListById(
+            Pageable pageable, @PathVariable String search) {
+        Page<MemberResponseDto> members =
+                memberService.getMembersById(pageable, search);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new PageResponse<>(members));
+    }
+
+
+    /**
      * 멤버가 회원탈퇴를 했을경우 실행되는 메서드입니다.
      * 회원만 접근가능.
      * 성공시 201반환.

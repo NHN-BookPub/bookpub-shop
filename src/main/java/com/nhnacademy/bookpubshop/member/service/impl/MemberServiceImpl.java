@@ -277,6 +277,22 @@ public class MemberServiceImpl implements MemberService {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public Page<MemberResponseDto> getMembersByNickName(Pageable pageable, String search) {
+        return memberRepository.findMembersListByNickName(pageable, search);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<MemberResponseDto> getMembersById(Pageable pageable, String search) {
+        return memberRepository.findMembersListById(pageable, search);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Transactional
     @Override
     public void modifyMemberName(Long memberNo, ModifyMemberNameRequestDto dto) {

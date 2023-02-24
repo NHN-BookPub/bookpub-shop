@@ -227,4 +227,76 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport
                 .fetchOne()
         );
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<MemberResponseDto> findMembersListByNickName(Pageable pageable, String search) {
+        JPQLQuery<Long> count = from(member)
+                .select(member.count())
+                .innerJoin(member.tier, tier)
+                .where(member.memberNickname.contains(search));
+
+        List<MemberResponseDto> content = from(member)
+                .innerJoin(member.tier, tier)
+                .select(
+                        Projections.constructor(MemberResponseDto.class,
+                                member.memberNo,
+                                member.tier.tierName.as("tier"),
+                                member.memberId,
+                                member.memberNickname.as("nickname"),
+                                member.memberName.as("name"),
+                                member.memberGender.as("gender"),
+                                member.memberBirthYear.as("birthYear"),
+                                member.memberBirthMonth.as("birthMonth"),
+                                member.memberEmail.as("email"),
+                                member.memberPoint.as("point"),
+                                member.socialJoined.as("isSocial"),
+                                member.memberDeleted.as("idDeleted"),
+                                member.memberBlocked.as("isBlocked")
+                        )
+                )
+                .where(member.memberNickname.contains(search))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<MemberResponseDto> findMembersListById(Pageable pageable, String search) {
+        JPQLQuery<Long> count = from(member)
+                .select(member.count())
+                .innerJoin(member.tier, tier)
+                .where(member.memberId.contains(search));
+
+        List<MemberResponseDto> content = from(member)
+                .innerJoin(member.tier, tier)
+                .select(
+                        Projections.constructor(MemberResponseDto.class,
+                                member.memberNo,
+                                member.tier.tierName.as("tier"),
+                                member.memberId,
+                                member.memberNickname.as("nickname"),
+                                member.memberName.as("name"),
+                                member.memberGender.as("gender"),
+                                member.memberBirthYear.as("birthYear"),
+                                member.memberBirthMonth.as("birthMonth"),
+                                member.memberEmail.as("email"),
+                                member.memberPoint.as("point"),
+                                member.socialJoined.as("isSocial"),
+                                member.memberDeleted.as("idDeleted"),
+                                member.memberBlocked.as("isBlocked")))
+                .where(member.memberId.contains(search))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
 }
