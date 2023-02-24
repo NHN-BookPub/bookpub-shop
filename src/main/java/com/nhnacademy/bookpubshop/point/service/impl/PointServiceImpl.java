@@ -65,6 +65,18 @@ public class PointServiceImpl implements PointService {
         return new PageResponse<>(pointHistoryRepository.getPoints(pageable, start, end));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PageResponse<GetPointAdminResponseDto> getPointsBySearch(
+            Pageable pageable,
+            LocalDateTime start,
+            LocalDateTime end,
+            String search) {
+        return new PageResponse<>(pointHistoryRepository.getPointsBySearch(pageable, start, end, search));
+    }
+
 
     /**
      * 선물 주고 받은 내역 기록 메소드.
@@ -88,7 +100,6 @@ public class PointServiceImpl implements PointService {
                 .pointHistoryAmount(giftRequestDto.getPointAmount())
                 .pointHistoryReason(GIFT)
                 .pointHistoryIncreased(true)
-                .build()
-        );
+                .build());
     }
 }

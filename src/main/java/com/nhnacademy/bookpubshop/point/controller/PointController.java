@@ -82,4 +82,25 @@ public class PointController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(pointService.getPoints(pageable, start, end));
     }
+
+    /**
+     * 관리자가 포인트내역을 회원 아이디를 검색하여 조회하기위한 메서드입니다.
+     * 성공시 200이 반환됩니다.
+     *
+     * @param pageable 페이징
+     * @param start 시작일
+     * @param end 종료일
+     * @param search 아이디 검색어
+     * @return 포인트 내역
+     */
+    @AdminAuth
+    @GetMapping("/token/points/{search}")
+    public ResponseEntity<PageResponse<GetPointAdminResponseDto>> getPointsBySearch(
+            Pageable pageable,
+            @RequestParam(value = "start", required = false) LocalDateTime start,
+            @RequestParam(value = "end", required = false) LocalDateTime end,
+            @PathVariable String search) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(pointService.getPointsBySearch(pageable, start, end, search));
+    }
 }
