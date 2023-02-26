@@ -24,3 +24,37 @@ include::../../../../target/snippets/coupon-add/response-body.adoc[]
 include::../../../../target/snippets/coupon-add-no-memberId-validation/http-response.adoc[]
 ====== 2. 쿠폰 템플릿 번호를 입력하지않았을경우
 include::../../../../target/snippets/coupon-add-no-templateNo-validation/http-response.adoc[]
+
+==== 등급 쿠폰을 발급
+
+===== 요청구조
+include::../../../../target/snippets/coupon-post-tierCoupon/http-request.adoc[]
+
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/coupon-post-tierCoupon/path-parameters.adoc[]
+
+===== 응답 구조
+include::../../../../target/snippets/coupon-post-tierCoupon/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-post-tierCoupon/response-body.adoc[]
+
+==== 이달의 쿠폰을 발급
+
+===== 요청구조
+include::../../../../target/snippets/coupon-post-month-coupon/http-request.adoc[]
+
+
+===== 요청 파라미터들
+
+include::../../../../target/snippets/coupon-post-month-coupon/path-parameters.adoc[]
+
+===== 응답 구조
+include::../../../../target/snippets/coupon-post-month-coupon/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-post-month-coupon/response-body.adoc[]

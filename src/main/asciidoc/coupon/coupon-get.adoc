@@ -18,3 +18,100 @@ include::../../../../target/snippets/coupon-get.adoc/http-response.adoc[]
 ===== 응답 파라미터들
 
 include::../../../../target/snippets/coupon-get.adoc/response-fields.adoc[]
+
+==== 마이페이지 사용가능 쿠폰 조회
+
+
+===== 요청구조
+
+include::../../../../target/snippets/coupon-get-positive/http-request.adoc[]
+
+===== 요청 파라미터들
+
+RequestParam
+
+include::../../../../target/snippets/coupon-get-positive/request-parameters.adoc[]
+
+PathVariable
+
+include::../../../../target/snippets/coupon-get-positive/path-parameters.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/coupon-get-positive/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-get-positive/response-fields.adoc[]
+
+==== 멤버의 등급쿠폰 발급 유뮤확인
+
+===== 요청구조
+
+include::../../../../target/snippets/coupon-get-tierCoupon/http-request.adoc[]
+
+===== 요청 파라미터들
+
+RequestParam
+
+include::../../../../target/snippets/coupon-get-tierCoupon/request-parameters.adoc[]
+
+PathVariable
+
+include::../../../../target/snippets/coupon-get-tierCoupon/path-parameters.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/coupon-get-tierCoupon/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-get-tierCoupon/response-body.adoc[]
+
+==== 이달의 쿠폰 중복 발급을 확인
+
+===== 요청구조
+
+include::../../../../target/snippets/coupon-get-issue-check/http-request.adoc[]
+
+===== 요청 파라미터들
+
+RequestParam
+
+include::../../../../target/snippets/coupon-get-issue-check/request-parameters.adoc[]
+
+PathVariable
+
+include::../../../../target/snippets/coupon-get-issue-check/path-parameters.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/coupon-get-issue-check/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-get-issue-check/response-body.adoc[]
+
+==== 사용불가능한 쿠폰 조회
+
+===== 요청구조
+
+include::../../../../target/snippets/coupon-get-negative/http-request.adoc[]
+
+===== 요청 파라미터들
+
+RequestParam
+
+include::../../../../target/snippets/coupon-get-negative/request-parameters.adoc[]
+
+PathVariable
+
+include::../../../../target/snippets/coupon-get-negative/path-parameters.adoc[]
+
+===== 응답 구조
+
+include::../../../../target/snippets/coupon-get-negative/http-response.adoc[]
+
+===== 응답 파라미터들
+
+include::../../../../target/snippets/coupon-get-negative/response-fields.adoc[]
