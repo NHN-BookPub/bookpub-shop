@@ -56,3 +56,31 @@ include::../../../../target/snippets/member-statistics-success-byTier/response-f
 
 include::../../../../target/snippets/member-login-Member-success/response-fields.adoc[]
 
+==== 닉네임을 통한 멤버 정보 조회
+
+===== 요청구조
+include::../../../../target/snippets/member-detail-get-by-nickname/path-parameters.adoc[]
+
+include::../../../../target/snippets/member-detail-get-by-nickname/request-parameters.adoc[]
+
+===== 응답구조
+include::../../../../target/snippets/member-detail-get-by-nickname/response-fields.adoc[]
+
+==== 아이디를 통한 멤버 정보 조회
+
+===== 요청구조
+include::../../../../target/snippets/member-detail-get-by-id/path-parameters.adoc[]
+
+include::../../../../target/snippets/member-detail-get-by-id/request-parameters.adoc[]
+
+===== 응답구조
+include::../../../../target/snippets/member-detail-get-by-id/response-fields.adoc[]
+
+==== 멤버 번호를 통한 멤버의 등급번호 조회
+
+===== 요청구조
+include::../../../../target/snippets/member-tierNo-get-by-memberNo/path-parameters.adoc[]
+
+===== 응답구조
+include::../../../../target/snippets/member-detail-get-by-nickname/response-fields.adoc[]
+

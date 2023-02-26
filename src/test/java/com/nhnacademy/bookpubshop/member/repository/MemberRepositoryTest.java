@@ -2,7 +2,6 @@ package com.nhnacademy.bookpubshop.member.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
 import com.nhnacademy.bookpubshop.address.entity.Address;
 import com.nhnacademy.bookpubshop.authority.dummy.AuthorityDummy;
@@ -55,7 +54,7 @@ class MemberRepositoryTest {
     MemberAuthority memberAuthority;
 
     Address address;
-
+    
     @BeforeEach
     void setUp() {
         bookPubTier = TierDummy.dummy();
@@ -233,5 +232,61 @@ class MemberRepositoryTest {
                 () -> memberRepository.findByAuthMemberInfo(1234L))
                 .isInstanceOf(MemberNotFoundException.class)
                 .hasMessageContaining(MemberNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("회원번호로 등급번호 조회 성공 테스트")
+    void findTierNoByMemberNoTest() {
+        entityManager.persist(bookPubTier);
+        entityManager.persist(member);
+
+        Integer result = memberRepository.findTierNoByMemberNo(member.getMemberNo());
+
+        assertThat(result).isEqualTo(bookPubTier.getTierNo());
+    }
+
+    @Test
+    @DisplayName("회원 닉네임으로 회원 조회 성공 테스트")
+    void findMemberByMemberNicknameTest() {
+        entityManager.persist(member);
+
+        Optional<Member> result = memberRepository.findMemberByMemberNickname(member.getMemberNickname());
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getMemberNo()).isEqualTo(member.getMemberNo());
+        assertThat(result.get().getMemberNickname()).isEqualTo(member.getMemberNickname());
+        assertThat(result.get().getMemberId()).isEqualTo(member.getMemberId());
+    }
+
+    @Test
+    @DisplayName("회원 닉네임으로 회원 리스트 조회 성공 테스트")
+    void findMembersListByNickNameTest() {
+        entityManager.persist(member);
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<MemberResponseDto> result =
+                memberRepository.findMembersListByNickName(pageable, member.getMemberNickname());
+
+        assertThat(result).isNotEmpty();
+        assertThat(result.getContent().get(0).getMemberNo()).isEqualTo(member.getMemberNo());
+        assertThat(result.getContent().get(0).getNickname()).isEqualTo(member.getMemberNickname());
+        assertThat(result.getContent().get(0).getMemberId()).isEqualTo(member.getMemberId());
+        assertThat(result.getContent().get(0).getEmail()).isEqualTo(member.getMemberEmail());
+    }
+
+    @Test
+    @DisplayName("회원 아이디로 회원 리스트 조회 성공 테스트")
+    void findMembersListById() {
+        entityManager.persist(member);
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Page<MemberResponseDto> result =
+                memberRepository.findMembersListById(pageable, member.getMemberId());
+
+        assertThat(result).isNotEmpty();
+        assertThat(result.getContent().get(0).getMemberNo()).isEqualTo(member.getMemberNo());
+        assertThat(result.getContent().get(0).getNickname()).isEqualTo(member.getMemberNickname());
+        assertThat(result.getContent().get(0).getMemberId()).isEqualTo(member.getMemberId());
+        assertThat(result.getContent().get(0).getEmail()).isEqualTo(member.getMemberEmail());
     }
 }

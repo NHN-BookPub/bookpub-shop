@@ -4,13 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyLong;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.address.dummy.AddressDummy;
 import com.nhnacademy.bookpubshop.address.entity.Address;
@@ -27,6 +21,7 @@ import com.nhnacademy.bookpubshop.member.dto.request.ModifyMemberPhoneRequestDto
 import com.nhnacademy.bookpubshop.member.dto.request.OauthMemberCreateRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.request.SignUpMemberRequestDto;
 import com.nhnacademy.bookpubshop.member.dto.response.LoginMemberResponseDto;
+import com.nhnacademy.bookpubshop.member.dto.response.MemberAuthResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberDetailResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberPasswordResponseDto;
 import com.nhnacademy.bookpubshop.member.dto.response.MemberResponseDto;
@@ -92,6 +87,8 @@ class MemberServiceTest {
     Address address;
 
     ModifyMemberEmailRequestDto emailRequestDto;
+    MemberAuthResponseDto authResponseDto;
+    MemberResponseDto memberResponseDto;
     BookPubTier tier;
     ArgumentCaptor<Member> captor;
 
@@ -115,6 +112,8 @@ class MemberServiceTest {
         ReflectionTestUtils.setField(signUpMemberRequestDto, "email", "tagkdj1@naver.com");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "address", "광주");
         ReflectionTestUtils.setField(signUpMemberRequestDto, "detailAddress", "109동 102호");
+
+        memberResponseDto = new MemberResponseDto(1L, "tier", "memberId", "nickname", "name", "gender", 1999, 1111, "email", 100L, false, false, false);
     }
 
     @Test
@@ -303,18 +302,15 @@ class MemberServiceTest {
     @DisplayName("멤버 이메일 수정 관련 성공")
     @Test
     void memberEmailSuccessTest() {
-        ReflectionTestUtils.setField(emailRequestDto, "email", member.getMemberEmail());
+        ReflectionTestUtils.setField(emailRequestDto, "email", "modify_email");
 
         when(memberRepository.findById(anyLong()))
                 .thenReturn(Optional.of(member));
 
-        when(memberRepository.existsByMemberEmail(anyString()))
-                .thenReturn(false);
-
         memberService.modifyMemberEmail(1L, emailRequestDto);
 
         verify(memberRepository, times(1))
-                .findById(1L);
+                .findById(anyLong());
     }
 
     @DisplayName("멤버 상세 정보조회실패")
@@ -713,6 +709,19 @@ class MemberServiceTest {
         then(addressRepository).should().delete(address);
     }
 
+    @Test
+    @DisplayName("회원 번호로 회원의 auth 정보 조회 테스트")
+    void authMemberInfoTest() {
+        authResponseDto = new MemberAuthResponseDto(1L, "password", List.of("admin"));
+
+        when(memberRepository.findByAuthMemberInfo(anyLong()))
+                .thenReturn(authResponseDto);
+
+        memberService.authMemberInfo(1L);
+
+        verify(memberRepository, times(1)).findByAuthMemberInfo(anyLong());
+    }
+
     @DisplayName("oauth 멤버 확인 메소드")
     @Test
     void isOauthMember() {
@@ -724,5 +733,43 @@ class MemberServiceTest {
 
         verify(memberRepository, times(1))
                 .existsByMemberId("tagkdj1@naver.com");
+    }
+
+    @Test
+    @DisplayName("회원 번호로 등급 번호 조회 성공 테스트")
+    void getTierByMemberNoTest() {
+        when(memberRepository.findTierNoByMemberNo(anyLong())).thenReturn(1);
+
+        Integer result = memberService.getTierByMemberNo(1L);
+
+        assertThat(result).isEqualTo(1);
+
+        verify(memberRepository, times(1)).findTierNoByMemberNo(anyLong());
+    }
+
+    @Test
+    @DisplayName("회원 닉네임으로 회원 정보 페이지 조회 성공 테스트")
+    void getMembersByNickNameTest() {
+        Pageable pagable = PageRequest.of(0, 10);
+        PageImpl<MemberResponseDto> page = new PageImpl<>(List.of(memberResponseDto), pagable, 1);
+
+        when(memberRepository.findMembersListByNickName(any(), anyString())).thenReturn(page);
+
+        memberService.getMembersByNickName(pagable, "search");
+
+        verify(memberRepository, times(1)).findMembersListByNickName(any(), anyString());
+    }
+
+    @Test
+    @DisplayName("회원 아이디로 회원 정보 페이지정보 조회 성공 테스트")
+    void getMembersById() {
+        Pageable pagable = PageRequest.of(0, 10);
+        PageImpl<MemberResponseDto> page = new PageImpl<>(List.of(memberResponseDto), pagable, 1);
+
+        when(memberRepository.findMembersListById(any(), anyString())).thenReturn(page);
+
+        memberService.getMembersById(pagable, "search");
+
+        verify(memberRepository, times(1)).findMembersListById(any(), anyString());
     }
 }

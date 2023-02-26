@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.inquirystatecode.dummy;
 
 import com.nhnacademy.bookpubshop.inquirystatecode.entity.InquiryStateCode;
+import com.nhnacademy.bookpubshop.state.InquiryState;
 
 /**
  * 상품평 더미 클래스
@@ -14,7 +15,7 @@ public class InquiryCodeDummy {
     public static InquiryStateCode dummy() {
         return new InquiryStateCode(
                 null,
-                "name",
+                InquiryState.NORMAL.getName(),
                 true,
                 "info"
         );
