@@ -57,7 +57,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * 쿠폰 레포지토리 테스트
@@ -435,5 +437,123 @@ class CouponRepositoryTest {
                 0, true);
 
         return entityManager.persist(category);
+    }
+
+    @DisplayName("월별 쿠폰이 존재하는지 확인")
+    @Test
+    void existsMonthCoupon() {
+        //given
+        entityManager.persist(coupon);
+
+        boolean result = couponRepository.existsMonthCoupon(member.getMemberNo(), couponTemplate.getTemplateNo());
+        assertThat(result).isTrue();
+    }
+
+    @DisplayName("이달의 쿠폰들이 존재하는지 확인")
+    @Test
+    void existsMonthCouponList() {
+        entityManager.persist(coupon);
+
+        List<Long> result = couponRepository.existsMonthCouponList(member.getMemberNo(), List.of(couponTemplate.getTemplateNo()));
+
+        assertThat(result).isNotEmpty();
+    }
+
+    @DisplayName("주문번호를 통해 쿠폰을 확인")
+    @Test
+    void findByCouponByOrderNoTest() {
+        ReflectionTestUtils.setField(coupon, "couponUsed", true);
+
+        entityManager.persist(coupon);
+
+        List<Coupon> result = couponRepository.findByCouponByOrderNo(order.getOrderNo());
+
+
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getCouponNo()).isEqualTo(coupon.getCouponNo());
+        assertThat(result.get(0).getMember()).isEqualTo(member);
+        assertThat(result.get(0).getCouponTemplate()).isEqualTo(couponTemplate);
+        assertThat(result.get(0).getOrder()).isEqualTo(order);
+        assertThat(result.get(0).getOrderProduct()).isEqualTo(orderProduct);
+        assertThat(result.get(0).isCouponUsed()).isEqualTo(coupon.isCouponUsed());
+        assertThat(result.get(0).getUsedAt()).isEqualTo(coupon.getUsedAt());
+    }
+
+    @DisplayName("주문번호를 통해 사용한 쿠폰을 조회하는 테스트")
+    @Test
+    void findByCouponByOrderProductNoTest() {
+        ReflectionTestUtils.setField(coupon, "couponUsed", true);
+        entityManager.persist(coupon);
+
+        List<Coupon> result = couponRepository.findByCouponByOrderProductNo(orderProduct.getOrderProductNo());
+
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getCouponNo()).isEqualTo(coupon.getCouponNo());
+        assertThat(result.get(0).getCouponTemplate()).isEqualTo(coupon.getCouponTemplate());
+        assertThat(result.get(0).getOrder()).isEqualTo(coupon.getOrder());
+        assertThat(result.get(0).getOrderProduct()).isEqualTo(coupon.getOrderProduct());
+        assertThat(result.get(0).getMember()).isEqualTo(coupon.getMember());
+        assertThat(result.get(0).isCouponUsed()).isEqualTo(coupon.isCouponUsed());
+        assertThat(result.get(0).getUsedAt()).isEqualTo(coupon.getUsedAt());
+    }
+
+    @DisplayName("회원번호를 통해 사용가능한 쿠폰을 받는 테스트")
+    @Test
+    void findPositiveCouponByMemberNoTest() {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        entityManager.persist(coupon);
+
+        Page<GetCouponResponseDto> page = couponRepository.findPositiveCouponByMemberNo(pageRequest, member.getMemberNo());
+        List<GetCouponResponseDto> result = page.getContent();
+
+        assertThat(page).isNotEmpty();
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getCouponNo()).isEqualTo(coupon.getCouponNo());
+        assertThat(result.get(0).getMemberId()).isEqualTo(member.getMemberId());
+        assertThat(result.get(0).getTemplateName()).isEqualTo(couponTemplate.getTemplateName());
+        assertThat(result.get(0).getTemplateImage()).isEqualTo(file.getFilePath());
+        assertThat(result.get(0).getTypeName()).isEqualTo(couponType.getTypeName());
+        assertThat(result.get(0).isPolicyFixed()).isEqualTo(couponPolicy.isPolicyFixed());
+        assertThat(result.get(0).getPolicyPrice()).isEqualTo(couponPolicy.getPolicyPrice());
+        assertThat(result.get(0).getPolicyMinimum()).isEqualTo(couponPolicy.getPolicyMinimum());
+        assertThat(result.get(0).getMaxDiscount()).isEqualTo(couponPolicy.getMaxDiscount());
+        assertThat(result.get(0).getFinishedAt()).isEqualTo(couponTemplate.getFinishedAt());
+        assertThat(result.get(0).isCouponUsed()).isEqualTo(coupon.isCouponUsed());
+    }
+
+    @DisplayName("회원번호를 통해 사용한 쿠폰을 받는 테스트")
+    @Test
+    void findNegativeCouponByMemberNo() {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        ReflectionTestUtils.setField(coupon, "couponUsed", true);
+        entityManager.persist(coupon);
+
+        Page<GetCouponResponseDto> page = couponRepository.findNegativeCouponByMemberNo(pageRequest, member.getMemberNo());
+        List<GetCouponResponseDto> result = page.getContent();
+
+        assertThat(page).isNotEmpty();
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getCouponNo()).isEqualTo(coupon.getCouponNo());
+        assertThat(result.get(0).getMemberId()).isEqualTo(member.getMemberId());
+        assertThat(result.get(0).getTemplateName()).isEqualTo(couponTemplate.getTemplateName());
+        assertThat(result.get(0).getTemplateImage()).isEqualTo(file.getFilePath());
+        assertThat(result.get(0).getTypeName()).isEqualTo(couponType.getTypeName());
+        assertThat(result.get(0).isPolicyFixed()).isEqualTo(couponPolicy.isPolicyFixed());
+        assertThat(result.get(0).getPolicyPrice()).isEqualTo(couponPolicy.getPolicyPrice());
+        assertThat(result.get(0).getPolicyMinimum()).isEqualTo(couponPolicy.getPolicyMinimum());
+        assertThat(result.get(0).getMaxDiscount()).isEqualTo(couponPolicy.getMaxDiscount());
+        assertThat(result.get(0).getFinishedAt()).isEqualTo(couponTemplate.getFinishedAt());
+        assertThat(result.get(0).isCouponUsed()).isEqualTo(coupon.isCouponUsed());
+    }
+
+    @DisplayName("등급 쿠폰을 사용가능했는지 확인하기위한 테스트")
+    @Test
+    void existsTierCouponsByMemberNoTest(){
+        entityManager.persist(coupon);
+
+        boolean result = couponRepository.existsTierCouponsByMemberNo(member.getMemberNo(),
+                List.of(couponTemplate.getTemplateNo()));
+
+        assertThat(result).isTrue();
     }
 }

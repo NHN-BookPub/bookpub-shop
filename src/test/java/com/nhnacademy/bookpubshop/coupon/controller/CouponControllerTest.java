@@ -19,8 +19,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nhnacademy.bookpubshop.coupon.dto.request.CreateCouponRequestDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.dto.response.GetOrderCouponResponseDto;
+import com.nhnacademy.bookpubshop.coupon.dummy.CouponDummy;
 import com.nhnacademy.bookpubshop.coupon.service.CouponService;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
+import com.nhnacademy.bookpubshop.utils.PageResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,9 +61,11 @@ class CouponControllerTest {
     ObjectMapper mapper;
     String uri = "/api/coupons";
     String authUri = "/token/coupons";
+    GetCouponResponseDto getCouponResponseDto;
 
     @BeforeEach
     void setUp() {
+        getCouponResponseDto = CouponDummy.getCouponResponseDtoDummy();
         mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
@@ -300,4 +304,220 @@ class CouponControllerTest {
                                 fieldWithPath("[].templateBundled").description("쿠폰 묶음 여부입니다.")
                         )));
     }
+
+    @Test
+    @DisplayName("마이페이지에서 사용가능한 쿠폰을 조회하는 메서드")
+    void memberPositiveCouponList() throws Exception {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        PageImpl<GetCouponResponseDto> page = new PageImpl<>(List.of(getCouponResponseDto));
+        PageResponse<GetCouponResponseDto> pageResponse = new PageResponse<>(page);
+        when(couponService.getPositiveCouponList(any(), any()))
+                .thenReturn(page);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/token/coupons/members/{memberNo}/positive", 1L)
+                        .param("page", mapper.writeValueAsString(pageRequest.getPageNumber()))
+                        .param("size", mapper.writeValueAsString(pageRequest.getPageSize()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content[0].couponNo").value(mapper.writeValueAsString(getCouponResponseDto.getCouponNo())))
+                .andExpect(jsonPath("$.content[0].memberId").value((getCouponResponseDto.getMemberId())))
+                .andExpect(jsonPath("$.content[0].templateName").value((getCouponResponseDto.getTemplateName())))
+                .andExpect(jsonPath("$.content[0].templateImage").value((getCouponResponseDto.getTemplateImage())))
+                .andExpect(jsonPath("$.content[0].typeName").value((getCouponResponseDto.getTypeName())))
+                .andExpect(jsonPath("$.content[0].policyFixed").value(getCouponResponseDto.isPolicyFixed()))
+                .andExpect(jsonPath("$.content[0].policyPrice").value(mapper.writeValueAsString(getCouponResponseDto.getPolicyPrice())))
+                .andExpect(jsonPath("$.content[0].policyMinimum").value(mapper.writeValueAsString(getCouponResponseDto.getPolicyMinimum())))
+                .andExpect(jsonPath("$.content[0].maxDiscount").value(mapper.writeValueAsString(getCouponResponseDto.getMaxDiscount())))
+                .andExpect(jsonPath("$.content[0].couponUsed").value(getCouponResponseDto.isCouponUsed()))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("coupon-get-positive",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        requestParameters(
+                                parameterWithName("page").description("페이지 번호"),
+                                parameterWithName("size").description("페이지 사이즈")),
+                        responseFields(
+                                fieldWithPath("content[].couponNo").description("쿠폰 번호"),
+                                fieldWithPath("content[].memberId").description("멤버 아이디"),
+                                fieldWithPath("content[].templateName").description("쿠폰 템플릿 이름"),
+                                fieldWithPath("content[].templateImage").description("쿠폰 템플릿 이미지"),
+                                fieldWithPath("content[].typeName").description("유형 이름"),
+                                fieldWithPath("content[].policyFixed").description("정률 정액 여부"),
+                                fieldWithPath("content[].policyPrice").description("정률 정액 금액"),
+                                fieldWithPath("content[].policyMinimum").description("쿠폰 최소 금액"),
+                                fieldWithPath("content[].maxDiscount").description("최대 할인가격"),
+                                fieldWithPath("content[].finishedAt").description("만료일자"),
+                                fieldWithPath("content[].couponUsed").description("사용여부"),
+                                fieldWithPath("totalPages").description("총 페이지 수"),
+                                fieldWithPath("number").description("현재 페이지 번호"),
+                                fieldWithPath("previous").description("이전 이동 가능 여부"),
+                                fieldWithPath("next").description("다음 이동 가능 여부")
+                        )));
+    }
+
+    @Test
+    @DisplayName("회원이 포인트 포인트 쿠폰 사용시 상태변경 및 포인트 적립")
+    void pointCouponModifyUsed() throws Exception {
+        doNothing().when(couponService)
+                .modifyPointCouponUsed(any(), any());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.put("/token/coupons/{couponNo}/point/members/{memberNo}", 1L, 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("coupon-put-point",
+                        pathParameters(
+                                parameterWithName("couponNo").description("쿠폰 번호"),
+                                parameterWithName("memberNo").description("회원 번호"))
+                ));
+    }
+
+    @Test
+    @DisplayName("멤버의 등급쿠폰 발급 유무확인")
+    void existsCouponListByMemberNo() throws Exception {
+        when(couponService.existsCouponsByMemberNo(any(), any()))
+                .thenReturn(true);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/token/coupons/{memberNo}/tier-coupons", 1L)
+                        .param("tierCoupons", mapper.writeValueAsString(1L))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("coupon-get-tierCoupon",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("memberNo").description("회원 번호")),
+                        requestParameters(
+                                parameterWithName("tierCoupons").description("등급 쿠폰 번호들이 기입"))
+                ));
+    }
+
+    @Test
+    @DisplayName("멤버에게 등급 쿠폰을 발급")
+    void issueTierCoupons() throws Exception {
+        doNothing().when(couponService).issueTierCouponsByMemberNo(any(), any());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/token/coupons/{memberNo}/tier-coupons", 1L)
+                        .param("tierCoupons", mapper.writeValueAsString(1L))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(document("coupon-post-tierCoupon",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("memberNo").description("회원 번호")),
+                        requestParameters(
+                                parameterWithName("tierCoupons").description("등급 쿠폰 번호들이 기입"))
+                ));
+
+
+    }
+
+    @Test
+    @DisplayName("이달의 쿠폰 발급")
+    void issueMonthCoupon() throws Exception {
+        doNothing().when(couponService).issueCouponMonth(any(), any());
+
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/token/coupons/{memberNo}/month-coupon", 1L)
+                        .param("templateNo", mapper.writeValueAsString(1L))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("coupon-post-month-coupon",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("memberNo").description("회원 번호")),
+                        requestParameters(
+                                parameterWithName("templateNo").description("탬플릿 번호가 기입"))
+                ));
+    }
+
+    @Test
+    @DisplayName("이달의 쿠폰 발행 여부 확인")
+    void checkCouponMonthIssued() throws Exception {
+        when(couponService.existsCouponMonthIssued(any(), any()))
+                .thenReturn(true);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/token/coupons/{memberNo}/month-coupon", 1L)
+                        .param("templateNo", mapper.writeValueAsString(1L))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("coupon-get-month-coupon",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("memberNo").description("회원 번호")),
+                        requestParameters(
+                                parameterWithName("templateNo").description("탬플릿 번호가 기입"))
+                ));
+    }
+
+    @Test
+    @DisplayName("이달의 쿠폰 중복 발급을 확인")
+    void checkCouponMonthListIssued() throws Exception {
+        when(couponService.existsCouponMonthListIssued(any(), any()))
+                .thenReturn(List.of(true));
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/token/coupons/{memberNo}/month-coupons/issue-check", 1L)
+                        .param("couponList", mapper.writeValueAsString(1L))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("coupon-get-issue-check",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(parameterWithName("memberNo").description("회원 번호")),
+                        requestParameters(
+                                parameterWithName("couponList").description("이달의 쿠폰 번호들 기입"))
+                ));
+    }
+
+    @Test
+    @DisplayName("사용불가능한 쿠폰을 조회")
+    void memberNegativeCouponList() throws Exception {
+        PageImpl<GetCouponResponseDto> page = new PageImpl<>(List.of(getCouponResponseDto));
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        when(couponService.getNegativeCouponList(any(), any()))
+                .thenReturn(page);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/token/coupons/members/{memberNo}/negative", 1L)
+                        .param("page", mapper.writeValueAsString(pageRequest.getPageNumber()))
+                        .param("size", mapper.writeValueAsString(pageRequest.getPageSize()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andExpect(jsonPath("$.content[0].couponNo").value(mapper.writeValueAsString(getCouponResponseDto.getCouponNo())))
+                .andExpect(jsonPath("$.content[0].memberId").value((getCouponResponseDto.getMemberId())))
+                .andExpect(jsonPath("$.content[0].templateName").value((getCouponResponseDto.getTemplateName())))
+                .andExpect(jsonPath("$.content[0].templateImage").value((getCouponResponseDto.getTemplateImage())))
+                .andExpect(jsonPath("$.content[0].typeName").value((getCouponResponseDto.getTypeName())))
+                .andExpect(jsonPath("$.content[0].policyFixed").value(getCouponResponseDto.isPolicyFixed()))
+                .andExpect(jsonPath("$.content[0].policyPrice").value(mapper.writeValueAsString(getCouponResponseDto.getPolicyPrice())))
+                .andExpect(jsonPath("$.content[0].policyMinimum").value(mapper.writeValueAsString(getCouponResponseDto.getPolicyMinimum())))
+                .andExpect(jsonPath("$.content[0].maxDiscount").value(mapper.writeValueAsString(getCouponResponseDto.getMaxDiscount())))
+                .andExpect(jsonPath("$.content[0].couponUsed").value(getCouponResponseDto.isCouponUsed()))
+                .andExpect(status().is2xxSuccessful())
+                .andDo(print())
+                .andDo(document("coupon-get-negative",
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("회원 번호")),
+                        requestParameters(
+                                parameterWithName("page").description("페이지 번호"),
+                                parameterWithName("size").description("페이지 사이즈")),
+                        responseFields(
+                                fieldWithPath("content[].couponNo").description("쿠폰 번호"),
+                                fieldWithPath("content[].memberId").description("멤버 아이디"),
+                                fieldWithPath("content[].templateName").description("쿠폰 템플릿 이름"),
+                                fieldWithPath("content[].templateImage").description("쿠폰 템플릿 이미지"),
+                                fieldWithPath("content[].typeName").description("유형 이름"),
+                                fieldWithPath("content[].policyFixed").description("정률 정액 여부"),
+                                fieldWithPath("content[].policyPrice").description("정률 정액 금액"),
+                                fieldWithPath("content[].policyMinimum").description("쿠폰 최소 금액"),
+                                fieldWithPath("content[].maxDiscount").description("최대 할인가격"),
+                                fieldWithPath("content[].finishedAt").description("만료일자"),
+                                fieldWithPath("content[].couponUsed").description("사용여부"),
+                                fieldWithPath("totalPages").description("총 페이지 수"),
+                                fieldWithPath("number").description("현재 페이지 번호"),
+                                fieldWithPath("previous").description("이전 이동 가능 여부"),
+                                fieldWithPath("next").description("다음 이동 가능 여부")
+                        )));
+
+    }
+
 }

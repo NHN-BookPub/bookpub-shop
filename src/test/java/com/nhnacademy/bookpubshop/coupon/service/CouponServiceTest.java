@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.coupon.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -39,6 +40,8 @@ import com.nhnacademy.bookpubshop.order.entity.BookpubOrder;
 import com.nhnacademy.bookpubshop.order.relationship.entity.OrderProduct;
 import com.nhnacademy.bookpubshop.orderstatecode.dummy.OrderStateCodeDummy;
 import com.nhnacademy.bookpubshop.orderstatecode.entity.OrderStateCode;
+import com.nhnacademy.bookpubshop.point.dummy.PointHistoryDummy;
+import com.nhnacademy.bookpubshop.point.entity.PointHistory;
 import com.nhnacademy.bookpubshop.point.repository.PointHistoryRepository;
 import com.nhnacademy.bookpubshop.pricepolicy.entity.PricePolicy;
 import com.nhnacademy.bookpubshop.product.dummy.ProductDummy;
@@ -65,7 +68,9 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -116,8 +121,9 @@ class CouponServiceTest {
     PricePolicy pricePolicy;
     PricePolicy packagePolicy;
     OrderStateCode orderStateCode;
-
+    GetCouponResponseDto getCouponResponseDto;
     GetOrderCouponResponseDto orderCouponResponseDto;
+    PointHistory pointHistory;
 
     @MockBean
     RabbitTemplate rabbitTemplate;
@@ -127,6 +133,7 @@ class CouponServiceTest {
 
     @BeforeEach
     void setUp() {
+        getCouponResponseDto = CouponDummy.getCouponResponseDtoDummy();
         couponService = new CouponServiceImpl(couponRepository, memberRepository,
                 couponTemplateRepository, productRepository, couponMonthRepository,
                 pointHistoryRepository, rabbitTemplate, objectMapper);
@@ -155,6 +162,8 @@ class CouponServiceTest {
         orderCouponResponseDto = new GetOrderCouponResponseDto(
                 1L, "testName", 1L, 1, true, 1000L, 1000L, 1000L, true
         );
+
+        pointHistory = PointHistoryDummy.dummy(member);
     }
 
     @Test
@@ -359,6 +368,232 @@ class CouponServiceTest {
         assertThatThrownBy(() -> couponService.getOrderCoupons(1L, 1L))
                 .isInstanceOf(ProductNotFoundException.class)
                 .hasMessageContaining(ProductNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("사용가능한 쿠폰리스트를 반환 exception 회원을 찾을수없을 경우")
+    void getPositiveCouponList() {
+        // when
+        when(memberRepository.existsById(anyLong()))
+                .thenReturn(false);
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        assertThatThrownBy(() -> couponService.getPositiveCouponList(pageRequest, 1L))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+    }
+
+    @Test
+    @DisplayName("사용가능한 쿠폰리스트를 반환 성공")
+    void getPositiveCouponListSuccess() {
+        // when
+        PageImpl<GetCouponResponseDto> page = new PageImpl<>(List.of(getCouponResponseDto));
+
+        when(memberRepository.existsById(anyLong()))
+                .thenReturn(true);
+        when(couponRepository.findPositiveCouponByMemberNo(any(), anyLong()))
+                .thenReturn(page);
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        Page<GetCouponResponseDto> pageResponse = couponService.getPositiveCouponList(pageRequest, 1L);
+        List<GetCouponResponseDto> result = pageResponse.getContent();
+
+        assertThat(pageResponse).isNotEmpty();
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getCouponNo()).isEqualTo(getCouponResponseDto.getCouponNo());
+        assertThat(result.get(0).getMemberId()).isEqualTo(getCouponResponseDto.getMemberId());
+        assertThat(result.get(0).getTemplateName()).isEqualTo(getCouponResponseDto.getTemplateName());
+        assertThat(result.get(0).getTemplateImage()).isEqualTo(getCouponResponseDto.getTemplateImage());
+        assertThat(result.get(0).getTypeName()).isEqualTo(getCouponResponseDto.getTypeName());
+        assertThat(result.get(0).isPolicyFixed()).isEqualTo(getCouponResponseDto.isPolicyFixed());
+        assertThat(result.get(0).getPolicyPrice()).isEqualTo(getCouponResponseDto.getPolicyPrice());
+        assertThat(result.get(0).getPolicyMinimum()).isEqualTo(getCouponResponseDto.getPolicyMinimum());
+        assertThat(result.get(0).getMaxDiscount()).isEqualTo(getCouponResponseDto.getMaxDiscount());
+        assertThat(result.get(0).getFinishedAt()).isEqualTo(getCouponResponseDto.getFinishedAt());
+        assertThat(result.get(0).isCouponUsed()).isEqualTo(getCouponResponseDto.isCouponUsed());
+
+        verify(memberRepository, times(1))
+                .existsById(1L);
+        verify(couponRepository, times(1))
+                .findPositiveCouponByMemberNo(pageRequest, 1L);
+    }
+
+    @Test
+    @DisplayName("사용 불가능한 쿠폰을 조회할 경우 : 회원을 찾지못함")
+    void getNegativeCouponListFail() {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        when(memberRepository.existsById(anyLong()))
+                .thenReturn(false);
+
+        assertThatThrownBy(() -> couponService.getNegativeCouponList(pageRequest, 1L))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+
+    }
+
+    @Test
+    @DisplayName("사용 불가능한 쿠폰을 조회한 경우")
+    void getNegativeCouponList() {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        PageImpl<GetCouponResponseDto> pageResponse = new PageImpl<>(List.of(getCouponResponseDto));
+        when(memberRepository.existsById(anyLong()))
+                .thenReturn(true);
+        when(couponRepository.findNegativeCouponByMemberNo(any(), anyLong()))
+                .thenReturn(pageResponse);
+
+        Page<GetCouponResponseDto> page = couponService.getNegativeCouponList(pageRequest, 1L);
+        List<GetCouponResponseDto> result = page.getContent();
+
+        assertThat(page).isNotEmpty();
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getCouponNo()).isEqualTo(getCouponResponseDto.getCouponNo());
+        assertThat(result.get(0).getMemberId()).isEqualTo(getCouponResponseDto.getMemberId());
+        assertThat(result.get(0).getTemplateName()).isEqualTo(getCouponResponseDto.getTemplateName());
+        assertThat(result.get(0).getTemplateImage()).isEqualTo(getCouponResponseDto.getTemplateImage());
+        assertThat(result.get(0).getTypeName()).isEqualTo(getCouponResponseDto.getTypeName());
+        assertThat(result.get(0).isPolicyFixed()).isEqualTo(getCouponResponseDto.isPolicyFixed());
+        assertThat(result.get(0).getPolicyPrice()).isEqualTo(getCouponResponseDto.getPolicyPrice());
+        assertThat(result.get(0).getPolicyMinimum()).isEqualTo(getCouponResponseDto.getPolicyMinimum());
+        assertThat(result.get(0).getMaxDiscount()).isEqualTo(getCouponResponseDto.getMaxDiscount());
+        assertThat(result.get(0).getFinishedAt()).isEqualTo(getCouponResponseDto.getFinishedAt());
+        assertThat(result.get(0).isCouponUsed()).isEqualTo(getCouponResponseDto.isCouponUsed());
+
+        verify(memberRepository, times(1))
+                .existsById(1L);
+        verify(couponRepository, times(1))
+                .findNegativeCouponByMemberNo(pageRequest, 1L);
+    }
+
+    @DisplayName("포인트 쿠폰 사용여부 수정 : 쿠폰을 찾을수 없을경우")
+    @Test
+    void modifyPointCouponUsedFail1() {
+        when(couponRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+
+        assertThatThrownBy(() -> couponService.modifyPointCouponUsed(1L, 1L))
+                .isInstanceOf(CouponNotFoundException.class)
+                .hasMessageContaining(CouponNotFoundException.MESSAGE);
+    }
+
+    @DisplayName("포인트 쿠폰 사용여부 수정 : 회원을 찾을수 없을경우")
+    @Test
+    void modifyPointCouponUsedFail2() {
+        when(couponRepository.findById(anyLong()))
+                .thenReturn(Optional.of(coupon));
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> couponService.modifyPointCouponUsed(1L, 1L))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+    }
+
+    @DisplayName("포인트 쿠폰 사용여부 수정")
+    @Test
+    void modifyPointCouponUsedSuccess() {
+        when(couponRepository.findById(anyLong()))
+                .thenReturn(Optional.of(coupon));
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+        when(pointHistoryRepository.save(any()))
+                .thenReturn(pointHistory);
+
+        couponService.modifyPointCouponUsed(1L, 1L);
+
+        verify(couponRepository, times(1))
+                .findById(1L);
+        verify(memberRepository, times(1))
+                .findById(1L);
+        verify(pointHistoryRepository, times(1))
+                .save(any());
+    }
+
+    @DisplayName("이달의 쿠폰 발행 여부 확인")
+    @Test
+    void existsCouponMonthIssuedTest() {
+        when(couponRepository.existsMonthCoupon(anyLong(), anyLong()))
+                .thenReturn(true);
+
+        boolean result = couponService.existsCouponMonthIssued(1L, 1L);
+
+        assertThat(result).isTrue();
+        verify(couponRepository, times(1))
+                .existsMonthCoupon(1L, 1L);
+    }
+
+    @DisplayName("회원의 이달의 쿠폰 리스트 발행 여부를 확인 성공")
+    @Test
+    void existsCouponMonthListIssued() {
+        when(couponRepository.existsMonthCouponList(anyLong(), any()))
+                .thenReturn(List.of(1L, 2L, 3L));
+
+        List<Boolean> result = couponService.existsCouponMonthListIssued(1L, List.of(1L, 2L, 3L));
+
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0)).isTrue();
+        assertThat(result.get(1)).isTrue();
+        assertThat(result.get(2)).isTrue();
+
+        verify(couponRepository, times(1))
+                .existsMonthCouponList(1L, List.of(1L, 2L, 3L));
+    }
+
+    @DisplayName("멤버에게 등급 쿠폰을 발급 : 쿠폰 테플릿이 없을경우")
+    @Test
+    void issueTierCouponsByMemberNoFail1() {
+        when(couponTemplateRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> couponService.issueTierCouponsByMemberNo(1L, List.of(1L)))
+                .isInstanceOf(CouponTemplateNotFoundException.class)
+                .hasMessageContaining(CouponTemplateNotFoundException.MESSAGE);
+    }
+
+    @DisplayName("멤버에게 등급 쿠폰을 발급 : 회원이 없는경우")
+    @Test
+    void issueTierCouponsByMemberNoFail2() {
+        when(couponTemplateRepository.findById(anyLong()))
+                .thenReturn(Optional.of(couponTemplate));
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> couponService.issueTierCouponsByMemberNo(1L, List.of(1L)))
+                .isInstanceOf(MemberNotFoundException.class)
+                .hasMessageContaining(MemberNotFoundException.MESSAGE);
+    }
+
+    @DisplayName("멤버에게 등급 쿠폰을 발급")
+    @Test
+    void issueTierCouponsByMemberNo() {
+        when(couponTemplateRepository.findById(anyLong()))
+                .thenReturn(Optional.of(couponTemplate));
+        when(memberRepository.findById(anyLong()))
+                .thenReturn(Optional.of(member));
+        when(couponRepository.save(any()))
+                .thenReturn(coupon);
+
+        couponService.issueTierCouponsByMemberNo(1L, List.of(1L));
+
+        verify(couponTemplateRepository, times(1))
+                .findById(1L);
+        verify(memberRepository, times(1))
+                .findById(1L);
+        verify(couponRepository, times(1))
+                .save(any());
+    }
+
+    @DisplayName("멤버의 등급쿠폰 발급 유무를 확인")
+    @Test
+    void existsCouponsByMemberNo(){
+        when(couponRepository.existsTierCouponsByMemberNo(any(), any()))
+                .thenReturn(true);
+
+        boolean result = couponService.existsCouponsByMemberNo(1L, List.of(1L));
+
+        assertThat(result).isTrue();
+        verify(couponRepository, times(1))
+                .existsTierCouponsByMemberNo(1L, List.of(1L));
     }
 
 }

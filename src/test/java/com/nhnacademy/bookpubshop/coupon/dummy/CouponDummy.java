@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.coupon.dummy;
 
+import com.nhnacademy.bookpubshop.coupon.dto.response.GetCouponResponseDto;
 import com.nhnacademy.bookpubshop.coupon.entity.Coupon;
 import com.nhnacademy.bookpubshop.coupontemplate.entity.CouponTemplate;
 import com.nhnacademy.bookpubshop.member.entity.Member;
@@ -28,6 +29,12 @@ public class CouponDummy {
                 member,
                 false,
                 LocalDateTime.now()
+        );
+    }
+
+    public static GetCouponResponseDto getCouponResponseDtoDummy(){
+        return new GetCouponResponseDto(1L, "id", "name",
+                "image", "name", true, 1L, 1L, 10L, LocalDateTime.now(), false
         );
     }
 }
