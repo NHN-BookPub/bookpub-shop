@@ -54,7 +54,7 @@ class MemberRepositoryTest {
     MemberAuthority memberAuthority;
 
     Address address;
-    
+
     @BeforeEach
     void setUp() {
         bookPubTier = TierDummy.dummy();
