@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.category.service;
 
 import com.nhnacademy.bookpubshop.category.dto.request.CreateCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.request.ModifyCategoryRequestDto;
+import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryInfoResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import java.util.List;
@@ -61,4 +62,11 @@ public interface CategoryService {
      * @return 최상위와 그 하위 카테고리 반환됩니다.
      */
     List<GetParentCategoryWithChildrenResponseDto> getParentCategoryWithChildren();
+
+    /**
+     * 카테고리 기본 정보 조회를 위한 메서드입니다.
+     *
+     * @return 모든 카테고리 번호, 이름 반환.
+     */
+    List<GetCategoryInfoResponseDto> getAllCategories();
 }

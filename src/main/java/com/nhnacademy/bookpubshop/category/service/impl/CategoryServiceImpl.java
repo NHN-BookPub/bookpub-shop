@@ -2,6 +2,7 @@ package com.nhnacademy.bookpubshop.category.service.impl;
 
 import com.nhnacademy.bookpubshop.category.dto.request.CreateCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.request.ModifyCategoryRequestDto;
+import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryInfoResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import com.nhnacademy.bookpubshop.category.entity.Category;
@@ -123,6 +124,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<GetParentCategoryWithChildrenResponseDto> getParentCategoryWithChildren() {
         return categoryRepository.findParentCategoryWithChildren();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<GetCategoryInfoResponseDto> getAllCategories() {
+        return categoryRepository.findCategoriesInfo();
     }
 
 

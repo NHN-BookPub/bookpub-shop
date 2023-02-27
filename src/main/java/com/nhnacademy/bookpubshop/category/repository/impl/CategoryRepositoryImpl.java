@@ -1,5 +1,6 @@
 package com.nhnacademy.bookpubshop.category.repository.impl;
 
+import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryInfoResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetChildCategoryResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
@@ -114,5 +115,20 @@ public class CategoryRepositoryImpl extends QuerydslRepositorySupport implements
                 .where(category.parentCategory.categoryNo.eq(parentCategoryNo))
                 .fetch();
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<GetCategoryInfoResponseDto> findCategoriesInfo() {
+        QCategory category = QCategory.category;
+
+        return from(category)
+                .select(Projections.constructor(GetCategoryInfoResponseDto.class,
+                        category.categoryNo,
+                        category.categoryName))
+                .distinct()
+                .fetch();
     }
 }

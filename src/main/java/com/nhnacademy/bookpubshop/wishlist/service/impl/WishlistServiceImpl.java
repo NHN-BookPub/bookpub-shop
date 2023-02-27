@@ -9,6 +9,7 @@ import com.nhnacademy.bookpubshop.product.repository.ProductRepository;
 import com.nhnacademy.bookpubshop.wishlist.dto.request.CreateWishlistRequestDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.request.DeleteWishlistRequestDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.request.ModifyWishlistAlarmRequestDto;
+import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistCountResponseDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistResponseDto;
 import com.nhnacademy.bookpubshop.wishlist.entity.Wishlist;
 import com.nhnacademy.bookpubshop.wishlist.exception.WishlistNotFoundException;
@@ -69,6 +70,16 @@ public class WishlistServiceImpl implements WishlistService {
      * {@inheritDoc}
      */
     @Override
+    public Page<GetWishlistCountResponseDto> getCountWishList(Integer categoryNo,
+            Pageable pageable) {
+        return wishlistRepository.getCountWishList(categoryNo, pageable);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     @Transactional
     public void deleteWishlist(Long memberNo, DeleteWishlistRequestDto request) {
         wishlistRepository.deleteById(new Wishlist.Pk(memberNo, request.getProductNo()));
@@ -80,7 +91,8 @@ public class WishlistServiceImpl implements WishlistService {
     @Override
     @Transactional
     public void modifyWishlistAlarm(Long memberNo, ModifyWishlistAlarmRequestDto request) {
-        Wishlist wishlist = wishlistRepository.findById(new Wishlist.Pk(memberNo, request.getProductNo()))
+        Wishlist wishlist = wishlistRepository.findById(
+                        new Wishlist.Pk(memberNo, request.getProductNo()))
                 .orElseThrow(WishlistNotFoundException::new);
 
         wishlist.modifyWishlistAlarm();

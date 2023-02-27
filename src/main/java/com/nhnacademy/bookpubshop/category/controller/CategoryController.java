@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.category.controller;
 import com.nhnacademy.bookpubshop.annotation.AdminAuth;
 import com.nhnacademy.bookpubshop.category.dto.request.CreateCategoryRequestDto;
 import com.nhnacademy.bookpubshop.category.dto.request.ModifyCategoryRequestDto;
+import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryInfoResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetCategoryResponseDto;
 import com.nhnacademy.bookpubshop.category.dto.response.GetParentCategoryWithChildrenResponseDto;
 import com.nhnacademy.bookpubshop.category.service.CategoryService;
@@ -111,5 +112,17 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(categoryService.getParentCategoryWithChildren());
+    }
+
+    /**
+     * 카테고리 리스트 조회.
+     *
+     * @return 카테고리 반환.
+     */
+    @GetMapping("/api/category-list")
+    public ResponseEntity<List<GetCategoryInfoResponseDto>> getCategories() {
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(categoryService.getAllCategories());
     }
 }

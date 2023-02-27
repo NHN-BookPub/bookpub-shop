@@ -1,6 +1,7 @@
 package com.nhnacademy.bookpubshop.wishlist.repository;
 
 import com.nhnacademy.bookpubshop.wishlist.dto.response.GetAppliedMemberResponseDto;
+import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistCountResponseDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistResponseDto;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -32,4 +33,13 @@ public interface WishlistRepositoryCustom {
      * @return 알림여부를 등록한 멤버들
      */
     List<GetAppliedMemberResponseDto> findWishlistAppliedMembers(Long productNo);
+
+    /**
+     * 좋아요 카운트 조회를 위한 메서드.
+     *
+     * @param categoryNo 카테고리 번호
+     * @param pageable   페이징 정보
+     * @return 좋아요 카운트 반환.
+     */
+    Page<GetWishlistCountResponseDto> getCountWishList(Integer categoryNo, Pageable pageable);
 }

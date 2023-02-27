@@ -3,6 +3,7 @@ package com.nhnacademy.bookpubshop.wishlist.service;
 import com.nhnacademy.bookpubshop.wishlist.dto.request.CreateWishlistRequestDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.request.DeleteWishlistRequestDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.request.ModifyWishlistAlarmRequestDto;
+import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistCountResponseDto;
 import com.nhnacademy.bookpubshop.wishlist.dto.response.GetWishlistResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,4 +48,13 @@ public interface WishlistService {
      * @param request  수정을 위한 dto
      */
     void modifyWishlistAlarm(Long memberNo, ModifyWishlistAlarmRequestDto request);
+
+    /**
+     * 좋아요 카운트 조회하는 메서드.
+     *
+     * @param categoryNo 카테고리 번호
+     * @param pageable   페이징 정보
+     * @return 좋아요 카운트 반환.
+     */
+    Page<GetWishlistCountResponseDto> getCountWishList(Integer categoryNo, Pageable pageable);
 }
