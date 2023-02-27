@@ -118,65 +118,89 @@ public class WishlistRepositoryImpl extends QuerydslRepositorySupport
     @Override
     public Page<GetWishlistCountResponseDto> getCountWishList(Integer categoryNo,
             Pageable pageable) {
-
-        JPQLQuery<Long> count;
         NumberPath<Long> aliasCount =
                 Expressions.numberPath(Long.class, "wishCount");
-        List<GetWishlistCountResponseDto> content;
 
         if (Objects.isNull(categoryNo)) {
-            count = from(product)
-                    .select(product.count())
-                    .leftJoin(wishlist.product, product)
-                    .on(product.productNo.eq(wishlist.product.productNo))
-                    .where(categoryEq(categoryNo));
-
-            content = from(wishlist)
-                    .select(Projections.fields(
-                            GetWishlistCountResponseDto.class,
-                            wishlist.product.productNo,
-                            wishlist.product.title,
-                            wishlist.product.productNo.count().as(aliasCount)))
-                    .leftJoin(wishlist.product, product)
-                    .on(product.productNo.eq(wishlist.product.productNo))
-                    .where(categoryEq(categoryNo))
-                    .groupBy(wishlist.product.productNo)
-                    .orderBy(aliasCount.desc())
-                    .offset(pageable.getOffset())
-                    .limit(pageable.getPageSize())
-                    .fetch();
-
-        } else {
-            count = from(wishlist)
-                    .select(wishlist.count())
-                    .leftJoin(wishlist.product, product)
-                    .on(product.productNo.eq(wishlist.product.productNo))
-                    .leftJoin(productCategory)
-                    .on(product.productNo.eq(productCategory.product.productNo))
-                    .leftJoin(category)
-                    .on(productCategory.category.categoryNo.eq(category.categoryNo))
-                    .where(categoryEq(categoryNo));
-
-            content = from(wishlist)
-                    .select(Projections.fields(
-                            GetWishlistCountResponseDto.class,
-                            wishlist.product.productNo,
-                            wishlist.product.title,
-                            wishlist.product.productNo.count().as(aliasCount)))
-                    .leftJoin(wishlist.product, product)
-                    .on(product.productNo.eq(wishlist.product.productNo))
-                    .leftJoin(productCategory)
-                    .on(product.productNo.eq(productCategory.product.productNo))
-                    .leftJoin(category)
-                    .on(productCategory.category.categoryNo.eq(category.categoryNo))
-                    .where(categoryEq(categoryNo))
-                    .groupBy(wishlist.product.productNo)
-                    .orderBy(aliasCount.desc())
-                    .offset(pageable.getOffset())
-                    .limit(pageable.getPageSize())
-                    .fetch();
-
+            return getWishCountByDefault(aliasCount, pageable);
         }
+
+        return getWishCountByCategory(aliasCount, categoryNo, pageable);
+
+    }
+
+    /**
+     * 카테고리 번호가 존재할 때 좋아요 카운트.
+     *
+     * @param categoryNo 카테고리 번호
+     * @param pageable   페이지 정보
+     * @return 좋아요 카운트 반환.
+     */
+
+    private Page<GetWishlistCountResponseDto> getWishCountByCategory(NumberPath<Long> aliasCount,
+            Integer categoryNo,
+            Pageable pageable) {
+
+        JPQLQuery<Long> count = from(wishlist)
+                .select(wishlist.count())
+                .leftJoin(wishlist.product, product)
+                .on(product.productNo.eq(wishlist.product.productNo))
+                .leftJoin(productCategory)
+                .on(product.productNo.eq(productCategory.product.productNo))
+                .leftJoin(category)
+                .on(productCategory.category.categoryNo.eq(category.categoryNo))
+                .where(categoryEq(categoryNo));
+
+        List<GetWishlistCountResponseDto> content = from(wishlist)
+                .select(Projections.fields(
+                        GetWishlistCountResponseDto.class,
+                        wishlist.product.productNo,
+                        wishlist.product.title,
+                        wishlist.product.productNo.count().as(aliasCount)))
+                .leftJoin(wishlist.product, product)
+                .on(product.productNo.eq(wishlist.product.productNo))
+                .leftJoin(productCategory)
+                .on(product.productNo.eq(productCategory.product.productNo))
+                .leftJoin(category)
+                .on(productCategory.category.categoryNo.eq(category.categoryNo))
+                .where(categoryEq(categoryNo))
+                .groupBy(wishlist.product.productNo)
+                .orderBy(aliasCount.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
+    }
+
+    /**
+     * 기본 좋아요 카운트 조회.
+     *
+     * @param pageable 페이징 정보
+     * @return 좋아요 카운트 반환.
+     */
+    private Page<GetWishlistCountResponseDto> getWishCountByDefault(NumberPath<Long> aliasCount,
+            Pageable pageable) {
+
+        JPQLQuery<Long> count = from(product)
+                .select(product.count())
+                .leftJoin(wishlist.product, product)
+                .on(product.productNo.eq(wishlist.product.productNo));
+
+        List<GetWishlistCountResponseDto> content = from(wishlist)
+                .select(Projections.fields(
+                        GetWishlistCountResponseDto.class,
+                        wishlist.product.productNo,
+                        wishlist.product.title,
+                        wishlist.product.productNo.count().as(aliasCount)))
+                .leftJoin(wishlist.product, product)
+                .on(product.productNo.eq(wishlist.product.productNo))
+                .groupBy(wishlist.product.productNo)
+                .orderBy(aliasCount.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
         return PageableExecutionUtils.getPage(content, pageable, count::fetchOne);
     }
 
