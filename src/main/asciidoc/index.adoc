@@ -160,6 +160,9 @@ include::tiercoupon/tiercoupon.adoc[]
 //매출
 include::sales/sales.adoc[]
 
+//상품문의상태코드
+include::inquirystatecode/inquirystatecode.adoc[]
+
 //상품문의
 include::inquiry/inquiry.adoc[]
 

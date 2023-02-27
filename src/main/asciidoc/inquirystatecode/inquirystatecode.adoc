@@ -1,0 +1,5 @@
+=== 상품문의상태코드(Product)
+
+상품문의상태코드 조회 API.
+
+include::inquirystatecode-get.adoc[]

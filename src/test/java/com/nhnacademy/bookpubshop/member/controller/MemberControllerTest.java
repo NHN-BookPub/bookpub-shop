@@ -1,29 +1,16 @@
 package com.nhnacademy.bookpubshop.member.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.bookpubshop.error.ShopAdviceController;
 import com.nhnacademy.bookpubshop.member.dto.request.CreateAddressRequestDto;
@@ -49,6 +36,7 @@ import com.nhnacademy.bookpubshop.member.service.MemberService;
 import com.nhnacademy.bookpubshop.tier.dummy.TierDummy;
 import com.nhnacademy.bookpubshop.tier.entity.BookPubTier;
 import java.util.List;
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -60,6 +48,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -100,12 +89,16 @@ class MemberControllerTest {
     SignUpMemberResponseDto signUpMemberResponseDto;
     SignUpMemberResponseDto oauthSignUpMemberResponseDto;
 
+    MemberDetailResponseDto memberDetailResponseDto;
+    MemberResponseDto memberResponseDto;
+
     @BeforeEach
     void setUp() {
         basic = new BookPubTier("basic", 1, 1L, 100L);
         objectMapper = new ObjectMapper();
         signUpMemberRequestDto = new SignUpMemberRequestDto();
         oauthMemberCreateRequestDto = new OauthMemberCreateRequestDto();
+        memberDetailResponseDto = new MemberDetailResponseDto();
 
         signUpMemberResponseDto = new SignUpMemberResponseDto(
                 "tagkdj1",
@@ -118,6 +111,12 @@ class MemberControllerTest {
                 "taewon",
                 "tagkdj1@naver.com",
                 "basic"
+        );
+
+        memberResponseDto = new MemberResponseDto(
+                1L, "tier", "id", "nickname", "name",
+                "gender", 1999, 1001, "email", 100L,
+                false, false, false
         );
     }
 
@@ -616,6 +615,7 @@ class MemberControllerTest {
         then(memberService)
                 .should().getMemberDetails(anyLong());
     }
+
     @Test
     @DisplayName("전체 멤버를 조회하는 메서드입니다.")
     void memberListTest() throws Exception {
@@ -1335,5 +1335,146 @@ class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("false"));
+    }
+
+    @Test
+    @DisplayName("닉네임으로 멤버 조회 테스트")
+    void memberListByNickTest() throws Exception {
+        Pageable pageable = PageRequest.of(0, 10);
+        List<MemberResponseDto> content = List.of(memberResponseDto);
+        PageImpl<MemberResponseDto> page = new PageImpl<>(content, pageable, 1);
+
+        when(memberService.getMembersByNickName(any(), anyString()))
+                .thenReturn(page);
+
+        mvc.perform(RestDocumentationRequestBuilders.get("/token/admin/members/{search}/nick", "search")
+                        .param("page", objectMapper.writeValueAsString(pageable.getPageNumber()))
+                        .param("size", objectMapper.writeValueAsString(pageable.getPageSize()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content[0].memberNo").value(memberResponseDto.getMemberNo()))
+                .andExpect(jsonPath("$.content[0].tier").value(memberResponseDto.getTier()))
+                .andExpect(jsonPath("$.content[0].memberId").value(memberResponseDto.getMemberId()))
+                .andExpect(jsonPath("$.content[0].nickname").value(memberResponseDto.getNickname()))
+                .andExpect(jsonPath("$.content[0].name").value(memberResponseDto.getName()))
+                .andExpect(jsonPath("$.content[0].gender").value(memberResponseDto.getGender()))
+                .andExpect(jsonPath("$.content[0].birthYear").value(memberResponseDto.getBirthYear()))
+                .andExpect(jsonPath("$.content[0].birthMonth").value(memberResponseDto.getBirthMonth()))
+                .andExpect(jsonPath("$.content[0].email").value(memberResponseDto.getEmail()))
+                .andExpect(jsonPath("$.content[0].point").value(memberResponseDto.getPoint()))
+                .andExpect(jsonPath("$.content[0].social").value(memberResponseDto.isSocial()))
+                .andExpect(jsonPath("$.content[0].deleted").value(memberResponseDto.isDeleted()))
+                .andExpect(jsonPath("$.content[0].blocked").value(memberResponseDto.isBlocked()))
+                .andDo(document("member-detail-get-by-nickname",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("search").description("조회할 회원 닉네임")
+                        ),
+                        requestParameters(
+                                parameterWithName("size").description("페이지 사이즈"),
+                                parameterWithName("page").description("페이지 번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("content[].memberNo").description("회원 번호"),
+                                fieldWithPath("content[].tier").description("회원 등급"),
+                                fieldWithPath("content[].memberId").description("아이디"),
+                                fieldWithPath("content[].nickname").description("닉네임"),
+                                fieldWithPath("content[].name").description("이름"),
+                                fieldWithPath("content[].gender").description("성별"),
+                                fieldWithPath("content[].birthYear").description("생년"),
+                                fieldWithPath("content[].birthMonth").description("생월"),
+                                fieldWithPath("content[].email").description("이메일"),
+                                fieldWithPath("content[].point").description("포인트"),
+                                fieldWithPath("content[].social").description("소셜여부"),
+                                fieldWithPath("content[].deleted").description("탈퇴여부"),
+                                fieldWithPath("content[].blocked").description("차단여부"),
+                                fieldWithPath("totalPages").description("총 페이지 수"),
+                                fieldWithPath("number").description("현재 페이지 번호"),
+                                fieldWithPath("previous").description("이전 이동 가능 여부"),
+                                fieldWithPath("next").description("다음 이동 가능 여부")
+                        )));
+    }
+
+    @Test
+    @DisplayName("아이디로 멤버 조회 테스트")
+    void memberListByIdTest() throws Exception {
+        Pageable pageable = PageRequest.of(0, 10);
+        List<MemberResponseDto> content = List.of(memberResponseDto);
+        PageImpl<MemberResponseDto> page = new PageImpl<>(content, pageable, 1);
+
+        when(memberService.getMembersById(any(), anyString()))
+                .thenReturn(page);
+
+        mvc.perform(RestDocumentationRequestBuilders.get("/token/admin/members/{search}/id", "searchId")
+                        .param("page", objectMapper.writeValueAsString(pageable.getPageNumber()))
+                        .param("size", objectMapper.writeValueAsString(pageable.getPageSize()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content[0].memberNo").value(memberResponseDto.getMemberNo()))
+                .andExpect(jsonPath("$.content[0].tier").value(memberResponseDto.getTier()))
+                .andExpect(jsonPath("$.content[0].memberId").value(memberResponseDto.getMemberId()))
+                .andExpect(jsonPath("$.content[0].nickname").value(memberResponseDto.getNickname()))
+                .andExpect(jsonPath("$.content[0].name").value(memberResponseDto.getName()))
+                .andExpect(jsonPath("$.content[0].gender").value(memberResponseDto.getGender()))
+                .andExpect(jsonPath("$.content[0].birthYear").value(memberResponseDto.getBirthYear()))
+                .andExpect(jsonPath("$.content[0].birthMonth").value(memberResponseDto.getBirthMonth()))
+                .andExpect(jsonPath("$.content[0].email").value(memberResponseDto.getEmail()))
+                .andExpect(jsonPath("$.content[0].point").value(memberResponseDto.getPoint()))
+                .andExpect(jsonPath("$.content[0].social").value(memberResponseDto.isSocial()))
+                .andExpect(jsonPath("$.content[0].deleted").value(memberResponseDto.isDeleted()))
+                .andExpect(jsonPath("$.content[0].blocked").value(memberResponseDto.isBlocked()))
+                .andDo(document("member-detail-get-by-id",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("search").description("조회할 회원 닉네임")
+                        ),
+                        requestParameters(
+                                parameterWithName("size").description("페이지 사이즈"),
+                                parameterWithName("page").description("페이지 번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("content[].memberNo").description("회원 번호"),
+                                fieldWithPath("content[].tier").description("회원 등급"),
+                                fieldWithPath("content[].memberId").description("아이디"),
+                                fieldWithPath("content[].nickname").description("닉네임"),
+                                fieldWithPath("content[].name").description("이름"),
+                                fieldWithPath("content[].gender").description("성별"),
+                                fieldWithPath("content[].birthYear").description("생년"),
+                                fieldWithPath("content[].birthMonth").description("생월"),
+                                fieldWithPath("content[].email").description("이메일"),
+                                fieldWithPath("content[].point").description("포인트"),
+                                fieldWithPath("content[].social").description("소셜여부"),
+                                fieldWithPath("content[].deleted").description("탈퇴여부"),
+                                fieldWithPath("content[].blocked").description("차단여부"),
+                                fieldWithPath("totalPages").description("총 페이지 수"),
+                                fieldWithPath("number").description("현재 페이지 번호"),
+                                fieldWithPath("previous").description("이전 이동 가능 여부"),
+                                fieldWithPath("next").description("다음 이동 가능 여부")
+                        )));
+    }
+
+    @Test
+    @DisplayName("멤버 번호로 등급번호를 조회 테스트")
+    void getTierNoByMemberNo() throws Exception {
+        when(memberService.getTierByMemberNo(anyLong())).thenReturn(1);
+
+        mvc.perform(RestDocumentationRequestBuilders.get("/token/members/{memberNo}/tier", 1L))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isNumber())
+                .andDo(print())
+                .andDo(document("member-tierNo-get-by-memberNo",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("memberNo").description("조회할 회원 번호")
+                        ),
+                        responseBody(
+                                Map.of("tierNo", "등급 번호")
+                        )));
     }
 }

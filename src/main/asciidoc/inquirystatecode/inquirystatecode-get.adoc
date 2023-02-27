@@ -1,0 +1,24 @@
+:toc:
+
+
+
+==== 상품문의상태코드 멤버용 코드 조회
+
+상품문의상태코드(InquiryStateCode) 조회 관한 API 명세
+
+===== 요청구조
+
+include::../../../../target/snippets/inquiry-state-list-member/http-request.adoc[]
+
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-state-list-member/response-fields.adoc[]
+
+==== 상품문의상태코드 관리자용 코드 조회
+
+===== 요청구조
+
+include::../../../../target/snippets/inquiry-state-list-admin/http-request.adoc[]
+===== 응답구조
+
+include::../../../../target/snippets/inquiry-state-list-admin/response-fields.adoc[]
