@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
- * Some description here.
+ * 상품문의상태코드 서비스 테스트.
  *
  * @author : 정유진
  * @since : 1.0

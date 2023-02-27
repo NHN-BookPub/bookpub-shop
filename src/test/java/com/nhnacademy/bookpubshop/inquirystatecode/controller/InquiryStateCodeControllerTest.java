@@ -28,7 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * Some description here.
+ * 상품문의상태코드 컨트롤러 테스트.
  *
  * @author : 정유진
  * @since : 1.0
